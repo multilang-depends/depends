@@ -1,0 +1,12 @@
+*.class
+*.log
+.idea/
+out/
+*.DS_Store
+/target/
+.classpath
+.project
+.settings/
+META-INF/
+result/
+
