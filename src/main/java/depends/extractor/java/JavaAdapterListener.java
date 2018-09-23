@@ -23,6 +23,7 @@ import depends.javaextractor.Java9Parser.InterfaceTypeContext;
 import depends.javaextractor.Java9Parser.LocalVariableDeclarationContext;
 import depends.javaextractor.Java9Parser.MethodDeclarationContext;
 import depends.javaextractor.Java9Parser.MethodDeclaratorContext;
+import depends.javaextractor.Java9Parser.MethodHeaderContext;
 import depends.javaextractor.Java9Parser.NormalClassDeclarationContext;
 import depends.javaextractor.Java9Parser.NormalInterfaceDeclarationContext;
 import depends.javaextractor.Java9Parser.PackageDeclarationContext;
@@ -34,6 +35,7 @@ import depends.javaextractor.Java9Parser.StaticImportOnDemandDeclarationContext;
 import depends.javaextractor.Java9Parser.SuperclassContext;
 import depends.javaextractor.Java9Parser.SuperinterfacesContext;
 import depends.javaextractor.Java9Parser.TypeImportOnDemandDeclarationContext;
+import depends.util.Tuple;
 
 public class JavaAdapterListener extends Java9BaseListener{
 	private JavaHandler handler;
@@ -147,15 +149,20 @@ public class JavaAdapterListener extends Java9BaseListener{
 	/////////////////////////////////////////////////////////
 	// Method Parameters
 	@Override
-	public void enterMethodDeclarator(MethodDeclaratorContext ctx) {
-		Collection<String> parameterTypes  = new ArrayList<>();
-		if (ctx.formalParameterList()!=null) {
-			parameterTypes = new FormalParameterListContextHelper(ctx.formalParameterList()).extractParameterTypeList();
+	public void enterMethodHeader(MethodHeaderContext ctx) {
+		MethodDeclaratorContext declarator = ctx.methodDeclarator();
+		FormalParameterListContextHelper helper = new FormalParameterListContextHelper(declarator.formalParameterList());
+		handler.foundMethodDeclarator(declarator.identifier().getText(),helper.getParameterTypeList());
+		
+		ResultContext result = ctx.result();
+		handler.foundReturn(new UnannTypeContextHelper().calculateType(result.unannType()));
+		super.enterMethodHeader(ctx);
+		
+		Collection<Tuple<String, String>> varList = helper.getVarList();
+		for (Tuple<String, String> var:varList) {
+			handler.foundVarDefintion(var.x,var.y);
 		}
-		handler.foundMethodDeclarator(ctx.identifier().getText(),parameterTypes);
-		super.enterMethodDeclarator(ctx);
 	}
-
 	/////////////////////////////////////////////////////////
 	// Field 
 	@Override
@@ -208,18 +215,6 @@ public class JavaAdapterListener extends Java9BaseListener{
 		super.exitBlock(ctx);
 	}
 
-	@Override
-	public void enterResult(ResultContext ctx) {
-		// TODO Auto-generated method stub
-		super.enterResult(ctx);
-	}
 }
 
-
-// relations to be clarified:
-// 1. functionName(ParametersList) throws ExceptionTypeList <-- exceptionTypeList should be parameter?
-// 2. class defines members <-- what's the relation between them? 
-// 3. 'Contains' does not defined in the code. Please clarify
-// 4. (TODO): the arguments of generic type have not be calculated yet
-// 5. Parameter is not about method - > var for java; it is method ( parameter type
 

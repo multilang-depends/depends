@@ -10,7 +10,7 @@ public class UnannTypeContextHelper {
 	
 	public String calculateType(UnannTypeContext type) {
 		if (type == null)
-			return null;
+			return "void";
 		UnannReferenceTypeContext t = type.unannReferenceType();
 		if (t != null) {
 			if (t.unannArrayType() != null && t.unannArrayType().unannClassOrInterfaceType() != null) {
@@ -23,7 +23,7 @@ public class UnannTypeContextHelper {
 		}else if (type.unannPrimitiveType()!=null){
 			return type.unannPrimitiveType().getText();
 		}
-		return null;
+		return "void";
 	}
 
 	public String computeType(UnannClassOrInterfaceTypeContext c) {

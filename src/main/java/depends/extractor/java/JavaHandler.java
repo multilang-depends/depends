@@ -37,6 +37,11 @@ public class JavaHandler extends GenericHandler {
 		addInheritRelation(superClassName);
 	}
 
+	public void foundReturn(String returnTypeName) {
+		returnTypeName = context().resolveTypeNameRef(returnTypeName);
+		addReturnRelation(returnTypeName);
+	}
+
 	public void foundImplements(String interfaceName) {
 		interfaceName = context().resolveTypeNameRef(interfaceName);
 		addImplementRelation(interfaceName);
@@ -58,6 +63,7 @@ public class JavaHandler extends GenericHandler {
 		context().addVar(type,var);
 		addVars(context().resolveTypeNameRef(type),var);		
 	}
+	
 	
 }
 
