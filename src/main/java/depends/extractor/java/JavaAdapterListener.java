@@ -11,6 +11,7 @@ import depends.extractor.java.context.VariableDeclaratorContextHelper;
 import depends.javaextractor.Java9BaseListener;
 import depends.javaextractor.Java9Parser.AnnotationTypeDeclarationContext;
 import depends.javaextractor.Java9Parser.AnnotationTypeElementDeclarationContext;
+import depends.javaextractor.Java9Parser.AssignmentContext;
 import depends.javaextractor.Java9Parser.BlockContext;
 import depends.javaextractor.Java9Parser.ClassDeclarationContext;
 import depends.javaextractor.Java9Parser.ClassTypeContext;
@@ -27,6 +28,10 @@ import depends.javaextractor.Java9Parser.MethodHeaderContext;
 import depends.javaextractor.Java9Parser.NormalClassDeclarationContext;
 import depends.javaextractor.Java9Parser.NormalInterfaceDeclarationContext;
 import depends.javaextractor.Java9Parser.PackageDeclarationContext;
+import depends.javaextractor.Java9Parser.PostIncrementExpressionContext;
+import depends.javaextractor.Java9Parser.PostIncrementExpression_lf_postfixExpressionContext;
+import depends.javaextractor.Java9Parser.PreDecrementExpressionContext;
+import depends.javaextractor.Java9Parser.PreIncrementExpressionContext;
 import depends.javaextractor.Java9Parser.ResourceContext;
 import depends.javaextractor.Java9Parser.ResultContext;
 import depends.javaextractor.Java9Parser.SingleStaticImportDeclarationContext;
@@ -203,6 +208,50 @@ public class JavaAdapterListener extends Java9BaseListener{
 		super.enterResource(ctx);
 	}
 	
+	/////////////////////////////////////////
+	// Assignment or In(De)Cremental
+	@Override
+	public void enterAssignment(AssignmentContext ctx) {
+		if (ctx.leftHandSide().expressionName()!=null) {
+			handler.foundVariableSet(ctx.leftHandSide().expressionName().identifier().getText());
+		}
+		if (ctx.leftHandSide().fieldAccess()!=null) {
+			//TODO
+		}
+		if (ctx.leftHandSide().arrayAccess()!=null) {
+			//TODO
+		}
+		super.enterAssignment(ctx);
+	}
+
+	@Override
+	public void enterPreIncrementExpression(PreIncrementExpressionContext ctx) {
+		// TODO Auto-generated method stub
+		super.enterPreIncrementExpression(ctx);
+	}
+
+	@Override
+	public void enterPreDecrementExpression(PreDecrementExpressionContext ctx) {
+		// TODO Auto-generated method stub
+		super.enterPreDecrementExpression(ctx);
+	}
+
+	@Override
+	public void enterPostIncrementExpression(PostIncrementExpressionContext ctx) {
+		// TODO Auto-generated method stub
+		System.out.println(ctx.postfixExpression().expressionName().identifier().getText());
+		super.enterPostIncrementExpression(ctx);
+	}
+
+	@Override
+	public void enterPostIncrementExpression_lf_postfixExpression(
+			PostIncrementExpression_lf_postfixExpressionContext ctx) {
+		// TODO Auto-generated method stub
+		super.enterPostIncrementExpression_lf_postfixExpression(ctx);
+	}
+
+	/////////////////////////////////////////////
+	// Block
 	@Override
 	public void enterBlock(BlockContext ctx) {
 		// TODO Auto-generated method stub
@@ -218,3 +267,10 @@ public class JavaAdapterListener extends Java9BaseListener{
 }
 
 
+/**
+unaryExpressionNotPlusMinus
+	:	postfixExpression
+	|	'~' unaryExpression
+	|	'!' unaryExpression
+	|	castExpression
+*/

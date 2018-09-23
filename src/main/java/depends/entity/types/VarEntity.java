@@ -10,5 +10,9 @@ public class VarEntity extends Entity {
 		super(fullName,  parentId,id);
 		this.type = type;
 	}
+
+	public String getType() {
+		return type;
+	}
     
 }

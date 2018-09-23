@@ -64,6 +64,12 @@ public class JavaHandler extends GenericHandler {
 		addVars(context().resolveTypeNameRef(type),var);		
 	}
 	
+	public void foundVariableSet(String varName) {
+		String type = context().inferType(varName);
+		if (type!=null) {
+			addSetRelation(type);
+		}
+	}
 	
 }
 

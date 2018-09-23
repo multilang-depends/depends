@@ -29,4 +29,14 @@ public class JavaVarResolveTest {
         assertEquals(1,repo.getEntity("LocalVar").getVars().size());
         assertEquals(2,repo.getEntity("LocalVar.foo").getVars().size());
 	}
+	
+	@Test
+	public void test_local_var_type_could_be_inferred() throws IOException {
+		EntityRepo repo = new EntityRepo();
+        String src = "./src/test/resources/java-code-examples/LocalVarInferExample.java";
+        JavaFileParser parser = new JavaFileParser(src,repo);
+        parser.parse();
+        assertEquals(2,repo.getEntity("LocalVarInferExample.setExample").getVars().size());
+        
+	}
 }

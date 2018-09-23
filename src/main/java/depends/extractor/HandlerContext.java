@@ -121,4 +121,15 @@ public class HandlerContext{
 	public Entity lastContainer() {
 		return entityStack.peek();
 	}
+	public String inferType(String varName) {
+		for (int i=entityStack.size()-1;i>=0;i--) {
+			Entity t = entityStack.get(i);
+			for (VarEntity var:t.getVars()) {
+				if (var.getFullName().equals(varName)){
+					return var.getType();
+				}
+			}
+		}
+		return null;
+	}
 }

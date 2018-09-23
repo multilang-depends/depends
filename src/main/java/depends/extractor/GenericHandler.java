@@ -41,6 +41,14 @@ public abstract class GenericHandler {
 		entityRepo.addRelation(context().currentFunction().getId(), returnTypeName, DependencyType.RELATION_RETURN);
 	}
 	
+	public void addSetRelation(String type) {
+		Entity currentFunction = context().currentFunction();
+		if (currentFunction!=null)
+			entityRepo.addRelation(currentFunction.getId(), type, DependencyType.RELATION_SET);
+		else
+			entityRepo.addRelation(context().currentType().getId(), type, DependencyType.RELATION_SET);
+	}
+	
 	public void addVars(String type, String var) {
 		entityRepo.addRelation(context().lastContainer().getId(), type, DependencyType.RELATION_DEFINE);
 	}
