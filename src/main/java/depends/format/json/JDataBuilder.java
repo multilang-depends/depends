@@ -10,7 +10,6 @@ import depends.util.Configure;
 
 public class JDataBuilder {
 
-
     public JDepObject build(DependencyMatrix dependencyMatrix) {
         Configure configure = Configure.getConfigureInstance();
         ArrayList<String> files = dependencyMatrix.getNodes();
@@ -25,7 +24,6 @@ public class JDataBuilder {
 
         return depObject;
     }
-
 
     /**
      *

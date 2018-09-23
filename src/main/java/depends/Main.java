@@ -9,12 +9,11 @@ import depends.extractor.java.JavaWorker;
 public class Main {
 
 	/**
-	 * python /home/gangz/work/deper/python-fire-master python-fire-test-sep14
-	 * python-fire-test-sep14 111111111 java /home/gangz/work/deper/src/main/java
-	 * java-test java-test 111111111
-	 * @throws ClassNotFoundException 
+	 * <executable> <lang> <dir> <usage-dir[currently-ignored]> <project-name> <dep-mask> 
+	 * e.g. 
+	 * <executable> java test-dir not-care test 111111111
 	 */
-	public static void main(String[] args) throws ClassNotFoundException {
+	public static void main(String[] args) {
 		// System.out.println("\ninput parameters:" + "srcDir usageDir projectName
 		// deps=[111111111]");
 		if (args.length < 4) {
@@ -23,7 +22,6 @@ public class Main {
 		}
 		
 		new JavaWorker().register();
-		
 		String lang = args[0];
         String inputDir = args[1];
         String usageDir = args[2];

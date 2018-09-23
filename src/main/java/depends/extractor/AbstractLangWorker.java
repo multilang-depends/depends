@@ -69,7 +69,6 @@ abstract public class AbstractLangWorker {
         configure.setUsageSrcPath(usageDir);
         configure.setAnalyzedProjectName(projectName);
         configure.setWorker(worker);
-        configure.setDefault();
     }
 
     private final void parseAllFiles() {

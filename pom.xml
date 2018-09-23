@@ -9,7 +9,6 @@
 	<version>1.0-SNAPSHOT</version>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<!-- <antlr4.visitor>true</antlr4.visitor> -->
 	</properties>
 
 	<build>
