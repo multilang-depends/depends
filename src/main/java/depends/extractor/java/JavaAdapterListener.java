@@ -5,7 +5,9 @@ import java.util.Collection;
 
 import depends.entity.repo.EntityRepo;
 import depends.extractor.java.context.ClassTypeContextHelper;
+import depends.extractor.java.context.ExpressionNameContextHelper;
 import depends.extractor.java.context.FormalParameterListContextHelper;
+import depends.extractor.java.context.PostfixExpressionContextHelper;
 import depends.extractor.java.context.UnannTypeContextHelper;
 import depends.extractor.java.context.VariableDeclaratorContextHelper;
 import depends.javaextractor.Java9BaseListener;
@@ -30,6 +32,7 @@ import depends.javaextractor.Java9Parser.NormalInterfaceDeclarationContext;
 import depends.javaextractor.Java9Parser.PackageDeclarationContext;
 import depends.javaextractor.Java9Parser.PostIncrementExpressionContext;
 import depends.javaextractor.Java9Parser.PostIncrementExpression_lf_postfixExpressionContext;
+import depends.javaextractor.Java9Parser.PostfixExpressionContext;
 import depends.javaextractor.Java9Parser.PreDecrementExpressionContext;
 import depends.javaextractor.Java9Parser.PreIncrementExpressionContext;
 import depends.javaextractor.Java9Parser.ResourceContext;
@@ -69,7 +72,6 @@ public class JavaAdapterListener extends Java9BaseListener{
 	
 	@Override
 	public void exitMethodDeclaration(MethodDeclarationContext ctx) {
-		System.out.println(ctx.getText());
 		handler.exitLastedEntity();
 		super.exitMethodDeclaration(ctx);
 	}
@@ -212,8 +214,9 @@ public class JavaAdapterListener extends Java9BaseListener{
 	// Assignment or In(De)Cremental
 	@Override
 	public void enterAssignment(AssignmentContext ctx) {
+		System.out.println(ctx.leftHandSide().getText());
 		if (ctx.leftHandSide().expressionName()!=null) {
-			handler.foundVariableSet(ctx.leftHandSide().expressionName().identifier().getText());
+			handler.foundVariableSet((new ExpressionNameContextHelper()).getVarName(ctx.leftHandSide().expressionName()));
 		}
 		if (ctx.leftHandSide().fieldAccess()!=null) {
 			//TODO
@@ -224,30 +227,13 @@ public class JavaAdapterListener extends Java9BaseListener{
 		super.enterAssignment(ctx);
 	}
 
-	@Override
-	public void enterPreIncrementExpression(PreIncrementExpressionContext ctx) {
-		// TODO Auto-generated method stub
-		super.enterPreIncrementExpression(ctx);
-	}
 
 	@Override
-	public void enterPreDecrementExpression(PreDecrementExpressionContext ctx) {
-		// TODO Auto-generated method stub
-		super.enterPreDecrementExpression(ctx);
-	}
-
-	@Override
-	public void enterPostIncrementExpression(PostIncrementExpressionContext ctx) {
-		// TODO Auto-generated method stub
-		System.out.println(ctx.postfixExpression().expressionName().identifier().getText());
-		super.enterPostIncrementExpression(ctx);
-	}
-
-	@Override
-	public void enterPostIncrementExpression_lf_postfixExpression(
-			PostIncrementExpression_lf_postfixExpressionContext ctx) {
-		// TODO Auto-generated method stub
-		super.enterPostIncrementExpression_lf_postfixExpression(ctx);
+	public void enterPostfixExpression(PostfixExpressionContext ctx) {
+		String varName = new PostfixExpressionContextHelper().getVariable(ctx);
+		if (varName !=null)
+			handler.foundVariableSet(varName );
+		super.enterPostfixExpression(ctx);
 	}
 
 	/////////////////////////////////////////////

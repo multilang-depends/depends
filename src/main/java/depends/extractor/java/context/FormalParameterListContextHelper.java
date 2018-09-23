@@ -35,9 +35,7 @@ public class FormalParameterListContextHelper {
 	 */
 	public void extractParameterTypeList() {
 		if (context != null) {
-			System.out.println(context.getText());
 			if (context.formalParameters() != null) {
-				System.out.println(context.formalParameters().getText());
 				for (FormalParameterContext p : context.formalParameters().formalParameter()) {
 					foundParameterDefintion(p.unannType(),p.variableDeclaratorId());
 				}

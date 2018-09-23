@@ -88,7 +88,7 @@ public class HandlerContext{
 		if (currentFile().getImport(typeName)!=null)
 			typeName = currentFile().getImport(typeName);
 		else
-			typeName = (currentPackageName.isEmpty()? "":".") + typeName;
+			typeName = currentPackageName + (currentPackageName.isEmpty()? "":".") + typeName;
 		return typeName;
 	}
 	public Entity newFunctionEntity(String methodName) {
@@ -129,6 +129,16 @@ public class HandlerContext{
 					return var.getType();
 				}
 			}
+		}
+		return null;
+	}
+	public String inferType(String fromType, String varName) {
+		Entity type = entityRepo.getEntity(fromType);
+		if (type==null) return null;
+		if (!(type instanceof TypeEntity)) return null;
+		for (VarEntity var:type.getVars()) {
+			if (var.getFullName().equals(varName))
+				return var.getType();
 		}
 		return null;
 	}

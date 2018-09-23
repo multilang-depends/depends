@@ -60,7 +60,7 @@ public class JavaHandler extends GenericHandler {
 		}
 	}
 	public void foundVarDefintion(String type, String var) {
-		context().addVar(type,var);
+		context().addVar(context().resolveTypeNameRef(type),var);
 		addVars(context().resolveTypeNameRef(type),var);		
 	}
 	
@@ -69,6 +69,31 @@ public class JavaHandler extends GenericHandler {
 		if (type!=null) {
 			addSetRelation(type);
 		}
+	}
+	
+    /**
+     * Handle the variable paths like a.x
+     * @param varNamePath
+     */
+	public void foundVariableSet(List<String> varNamePath) {
+		if (varNamePath.size()==0) return;
+		if (varNamePath.size()==1) {
+			foundVariableSet(varNamePath.get(0));
+			return;
+		}
+		String type = context().inferType(varNamePath.get(0));
+		if (type==null) return;
+		addSetRelation(type);
+
+		for (int i=1;i<varNamePath.size();i++) {
+			type = context().inferType(type,varNamePath.get(i));
+			if (type==null) {
+				break;
+			}
+			addSetRelation(type);
+		}
+		System.out.println(type);
+		System.out.println(varNamePath);
 	}
 	
 }

@@ -36,7 +36,18 @@ public class JavaVarResolveTest {
         String src = "./src/test/resources/java-code-examples/LocalVarInferExample.java";
         JavaFileParser parser = new JavaFileParser(src,repo);
         parser.parse();
-        assertEquals(2,repo.getEntity("LocalVarInferExample.setExample").getVars().size());
+        //7 set included
+        assertEquals(11,repo.getEntity("LocalVarInferExample.setExample").getRelations().size());
         
 	}
+	
+	@Test
+	public void test_field_access_could_be_inferred() throws IOException {
+		EntityRepo repo = new EntityRepo();
+        String src = "./src/test/resources/java-code-examples/FieldAccessInferExample.java";
+        JavaFileParser parser = new JavaFileParser(src,repo);
+        parser.parse();
+        assertEquals(11,repo.getEntity("test.FieldAccessInferExample.setExample").getRelations().size());
+	}
+	
 }
