@@ -1,7 +1,9 @@
 package depends.extractor.java;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import depends.entity.repo.EntityRepo;
 import depends.extractor.java.context.ClassTypeContextHelper;
@@ -20,6 +22,7 @@ import depends.javaextractor.Java9Parser.ClassTypeContext;
 import depends.javaextractor.Java9Parser.ConstantDeclarationContext;
 import depends.javaextractor.Java9Parser.EnhancedForStatementContext;
 import depends.javaextractor.Java9Parser.EnumDeclarationContext;
+import depends.javaextractor.Java9Parser.FieldAccessContext;
 import depends.javaextractor.Java9Parser.FieldDeclarationContext;
 import depends.javaextractor.Java9Parser.InterfaceMethodDeclarationContext;
 import depends.javaextractor.Java9Parser.InterfaceTypeContext;
@@ -30,11 +33,7 @@ import depends.javaextractor.Java9Parser.MethodHeaderContext;
 import depends.javaextractor.Java9Parser.NormalClassDeclarationContext;
 import depends.javaextractor.Java9Parser.NormalInterfaceDeclarationContext;
 import depends.javaextractor.Java9Parser.PackageDeclarationContext;
-import depends.javaextractor.Java9Parser.PostIncrementExpressionContext;
-import depends.javaextractor.Java9Parser.PostIncrementExpression_lf_postfixExpressionContext;
 import depends.javaextractor.Java9Parser.PostfixExpressionContext;
-import depends.javaextractor.Java9Parser.PreDecrementExpressionContext;
-import depends.javaextractor.Java9Parser.PreIncrementExpressionContext;
 import depends.javaextractor.Java9Parser.ResourceContext;
 import depends.javaextractor.Java9Parser.ResultContext;
 import depends.javaextractor.Java9Parser.SingleStaticImportDeclarationContext;
@@ -167,7 +166,7 @@ public class JavaAdapterListener extends Java9BaseListener{
 		
 		Collection<Tuple<String, String>> varList = helper.getVarList();
 		for (Tuple<String, String> var:varList) {
-			handler.foundVarDefintion(var.x,var.y);
+			handler.foundVarDefintion(var.x,var.y,false);
 		}
 	}
 	/////////////////////////////////////////////////////////
@@ -187,7 +186,7 @@ public class JavaAdapterListener extends Java9BaseListener{
 
 	@Override
 	public void enterAnnotationTypeElementDeclaration(AnnotationTypeElementDeclarationContext ctx) {
-		handler.foundVarDefintion(new UnannTypeContextHelper().calculateType(ctx.unannType()),ctx.identifier().getText());
+		handler.foundVarDefintion(new UnannTypeContextHelper().calculateType(ctx.unannType()),ctx.identifier().getText(),true);
 		super.enterAnnotationTypeElementDeclaration(ctx);
 	}
 
@@ -200,13 +199,13 @@ public class JavaAdapterListener extends Java9BaseListener{
 
 	@Override
 	public void enterEnhancedForStatement(EnhancedForStatementContext ctx) {
-		handler.foundVarDefintion(new UnannTypeContextHelper().calculateType(ctx.unannType()),ctx.variableDeclaratorId().identifier().getText());
+		handler.foundVarDefintion(new UnannTypeContextHelper().calculateType(ctx.unannType()),ctx.variableDeclaratorId().identifier().getText(),true);
 		super.enterEnhancedForStatement(ctx);
 	}
 
 	@Override
 	public void enterResource(ResourceContext ctx) {
-		handler.foundVarDefintion(new UnannTypeContextHelper().calculateType(ctx.unannType()),ctx.variableDeclaratorId().identifier().getText());
+		handler.foundVarDefintion(new UnannTypeContextHelper().calculateType(ctx.unannType()),ctx.variableDeclaratorId().identifier().getText(),true);
 		super.enterResource(ctx);
 	}
 	
@@ -214,20 +213,57 @@ public class JavaAdapterListener extends Java9BaseListener{
 	// Assignment or In(De)Cremental
 	@Override
 	public void enterAssignment(AssignmentContext ctx) {
-		System.out.println(ctx.leftHandSide().getText());
 		if (ctx.leftHandSide().expressionName()!=null) {
 			handler.foundVariableSet((new ExpressionNameContextHelper()).getVarName(ctx.leftHandSide().expressionName()));
 		}
 		if (ctx.leftHandSide().fieldAccess()!=null) {
-			//TODO
+			System.out.println(ctx.leftHandSide().fieldAccess().getText());
+			lookupVarSetInFieldAccessContext(ctx.leftHandSide().fieldAccess());
 		}
 		if (ctx.leftHandSide().arrayAccess()!=null) {
-			//TODO
+			List<String> varName = new ExpressionNameContextHelper().getVarName(ctx.leftHandSide().arrayAccess().expressionName());
+			handler.foundVariableSet(varName);
 		}
 		super.enterAssignment(ctx);
 	}
 
 
+	//TODO: should be move
+	/**
+		fieldAccess
+			:	primary '.' identifier
+			|	'super' '.' identifier
+			|	typeName '.' 'super' '.' identifier
+	 */
+	private void lookupVarSetInFieldAccessContext(FieldAccessContext ctx) {
+		if (ctx.primary()!=null) {
+			System.out.println(ctx.primary().getText());
+		    ParseTreeWalker walker = new ParseTreeWalker();
+		    NewClassInstanceListener newClassInstanceListener = new NewClassInstanceListener();
+			walker.walk(newClassInstanceListener, ctx);
+			if (!newClassInstanceListener.getTypeName().isEmpty()) {
+				String typeNames =newClassInstanceListener.getTypeName();
+				String var = ctx.identifier()==null?
+					     "":ctx.identifier().getText();
+				handler.foundVariableSetOfTypes(typeNames,var);
+			}else {
+				ArrayAccessListener arrayAccessListener = new ArrayAccessListener();
+				walker.walk(arrayAccessListener, ctx);
+				if (arrayAccessListener.getVarName().size()>0) {
+					System.out.println(arrayAccessListener.getVarName());
+					handler.foundVariableSet(arrayAccessListener.getVarName());
+				}
+			}
+		}
+		if (ctx.typeName()!=null) {
+
+		}
+		if (ctx.getText().indexOf("super")>0) {
+			
+		}
+		
+	}
+	
 	@Override
 	public void enterPostfixExpression(PostfixExpressionContext ctx) {
 		String varName = new PostfixExpressionContextHelper().getVariable(ctx);

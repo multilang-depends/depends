@@ -37,7 +37,7 @@ public class JavaVarResolveTest {
         JavaFileParser parser = new JavaFileParser(src,repo);
         parser.parse();
         //7 set included
-        assertEquals(11,repo.getEntity("LocalVarInferExample.setExample").getRelations().size());
+        assertEquals(9,repo.getEntity("LocalVarInferExample.setExample").getRelations().size());
         
 	}
 	
@@ -47,7 +47,7 @@ public class JavaVarResolveTest {
         String src = "./src/test/resources/java-code-examples/FieldAccessInferExample.java";
         JavaFileParser parser = new JavaFileParser(src,repo);
         parser.parse();
-        assertEquals(11,repo.getEntity("test.FieldAccessInferExample.setExample").getRelations().size());
+        assertEquals(13,repo.getEntity("test.FieldAccessInferExample.setExample").getRelations().size());
 	}
 	
 }

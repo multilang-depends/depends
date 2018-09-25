@@ -38,6 +38,8 @@ public class JavaHandler extends GenericHandler {
 	}
 
 	public void foundReturn(String returnTypeName) {
+		if (returnTypeName.equals("void")) return;
+		if (returnTypeName==null) return;
 		returnTypeName = context().resolveTypeNameRef(returnTypeName);
 		addReturnRelation(returnTypeName);
 	}
@@ -54,14 +56,15 @@ public class JavaHandler extends GenericHandler {
 			addParameterRelation(context().resolveTypeNameRef(parameterType));
 		}
 	}
-	public void foundVarDefintion(String type, List<String> vars) {
+	public void foundVarDefintion(String type, List<String> vars, boolean isNewRelation) {
 		for (String var:vars) {
-			foundVarDefintion(type,var);
+			foundVarDefintion(type,var,isNewRelation);
 		}
 	}
-	public void foundVarDefintion(String type, String var) {
+	public void foundVarDefintion(String type, String var, boolean isNewRelation) {
 		context().addVar(context().resolveTypeNameRef(type),var);
-		addVars(context().resolveTypeNameRef(type),var);		
+		if (isNewRelation)
+			addVars(context().resolveTypeNameRef(type),var);		
 	}
 	
 	public void foundVariableSet(String varName) {
@@ -85,6 +88,7 @@ public class JavaHandler extends GenericHandler {
 		if (type==null) return;
 		addSetRelation(type);
 
+		//e.g. type.x.y.z = 1; x,y,z are also have relation SET
 		for (int i=1;i<varNamePath.size();i++) {
 			type = context().inferType(type,varNamePath.get(i));
 			if (type==null) {
@@ -92,9 +96,24 @@ public class JavaHandler extends GenericHandler {
 			}
 			addSetRelation(type);
 		}
-		System.out.println(type);
-		System.out.println(varNamePath);
 	}
+	public void foundVariableSetOfTypes(String type, String var) {
+		type = context().resolveTypeNameRef(type);
+		addSetRelation(type);
+		if (var.isEmpty()) return;
+		type = context().inferType(type,var);
+		if (type==null) return;
+		addSetRelation(type);
+	}
+	/**
+	 * Provide a default version of var definition (always add define relation)
+	 * @param calculateType
+	 * @param extractVarList
+	 */
+	public void foundVarDefintion(String type, List<String> vars) {
+		this.foundVarDefintion(type, vars, true);
+	}
+	
 	
 }
 
