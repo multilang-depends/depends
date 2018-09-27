@@ -9,8 +9,8 @@ import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import depends.entity.repo.EntityRepo;
-import depends.javaextractor.Java9Lexer;
-import depends.javaextractor.Java9Parser;
+import depends.javaextractor.JavaLexer;
+import depends.javaextractor.JavaParser;
 
 
 public class JavaFileParser implements depends.extractor.FileParser{
@@ -25,9 +25,9 @@ public class JavaFileParser implements depends.extractor.FileParser{
 	@Override
 	public void parse() throws IOException {
         CharStream input = CharStreams.fromFileName(fileFullPath);
-        Lexer lexer = new Java9Lexer(input);
+        Lexer lexer = new JavaLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
-        Java9Parser parser = new Java9Parser(tokens);
+        JavaParser parser = new JavaParser(tokens);
         JavaAdapterListener bridge = new JavaAdapterListener(fileFullPath, entityRepo);
 	    ParseTreeWalker walker = new ParseTreeWalker();
 	    walker.walk(bridge, parser.compilationUnit());

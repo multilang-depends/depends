@@ -3,8 +3,10 @@ package depends.extractor.java;
 import java.util.Collection;
 import java.util.List;
 
+import depends.deptypes.DependencyType;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.GenericHandler;
+import depends.util.Tuple;
 
 public class JavaHandler extends GenericHandler {
 	public JavaHandler(EntityRepo entityRepo){
@@ -24,37 +26,47 @@ public class JavaHandler extends GenericHandler {
 	}
 	public void exitLastedEntity() {
 		context().popEntity();
-		
 	}
     ///Relations 
 	public void foundImport(String importedTypeOrPackage) {
 		context().newImport(importedTypeOrPackage);
-		addImportRelation(importedTypeOrPackage);
+		addRelation(importedTypeOrPackage,DependencyType.RELATION_IMPORT);
 	}
 	
 	public void foundExtends(String superClassName) {
 		superClassName = context().resolveTypeNameRef(superClassName);
-		addInheritRelation(superClassName);
+		addRelation(superClassName,DependencyType.RELATION_INHERIT);
 	}
 
-	public void foundReturn(String returnTypeName) {
-		if (returnTypeName.equals("void")) return;
+	public void foundTypeParametes(String className) {
+		className = context().resolveTypeNameRef(className);
+		addRelation(className,DependencyType.RELATION_USE);
+	}
+	public void foundThrows(String className) {
+		className = context().resolveTypeNameRef(className);
+		addRelation(className,DependencyType.RELATION_USE);
+	}
+	
+	private void foundReturn(String returnTypeName) {
 		if (returnTypeName==null) return;
+		if (returnTypeName.equals("void")) return;
 		returnTypeName = context().resolveTypeNameRef(returnTypeName);
-		addReturnRelation(returnTypeName);
+		addRelation(returnTypeName,DependencyType.RELATION_RETURN);
 	}
 
 	public void foundImplements(String interfaceName) {
 		interfaceName = context().resolveTypeNameRef(interfaceName);
-		addImplementRelation(interfaceName);
+		addRelation(interfaceName,DependencyType.RELATION_IMPLEMENT);
 	}
 	
 	
-	public void foundMethodDeclarator(String methodName, Collection<String> parameterTypes) {
-		addEntity(context().newFunctionEntity(methodName));
+	public void foundMethodDeclarator(String methodName, Collection<String> parameterTypes, String resultType) {
+		addEntity(context().newFunctionEntity(methodName,resultType));
+		if (parameterTypes==null) return;
 		for (String parameterType:parameterTypes) {
-			addParameterRelation(context().resolveTypeNameRef(parameterType));
+			addRelation(context().resolveTypeNameRef(parameterType),DependencyType.RELATION_PARAMETER);
 		}
+		foundReturn(resultType);
 	}
 	public void foundVarDefintion(String type, List<String> vars, boolean isNewRelation) {
 		for (String var:vars) {
@@ -70,7 +82,14 @@ public class JavaHandler extends GenericHandler {
 	public void foundVariableSet(String varName) {
 		String type = context().inferType(varName);
 		if (type!=null) {
-			addSetRelation(type);
+			addRelation(type,DependencyType.RELATION_SET);
+		}
+	}
+	
+	public void foundAnnotationInUse(String name) {
+		String type = context().inferType(name);
+		if (type!=null) {
+			addRelation(type,DependencyType.RELATION_USE);
 		}
 	}
 	
@@ -86,24 +105,25 @@ public class JavaHandler extends GenericHandler {
 		}
 		String type = context().inferType(varNamePath.get(0));
 		if (type==null) return;
-		addSetRelation(type);
+		addRelation(type,DependencyType.RELATION_SET);
 
 		//e.g. type.x.y.z = 1; x,y,z are also have relation SET
 		for (int i=1;i<varNamePath.size();i++) {
-			type = context().inferType(type,varNamePath.get(i));
+			type = context().inferVarType(type,varNamePath.get(i));
 			if (type==null) {
 				break;
 			}
-			addSetRelation(type);
+			addRelation(type,DependencyType.RELATION_SET);
 		}
 	}
+
 	public void foundVariableSetOfTypes(String type, String var) {
 		type = context().resolveTypeNameRef(type);
-		addSetRelation(type);
+		addRelation(type,DependencyType.RELATION_SET);
 		if (var.isEmpty()) return;
-		type = context().inferType(type,var);
+		type = context().inferVarType(type,var);
 		if (type==null) return;
-		addSetRelation(type);
+		addRelation(type,DependencyType.RELATION_SET);
 	}
 	/**
 	 * Provide a default version of var definition (always add define relation)
@@ -113,7 +133,12 @@ public class JavaHandler extends GenericHandler {
 	public void foundVarDefintion(String type, List<String> vars) {
 		this.foundVarDefintion(type, vars, true);
 	}
-	
+	public void foundVarDefintion(Collection<Tuple<String, String>> varList, boolean isNewRelation) {
+		if (varList==null) return;
+		for (Tuple<String, String> var:varList) {
+			foundVarDefintion(var.x,var.y,isNewRelation);
+		}
+	}
 	
 }
 

@@ -18,9 +18,11 @@ public class HandlerContext{
 	
 	public HandlerContext(EntityRepo entityRepo) {
 		this.entityRepo = entityRepo;
+		entityStack = new Stack<Entity>();
 	}
 	public FileEntity newFileEntity(String fileName) {
 		currentFileEntity = new FileEntity(fileName,entityRepo.getCurrentIndex());
+        entityStack.push(currentFileEntity);
 		return currentFileEntity;
 	}
 
@@ -41,6 +43,7 @@ public class HandlerContext{
 		String prefix = "";
 		for (int i=entityStack.size()-1;i>=0;i--) {
 			Entity t = entityStack.get(i);
+			if (t instanceof FileEntity) continue; //file name should be bypass. use package name instead 
 			if(! t.getFullName().isEmpty() &&
 					!(t.getFullName().startsWith("<Anony>"))) {
 				prefix = t.getFullName();
@@ -73,11 +76,6 @@ public class HandlerContext{
 		currentFileEntity.addImport(importedTypeOrPackage);
 	}
 	
-	//TODO: should be refined
-	public FileEntity currentFile() {
-		return currentFileEntity;
-	}
-	
 	public String resolveTypeNameRef(String typeName) {
 		//if it is a full name like "java.io.Exception"
 		if (typeName.indexOf('.')>0) return typeName;
@@ -91,10 +89,12 @@ public class HandlerContext{
 			typeName = currentPackageName + (currentPackageName.isEmpty()? "":".") + typeName;
 		return typeName;
 	}
-	public Entity newFunctionEntity(String methodName) {
-		Entity currentFunctionEntity = new FunctionEntity(resolveTypeNameDefinition(methodName),
+	public Entity newFunctionEntity(String methodName, String resultType) {
+		//TODO: should process parameter types to distinguish the overload functions for short name;
+		FunctionEntity currentFunctionEntity = new FunctionEntity(resolveTypeNameDefinition(methodName),
 				currentType().getId(),
-				entityRepo.getCurrentIndex());
+				entityRepo.getCurrentIndex(),resultType,methodName);
+		currentType().addFunction(currentFunctionEntity);
         entityStack.push(currentFunctionEntity);
 		return currentFunctionEntity;
 	}
@@ -114,6 +114,24 @@ public class HandlerContext{
 		}
 		return null;
 	}
+	
+	public FileEntity currentFile() {
+		return currentFileEntity;
+	}
+	
+	public Entity latestValidContainer() {
+		for (int i=entityStack.size()-1;i>=0;i--) {
+			Entity t = entityStack.get(i);
+			if (t instanceof FunctionEntity)
+				return t;
+			if (t instanceof TypeEntity)
+				return t;
+			if (t instanceof FileEntity)
+				return t;
+		}
+		return null;
+	}
+	
 	public void addVar(String type, String varName) {
 		VarEntity varEntity = new VarEntity(varName, type, lastContainer().getId(), entityRepo.getCurrentIndex());
 		lastContainer().addVar(varEntity);
@@ -132,7 +150,7 @@ public class HandlerContext{
 		}
 		return null;
 	}
-	public String inferType(String fromType, String varName) {
+	public String inferVarType(String fromType, String varName) {
 		Entity type = entityRepo.getEntity(fromType);
 		if (type==null) return null;
 		if (!(type instanceof TypeEntity)) return null;
@@ -142,4 +160,18 @@ public class HandlerContext{
 		}
 		return null;
 	}
+
+	public String inferFunctionType(String fromType, String varName) {
+		Entity type = entityRepo.getEntity(fromType);
+		if (type==null) return null;
+		if (!(type instanceof TypeEntity)) return null;
+		TypeEntity typeEntity = (TypeEntity)type;
+		
+		for (FunctionEntity var:typeEntity.getFunctions()) {
+			if (var.getShortName().equals(varName))
+				return var.getReturnType();
+		}
+		return null;
+	}
+
 }

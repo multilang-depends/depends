@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import depends.entity.repo.EntityRepo;
+import depends.entity.types.FunctionEntity;
 import depends.entity.types.VarEntity;
 
 public class Entity {
@@ -17,6 +18,7 @@ public class Entity {
 		this.setParentId(parentId);
 		this.setId(id);
 		vars = new ArrayList<>();
+		functions = new ArrayList<>();
 	}
 
 	public void setFileId(int fileId) {
@@ -34,6 +36,7 @@ public class Entity {
     protected ArrayList<Integer> childrenIds = new ArrayList<>();
     protected ArrayList<Relation> relations = new ArrayList<>();
     protected ArrayList<VarEntity> vars;
+    protected ArrayList<FunctionEntity> functions;
 
     public int getId() {
         return id;
@@ -110,5 +113,13 @@ public class Entity {
 
 	public ArrayList<VarEntity> getVars() {
 		return this.vars;
+	}
+
+	public void addFunction(FunctionEntity functionEntity) {
+		this.functions.add(functionEntity);
+	}
+	
+	public ArrayList<FunctionEntity> getFunctions() {
+		return this.functions;
 	}
 }

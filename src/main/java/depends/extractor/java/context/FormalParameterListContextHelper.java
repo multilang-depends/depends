@@ -4,85 +4,85 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import depends.javaextractor.Java9Parser.FormalParameterContext;
-import depends.javaextractor.Java9Parser.FormalParameterListContext;
-import depends.javaextractor.Java9Parser.IdentifierContext;
-import depends.javaextractor.Java9Parser.UnannTypeContext;
-import depends.javaextractor.Java9Parser.VariableDeclaratorIdContext;
+import org.antlr.v4.runtime.tree.TerminalNode;
+
+import depends.javaextractor.JavaParser.FormalParameterContext;
+import depends.javaextractor.JavaParser.FormalParameterListContext;
+import depends.javaextractor.JavaParser.FormalParametersContext;
+import depends.javaextractor.JavaParser.LastFormalParameterContext;
+import depends.javaextractor.JavaParser.TypeTypeContext;
+import depends.javaextractor.JavaParser.VariableModifierContext;
 import depends.util.Tuple;
 
 public class FormalParameterListContextHelper {
-	
+
+	private FormalParametersContext formalParameters;
 	FormalParameterListContext context;
+
 	List<String> parameterTypes;
 	List<Tuple<String, String>> varList;
-	
-	public FormalParameterListContextHelper(FormalParameterListContext formalParameterListContext) {
-		this.context = formalParameterListContext;
+	private List<String> annotations;
+
+	public FormalParameterListContextHelper(FormalParametersContext formalParameters) {
+		this.formalParameters = formalParameters;
+		this.context = this.formalParameters.formalParameterList();
 		parameterTypes = new ArrayList<>();
 		varList = new ArrayList<>();
-		if (formalParameterListContext!=null)
+		annotations = new ArrayList<>();
+		if (context!=null)
 			extractParameterTypeList();
 	}
-	/**
-	 * 
-	 * formalParameterList
-	 * :	formalParameters ',' lastFormalParameter
-	 * |	lastFormalParameter
-	 * |	receiverParameter
-	 * @param context
-	 * @return
-	 */
-	public void extractParameterTypeList() {
-		if (context != null) {
-			if (context.formalParameters() != null) {
-				for (FormalParameterContext p : context.formalParameters().formalParameter()) {
-					foundParameterDefintion(p.unannType(),p.variableDeclaratorId());
-				}
-			}
-			/**
-			 * lastFormalParameter:
-			 *   	variableModifier* unannType annotation* '...' variableDeclaratorId
-		     *     |formalParameter
-			 */
-			if (context.lastFormalParameter() != null) {
-				if (context.lastFormalParameter().formalParameter() != null) {
-					foundParameterDefintion(context.lastFormalParameter().formalParameter().unannType(),
-							context.lastFormalParameter().formalParameter().variableDeclaratorId());
-				}
-				
-				if (context.lastFormalParameter().unannType() != null) {
-					foundParameterDefintion(context.lastFormalParameter().unannType(),
-							context.lastFormalParameter().variableDeclaratorId());
-				}
-			}
-			/**
-			 * receiverParameter :	annotation* unannType (identifier '.')? 'this'
-			 */
-			if (context.receiverParameter() != null) {
-				UnannTypeContext unannType =  context.receiverParameter().unannType();
-				String type =  new UnannTypeContextHelper().calculateType(unannType);
-				if (type!=null)
-					this.parameterTypes.add(type);
-				IdentifierContext var = context.receiverParameter().identifier();
-				if (var!=null)
-					varList.add(new Tuple<String, String>(type,var.Identifier().getText()));		
-			}
-		}
-		return;
-	}
+
 	public Collection<String> getParameterTypeList(){
 		return parameterTypes;
 	}
 	public Collection<Tuple<String, String>> getVarList(){
 		return varList;
 	}
+
 	
-	private void foundParameterDefintion(UnannTypeContext unannType, VariableDeclaratorIdContext variableDeclaratorId) {
-		String type =  new UnannTypeContextHelper().calculateType(unannType);
+	public FormalParameterListContextHelper(FormalParameterListContext formalParameterListContext) {
+		this.context = formalParameterListContext;
+		parameterTypes = new ArrayList<>();
+		varList = new ArrayList<>();
+		annotations = new ArrayList<>();
+		if (context!=null)
+			extractParameterTypeList();
+	}
+
+
+	public void extractParameterTypeList() {
+		if (context != null) {
+			if (context.formalParameter() != null) {
+				for (FormalParameterContext p : context.formalParameter()) {
+					foundParameterDefintion(p.typeType(),p.variableDeclaratorId().IDENTIFIER(),p.variableModifier());
+				}
+				if (context.lastFormalParameter()!=null) {
+					LastFormalParameterContext p = context.lastFormalParameter();
+					foundParameterDefintion(p.typeType(),p.variableDeclaratorId().IDENTIFIER(),p.variableModifier());
+				}
+			}
+		}
+		return;
+	}
+
+	private void foundParameterDefintion(TypeTypeContext typeType, TerminalNode identifier, List<VariableModifierContext> variableModifier) {
+		String type = ClassTypeContextHelper.getClassName(typeType);
 		if (type!=null)
 			this.parameterTypes.add(type);
-		String var = variableDeclaratorId.identifier().getText();
-		varList.add(new Tuple<String, String>(type,var));		
+		String var = identifier.getText();
+		varList.add(new Tuple<String, String>(type,var));	
+
+		for ( VariableModifierContext modifier:variableModifier) {
+			if (modifier.annotation()!=null) {
+				this.annotations.add(QualitiedNameContextHelper.getName(modifier.annotation().qualifiedName()));
+			}
+		}
+
 	}
+
+	public List<String> getAnnotations() {
+		return annotations;
+	}
+
 }

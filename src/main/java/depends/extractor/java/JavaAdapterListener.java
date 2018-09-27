@@ -1,275 +1,291 @@
 package depends.extractor.java;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
-import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import depends.entity.repo.EntityRepo;
+import depends.extractor.java.context.AnnotationProcessor;
 import depends.extractor.java.context.ClassTypeContextHelper;
-import depends.extractor.java.context.ExpressionNameContextHelper;
+import depends.extractor.java.context.ExpressionUsage;
 import depends.extractor.java.context.FormalParameterListContextHelper;
-import depends.extractor.java.context.PostfixExpressionContextHelper;
-import depends.extractor.java.context.UnannTypeContextHelper;
-import depends.extractor.java.context.VariableDeclaratorContextHelper;
-import depends.javaextractor.Java9BaseListener;
-import depends.javaextractor.Java9Parser.AnnotationTypeDeclarationContext;
-import depends.javaextractor.Java9Parser.AnnotationTypeElementDeclarationContext;
-import depends.javaextractor.Java9Parser.AssignmentContext;
-import depends.javaextractor.Java9Parser.BlockContext;
-import depends.javaextractor.Java9Parser.ClassDeclarationContext;
-import depends.javaextractor.Java9Parser.ClassTypeContext;
-import depends.javaextractor.Java9Parser.ConstantDeclarationContext;
-import depends.javaextractor.Java9Parser.EnhancedForStatementContext;
-import depends.javaextractor.Java9Parser.EnumDeclarationContext;
-import depends.javaextractor.Java9Parser.FieldAccessContext;
-import depends.javaextractor.Java9Parser.FieldDeclarationContext;
-import depends.javaextractor.Java9Parser.InterfaceMethodDeclarationContext;
-import depends.javaextractor.Java9Parser.InterfaceTypeContext;
-import depends.javaextractor.Java9Parser.LocalVariableDeclarationContext;
-import depends.javaextractor.Java9Parser.MethodDeclarationContext;
-import depends.javaextractor.Java9Parser.MethodDeclaratorContext;
-import depends.javaextractor.Java9Parser.MethodHeaderContext;
-import depends.javaextractor.Java9Parser.NormalClassDeclarationContext;
-import depends.javaextractor.Java9Parser.NormalInterfaceDeclarationContext;
-import depends.javaextractor.Java9Parser.PackageDeclarationContext;
-import depends.javaextractor.Java9Parser.PostfixExpressionContext;
-import depends.javaextractor.Java9Parser.ResourceContext;
-import depends.javaextractor.Java9Parser.ResultContext;
-import depends.javaextractor.Java9Parser.SingleStaticImportDeclarationContext;
-import depends.javaextractor.Java9Parser.SingleTypeImportDeclarationContext;
-import depends.javaextractor.Java9Parser.StaticImportOnDemandDeclarationContext;
-import depends.javaextractor.Java9Parser.SuperclassContext;
-import depends.javaextractor.Java9Parser.SuperinterfacesContext;
-import depends.javaextractor.Java9Parser.TypeImportOnDemandDeclarationContext;
+import depends.extractor.java.context.IdentifierContextHelper;
+import depends.extractor.java.context.QualitiedNameContextHelper;
+import depends.extractor.java.context.VariableDeclaratorsContextHelper;
+import depends.javaextractor.JavaParser.AnnotationConstantRestContext;
+import depends.javaextractor.JavaParser.AnnotationMethodRestContext;
+import depends.javaextractor.JavaParser.AnnotationTypeDeclarationContext;
+import depends.javaextractor.JavaParser.BlockContext;
+import depends.javaextractor.JavaParser.ClassDeclarationContext;
+import depends.javaextractor.JavaParser.ConstDeclarationContext;
+import depends.javaextractor.JavaParser.ConstructorDeclarationContext;
+import depends.javaextractor.JavaParser.EnhancedForControlContext;
+import depends.javaextractor.JavaParser.EnumDeclarationContext;
+import depends.javaextractor.JavaParser.ExpressionContext;
+import depends.javaextractor.JavaParser.FieldDeclarationContext;
+import depends.javaextractor.JavaParser.ImportDeclarationContext;
+import depends.javaextractor.JavaParser.InterfaceDeclarationContext;
+import depends.javaextractor.JavaParser.InterfaceMethodDeclarationContext;
+import depends.javaextractor.JavaParser.LocalVariableDeclarationContext;
+import depends.javaextractor.JavaParser.MethodDeclarationContext;
+import depends.javaextractor.JavaParser.PackageDeclarationContext;
+import depends.javaextractor.JavaParser.QualifiedNameContext;
+import depends.javaextractor.JavaParser.QualifiedNameListContext;
+import depends.javaextractor.JavaParser.ResourceContext;
+import depends.javaextractor.JavaParser.TypeParameterContext;
+import depends.javaextractor.JavaParser.TypeParametersContext;
+import depends.javaextractor.JavaParserBaseListener;
 import depends.util.Tuple;
 
-public class JavaAdapterListener extends Java9BaseListener{
+public class JavaAdapterListener extends JavaParserBaseListener {
 	private JavaHandler handler;
+	private AnnotationProcessor annotationProcessor;
+	private ExpressionUsage expressionUsage;
 
 	public JavaAdapterListener(String fileFullPath, EntityRepo entityRepo) {
-        this.handler = new JavaHandler(entityRepo);
-        handler.startFile(fileFullPath);
+		this.handler = new JavaHandler(entityRepo);
+		annotationProcessor = new AnnotationProcessor(handler);
+		expressionUsage = new ExpressionUsage(handler);
+
+		handler.startFile(fileFullPath);
 	}
 
 	////////////////////////
-    // Package
+	// Package
 	@Override
 	public void enterPackageDeclaration(PackageDeclarationContext ctx) {
-		handler.foundPackageDeclaration(ctx.packageName().getText());
+		handler.foundPackageDeclaration(QualitiedNameContextHelper.getName(ctx.qualifiedName()));
 		super.enterPackageDeclaration(ctx);
-	}
-
-	///////////////////////
-	// Class or Interface
-	
-	@Override
-	public void exitClassDeclaration(ClassDeclarationContext ctx) {
-		handler.exitLastedEntity();
-		super.exitClassDeclaration(ctx);
-	}
-	
-	@Override
-	public void exitMethodDeclaration(MethodDeclarationContext ctx) {
-		handler.exitLastedEntity();
-		super.exitMethodDeclaration(ctx);
-	}
-
-	@Override
-	public void exitInterfaceMethodDeclaration(InterfaceMethodDeclarationContext ctx) {
-		handler.exitLastedEntity();
-		super.exitInterfaceMethodDeclaration(ctx);
-	}
-	
-	@Override
-	public void enterNormalClassDeclaration(NormalClassDeclarationContext ctx) {
-		handler.foundClassOrInterface(ctx.identifier().getText());
-    	super.enterNormalClassDeclaration(ctx);
-	}
-	
-
-	@Override
-	public void enterEnumDeclaration(EnumDeclarationContext ctx) {
-		handler.foundClassOrInterface(ctx.identifier().getText());
-    	super.enterEnumDeclaration(ctx);
-	}
-
-
-	@Override
-	public void enterAnnotationTypeDeclaration(AnnotationTypeDeclarationContext ctx) {
-		handler.foundClassOrInterface(ctx.identifier().getText());
-    	super.enterAnnotationTypeDeclaration(ctx);
-	}
-	
-	@Override
-	public void enterNormalInterfaceDeclaration(NormalInterfaceDeclarationContext ctx) {
-		handler.foundClassOrInterface(ctx.identifier().getText());
-		super.enterNormalInterfaceDeclaration(ctx);
 	}
 
 	////////////////////////
 	// Import
 	@Override
-	public void enterSingleTypeImportDeclaration(SingleTypeImportDeclarationContext ctx) {
-		handler.foundImport(ctx.typeName().getText());
-		super.enterSingleTypeImportDeclaration(ctx);
+	public void enterImportDeclaration(ImportDeclarationContext ctx) {
+		handler.foundImport(ctx.qualifiedName().getText());
+		super.enterImportDeclaration(ctx);
 	}
 
-
+	///////////////////////
+	// Class or Interface
+	// classDeclaration | enumDeclaration | interfaceDeclaration |
+	/////////////////////// annotationTypeDeclaration
 	@Override
-	public void enterTypeImportOnDemandDeclaration(TypeImportOnDemandDeclarationContext ctx) {
-		handler.foundImport(ctx.packageOrTypeName().getText());
-		super.enterTypeImportOnDemandDeclaration(ctx);
-	}
-
-
-	@Override
-	public void enterSingleStaticImportDeclaration(SingleStaticImportDeclarationContext ctx) {
-		handler.foundImport(ctx.typeName().getText());
-		super.enterSingleStaticImportDeclaration(ctx);
-	}
-
-
-	@Override
-	public void enterStaticImportOnDemandDeclaration(StaticImportOnDemandDeclarationContext ctx) {
-		handler.foundImport(ctx.typeName().getText());
-		super.enterStaticImportOnDemandDeclaration(ctx);
-	}
-
-	@Override
-	public void enterSuperclass(SuperclassContext ctx) {
-		ClassTypeContext classType = ctx.classType();
-		handler.foundExtends(ClassTypeContextHelper.getClassName(classType));
-		super.enterSuperclass(ctx);
-	}
-
-
-	@Override
-	public void enterSuperinterfaces(SuperinterfacesContext ctx) {
-		for(InterfaceTypeContext itf:ctx.interfaceTypeList().interfaceType()) {
-			handler.foundImplements(ClassTypeContextHelper.getClassName(itf.classType()));
+	public void enterClassDeclaration(ClassDeclarationContext ctx) {
+		handler.foundClassOrInterface(ctx.IDENTIFIER().getText());
+		// implements
+		if (ctx.typeList() != null) {
+			for (int i = 0; i < ctx.typeList().typeType().size(); i++) {
+				handler.foundImplements(ClassTypeContextHelper.getClassName(ctx.typeList().typeType().get(i)));
+			}
 		}
-		super.enterSuperinterfaces(ctx);
+		// extends relation
+		if (ctx.typeType() != null) {
+			handler.foundExtends(ClassTypeContextHelper.getClassName(ctx.typeType()));
+		}
+
+		if (ctx.typeParameters() != null) {
+			foundTypeParametersUse(ctx.typeParameters());
+		}
+		annotationProcessor.processAnnotationModifier(ctx, "classOrInterfaceModifier");
+		super.enterClassDeclaration(ctx);
 	}
-	
-	/////////////////////////////////////////////////////////
-	// Method Parameters
+
 	@Override
-	public void enterMethodHeader(MethodHeaderContext ctx) {
-		MethodDeclaratorContext declarator = ctx.methodDeclarator();
-		FormalParameterListContextHelper helper = new FormalParameterListContextHelper(declarator.formalParameterList());
-		handler.foundMethodDeclarator(declarator.identifier().getText(),helper.getParameterTypeList());
-		
-		ResultContext result = ctx.result();
-		handler.foundReturn(new UnannTypeContextHelper().calculateType(result.unannType()));
-		super.enterMethodHeader(ctx);
+	public void exitClassDeclaration(ClassDeclarationContext ctx) {
+		exitLastEntity();
+		super.exitClassDeclaration(ctx);
+	}
+
+	@Override
+	public void enterEnumDeclaration(EnumDeclarationContext ctx) {
+		handler.foundClassOrInterface(ctx.IDENTIFIER().getText());
+		annotationProcessor.processAnnotationModifier(ctx, "classOrInterfaceModifier");
+		super.enterEnumDeclaration(ctx);
+	}
+
+	@Override
+	public void exitEnumDeclaration(EnumDeclarationContext ctx) {
+		exitLastEntity();
+		super.exitEnumDeclaration(ctx);
+	}
+
+	/**
+	 * interfaceDeclaration : INTERFACE IDENTIFIER typeParameters? (EXTENDS
+	 * typeList)? interfaceBody ;
+	 */
+	@Override
+	public void enterInterfaceDeclaration(InterfaceDeclarationContext ctx) {
+		handler.foundClassOrInterface(ctx.IDENTIFIER().getText());
+		// type parameters
+		if (ctx.typeParameters() != null) {
+			foundTypeParametersUse(ctx.typeParameters());
+		}
+		// extends relation
+		if (ctx.typeList() != null) {
+			for (int i = 0; i < ctx.typeList().typeType().size(); i++) {
+				handler.foundExtends(ClassTypeContextHelper.getClassName(ctx.typeList().typeType().get(i)));
+			}
+		}
+		annotationProcessor.processAnnotationModifier(ctx, "classOrInterfaceModifier");
+		super.enterInterfaceDeclaration(ctx);
+	}
+
+	@Override
+	public void exitInterfaceDeclaration(InterfaceDeclarationContext ctx) {
+		exitLastEntity();
+		super.exitInterfaceDeclaration(ctx);
+	}
+
+	@Override
+	public void enterAnnotationTypeDeclaration(AnnotationTypeDeclarationContext ctx) {
+		handler.foundClassOrInterface(ctx.IDENTIFIER().getText());
+		annotationProcessor.processAnnotationModifier(ctx, "classOrInterfaceModifier");
+		super.enterAnnotationTypeDeclaration(ctx);
+	}
+
+	@Override
+	public void exitAnnotationTypeDeclaration(AnnotationTypeDeclarationContext ctx) {
+		exitLastEntity();
+		super.exitAnnotationTypeDeclaration(ctx);
+	}
+
+	/////////////////////////
+	// Method
+	@Override
+	public void enterMethodDeclaration(MethodDeclarationContext ctx) {
+		FormalParameterListContextHelper helper = new FormalParameterListContextHelper(ctx.formalParameters());
+		handler.foundMethodDeclarator(ctx.IDENTIFIER().getText(), helper.getParameterTypeList(),
+				ClassTypeContextHelper.getClassName(ctx.typeTypeOrVoid()));
 		
 		Collection<Tuple<String, String>> varList = helper.getVarList();
-		for (Tuple<String, String> var:varList) {
-			handler.foundVarDefintion(var.x,var.y,false);
-		}
+		handler.foundVarDefintion(varList, false);
+		processThrows(ctx.qualifiedNameList());
+		annotationProcessor.processAnnotationModifier(ctx, "classOrInterfaceModifier");
+		super.enterMethodDeclaration(ctx);
 	}
+
+	@Override
+	public void exitMethodDeclaration(MethodDeclarationContext ctx) {
+		exitLastEntity();
+		super.exitMethodDeclaration(ctx);
+	}
+
+	private void exitLastEntity() {
+		expressionUsage.commitAllExpressionUsage();
+		handler.exitLastedEntity();
+	}
+
+//	interfaceMethodDeclaration
+//    : interfaceMethodModifier* (typeTypeOrVoid | typeParameters annotation* typeTypeOrVoid)
+//      IDENTIFIER formalParameters ('[' ']')* (THROWS qualifiedNameList)? methodBody
+
+	@Override
+	public void enterInterfaceMethodDeclaration(InterfaceMethodDeclarationContext ctx) {
+		FormalParameterListContextHelper helper = new FormalParameterListContextHelper(ctx.formalParameters());
+		handler.foundMethodDeclarator(ctx.IDENTIFIER().getText(), helper.getParameterTypeList(),
+				ClassTypeContextHelper.getClassName(ctx.typeTypeOrVoid()));
+		if (ctx.typeParameters() != null) {
+			foundTypeParametersUse(ctx.typeParameters());
+		}
+		Collection<Tuple<String, String>> varList = helper.getVarList();
+		handler.foundVarDefintion(varList, false);
+		annotationProcessor.processAnnotationModifier(ctx, "interfaceMethodModifier");
+		processThrows(ctx.qualifiedNameList());
+
+		super.enterInterfaceMethodDeclaration(ctx);
+	}
+
+	@Override
+	public void exitInterfaceMethodDeclaration(InterfaceMethodDeclarationContext ctx) {
+		exitLastEntity();
+		super.exitInterfaceMethodDeclaration(ctx);
+	}
+
+	@Override
+	public void enterConstructorDeclaration(ConstructorDeclarationContext ctx) {
+		FormalParameterListContextHelper helper = new FormalParameterListContextHelper(ctx.formalParameters());
+		handler.foundMethodDeclarator(ctx.IDENTIFIER().getText(), helper.getParameterTypeList(),ctx.IDENTIFIER().getText());
+		Collection<Tuple<String, String>> varList = helper.getVarList();
+		handler.foundVarDefintion(varList, false);
+		annotationProcessor.processAnnotationModifier(ctx, "classBodyDeclaration");
+		processThrows(ctx.qualifiedNameList());
+		super.enterConstructorDeclaration(ctx);
+	}
+
+	@Override
+	public void exitConstructorDeclaration(ConstructorDeclarationContext ctx) {
+		exitLastEntity();
+		super.exitConstructorDeclaration(ctx);
+	}
+
 	/////////////////////////////////////////////////////////
-	// Field 
+	// Field
 	@Override
 	public void enterFieldDeclaration(FieldDeclarationContext ctx) {
-		handler.foundVarDefintion(new UnannTypeContextHelper().calculateType(ctx.unannType()),new VariableDeclaratorContextHelper().extractVarList(ctx.variableDeclaratorList()));
+		handler.foundVarDefintion(ClassTypeContextHelper.getClassName(ctx.typeType()),
+				VariableDeclaratorsContextHelper.getVariables(ctx.variableDeclarators()));
+		annotationProcessor.processAnnotationModifier(ctx, "classBodyDeclaration");
 		super.enterFieldDeclaration(ctx);
 	}
 
 	@Override
-	public void enterConstantDeclaration(ConstantDeclarationContext ctx) {
-		handler.foundVarDefintion(new UnannTypeContextHelper().calculateType(ctx.unannType()),new VariableDeclaratorContextHelper().extractVarList(ctx.variableDeclaratorList()));
-		super.enterConstantDeclaration(ctx);
+	public void enterConstDeclaration(ConstDeclarationContext ctx) {
+		handler.foundVarDefintion(ClassTypeContextHelper.getClassName(ctx.typeType()),
+				VariableDeclaratorsContextHelper.getVariables(ctx.constantDeclarator()));
+		annotationProcessor.processAnnotationModifier(ctx, "interfaceBodyDeclaration");
+		super.enterConstDeclaration(ctx);
 	}
-
 
 	@Override
-	public void enterAnnotationTypeElementDeclaration(AnnotationTypeElementDeclarationContext ctx) {
-		handler.foundVarDefintion(new UnannTypeContextHelper().calculateType(ctx.unannType()),ctx.identifier().getText(),true);
-		super.enterAnnotationTypeElementDeclaration(ctx);
+	public void enterAnnotationMethodRest(AnnotationMethodRestContext ctx) {
+		handler.foundMethodDeclarator(ctx.IDENTIFIER().getText(), new ArrayList<>(),"void"); //TODO: what's the return type of annotcation method?
+		super.enterAnnotationMethodRest(ctx);
 	}
 
+	@Override
+	public void exitAnnotationMethodRest(AnnotationMethodRestContext ctx) {
+		exitLastEntity();
+		super.exitAnnotationMethodRest(ctx);
+	}
 
+	@Override
+	public void enterAnnotationConstantRest(AnnotationConstantRestContext ctx) {
+		// TODO: no variable type defined in annotation const？
+		handler.foundVarDefintion("tbc", VariableDeclaratorsContextHelper.getVariables(ctx.variableDeclarators()));
+		super.enterAnnotationConstantRest(ctx);
+	}
+
+	///////////////////////////////////////////
+	// variables
+	// TODO: all modifier have not processed yet.
 	@Override
 	public void enterLocalVariableDeclaration(LocalVariableDeclarationContext ctx) {
-		handler.foundVarDefintion(new UnannTypeContextHelper().calculateType(ctx.unannType()),new VariableDeclaratorContextHelper().extractVarList(ctx.variableDeclaratorList()));
+		handler.foundVarDefintion(ClassTypeContextHelper.getClassName(ctx.typeType()),
+				VariableDeclaratorsContextHelper.getVariables((ctx.variableDeclarators())));
 		super.enterLocalVariableDeclaration(ctx);
 	}
 
-	@Override
-	public void enterEnhancedForStatement(EnhancedForStatementContext ctx) {
-		handler.foundVarDefintion(new UnannTypeContextHelper().calculateType(ctx.unannType()),ctx.variableDeclaratorId().identifier().getText(),true);
-		super.enterEnhancedForStatement(ctx);
+	public void enterEnhancedForControl(EnhancedForControlContext ctx) {
+		handler.foundVarDefintion(ClassTypeContextHelper.getClassName(ctx.typeType()),
+				VariableDeclaratorsContextHelper.getVariable((ctx.variableDeclaratorId())));
+		super.enterEnhancedForControl(ctx);
 	}
 
+//	resource
+//    : variableModifier* classOrInterfaceType variableDeclaratorId '=' expression
+//    ;
 	@Override
 	public void enterResource(ResourceContext ctx) {
-		handler.foundVarDefintion(new UnannTypeContextHelper().calculateType(ctx.unannType()),ctx.variableDeclaratorId().identifier().getText(),true);
+		handler.foundVarDefintion(IdentifierContextHelper.getName(ctx.classOrInterfaceType().IDENTIFIER()),
+				ctx.variableDeclaratorId().IDENTIFIER().getText(), true);
 		super.enterResource(ctx);
 	}
-	
-	/////////////////////////////////////////
-	// Assignment or In(De)Cremental
+
 	@Override
-	public void enterAssignment(AssignmentContext ctx) {
-		if (ctx.leftHandSide().expressionName()!=null) {
-			handler.foundVariableSet((new ExpressionNameContextHelper()).getVarName(ctx.leftHandSide().expressionName()));
-		}
-		if (ctx.leftHandSide().fieldAccess()!=null) {
-			System.out.println(ctx.leftHandSide().fieldAccess().getText());
-			lookupVarSetInFieldAccessContext(ctx.leftHandSide().fieldAccess());
-		}
-		if (ctx.leftHandSide().arrayAccess()!=null) {
-			List<String> varName = new ExpressionNameContextHelper().getVarName(ctx.leftHandSide().arrayAccess().expressionName());
-			handler.foundVariableSet(varName);
-		}
-		super.enterAssignment(ctx);
-	}
-
-
-	//TODO: should be move
-	/**
-		fieldAccess
-			:	primary '.' identifier
-			|	'super' '.' identifier
-			|	typeName '.' 'super' '.' identifier
-	 */
-	private void lookupVarSetInFieldAccessContext(FieldAccessContext ctx) {
-		if (ctx.primary()!=null) {
-			System.out.println(ctx.primary().getText());
-		    ParseTreeWalker walker = new ParseTreeWalker();
-		    NewClassInstanceListener newClassInstanceListener = new NewClassInstanceListener();
-			walker.walk(newClassInstanceListener, ctx);
-			if (!newClassInstanceListener.getTypeName().isEmpty()) {
-				String typeNames =newClassInstanceListener.getTypeName();
-				String var = ctx.identifier()==null?
-					     "":ctx.identifier().getText();
-				handler.foundVariableSetOfTypes(typeNames,var);
-			}else {
-				ArrayAccessListener arrayAccessListener = new ArrayAccessListener();
-				walker.walk(arrayAccessListener, ctx);
-				if (arrayAccessListener.getVarName().size()>0) {
-					System.out.println(arrayAccessListener.getVarName());
-					handler.foundVariableSet(arrayAccessListener.getVarName());
-				}
-			}
-		}
-		if (ctx.typeName()!=null) {
-
-		}
-		if (ctx.getText().indexOf("super")>0) {
-			
-		}
-		
-	}
-	
-	@Override
-	public void enterPostfixExpression(PostfixExpressionContext ctx) {
-		String varName = new PostfixExpressionContextHelper().getVariable(ctx);
-		if (varName !=null)
-			handler.foundVariableSet(varName );
-		super.enterPostfixExpression(ctx);
+	public void enterExpression(ExpressionContext ctx) {
+		expressionUsage.foundExpression(ctx);
+		super.enterExpression(ctx);
 	}
 
 	/////////////////////////////////////////////
@@ -286,13 +302,28 @@ public class JavaAdapterListener extends Java9BaseListener{
 		super.exitBlock(ctx);
 	}
 
+	/* type parameters <T> <T1,T2>, <> treat as USE */
+	private void foundTypeParametersUse(TypeParametersContext typeParameters) {
+		for (int i = 0; i < typeParameters.typeParameter().size(); i++) {
+			TypeParameterContext typeParam = typeParameters.typeParameter(i);
+			if (typeParam.typeBound() != null) {
+				for (int j = 0; j < typeParam.typeBound().typeType().size(); j++) {
+					handler.foundTypeParametes(ClassTypeContextHelper.getClassName(typeParam.typeBound().typeType(j)));
+				}
+			}
+		}
+	}
+
+	private void processThrows(QualifiedNameListContext qualifiedNameList) {
+		if (qualifiedNameList == null)
+			return;
+		for (QualifiedNameContext item : qualifiedNameList.qualifiedName()) {
+			handler.foundThrows(QualitiedNameContextHelper.getName(item));
+		}
+	}
 }
 
-
 /**
-unaryExpressionNotPlusMinus
-	:	postfixExpression
-	|	'~' unaryExpression
-	|	'!' unaryExpression
-	|	castExpression
-*/
+ * unaryExpressionNotPlusMinus : postfixExpression | '~' unaryExpression | '!'
+ * unaryExpression | castExpression
+ */

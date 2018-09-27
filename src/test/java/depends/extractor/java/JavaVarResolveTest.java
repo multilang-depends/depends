@@ -36,8 +36,8 @@ public class JavaVarResolveTest {
         String src = "./src/test/resources/java-code-examples/LocalVarInferExample.java";
         JavaFileParser parser = new JavaFileParser(src,repo);
         parser.parse();
-        //7 set included
-        assertEquals(9,repo.getEntity("LocalVarInferExample.setExample").getRelations().size());
+        //8 set included
+        assertEquals(10,repo.getEntity("LocalVarInferExample.setExample").getRelations().size());
         
 	}
 	
