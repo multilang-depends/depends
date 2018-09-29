@@ -1,14 +1,8 @@
 package depends.extractor.java.context;
 
-import java.util.HashMap;
-import java.util.UUID;
-
 import org.antlr.v4.runtime.RuleContext;
 
-import depends.deptypes.DependencyType;
-import depends.entity.ContainerEntity;
 import depends.entity.Expression;
-import depends.entity.repo.EntityRepo;
 import depends.extractor.GenericHandler;
 import depends.javaextractor.JavaParser.ExpressionContext;
 import depends.javaextractor.JavaParser.PrimaryContext;
@@ -115,7 +109,7 @@ public class ExpressionUsage {
 		}else if (ctx.IDENTIFIER()!=null) {
 		//2. if it is a var name, dertermine the type based on context.
 			varName = ctx.IDENTIFIER().getText();
-			type = handler.context().inferType(varName);
+			type = handler.context().inferVarType(varName);
 		}else if (ctx.typeTypeOrVoid()!=null) {
 		//3. if given type directly
 			type = ClassTypeContextHelper.getClassName(ctx.typeTypeOrVoid());

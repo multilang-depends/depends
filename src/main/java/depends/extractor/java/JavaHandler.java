@@ -80,14 +80,14 @@ public class JavaHandler extends GenericHandler {
 	}
 	
 	public void foundVariableSet(String varName) {
-		String type = context().inferType(varName);
+		String type = context().inferVarType(varName);
 		if (type!=null) {
 			addRelation(type,DependencyType.RELATION_SET);
 		}
 	}
 	
 	public void foundAnnotationInUse(String name) {
-		String type = context().inferType(name);
+		String type = context().inferVarType(name);
 		if (type!=null) {
 			addRelation(type,DependencyType.RELATION_USE);
 		}
@@ -103,7 +103,7 @@ public class JavaHandler extends GenericHandler {
 			foundVariableSet(varNamePath.get(0));
 			return;
 		}
-		String type = context().inferType(varNamePath.get(0));
+		String type = context().inferVarType(varNamePath.get(0));
 		if (type==null) return;
 		addRelation(type,DependencyType.RELATION_SET);
 

@@ -4,7 +4,6 @@ import java.util.Stack;
 
 import depends.entity.ContainerEntity;
 import depends.entity.Entity;
-import depends.entity.Expression;
 import depends.entity.repo.EntityRepo;
 import depends.entity.types.FileEntity;
 import depends.entity.types.FunctionEntity;
@@ -23,7 +22,7 @@ public class HandlerContext{
 		entityStack = new Stack<Entity>();
 	}
 	public FileEntity newFileEntity(String fileName) {
-		currentFileEntity = new FileEntity(fileName,entityRepo.getCurrentIndex());
+		currentFileEntity = new FileEntity(fileName,entityRepo.generateId());
         entityStack.push(currentFileEntity);
 		return currentFileEntity;
 	}
@@ -33,7 +32,7 @@ public class HandlerContext{
 		Entity pkgEntity = entityRepo.getEntity(packageName);
 		if (pkgEntity ==null) {
 			pkgEntity = new PackageEntity(packageName,-1,
-				entityRepo.getCurrentIndex());
+				entityRepo.generateId());
 		}
 		currentFileEntity.setParentId(pkgEntity.getId());
 		pkgEntity.addChildId(currentFileEntity.getId());
@@ -64,7 +63,7 @@ public class HandlerContext{
 	public Entity newClassInterface(String classOrInterfaceName) {
 		Entity currentTypeEntity = new TypeEntity(resolveTypeNameDefinition(classOrInterfaceName),
 				currentFileEntity.getId(),
-				entityRepo.getCurrentIndex());
+				entityRepo.generateId());
         entityRepo.add(currentTypeEntity);
         entityStack.push(currentTypeEntity);
 		return currentTypeEntity;
@@ -95,7 +94,7 @@ public class HandlerContext{
 		//TODO: should process parameter types to distinguish the overload functions for short name;
 		FunctionEntity currentFunctionEntity = new FunctionEntity(resolveTypeNameDefinition(methodName),
 				currentType().getId(),
-				entityRepo.getCurrentIndex(),resultType,methodName);
+				entityRepo.generateId(),resultType,methodName);
 		currentType().addFunction(currentFunctionEntity);
         entityStack.push(currentFunctionEntity);
 		return currentFunctionEntity;
@@ -135,7 +134,7 @@ public class HandlerContext{
 	}
 	
 	public void addVar(String type, String varName) {
-		VarEntity varEntity = new VarEntity(varName, type, lastContainer().getId(), entityRepo.getCurrentIndex());
+		VarEntity varEntity = new VarEntity(varName, type, lastContainer().getId(), entityRepo.generateId());
 		lastContainer().addVar(varEntity);
 	}
 	public ContainerEntity lastContainer() {
@@ -147,7 +146,7 @@ public class HandlerContext{
 		return null;
 	}
 	
-	public String inferType(String varName) {
+	public String inferVarType(String varName) {
 		for (int i=entityStack.size()-1;i>=0;i--) {
 			Entity t = entityStack.get(i);
 			if (t instanceof ContainerEntity) {
@@ -185,9 +184,5 @@ public class HandlerContext{
 				return var.getReturnType();
 		}
 		return null;
-	}
-	public void addExpression(Expression d) {
-		// TODO Auto-generated method stub
-		
 	}
 }

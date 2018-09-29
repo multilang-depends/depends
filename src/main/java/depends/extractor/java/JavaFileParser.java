@@ -28,7 +28,7 @@ public class JavaFileParser implements depends.extractor.FileParser{
         Lexer lexer = new JavaLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         JavaParser parser = new JavaParser(tokens);
-        JavaAdapterListener bridge = new JavaAdapterListener(fileFullPath, entityRepo);
+        JavaEntitiesListener bridge = new JavaEntitiesListener(fileFullPath, entityRepo);
 	    ParseTreeWalker walker = new ParseTreeWalker();
 	    walker.walk(bridge, parser.compilationUnit());
     }

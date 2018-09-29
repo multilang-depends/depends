@@ -13,9 +13,8 @@ import depends.entity.types.PackageEntity;
 
 public class EntityRepo {
 	public HashMap<String, Entity> allEntieisByName = new HashMap<>();
-	public HashMap<Integer, Entity> allEntieisById = new HashMap<>();
+	public HashMap<Integer, Entity> allEntitiesById = new HashMap<>();
 	private int nextAvaliableIndex;
-	
 	
 	public EntityRepo() {
 		nextAvaliableIndex = 0;
@@ -24,13 +23,13 @@ public class EntityRepo {
 		return allEntieisByName.get(entityName);
 	}
 	public Entity getEntity(Integer entityId) {
-		return allEntieisById.get(entityId);
+		return allEntitiesById.get(entityId);
 	}
 	
 	public void add(Entity entity) {
 		if (!entity.getFullName().isEmpty())
 			allEntieisByName.put(entity.getFullName(),entity);
-		allEntieisById.put(entity.getId(), entity);
+		allEntitiesById.put(entity.getId(), entity);
 	}
 	
 	public void updateEntityNameIndex(String oldName, String newName, Entity entity) {
@@ -44,9 +43,9 @@ public class EntityRepo {
 	}
 	
 	public Collection<Entity> getEntities() {
-		return allEntieisById.values();
+		return allEntitiesById.values();
 	}
-	public Integer getCurrentIndex() {
+	public Integer generateId() {
 		return nextAvaliableIndex++;
 	}
 
@@ -63,7 +62,7 @@ public class EntityRepo {
 	
 	public Set<String> resolveAllBindings() {
     	HashSet<String> unsolved = new HashSet<>();
-        for (Entity entity:allEntieisByName.values()) {
+        for (Entity entity:allEntitiesById.values()) {
         	Set<String> u = entity.resolveBinding(this);
 			unsolved.addAll(u);
         }

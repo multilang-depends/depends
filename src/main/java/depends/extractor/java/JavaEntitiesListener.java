@@ -37,12 +37,12 @@ import depends.javaextractor.JavaParser.TypeParametersContext;
 import depends.javaextractor.JavaParserBaseListener;
 import depends.util.Tuple;
 
-public class JavaAdapterListener extends JavaParserBaseListener {
+public class JavaEntitiesListener extends JavaParserBaseListener {
 	private JavaHandler handler;
 	private AnnotationProcessor annotationProcessor;
 	private ExpressionUsage expressionUsage;
 
-	public JavaAdapterListener(String fileFullPath, EntityRepo entityRepo) {
+	public JavaEntitiesListener(String fileFullPath, EntityRepo entityRepo) {
 		this.handler = new JavaHandler(entityRepo);
 		annotationProcessor = new AnnotationProcessor(handler);
 		expressionUsage = new ExpressionUsage(handler);
