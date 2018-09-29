@@ -172,7 +172,7 @@ public class JavaAdapterListener extends JavaParserBaseListener {
 	}
 
 	private void exitLastEntity() {
-		expressionUsage.commitAllExpressionUsage();
+		handler.commitAllExpressionUsage(handler.context().lastContainer());
 		handler.exitLastedEntity();
 	}
 

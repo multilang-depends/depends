@@ -2,7 +2,9 @@ package depends.extractor;
 
 import java.util.Stack;
 
+import depends.entity.ContainerEntity;
 import depends.entity.Entity;
+import depends.entity.Expression;
 import depends.entity.repo.EntityRepo;
 import depends.entity.types.FileEntity;
 import depends.entity.types.FunctionEntity;
@@ -98,11 +100,11 @@ public class HandlerContext{
         entityStack.push(currentFunctionEntity);
 		return currentFunctionEntity;
 	}
-	public Entity currentType() {
+	public TypeEntity currentType() {
 		for (int i=entityStack.size()-1;i>=0;i--) {
 			Entity t = entityStack.get(i);
 			if (t instanceof TypeEntity)
-				return t;
+				return (TypeEntity)t;
 		}
 		return null;
 	}
@@ -136,27 +138,38 @@ public class HandlerContext{
 		VarEntity varEntity = new VarEntity(varName, type, lastContainer().getId(), entityRepo.getCurrentIndex());
 		lastContainer().addVar(varEntity);
 	}
-	public Entity lastContainer() {
-		return entityStack.peek();
+	public ContainerEntity lastContainer() {
+		for (int i=entityStack.size()-1;i>=0;i--) {
+			Entity t = entityStack.get(i);
+			if (t instanceof ContainerEntity)
+				return (ContainerEntity)t;
+		}
+		return null;
 	}
+	
 	public String inferType(String varName) {
 		for (int i=entityStack.size()-1;i>=0;i--) {
 			Entity t = entityStack.get(i);
-			for (VarEntity var:t.getVars()) {
-				if (var.getFullName().equals(varName)){
-					return var.getType();
+			if (t instanceof ContainerEntity) {
+				for (VarEntity var:((ContainerEntity)t).getVars()) {
+					if (var.getFullName().equals(varName)){
+						return var.getType();
+					}
 				}
 			}
 		}
 		return null;
 	}
+	
 	public String inferVarType(String fromType, String varName) {
 		Entity type = entityRepo.getEntity(fromType);
 		if (type==null) return null;
 		if (!(type instanceof TypeEntity)) return null;
-		for (VarEntity var:type.getVars()) {
-			if (var.getFullName().equals(varName))
-				return var.getType();
+		if (type instanceof ContainerEntity) {
+			for (VarEntity var:((ContainerEntity)type).getVars()) {
+				if (var.getFullName().equals(varName))
+					return var.getType();
+			}
 		}
 		return null;
 	}
@@ -173,5 +186,8 @@ public class HandlerContext{
 		}
 		return null;
 	}
-
+	public void addExpression(Expression d) {
+		// TODO Auto-generated method stub
+		
+	}
 }

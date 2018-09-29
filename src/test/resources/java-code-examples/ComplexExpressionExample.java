@@ -8,7 +8,7 @@ class ClassA{
 	int foo();
 }
 
-public class FieldAccessInferExample {
+public class ComplexExpressionExample {
 	void setExample(ClassA a) { 	      //parameter a(1)
 		(new ClassA()).x.m = 3;      //set (newA) x, m (2)
 		a.x.m = 1;                        //set m (1), use a, x? or set a,x?

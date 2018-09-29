@@ -8,17 +8,19 @@ import depends.entity.repo.EntityRepo;
 import depends.entity.types.FunctionEntity;
 import depends.entity.types.VarEntity;
 
-public class Entity {
-    protected String fullName = "";
+public abstract class Entity {
 	protected int id=-1;
-    protected int parentId=-1;
+	protected String fullName = "";
+
+	protected int parentId=-1;
+    protected ArrayList<Integer> childrenIds = new ArrayList<>();
+    
+    protected ArrayList<Relation> relations = new ArrayList<>();
     
     public Entity(String fullName, int parentId, Integer id) {
-		this.setFullName(fullName);
+		this.fullName = fullName;
 		this.setParentId(parentId);
 		this.setId(id);
-		vars = new ArrayList<>();
-		functions = new ArrayList<>();
 	}
 
 	public void setFileId(int fileId) {
@@ -28,15 +30,7 @@ public class Entity {
 		return fullName;
 	}
 
-	public void setFullName(String fullName) {
-		this.fullName = fullName;
-	}
 
-
-    protected ArrayList<Integer> childrenIds = new ArrayList<>();
-    protected ArrayList<Relation> relations = new ArrayList<>();
-    protected ArrayList<VarEntity> vars;
-    protected ArrayList<FunctionEntity> functions;
 
     public int getId() {
         return id;
@@ -70,10 +64,6 @@ public class Entity {
         childrenIds.add(id);
     }
 
-    public void addChildrenIds(ArrayList<Integer> ids) {
-        childrenIds.addAll(ids);
-    }
-
     public ArrayList<Integer> getChildrenIds() {
         return childrenIds;
     }
@@ -105,21 +95,5 @@ public class Entity {
 			}
 		}
 		return unsolved;
-	}
-
-	public void addVar(VarEntity var) {
-		this.vars.add(var);
-	}
-
-	public ArrayList<VarEntity> getVars() {
-		return this.vars;
-	}
-
-	public void addFunction(FunctionEntity functionEntity) {
-		this.functions.add(functionEntity);
-	}
-	
-	public ArrayList<FunctionEntity> getFunctions() {
-		return this.functions;
 	}
 }

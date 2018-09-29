@@ -8,6 +8,8 @@ import org.junit.Test;
 
 import depends.entity.Entity;
 import depends.entity.repo.EntityRepo;
+import depends.entity.types.FunctionEntity;
+import depends.entity.types.TypeEntity;
 
 public class JavaVarResolveTest {
 	@Test
@@ -17,7 +19,7 @@ public class JavaVarResolveTest {
         JavaFileParser parser = new JavaFileParser(src,repo);
         parser.parse();
         Entity classEntity = repo.getEntity("FieldVar");
-        assertEquals(3,classEntity.getVars().size()); 
+        assertEquals(3,((TypeEntity)classEntity).getVars().size()); 
 	}
 	
 	@Test
@@ -26,8 +28,8 @@ public class JavaVarResolveTest {
         String src = "./src/test/resources/java-code-examples/LocalVar.java";
         JavaFileParser parser = new JavaFileParser(src,repo);
         parser.parse();
-        assertEquals(1,repo.getEntity("LocalVar").getVars().size());
-        assertEquals(2,repo.getEntity("LocalVar.foo").getVars().size());
+        assertEquals(1,((TypeEntity)repo.getEntity("LocalVar")).getVars().size());
+        assertEquals(2,((FunctionEntity)repo.getEntity("LocalVar.foo")).getVars().size());
 	}
 	
 	@Test
@@ -44,10 +46,10 @@ public class JavaVarResolveTest {
 	@Test
 	public void test_field_access_could_be_inferred() throws IOException {
 		EntityRepo repo = new EntityRepo();
-        String src = "./src/test/resources/java-code-examples/FieldAccessInferExample.java";
+        String src = "./src/test/resources/java-code-examples/ComplexExpressionExample.java";
         JavaFileParser parser = new JavaFileParser(src,repo);
         parser.parse();
-        assertEquals(13,repo.getEntity("test.FieldAccessInferExample.setExample").getRelations().size());
+        assertEquals(13,repo.getEntity("test.ComplexExpressionExample.setExample").getRelations().size());
 	}
 	
 }

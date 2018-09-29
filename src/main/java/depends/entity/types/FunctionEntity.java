@@ -1,8 +1,8 @@
 package depends.entity.types;
 
-import depends.entity.Entity;
+import depends.entity.ContainerEntity;
 
-public class FunctionEntity extends Entity{
+public class FunctionEntity extends ContainerEntity{
 	private String returnType;
 	private String shortName;
 	public String getShortName() {

@@ -2,9 +2,9 @@ package depends.entity.types;
 
 import java.util.HashMap;
 
-import depends.entity.Entity;
+import depends.entity.ContainerEntity;
 
-public class FileEntity extends Entity{
+public class FileEntity extends ContainerEntity{
 	HashMap<String,String> importedNames = new HashMap<>();
 	public FileEntity(String fullName, int fileId) {
 		super(fullName, -1,fileId);

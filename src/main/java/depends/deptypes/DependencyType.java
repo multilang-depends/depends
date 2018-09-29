@@ -30,16 +30,27 @@ public class DependencyType {
     //function/method->OperandVar
     public static final String RELATION_USE = "Use";
 
-    //class->class in python
-    //struct-> struct , interface->interface in golang
     public static final String RELATION_INHERIT = "Inherit";
     
 	public static final String RELATION_DEFINE = "Define";
 
-    //struct1->struct2, interface1->interface2
-    //public static final String RELATION_INHERIT = "Embed";
-    //public static final String RELATION_INHERITED_BY = "Embeded by";
+    public static final String RELATION_EMBED = "Embed";
+    public static final String RELATION_EMBED_BY = "Embeded by";
 
+    /**
+     * Mask of dependencies.
+     * 0 - IMPORT
+     * 1 - INHERIT
+     * 2 - IMPLEMENT
+     * 3 - RECEIVE
+     * 4 - CALL
+     * 5 - SET
+     * 6 - USE
+     * 7 - PARAMETER
+     * 8 - RETURN 
+     * @param depMask
+     * @return
+     */
 	public static final ArrayList<String> resolveMask(String depMask) {
         ArrayList<String> depedencyTypes = new ArrayList<String>();
         for(int i = 0; i < depMask.toCharArray().length; i++) {
