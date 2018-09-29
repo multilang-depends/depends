@@ -1,6 +1,6 @@
 package depends.entity;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -9,7 +9,6 @@ import depends.entity.repo.EntityNotExistsException;
 import depends.entity.repo.EntityRepo;
 import depends.entity.repo.NoRequestedTypeOfAncestorExistsException;
 import depends.entity.types.FileEntity;
-import depends.entity.types.PackageEntity;
 import depends.entity.types.TypeEntity;
 import depends.entity.types.VarEntity;
 
@@ -23,9 +22,10 @@ public class EntityGetAncestorTest {
 	public void setup() {
 		//create a file 
 		FileEntity f = new FileEntity("/tmp/file.java",fileId);
-		TypeEntity p = new TypeEntity("test.packagenamea.ClassA",  fileId,typeId);
+		TypeEntity p = new TypeEntity("test.packagenamea.ClassA",  f,typeId);
 		entityRepo.add(f);
 		entityRepo.add(p);
+		entityRepo.resolveAllBindings();
 	}
 	@Test
 	public void testGetAncestorOfType() throws EntityNotExistsException, NoRequestedTypeOfAncestorExistsException {

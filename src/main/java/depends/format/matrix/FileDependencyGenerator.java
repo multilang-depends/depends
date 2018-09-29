@@ -19,7 +19,7 @@ public class FileDependencyGenerator {
         ArrayList<String> files = new ArrayList<String>();
 		for (Entity entity:entityRepo.getEntities()) {
         	if (entity instanceof FileEntity){
-        		files.add( entity.getFullName());
+        		files.add( entity.getRawName());
         	}
         	int fileEntityFrom = getFileEntityIdNoException(entityRepo, entity.getId());
         	if (fileEntityFrom==-1) continue;

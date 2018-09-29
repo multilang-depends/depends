@@ -18,6 +18,7 @@ public class JavaVarResolveTest {
         String src = "./src/test/resources/java-code-examples/FieldVar.java";
         JavaFileParser parser = new JavaFileParser(src,repo);
         parser.parse();
+        repo.resolveAllBindings();
         Entity classEntity = repo.getEntity("FieldVar");
         assertEquals(3,((TypeEntity)classEntity).getVars().size()); 
 	}
@@ -28,8 +29,9 @@ public class JavaVarResolveTest {
         String src = "./src/test/resources/java-code-examples/LocalVar.java";
         JavaFileParser parser = new JavaFileParser(src,repo);
         parser.parse();
+        repo.resolveAllBindings();
         assertEquals(1,((TypeEntity)repo.getEntity("LocalVar")).getVars().size());
-        assertEquals(2,((FunctionEntity)repo.getEntity("LocalVar.foo")).getVars().size());
+        assertEquals(1,((FunctionEntity)repo.getEntity("LocalVar.foo")).getVars().size());
 	}
 	
 	@Test
@@ -38,7 +40,8 @@ public class JavaVarResolveTest {
         String src = "./src/test/resources/java-code-examples/LocalVarInferExample.java";
         JavaFileParser parser = new JavaFileParser(src,repo);
         parser.parse();
-        //8 set included
+        repo.resolveAllBindings();
+       //8 set included
         assertEquals(10,repo.getEntity("LocalVarInferExample.setExample").getRelations().size());
         
 	}
@@ -49,6 +52,7 @@ public class JavaVarResolveTest {
         String src = "./src/test/resources/java-code-examples/ComplexExpressionExample.java";
         JavaFileParser parser = new JavaFileParser(src,repo);
         parser.parse();
+        repo.resolveAllBindings();
         assertEquals(13,repo.getEntity("test.ComplexExpressionExample.setExample").getRelations().size());
 	}
 	

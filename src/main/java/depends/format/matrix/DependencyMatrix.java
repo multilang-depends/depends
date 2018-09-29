@@ -65,7 +65,7 @@ public class DependencyMatrix {
 
 
 	private Integer translateToNewId(EntityRepo repo, HashMap<String, Integer> nodesMap, Integer key) {
-		return nodesMap.get(repo.getEntity(key).getFullName());
+		return nodesMap.get(repo.getEntity(key).getRawName());
 	}
 
 	public void remapIds(EntityRepo repo) {

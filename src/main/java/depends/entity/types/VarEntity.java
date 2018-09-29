@@ -1,18 +1,30 @@
 package depends.entity.types;
 
 import depends.entity.Entity;
+import depends.entity.TypeInfer;
 
 public class VarEntity extends Entity {
+	private String rawType;
+	private TypeEntity type;
+	public VarEntity(String simpleName,  String rawType, Entity parent, int id) {
+		super(simpleName,  parent,id);
+		this.rawType = rawType;
+	}
 
-	private String type;
+	public String getRawType() {
+		return rawType;
+	}
 
-	public VarEntity(String fullName,  String type, int parentId, int id) {
-		super(fullName,  parentId,id);
+	public TypeEntity getType() {
+		return type;
+	}
+
+	public void setType(TypeEntity type) {
 		this.type = type;
 	}
 
-	public String getType() {
-		return type;
+	@Override
+	public void inferLocalLevelTypes(TypeInfer typeInferer) {
+		type = typeInferer.inferType(this, rawType);
 	}
-    
 }

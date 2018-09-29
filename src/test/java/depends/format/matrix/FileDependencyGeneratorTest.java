@@ -1,6 +1,7 @@
 package depends.format.matrix;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
 
@@ -11,10 +12,7 @@ import depends.deptypes.DependencyType;
 import depends.entity.Relation;
 import depends.entity.repo.EntityRepo;
 import depends.entity.types.FileEntity;
-import depends.entity.types.PackageEntity;
 import depends.entity.types.TypeEntity;
-import depends.format.matrix.DependencyMatrix;
-import depends.format.matrix.FileDependencyGenerator;
 
 public class FileDependencyGeneratorTest {
 
@@ -31,7 +29,7 @@ public class FileDependencyGeneratorTest {
 
 		//create a file 
 		FileEntity f = new FileEntity(FILE1_NAME,file1Id);
-		TypeEntity p = new TypeEntity("test.packagenamea.ClassA",  0,typeId);
+		TypeEntity p = new TypeEntity("test.packagenamea.ClassA",  f,typeId);
 	
 		FileEntity theEntity = new FileEntity(FILE2_NAME,file2Id);
 		Relation r = new Relation(DependencyType.RELATION_IMPORT, "test.packagenamea.ClassA");

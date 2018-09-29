@@ -2,34 +2,53 @@ package depends.entity;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import depends.entity.repo.EntityRepo;
-import depends.entity.types.FunctionEntity;
-import depends.entity.types.VarEntity;
 
 public abstract class Entity {
-	protected int id=-1;
-	protected String fullName = "";
+	int id=-1;
+	String qualifiedName = null;
+	String rawName = "";
+	Entity parent;
+	ArrayList<Entity> children = new ArrayList<>();
+    ArrayList<Relation> relations = new ArrayList<>();
 
-	protected int parentId=-1;
-    protected ArrayList<Integer> childrenIds = new ArrayList<>();
-    
-    protected ArrayList<Relation> relations = new ArrayList<>();
-    
-    public Entity(String fullName, int parentId, Integer id) {
-		this.fullName = fullName;
-		this.setParentId(parentId);
+	
+    public Entity(String rawName, Entity parent, Integer id) {
+		this.qualifiedName = null;
+		this.rawName = rawName;
+		this.parent = parent;
 		this.setId(id);
+		deduceQualifiedName();
 	}
 
-	public void setFileId(int fileId) {
+	private void deduceQualifiedName() {
+		if (this.rawName.contains(".")) {
+			this.qualifiedName = this.rawName;
+			return; //already qualified
+		}
+		if (parent==null) {
+			this.qualifiedName = this.rawName;
+			return;
+		}
+		if (parent.getQualifiedName()==null) {
+			this.qualifiedName = this.rawName;
+			return;
+		}
+		if (parent.getQualifiedName().isEmpty()) {
+			this.qualifiedName = rawName;
+			return;
+		}
+		this.qualifiedName= parent.getQualifiedName()+"." + rawName;
+
 	}
 
-	public String getFullName() {
-		return fullName;
-	}
 
+	public String getRawName() {
+		return rawName;
+	}
 
 
     public int getId() {
@@ -38,14 +57,6 @@ public abstract class Entity {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public int getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(int parentId) {
-        this.parentId = parentId;
     }
 
     public void addRelation(Relation relation) {
@@ -60,25 +71,8 @@ public abstract class Entity {
         return relations;
     }
 
-    public void addChildId(Integer id) {
-        childrenIds.add(id);
-    }
-
-    public ArrayList<Integer> getChildrenIds() {
-        return childrenIds;
-    }
-
-    @Override
-    public String toString() {
-        String str = "";
-        str += "\n(";
-        str += ("name:" + fullName + ',');
-        str += ("id:" + id + ',');
-        str += ("parentId:" + parentId + ",");
-        str += ("childrenIds:" + childrenIds + ",");
-        str += ("relations:" + relations);
-        str += ")\n";
-        return str;
+    public void addChild(Entity child) {
+        children.add(child);
     }
 
 	public Set<String> resolveBinding(EntityRepo registry) {
@@ -96,4 +90,39 @@ public abstract class Entity {
 		}
 		return unsolved;
 	}
+
+	public Entity getParent() {
+		return parent;
+	}
+
+	public void setParent(Entity parent) {
+		this.parent = parent;
+	}
+	
+	public List<Entity> getChildren() {
+		return children;
+	}
+	
+	public void setQualifiedName(String qualifiedName) {
+		this.qualifiedName = qualifiedName;
+	}
+
+	public String getQualifiedName() {
+		return qualifiedName;
+	}
+
+	public void inferTypes(TypeInfer typeInferer) {
+		inferLocalLevelTypes(typeInferer);
+		for (Entity child:children) {
+			child.inferTypes(typeInferer);
+		}
+	}
+	public abstract void inferLocalLevelTypes(TypeInfer typeInferer);
+
+	@Override
+	public String toString() {
+		return "Entity [id=" + id + ", qualifiedName=" + qualifiedName + ", rawName=" + rawName + "]";
+	}
+	
+	
 }

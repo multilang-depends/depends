@@ -3,6 +3,7 @@ package depends.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import depends.entity.types.TypeEntity;
 import depends.util.Tuple;
 
 public class Expression {
@@ -10,7 +11,8 @@ public class Expression {
 	public Integer parentId;
 	
 	public String text; // for debug purpose
-	public String returnType; // the type we care
+	public TypeEntity returnType; // the type we care
+	public String rawType; //the raw type name
 	public String identifier; // the varName, or method name, etc.
 	public boolean isSet = false; // is a set relation from right to leftHand
 	public boolean isDot = false; // is a dot expression, will decuce variable tfype left to right

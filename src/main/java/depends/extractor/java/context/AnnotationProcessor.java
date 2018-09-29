@@ -5,14 +5,14 @@ import java.util.List;
 
 import org.antlr.v4.runtime.RuleContext;
 
-import depends.extractor.java.JavaHandler;
+import depends.extractor.HandlerContext;
 import depends.javaextractor.JavaParser.AnnotationContext;
 
 public class AnnotationProcessor {
-	private JavaHandler handler;
+	private HandlerContext context;
 
-	public AnnotationProcessor(JavaHandler handler) {
-		this.handler = handler;
+	public AnnotationProcessor(HandlerContext context) {
+		this.context = context;
 	}
 	/**
 	 * for any elements who with modifiers like 'public/static/... @Annotation‘，
@@ -62,7 +62,7 @@ public class AnnotationProcessor {
 				if (annotation == null)
 					return;
 				String name = QualitiedNameContextHelper.getName(annotation.qualifiedName());
-				handler.foundAnnotationInUse(name);
+				context.foundAnnotation(name);
 			}
 		} catch (Exception e) {
 			return;

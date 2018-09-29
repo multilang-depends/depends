@@ -1,5 +1,8 @@
 package depends.extractor.java;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import depends.extractor.AbstractLangWorker;
 import depends.extractor.FileParser;
 
@@ -8,6 +11,7 @@ public class JavaWorker extends AbstractLangWorker {
     public static final String JAVA_SUFFIX = ".java";
     
     public JavaWorker() {
+
     }
 
 
@@ -27,4 +31,5 @@ public class JavaWorker extends AbstractLangWorker {
 		return new JavaFileParser(fileFullPath,entityRepo);
 	}
 
+	
 }

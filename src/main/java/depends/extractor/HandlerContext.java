@@ -1,9 +1,12 @@
 package depends.extractor;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Stack;
 
 import depends.entity.ContainerEntity;
 import depends.entity.Entity;
+import depends.entity.IdGenerator;
 import depends.entity.repo.EntityRepo;
 import depends.entity.types.FileEntity;
 import depends.entity.types.FunctionEntity;
@@ -11,117 +14,83 @@ import depends.entity.types.PackageEntity;
 import depends.entity.types.TypeEntity;
 import depends.entity.types.VarEntity;
 
-public class HandlerContext{
+public class HandlerContext {
 	private EntityRepo entityRepo;
+	private IdGenerator idGenerator;
+
 	private FileEntity currentFileEntity;
-	private String currentPackageName = "";
 	Stack<Entity> entityStack = new Stack<Entity>();
-	
+
 	public HandlerContext(EntityRepo entityRepo) {
 		this.entityRepo = entityRepo;
+		this.idGenerator = entityRepo;
 		entityStack = new Stack<Entity>();
 	}
-	public FileEntity newFileEntity(String fileName) {
-		currentFileEntity = new FileEntity(fileName,entityRepo.generateId());
-        entityStack.push(currentFileEntity);
+
+	public FileEntity startFile(String fileName) {
+		currentFileEntity = new FileEntity(fileName, idGenerator.generateId());
+		entityStack.push(currentFileEntity);
+		entityRepo.add(currentFileEntity);
 		return currentFileEntity;
 	}
 
-	public Entity newPackageEntity(String packageName) {
-		this.currentPackageName = packageName;
+	public Entity foundNewPackage(String packageName) {
 		Entity pkgEntity = entityRepo.getEntity(packageName);
-		if (pkgEntity ==null) {
-			pkgEntity = new PackageEntity(packageName,-1,
-				entityRepo.generateId());
+		if (pkgEntity == null) {
+			pkgEntity = new PackageEntity(packageName, idGenerator.generateId());
+			entityRepo.add(pkgEntity);
 		}
-		currentFileEntity.setParentId(pkgEntity.getId());
-		pkgEntity.addChildId(currentFileEntity.getId());
+		entityRepo.setParent(currentFileEntity,pkgEntity);
 		return pkgEntity;
 	}
-	
-	private String resolveTypeNameDefinition(String name) {
-		if (name.isEmpty()) return "";
-		String prefix = "";
-		for (int i=entityStack.size()-1;i>=0;i--) {
-			Entity t = entityStack.get(i);
-			if (t instanceof FileEntity) continue; //file name should be bypass. use package name instead 
-			if(! t.getFullName().isEmpty() &&
-					!(t.getFullName().startsWith("<Anony>"))) {
-				prefix = t.getFullName();
-				break;
-			}
-		}
-		if (prefix.isEmpty()) {
-			if (currentPackageName.length()>0)
-				return currentPackageName + "." + name;
-			return name;
-		}else {
-			return  prefix + "." + name;
-		}
-	}
-	
-	public Entity newClassInterface(String classOrInterfaceName) {
-		Entity currentTypeEntity = new TypeEntity(resolveTypeNameDefinition(classOrInterfaceName),
-				currentFileEntity.getId(),
-				entityRepo.generateId());
-        entityRepo.add(currentTypeEntity);
-        entityStack.push(currentTypeEntity);
+
+	public Entity foundNewType(String classOrInterfaceName) {
+		Entity currentTypeEntity = new TypeEntity(classOrInterfaceName, this.latestValidContainer(),
+				idGenerator.generateId());
+		entityRepo.add(currentTypeEntity);
+		entityStack.push(currentTypeEntity);
 		return currentTypeEntity;
 	}
-	
-	public void popEntity() {
+
+	public void foundMethodDeclarator(String methodName, Collection<VarEntity> parameters, String returnType, List<String> throwedType) {
+		FunctionEntity functionEntity = new FunctionEntity(methodName, this.latestValidContainer(),
+				idGenerator.generateId(),returnType,parameters);
+		entityRepo.add(functionEntity);
+		entityStack.push(functionEntity);
+		functionEntity.addThrowTypes(throwedType);
+	}
+	public void exitLastedEntity() {
 		entityStack.pop();
 	}
-	
-	public void newImport(String importedTypeOrPackage) {
+
+	public void foundNewImport(String importedTypeOrPackage) {
 		currentFileEntity.addImport(importedTypeOrPackage);
 	}
-	
-	public String resolveTypeNameRef(String typeName) {
-		//if it is a full name like "java.io.Exception"
-		if (typeName.indexOf('.')>0) return typeName;
-		
-		//if it is a singleName like "JavaHandler"
-		// TODO: we still cannot handle on demand import like 
-		// import package.name.*;
-		if (currentFile().getImport(typeName)!=null)
-			typeName = currentFile().getImport(typeName);
-		else
-			typeName = currentPackageName + (currentPackageName.isEmpty()? "":".") + typeName;
-		return typeName;
-	}
-	public Entity newFunctionEntity(String methodName, String resultType) {
-		//TODO: should process parameter types to distinguish the overload functions for short name;
-		FunctionEntity currentFunctionEntity = new FunctionEntity(resolveTypeNameDefinition(methodName),
-				currentType().getId(),
-				entityRepo.generateId(),resultType,methodName);
-		currentType().addFunction(currentFunctionEntity);
-        entityStack.push(currentFunctionEntity);
-		return currentFunctionEntity;
-	}
+
 	public TypeEntity currentType() {
-		for (int i=entityStack.size()-1;i>=0;i--) {
+		for (int i = entityStack.size() - 1; i >= 0; i--) {
 			Entity t = entityStack.get(i);
 			if (t instanceof TypeEntity)
-				return (TypeEntity)t;
+				return (TypeEntity) t;
 		}
 		return null;
 	}
-	public Entity currentFunction() {
-		for (int i=entityStack.size()-1;i>=0;i--) {
+
+	public FunctionEntity currentFunction() {
+		for (int i = entityStack.size() - 1; i >= 0; i--) {
 			Entity t = entityStack.get(i);
 			if (t instanceof FunctionEntity)
-				return t;
+				return (FunctionEntity) t;
 		}
 		return null;
 	}
-	
+
 	public FileEntity currentFile() {
 		return currentFileEntity;
 	}
-	
+
 	public Entity latestValidContainer() {
-		for (int i=entityStack.size()-1;i>=0;i--) {
+		for (int i = entityStack.size() - 1; i >= 0; i--) {
 			Entity t = entityStack.get(i);
 			if (t instanceof FunctionEntity)
 				return t;
@@ -132,57 +101,48 @@ public class HandlerContext{
 		}
 		return null;
 	}
-	
-	public void addVar(String type, String varName) {
-		VarEntity varEntity = new VarEntity(varName, type, lastContainer().getId(), entityRepo.generateId());
-		lastContainer().addVar(varEntity);
-	}
+
 	public ContainerEntity lastContainer() {
-		for (int i=entityStack.size()-1;i>=0;i--) {
+		for (int i = entityStack.size() - 1; i >= 0; i--) {
 			Entity t = entityStack.get(i);
 			if (t instanceof ContainerEntity)
-				return (ContainerEntity)t;
-		}
-		return null;
-	}
-	
-	public String inferVarType(String varName) {
-		for (int i=entityStack.size()-1;i>=0;i--) {
-			Entity t = entityStack.get(i);
-			if (t instanceof ContainerEntity) {
-				for (VarEntity var:((ContainerEntity)t).getVars()) {
-					if (var.getFullName().equals(varName)){
-						return var.getType();
-					}
-				}
-			}
-		}
-		return null;
-	}
-	
-	public String inferVarType(String fromType, String varName) {
-		Entity type = entityRepo.getEntity(fromType);
-		if (type==null) return null;
-		if (!(type instanceof TypeEntity)) return null;
-		if (type instanceof ContainerEntity) {
-			for (VarEntity var:((ContainerEntity)type).getVars()) {
-				if (var.getFullName().equals(varName))
-					return var.getType();
-			}
+				return (ContainerEntity) t;
 		}
 		return null;
 	}
 
-	public String inferFunctionType(String fromType, String varName) {
-		Entity type = entityRepo.getEntity(fromType);
-		if (type==null) return null;
-		if (!(type instanceof TypeEntity)) return null;
-		TypeEntity typeEntity = (TypeEntity)type;
-		
-		for (FunctionEntity var:typeEntity.getFunctions()) {
-			if (var.getShortName().equals(varName))
-				return var.getReturnType();
+	public void foundAnnotation(String name) {
+		lastContainer().addAnnotation(name);
+	}
+
+	public void foundImplements(String typeName) {
+		currentType().addImplements(typeName);
+	}
+
+	public void foundExtends(String typeName) {
+		currentType().addExtends(typeName);
+	}
+
+
+	public void foundTypeParametes(String typeName) {
+		lastContainer().addTypeParameter(typeName);
+	}
+
+
+	public void foundVarDefinition(List<String> varNames, String type) {
+		for (String varName : varNames) {
+			foundVarDefintion(varName,type);
 		}
-		return null;
+	}
+
+	public void foundVarDefintion(Collection<VarEntity> vars) {
+		for (VarEntity var : vars) {
+			lastContainer().addVar(var);
+		}
+	}
+
+	public void foundVarDefintion(String varName, String type) {
+		VarEntity var = new VarEntity(varName, type, lastContainer(), idGenerator.generateId());
+		lastContainer().addVar(var);		
 	}
 }

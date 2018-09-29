@@ -90,6 +90,7 @@ abstract public class AbstractLangWorker {
     
     protected abstract FileParser getFileParser(String fileFullPath);
     
+
 	private final void outputDeps(ArrayList<String> depTypes) {
         JDataBuilder jBuilder = new JDataBuilder();
         JDepObject jDepObject = jBuilder.build(dependencyMatrix);
@@ -102,6 +103,5 @@ abstract public class AbstractLangWorker {
         XmlFormatter xmlFormatter = new XmlFormatter();
         xmlFormatter.toXml(xDepObject,configure.getOutputXmlFile());
         System.out.println("Export " + configure.getOutputXmlFile() + " successfully...");
-
     }
 }

@@ -1,8 +1,19 @@
+class MyString{
+	
+}
 
-@Autowired public class LocalVarInferExample {
-	String a;
-	void setExample(String b) { //param
-		Integer x; //define
+class MyInteger{
+	
+}
+
+@interface MyAnnotation{
+	
+}
+
+@MyAnnotation public class LocalVarInferExample {
+	MyString a;
+	void setExample(MyString b) { //param
+		MyInteger x; //define
 		x=1; //Set x
 		b="2"; //Set b
 		x=b.length(); //Set x

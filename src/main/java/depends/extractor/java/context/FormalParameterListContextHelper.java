@@ -6,50 +6,42 @@ import java.util.List;
 
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+import depends.entity.ContainerEntity;
+import depends.entity.IdGenerator;
+import depends.entity.types.VarEntity;
 import depends.javaextractor.JavaParser.FormalParameterContext;
 import depends.javaextractor.JavaParser.FormalParameterListContext;
 import depends.javaextractor.JavaParser.FormalParametersContext;
 import depends.javaextractor.JavaParser.LastFormalParameterContext;
 import depends.javaextractor.JavaParser.TypeTypeContext;
 import depends.javaextractor.JavaParser.VariableModifierContext;
-import depends.util.Tuple;
 
 public class FormalParameterListContextHelper {
 
-	private FormalParametersContext formalParameters;
 	FormalParameterListContext context;
-
-	List<String> parameterTypes;
-	List<Tuple<String, String>> varList;
+	private IdGenerator idGenerator;
+	List<VarEntity> parameters;
 	private List<String> annotations;
+	private ContainerEntity container;
 
-	public FormalParameterListContextHelper(FormalParametersContext formalParameters) {
-		this.formalParameters = formalParameters;
-		this.context = this.formalParameters.formalParameterList();
-		parameterTypes = new ArrayList<>();
-		varList = new ArrayList<>();
-		annotations = new ArrayList<>();
-		if (context!=null)
-			extractParameterTypeList();
-	}
-
-	public Collection<String> getParameterTypeList(){
-		return parameterTypes;
-	}
-	public Collection<Tuple<String, String>> getVarList(){
-		return varList;
-	}
-
-	
-	public FormalParameterListContextHelper(FormalParameterListContext formalParameterListContext) {
+	public FormalParameterListContextHelper(FormalParameterListContext formalParameterListContext,ContainerEntity container, IdGenerator idGenerator) {
 		this.context = formalParameterListContext;
-		parameterTypes = new ArrayList<>();
-		varList = new ArrayList<>();
+		parameters = new ArrayList<>();
+		this.container = container;
 		annotations = new ArrayList<>();
+		this.idGenerator = idGenerator;
 		if (context!=null)
 			extractParameterTypeList();
 	}
 
+	public FormalParameterListContextHelper(FormalParametersContext formalParameters,ContainerEntity container, IdGenerator idGenerator) {
+		this(formalParameters.formalParameterList(),container,idGenerator);
+	}
+
+
+	public Collection<VarEntity> getParameterList(){
+		return parameters;
+	}
 
 	public void extractParameterTypeList() {
 		if (context != null) {
@@ -68,10 +60,9 @@ public class FormalParameterListContextHelper {
 
 	private void foundParameterDefintion(TypeTypeContext typeType, TerminalNode identifier, List<VariableModifierContext> variableModifier) {
 		String type = ClassTypeContextHelper.getClassName(typeType);
-		if (type!=null)
-			this.parameterTypes.add(type);
 		String var = identifier.getText();
-		varList.add(new Tuple<String, String>(type,var));	
+		VarEntity entity = new VarEntity(var,type,container,idGenerator.generateId());
+		parameters.add(entity);	
 
 		for ( VariableModifierContext modifier:variableModifier) {
 			if (modifier.annotation()!=null) {

@@ -1,23 +1,42 @@
 package depends.entity;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
+import depends.entity.repo.EntityRepo;
 import depends.entity.types.FunctionEntity;
+import depends.entity.types.TypeEntity;
 import depends.entity.types.VarEntity;
-import depends.extractor.HandlerContext;
 
 public abstract class ContainerEntity extends Entity {
 
     ArrayList<VarEntity> vars;
     ArrayList<FunctionEntity> functions;
-	HashMap<Integer, Expression> expressions;
 
-	public ContainerEntity(String fullName, int parentId, Integer id) {
-		super(fullName, parentId, id);
+    HashMap<Integer, Expression> expressions;
+    Collection<String> typeParameters;      //Generic type parameters like <T>, <String>, <? extends Object>
+	Collection<String> annotations = new ArrayList<>();
+    Collection<TypeEntity> resolvedTypeParameters= new ArrayList<>();
+    Collection<TypeEntity> resolvedAnnotations= new ArrayList<>();
+    
+	public void addAnnotation(String name) {
+		this.annotations.add(name);
+	}
+	
+
+
+	public ContainerEntity(String rawName, Entity parent, Integer id) {
+		super(rawName, parent, id);
 		vars = new ArrayList<>();
 		functions = new ArrayList<>();
 		expressions = new HashMap<>();
+		typeParameters = new ArrayList<>();
+	}
+	
+	public void addTypeParameter(String typeName) {
+		this.typeParameters.add(typeName);
 	}
 	
 	public void addVar(VarEntity var) {
@@ -32,6 +51,7 @@ public abstract class ContainerEntity extends Entity {
 		this.functions.add(functionEntity);
 	}
 	
+
 	public ArrayList<FunctionEntity> getFunctions() {
 		return this.functions;
 	}
@@ -54,20 +74,45 @@ public abstract class ContainerEntity extends Entity {
 	 * @param ctx
 	 * @param type
 	 */
-	public void updateParentReturnType(Integer id, String type, HandlerContext context) {
+	public void updateParentReturnType(Integer expressionId, TypeEntity type, EntityRepo bindingResolver) {
 		if (type==null ) return;
-		Expression thisExpression = expressions.get(id);
+		Expression thisExpression = expressions.get(expressionId);
 		if (thisExpression==null) return;
-		Expression d = expressions.get(thisExpression.parentId);
-		if (d==null) return;
-		if (d.returnType!=null) return;
-		if (d.isDot && (!d.isCall))
-			d.returnType = context.inferVarType(context.resolveTypeNameRef(type), d.identifier);
-		else if (d.isDot && d.isCall)
-			d.returnType = context.inferFunctionType(context.resolveTypeNameRef(type),d.identifier);
+		Expression parentExpression = expressions.get(thisExpression.parentId);
+		if (parentExpression==null) return;
+		if (parentExpression.returnType!=null) return;
+		if (parentExpression.isDot && (!parentExpression.isCall)){
+			VarEntity returnType = bindingResolver.resolveVarBindings(type, parentExpression.identifier);
+			if (returnType!=null)
+				parentExpression.returnType = returnType.getType();
+		}
+		else if (parentExpression.isDot && parentExpression.isCall){
+			FunctionEntity returnType = bindingResolver.resolveFunctionBindings(type,parentExpression.identifier);
+			if (returnType!=null)
+				parentExpression.returnType = returnType.getReturnType();			
+		}
 		else
-			d.returnType = type;
-		updateParentReturnType(d.id,d.returnType,context);
+			parentExpression.returnType = type;
+		updateParentReturnType(parentExpression.id,parentExpression.returnType,bindingResolver);
+	}
+
+	public Collection<TypeEntity> identiferToTypes(TypeInfer typeInferer,Collection<String> identifiers) {
+		ArrayList<TypeEntity> r = new ArrayList<>();
+
+		for (String typeParameter:identifiers) {
+			TypeEntity typeEntity = typeInferer.inferType(this, typeParameter);
+			if (typeEntity!=null)
+				r.add(typeEntity);
+		}
+		return r;
+	}
+
+	public  void inferLocalLevelTypes(TypeInfer typeInferer){
+		resolvedTypeParameters= identiferToTypes(typeInferer,typeParameters);
+		resolvedAnnotations= identiferToTypes(typeInferer,annotations);
+		for (VarEntity var:this.vars) {
+			var.inferLocalLevelTypes(typeInferer);
+		}
 	}
 
 }

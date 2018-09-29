@@ -1,21 +1,11 @@
 package depends.entity;
 
-import static org.junit.Assert.*;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import depends.deptypes.DependencyType;
-import depends.entity.Relation;
 import depends.entity.repo.EntityRepo;
-import depends.entity.types.FileEntity;
-import depends.entity.types.PackageEntity;
-import depends.entity.types.TypeEntity;
-import depends.extractor.java.JavaHandler;
+import depends.extractor.HandlerContext;
 import depends.format.matrix.DependencyMatrix;
 import depends.format.matrix.FileDependencyGenerator;
 
@@ -27,17 +17,16 @@ public class EntityRepoExpendsImportsOfPackageTest {
 	public void testExpendsPackageImports() {
 		EntityRepo entityRepo = new EntityRepo();
 
-		JavaHandler visitor = new JavaHandler(entityRepo);
+		HandlerContext visitor = new HandlerContext(entityRepo);
 		visitor.startFile("/tmp/fileA.java");
-		visitor.foundPackageDeclaration(packageName);
+		visitor.foundNewPackage(packageName);
 		visitor.startFile("/tmp/fileB.java");
-		visitor.foundPackageDeclaration(packageName);
+		visitor.foundNewPackage(packageName);
 		
 		visitor.startFile("/tmp/thefile.java");
-		visitor.foundImport(packageName);
+		visitor.foundNewImport(packageName);
 		
 		entityRepo.resolveAllBindings();
-        entityRepo.expendsPackageImports();
 		
 		FileDependencyGenerator dependencyGenerator= new FileDependencyGenerator();
         DependencyMatrix dependencyMatrix = dependencyGenerator.build(entityRepo);
@@ -49,16 +38,16 @@ public class EntityRepoExpendsImportsOfPackageTest {
 	public void testNormalImportNoNeedExpansion() {
 		EntityRepo entityRepo = new EntityRepo();
 
-		JavaHandler visitor = new JavaHandler(entityRepo);
-		visitor.startFile("/tmp/fileA.java");
-		visitor.foundPackageDeclaration(packageName);
-		visitor.foundClassOrInterface("ClassA");;
+		HandlerContext context = new HandlerContext(entityRepo);
+		context.startFile("/tmp/fileA.java");
+		context.foundNewPackage(packageName);
+		context.foundNewType("ClassA");;
 
-		visitor.startFile("/tmp/fileB.java");
-		visitor.foundPackageDeclaration(packageName);
+		context.startFile("/tmp/fileB.java");
+		context.foundNewPackage(packageName);
 		
-		visitor.startFile("/tmp/thefile.java");
-		visitor.foundImport(packageName+".ClassA");
+		context.startFile("/tmp/thefile.java");
+		context.foundNewImport(packageName+".ClassA");
 		
 		entityRepo.resolveAllBindings();
 		

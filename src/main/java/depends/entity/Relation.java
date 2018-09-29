@@ -12,6 +12,13 @@ public class Relation {
 		this.type = type;
 		this.toId = fileId;
 	}
+	
+	public Relation(String type, Integer fileId,String rhsFullName) {
+		this.type = type;
+		this.toId = fileId;
+		this.toFullName = rhsFullName;
+	}
+	
 	public String getType() {
 		return type;
 	}
