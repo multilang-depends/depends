@@ -135,11 +135,6 @@ public class HandlerContext {
 		}
 	}
 
-	public void foundVarDefintion(Collection<VarEntity> vars) {
-		for (VarEntity var : vars) {
-			lastContainer().addVar(var);
-		}
-	}
 
 	public void foundVarDefintion(String varName, String type) {
 		VarEntity var = new VarEntity(varName, type, lastContainer(), idGenerator.generateId());

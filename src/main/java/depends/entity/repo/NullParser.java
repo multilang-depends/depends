@@ -1,14 +1,8 @@
 package depends.entity.repo;
 
-import java.io.IOException;
+import depends.extractor.BuiltInTypeIdenfier;
 
-import depends.extractor.FileParser;
-
-public class NullBuildInProcessor extends FileParser {
-
-	@Override
-	public void parse() throws IOException {
-	}
+public class NullParser extends BuiltInTypeIdenfier {
 
 	@Override
 	public String[] getBuiltInTypeStr() {

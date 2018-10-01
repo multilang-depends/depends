@@ -3,29 +3,25 @@ package depends.entity;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 
 import depends.entity.repo.EntityRepo;
 import depends.entity.types.FunctionEntity;
 import depends.entity.types.TypeEntity;
 import depends.entity.types.VarEntity;
+import depends.util.Tuple;
 
 public abstract class ContainerEntity extends Entity {
+	private ArrayList<VarEntity> vars;
+	private ArrayList<FunctionEntity> functions;
+	private HashMap<Integer, Expression> expressions;
+	private Collection<String> typeParameters; // Generic type parameters like <T>, <String>, <? extends Object>
+	private Collection<String> annotations = new ArrayList<>();
+	private Collection<TypeEntity> resolvedTypeParameters = new ArrayList<>();
+	private Collection<TypeEntity> resolvedAnnotations = new ArrayList<>();
 
-    ArrayList<VarEntity> vars;
-    ArrayList<FunctionEntity> functions;
-
-    HashMap<Integer, Expression> expressions;
-    Collection<String> typeParameters;      //Generic type parameters like <T>, <String>, <? extends Object>
-	Collection<String> annotations = new ArrayList<>();
-    Collection<TypeEntity> resolvedTypeParameters= new ArrayList<>();
-    Collection<TypeEntity> resolvedAnnotations= new ArrayList<>();
-    
 	public void addAnnotation(String name) {
 		this.annotations.add(name);
 	}
-	
-
 
 	public ContainerEntity(String rawName, Entity parent, Integer id) {
 		super(rawName, parent, id);
@@ -34,11 +30,11 @@ public abstract class ContainerEntity extends Entity {
 		expressions = new HashMap<>();
 		typeParameters = new ArrayList<>();
 	}
-	
+
 	public void addTypeParameter(String typeName) {
 		this.typeParameters.add(typeName);
 	}
-	
+
 	public void addVar(VarEntity var) {
 		this.vars.add(var);
 	}
@@ -50,7 +46,6 @@ public abstract class ContainerEntity extends Entity {
 	public void addFunction(FunctionEntity functionEntity) {
 		this.functions.add(functionEntity);
 	}
-	
 
 	public ArrayList<FunctionEntity> getFunctions() {
 		return this.functions;
@@ -64,55 +59,103 @@ public abstract class ContainerEntity extends Entity {
 		expressions.put(expression.id, expression);
 	}
 
-	/**
-	 * Recursively update all types of parent after obtain the child type <br>
-	 * In AST, the parent type is determined by child. <br>
-	 * e.g : <br>
-	 *       (i=1)++
-	 *       i is an integer, i=1 is also an integer (determined by i)
-	 *       (i=1)++ is an integer (determined by i=1)
-	 * @param ctx
-	 * @param type
-	 */
-	public void updateParentReturnType(Integer expressionId, TypeEntity type, EntityRepo bindingResolver) {
-		if (type==null ) return;
-		Expression thisExpression = expressions.get(expressionId);
-		if (thisExpression==null) return;
-		Expression parentExpression = expressions.get(thisExpression.parentId);
-		if (parentExpression==null) return;
-		if (parentExpression.returnType!=null) return;
-		if (parentExpression.isDot && (!parentExpression.isCall)){
-			VarEntity returnType = bindingResolver.resolveVarBindings(type, parentExpression.identifier);
-			if (returnType!=null)
-				parentExpression.returnType = returnType.getType();
-		}
-		else if (parentExpression.isDot && parentExpression.isCall){
-			FunctionEntity returnType = bindingResolver.resolveFunctionBindings(type,parentExpression.identifier);
-			if (returnType!=null)
-				parentExpression.returnType = returnType.getReturnType();			
-		}
-		else
-			parentExpression.returnType = type;
-		updateParentReturnType(parentExpression.id,parentExpression.returnType,bindingResolver);
-	}
-
-	public Collection<TypeEntity> identiferToTypes(TypeInfer typeInferer,Collection<String> identifiers) {
+	public Collection<TypeEntity> identiferToTypes(TypeInfer typeInferer, Collection<String> identifiers) {
 		ArrayList<TypeEntity> r = new ArrayList<>();
-
-		for (String typeParameter:identifiers) {
-			TypeEntity typeEntity = typeInferer.inferType(this, typeParameter);
-			if (typeEntity!=null)
+		for (String typeParameter : identifiers) {
+			TypeEntity typeEntity = inferType(typeInferer, typeParameter);
+			if (typeEntity != null)
 				r.add(typeEntity);
 		}
 		return r;
 	}
 
-	public  void inferLocalLevelTypes(TypeInfer typeInferer){
-		resolvedTypeParameters= identiferToTypes(typeInferer,typeParameters);
-		resolvedAnnotations= identiferToTypes(typeInferer,annotations);
-		for (VarEntity var:this.vars) {
+	private TypeEntity inferType(TypeInfer typeInferer, String rawName) {
+		return typeInferer.inferType(this, rawName);
+	}
+
+	public void inferLocalLevelTypes(TypeInfer typeInferer) {
+		setResolvedTypeParameters(identiferToTypes(typeInferer, typeParameters));
+		resolvedAnnotations = identiferToTypes(typeInferer, annotations);
+		for (VarEntity var : this.vars) {
 			var.inferLocalLevelTypes(typeInferer);
+		}
+		for (FunctionEntity func:this.functions) {
+			func.inferLocalLevelTypes(typeInferer);
+		}
+		resolveExpressions(this,typeInferer);
+	}
+
+	private void resolveExpressions(ContainerEntity container, TypeInfer typeInferer) {
+		for (Expression expression : expressions.values()) {
+			if (expression.type != null)
+				continue;
+			if (expression.rawType != null) {
+				expression.type = typeInferer.inferType(this, expression.rawType);
+			}
+
+			if (expression.identifier != null && expression.rawType == null) {
+				if (expression.identifier.contains(".")) {
+					Tuple<TypeEntity, String> result = locateType(typeInferer, this, expression.identifier);
+					if (result != null) {
+						if (result.y == null) {
+							expression.type = result.x;
+						} else {
+							expression.type = typeInferer.inferType(result.x, result.y);
+						}
+					}
+				} else {
+					expression.type = lookupVarDefinition(expression.identifier);
+					if (expression.type==null)
+						expression.type = typeInferer.inferType(this, expression.identifier);
+				}
+			}
+			if (expression.type != null) {
+				expression.refreshParent(this.expressions,typeInferer);
+			}
 		}
 	}
 
+	private Tuple<TypeEntity, String> locateType(TypeInfer typeInferer, ContainerEntity fromEntity,
+			String qualifiedName) {
+		String localName = null;
+		while (true) {
+			TypeEntity type = typeInferer.inferType(fromEntity, qualifiedName);
+			if (type != null)
+				return new Tuple<TypeEntity, String>(type, localName);
+			int lpos = qualifiedName.lastIndexOf(".");
+			if (lpos < 0)
+				return null;
+			localName = localName == null ? qualifiedName.substring(lpos + 1)
+					: localName + "." + qualifiedName.substring(lpos + 1);
+			qualifiedName = qualifiedName.substring(0, lpos);
+			type = typeInferer.inferType(fromEntity, qualifiedName);
+			return new Tuple<TypeEntity, String>(type,localName);
+		}
+	}
+
+	public TypeEntity lookupVarDefinition(String identifier) {
+		for (VarEntity var : this.vars) {
+			if (var.getRawName().equals(identifier))
+				return var.getType();
+		}
+		if (this.parent != null && this.parent instanceof ContainerEntity)
+			return ((ContainerEntity) this.parent).lookupVarDefinition(identifier);
+		return null;
+	}
+
+	public Collection<TypeEntity> getResolvedTypeParameters() {
+		return resolvedTypeParameters;
+	}
+
+	public void setResolvedTypeParameters(Collection<TypeEntity> resolvedTypeParameters) {
+		this.resolvedTypeParameters = resolvedTypeParameters;
+	}
+
+	public Collection<TypeEntity> getResolvedAnnotations() {
+		return resolvedAnnotations;
+	}
+
+	public void setResolvedAnnotations(Collection<TypeEntity> resolvedAnnotations) {
+		this.resolvedAnnotations = resolvedAnnotations;
+	}
 }

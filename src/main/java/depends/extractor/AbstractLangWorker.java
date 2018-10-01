@@ -52,10 +52,10 @@ abstract public class AbstractLangWorker {
     }
     
     private void identifyDependencies(){
-        System.out.println("start analysising dependencies...");	
+        System.out.println("dependencie data generating...");	
         FileDependencyGenerator dependencyGenerator= new FileDependencyGenerator();
         dependencyMatrix  = dependencyGenerator.buildWithRemap(entityRepo);
-        System.out.println("dependencies analysising done successfully...");	 	
+        System.out.println("dependencie data generating done successfully...");	 	
     }
 	/**
      * parse the input parameter, save into configure

@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Set;
 
 import depends.deptypes.DependencyType;
-import depends.entity.BindingResolver;
 import depends.entity.ContainerEntity;
 import depends.entity.Entity;
+import depends.entity.Expression;
 import depends.entity.IdGenerator;
 import depends.entity.Relation;
 import depends.entity.TypeInfer;
@@ -19,13 +19,13 @@ import depends.entity.types.FunctionEntity;
 import depends.entity.types.PackageEntity;
 import depends.entity.types.TypeEntity;
 import depends.entity.types.VarEntity;
-import depends.extractor.FileParser;
+import depends.extractor.BuiltInTypeIdenfier;
 
-public class EntityRepo implements IdGenerator,BindingResolver,TypeInfer{
+public class EntityRepo implements IdGenerator,TypeInfer{
 	public HashMap<String, Entity> allEntieisByName = new HashMap<>();
 	public HashMap<Integer, Entity> allEntitiesById = new HashMap<>();
 	private int nextAvaliableIndex;
-	private FileParser buildInProcessor = new NullBuildInProcessor();
+	private BuiltInTypeIdenfier buildInProcessor = new NullParser();
 	private TypeEntity buildInType;
 	
 	public EntityRepo() {
@@ -82,13 +82,19 @@ public class EntityRepo implements IdGenerator,BindingResolver,TypeInfer{
 	}
 	
 	public Set<String> resolveAllBindings() {
+		System.out.println("Infer types of variables, methods and expressions....");
 		inferTypes();
+		System.out.println("Infer types done.");
+		System.out.println("Dependency analaysing....");
 		computeRelations();
+		System.out.println("Dependency done....");
+		System.out.println("Post-processing of dependency....");
     	HashSet<String> unsolved = new HashSet<>();
         for (Entity entity:allEntitiesById.values()) {
         	Set<String> u = entity.resolveBinding(this);
 			unsolved.addAll(u);
         }
+		System.out.println("Post-processing of dependency done.");
 		return unsolved;		
 
 	}
@@ -124,6 +130,32 @@ public class EntityRepo implements IdGenerator,BindingResolver,TypeInfer{
 			else
 				System.out.println("cannot resove type of "+var.getQualifiedName());
 		}
+		for (TypeEntity type:entity.getResolvedAnnotations()) {
+			entity.addRelation(new Relation(DependencyType.RELATION_USE,type.getId(),type.getQualifiedName()));
+		}
+		for (TypeEntity type:entity.getResolvedTypeParameters()) {
+			entity.addRelation(new Relation(DependencyType.RELATION_USE,type.getId(),type.getQualifiedName()));
+		}
+		
+		HashSet<TypeEntity> usedEntities = new HashSet<>();
+		for (Expression expression:entity.expressions().values()){
+			if (expression.type==null) {
+				System.out.println("not resolved expression:" + expression.text + " in " + entity.getQualifiedName());
+				continue;
+			}
+			if (expression.isCall) {
+				entity.addRelation(new Relation(DependencyType.RELATION_CALL,expression.type.getId(),expression.type.getQualifiedName()));
+			}
+			else if (expression.isSet) {
+				entity.addRelation(new Relation(DependencyType.RELATION_SET,expression.type.getId(),expression.type.getQualifiedName()));
+			}else {
+				usedEntities.add(expression.type);
+			}
+		}
+		
+		for (TypeEntity usedEntity:usedEntities) {
+			entity.addRelation(new Relation(DependencyType.RELATION_USE,usedEntity.getId(),usedEntity.getQualifiedName()));
+		}
 	}
 
 	private void computeTypeRelations(TypeEntity type) {
@@ -158,7 +190,7 @@ public class EntityRepo implements IdGenerator,BindingResolver,TypeInfer{
 			if (this.buildInProcessor.isBuiltInTypePrefix(item)) continue;
 			Entity imported = this.getEntity(item);
 			if (imported==null) {
-				System.out.println("imported cannot be resolved: " + file.getQualifiedName() + "->" + item);
+				System.out.println("imported cannot be resolved: " + file.getRawName() + "->" + item);
 				continue;
 			}
 			if (imported instanceof PackageEntity) { 
@@ -178,28 +210,6 @@ public class EntityRepo implements IdGenerator,BindingResolver,TypeInfer{
 	public void addRelation(int theEntityId, String entityFullName, String relationType) {
 	        getEntity(theEntityId).addRelation(new Relation(relationType,entityFullName));
 	}
-	
-	@Override
-	public String inferQualifiedName(Entity theEntity, String rawTypeName) {
-		if (rawTypeName.isEmpty()) return "";
-		String prefix = "";
-		while (theEntity!=null) {
-			if (theEntity instanceof FileEntity) continue; //file name should be bypass. use package name instead 
-			if(theEntity.getQualifiedName()!=null &&
-					theEntity.getQualifiedName().length()>0 &&
-					!(theEntity.getQualifiedName().startsWith("<Anony>"))) {
-				prefix = theEntity.getQualifiedName();
-				break;
-			}
-			theEntity = theEntity.getParent();
-		}
-		if (prefix.isEmpty()) {
-			return rawTypeName;
-		}else {
-			return  prefix + "." + rawTypeName;
-		}
-	}
-	
 	
 	@Override
 	public VarEntity resolveVarBindings(Entity theContainer, String varName) {
@@ -244,10 +254,22 @@ public class EntityRepo implements IdGenerator,BindingResolver,TypeInfer{
 		if (rawName.contains(".")) {
 			return getTypeEntityByFullName(rawName);
 		}
+		if (rawName.equals("this")) {
+			if (fromEntity instanceof TypeEntity)
+			return (TypeEntity)fromEntity;
+		}
+		else if (rawName.equals("super")) {
+			if (fromEntity instanceof TypeEntity)
+				return ((TypeEntity)fromEntity).getInheritedType();
+		}
+		
 		while(true) {
 			if (fromEntity instanceof TypeEntity) {
 				if (fromEntity.getRawName().equals(rawName))
 					return (TypeEntity)fromEntity;
+				FunctionEntity var = resolveFunctionBindings(fromEntity,rawName);	
+				if (var!=null)
+					return var.getReturnType(); 				
 			}
 			if (fromEntity instanceof FileEntity) {
 				String importedFullName = ((FileEntity)fromEntity).getImport(rawName);
@@ -260,14 +282,22 @@ public class EntityRepo implements IdGenerator,BindingResolver,TypeInfer{
 				type = this.getTypeEntityUnder(rawName,fromEntity);
 				if(type!=null) return type;
 			}
+			if (fromEntity instanceof ContainerEntity) {
+				VarEntity var = resolveVarBindings(fromEntity,rawName);	
+				if (var!=null)
+					return var.getType(); 
+			}
 			fromEntity = fromEntity.getParent();
 			if (fromEntity==null) break;
 		}
+		
+		type = getTypeEntityByFullName(rawName);
 		if (type==null) {
-			System.out.println("cannot infer type of " + rawName);
+			System.out.println("cannot resolve raw type:" + rawName);
 		}
 		return type;
 	}
+	
 	private TypeEntity buildInType() {
 		return this.buildInType;
 	}
@@ -301,9 +331,7 @@ public class EntityRepo implements IdGenerator,BindingResolver,TypeInfer{
 		return null;
 	}
 	
-	@Override
-	public void addBuiltIn(FileParser fileParser) {
-		this.buildInProcessor = fileParser;
+	public void setBuiltInTypeIdentifier(BuiltInTypeIdenfier buildInProcessor) {
+		this.buildInProcessor = buildInProcessor;
 	}
-
 }

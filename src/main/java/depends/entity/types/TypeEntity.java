@@ -2,7 +2,6 @@ package depends.entity.types;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import depends.entity.ContainerEntity;
 import depends.entity.Entity;
@@ -13,7 +12,9 @@ public class TypeEntity extends ContainerEntity{
 	Collection<TypeEntity> implementedTypes;
 	Collection<String> inhertedTypeIdentifiers;
 	Collection<String> implementedIdentifiers;
- 	public TypeEntity(String simpleName, Entity parent, Integer id) {
+	TypeEntity inheritedType;
+
+	public TypeEntity(String simpleName, Entity parent, Integer id) {
 		super(simpleName,parent,id);
 		inhertedTypeIdentifiers = new ArrayList<>();
 		implementedIdentifiers = new ArrayList<>();
@@ -22,6 +23,8 @@ public class TypeEntity extends ContainerEntity{
 	public void inferLocalLevelTypes(TypeInfer typeInferer) {
 		inheritedTypes= identiferToTypes(typeInferer,this.inhertedTypeIdentifiers);
 		implementedTypes= identiferToTypes(typeInferer,this.implementedIdentifiers);
+		if (inheritedTypes.size()>0)
+			inheritedType = inheritedTypes.iterator().next();
 		super.inferLocalLevelTypes(typeInferer);
 	}
 	public void addImplements(String typeName) {
@@ -36,5 +39,9 @@ public class TypeEntity extends ContainerEntity{
 	
 	public Collection<TypeEntity> getImplementedTypes() {
 		return implementedTypes;
+	}
+	
+ 	public TypeEntity getInheritedType() {
+		return inheritedType;
 	}
 }

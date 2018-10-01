@@ -41,8 +41,7 @@ public class JavaVarResolveTest {
         JavaFileParser parser = new JavaFileParser(src,repo);
         parser.parse();
         repo.resolveAllBindings();
-       //8 set included
-        assertEquals(10,repo.getEntity("LocalVarInferExample.setExample").getRelations().size());
+        assertEquals(15,repo.getEntity("LocalVarInferExample.setExample").getRelations().size());
         
 	}
 	

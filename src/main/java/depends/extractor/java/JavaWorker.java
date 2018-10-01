@@ -1,8 +1,5 @@
 package depends.extractor.java;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import depends.extractor.AbstractLangWorker;
 import depends.extractor.FileParser;
 

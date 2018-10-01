@@ -16,7 +16,14 @@ public class ExpressionUsage {
 
 	public void foundExpression(ExpressionContext ctx) {
 		RuleContext parent = findParentInStack(ctx);
+
+		/* create expression and link it with parent*/
 		Expression expression = new Expression(ctx.hashCode(),parent==null?null:parent.hashCode());
+		if (parent!=null) {
+			Expression parentExpression = context.lastContainer().expressions().get(parent.hashCode());
+			if (parentExpression.firstChildId==null) parentExpression.firstChildId = expression.id;
+		}
+		
 		context.lastContainer().addExpression(expression);
 		expression.text = ctx.getText(); //for debug purpose. no actual effect
 		Tuple<String, String> nodeInfo = getExpressionType(ctx);
@@ -41,7 +48,10 @@ public class ExpressionUsage {
 		expression.isDot = isDot(ctx);
 		expression.isSet = isSet(ctx);
 		expression.isCall = ctx.methodCall()==null?false:true;
+		expression.isLogic = isLogic(ctx);
 	}
+
+
 
 	/**
 	 * To determine the return type of the expression, 
@@ -66,6 +76,16 @@ public class ExpressionUsage {
 			if (ctx.bop.getText().equals(".")) return true;
 		return false;
 	}
+	
+	private boolean isLogic(ExpressionContext ctx) {
+		if (ctx.bop != null) {
+			if (OpHelper.isLogic(ctx.bop.getText())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public boolean isSet(ExpressionContext ctx) {
 		if (ctx.bop != null) {
 			if (OpHelper.isAssigment(ctx.bop.getText())) {
@@ -82,6 +102,7 @@ public class ExpressionUsage {
 				return true;
 			}
 		}
+		
 		return false;
 	}
 	
@@ -103,7 +124,7 @@ public class ExpressionUsage {
 		if (ctx.expression()!=null) return null; 
 		if (ctx.literal()!=null) {
 		//2. if it is a build-in type like "hello"(string), 10(integer), etc.
-			type = "Built-in";
+			type = "<Built-in>";
 			varName = ctx.literal().getText();
 		}else if (ctx.IDENTIFIER()!=null) {
 		//2. if it is a var name, dertermine the type based on context.
