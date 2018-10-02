@@ -1,29 +1,18 @@
-public class MazeFactory
+import java.awt.Color;
+
+/**
+ *
+ * @author Sunny
+ * @version 1.0
+ * @since 1.0
+ */
+public class Door extends MapSite
 {
-        private int count = 0;
+	private boolean open;
 
-        protected final int nextRoomNumber()
-        {
-                return count++;
-        }
-
-        public Maze makeMaze()
-        {
-                return new Maze();
-        }
-
-        public Room makeRoom()
-        {
-                return new Room(nextRoomNumber());
-        }
-
-        public Wall makeWall()
-        {
-                return new Wall();
-        }
-
-        public Door makeDoor(final Room r1, final Room r2)
-        {
-                return new Door(r1, r2);
-        }
+	public final void setOpen(boolean open)
+	{
+		this.open = open;
+	}
+	
 }

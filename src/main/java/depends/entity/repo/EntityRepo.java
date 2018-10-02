@@ -285,7 +285,7 @@ public class EntityRepo implements IdGenerator,TypeInfer{
 		if (rawName.equals("this")) {
 			Entity entityType = this.getAncestorOfType(fromEntity, TypeEntity.class);
 			if (entityType!=null) {
-				return (TypeEntity) type;
+				return (TypeEntity) entityType;
 			}
 		}
 		else if (rawName.equals("super")) {
