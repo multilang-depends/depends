@@ -43,7 +43,7 @@ public class ExpressionUsage {
 			}
 		}
 		else if (expression.identifier==null && (ctx.NEW()!=null && ctx.creator()!=null)){
-			expression.identifier = ctx.creator().createdName().IDENTIFIER(0).getText();
+			expression.identifier = CreatorContextHelper.getCreatorType(ctx.creator());
 		}
 		expression.isDot = isDot(ctx);
 		expression.isSet = isSet(ctx);
@@ -66,7 +66,7 @@ public class ExpressionUsage {
 			return new Tuple<String,String>(ctx.typeType().getText(),"");
 		}
 		if (ctx.NEW()!=null & ctx.creator()!=null) {
-			return new Tuple<String,String>(ctx.creator().createdName().IDENTIFIER(0).getText(),"");
+			return new Tuple<String,String>(CreatorContextHelper.getCreatorType(ctx.creator()),"");
 		}
 		return null;
 	}
