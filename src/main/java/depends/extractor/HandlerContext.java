@@ -56,6 +56,7 @@ public class HandlerContext {
 		FunctionEntity functionEntity = new FunctionEntity(methodName, this.latestValidContainer(),
 				idGenerator.generateId(),returnType,parameters);
 		entityRepo.add(functionEntity);
+		this.currentType().addFunction(functionEntity);
 		entityStack.push(functionEntity);
 		functionEntity.addThrowTypes(throwedType);
 	}
@@ -139,5 +140,10 @@ public class HandlerContext {
 	public void foundVarDefintion(String varName, String type) {
 		VarEntity var = new VarEntity(varName, type, lastContainer(), idGenerator.generateId());
 		lastContainer().addVar(var);		
+	}
+
+	public void foundEnumConstDefinition(String varName) {
+		String type = lastContainer().getRawName();
+		foundVarDefintion(varName,type);
 	}
 }

@@ -66,6 +66,18 @@ public class EntityRepo implements IdGenerator,TypeInfer{
 	public Integer generateId() {
 		return nextAvaliableIndex++;
 	}
+	
+	
+
+	private Entity getAncestorOfType(Entity fromEntity, Class<TypeEntity> classType) {
+		while(fromEntity!=null) {
+			if (fromEntity.getClass().equals(classType))
+				return fromEntity;
+			if (fromEntity.getParent()==null) return null;
+			fromEntity = fromEntity.getParent();
+		}
+		return null;
+	}
 
 	public int getAncestorOfType(int entityId, @SuppressWarnings("rawtypes") Class classType) throws EntityNotExistsException, NoRequestedTypeOfAncestorExistsException {
 		Entity e = this.getEntity(entityId);
@@ -229,14 +241,31 @@ public class EntityRepo implements IdGenerator,TypeInfer{
 	public FunctionEntity resolveFunctionBindings(Entity theContainer, String varName) {
 		while(theContainer!=null) {
 			if (theContainer instanceof TypeEntity) {
-				for (FunctionEntity var:((TypeEntity)theContainer).getFunctions()) {
-					if (var.getRawName().equals(varName))
-						return var;
-				}
+				TypeEntity theType = (TypeEntity)theContainer;
+				FunctionEntity func = findFunctionFromType(theType, varName);
+				if (func!=null) return func;
 			}
 			theContainer = theContainer.getParent();
 		}
 		return null;
+	}
+
+	private FunctionEntity findFunctionFromType(TypeEntity type, String functionName) {
+		for (FunctionEntity var:(type).getFunctions()) {
+			if (var.getRawName().equals(functionName))
+				return var;
+		}
+		FunctionEntity funcType = null; 
+		for (TypeEntity inhertedType:type.getInheritedTypes()) {
+			funcType= findFunctionFromType(inhertedType,functionName);
+			if (funcType==null) break;
+		}
+		if (funcType!=null) return funcType;
+		for (TypeEntity implType:type.getImplementedTypes()) {
+			funcType= findFunctionFromType(implType,functionName);
+			if (funcType==null) break;
+		}
+		return funcType;
 	}
 	
 	public void setParent(Entity child, Entity parent) {
@@ -248,19 +277,22 @@ public class EntityRepo implements IdGenerator,TypeInfer{
 	public TypeEntity inferType(Entity fromEntity, String rawName) {
 		if (buildInProcessor.isBuiltInType(rawName)) return buildInType();
 		if (buildInProcessor.isBuiltInTypePrefix(rawName)) return buildInType();
-		
 		if (fromEntity==null) return null;
 		TypeEntity type = null;
 		if (rawName.contains(".")) {
 			return getTypeEntityByFullName(rawName);
 		}
 		if (rawName.equals("this")) {
-			if (fromEntity instanceof TypeEntity)
-			return (TypeEntity)fromEntity;
+			Entity entityType = this.getAncestorOfType(fromEntity, TypeEntity.class);
+			if (entityType!=null) {
+				return (TypeEntity) type;
+			}
 		}
 		else if (rawName.equals("super")) {
-			if (fromEntity instanceof TypeEntity)
-				return ((TypeEntity)fromEntity).getInheritedType();
+			Entity entityType = this.getAncestorOfType(fromEntity, TypeEntity.class);
+			if (entityType!=null) {
+				return ((TypeEntity)entityType).getInheritedType();
+			}
 		}
 		
 		while(true) {
@@ -292,12 +324,11 @@ public class EntityRepo implements IdGenerator,TypeInfer{
 		}
 		
 		type = getTypeEntityByFullName(rawName);
-		if (type==null) {
-			System.out.println("cannot resolve raw type:" + rawName);
-		}
 		return type;
 	}
 	
+
+
 	private TypeEntity buildInType() {
 		return this.buildInType;
 	}

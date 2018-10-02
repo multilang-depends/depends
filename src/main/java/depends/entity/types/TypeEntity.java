@@ -8,8 +8,8 @@ import depends.entity.Entity;
 import depends.entity.TypeInfer;
 
 public class TypeEntity extends ContainerEntity{
-	Collection<TypeEntity> inheritedTypes;
-	Collection<TypeEntity> implementedTypes;
+	Collection<TypeEntity> inheritedTypes = new ArrayList<>();
+	Collection<TypeEntity> implementedTypes = new ArrayList<>();
 	Collection<String> inhertedTypeIdentifiers;
 	Collection<String> implementedIdentifiers;
 	TypeEntity inheritedType;

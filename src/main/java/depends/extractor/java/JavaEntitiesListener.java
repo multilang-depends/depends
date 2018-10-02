@@ -23,6 +23,7 @@ import depends.javaextractor.JavaParser.ClassDeclarationContext;
 import depends.javaextractor.JavaParser.ConstDeclarationContext;
 import depends.javaextractor.JavaParser.ConstructorDeclarationContext;
 import depends.javaextractor.JavaParser.EnhancedForControlContext;
+import depends.javaextractor.JavaParser.EnumConstantContext;
 import depends.javaextractor.JavaParser.EnumDeclarationContext;
 import depends.javaextractor.JavaParser.ExpressionContext;
 import depends.javaextractor.JavaParser.FieldDeclarationContext;
@@ -240,6 +241,13 @@ public class JavaEntitiesListener extends JavaParserBaseListener {
 				ClassTypeContextHelper.getClassName(ctx.typeType()));
 		annotationProcessor.processAnnotationModifier(ctx, "interfaceBodyDeclaration");
 		super.enterConstDeclaration(ctx);
+	}
+	
+	@Override
+	public void enterEnumConstant(EnumConstantContext ctx) {
+		if (ctx.IDENTIFIER()!=null)
+		context.foundEnumConstDefinition(ctx.IDENTIFIER().getText());
+		super.enterEnumConstant(ctx);
 	}
 
 	@Override

@@ -59,7 +59,6 @@ public class Expression {
 		if (parent.type != null)return;
 		if (parent.firstChildId!=this.id) return;
 		if (parent.type!=null) return;
-		
 		if (parent.isLogic) {
 			parent.returnType = bindingResolver.inferType(this.returnType, "<Built-in>");
 			parent.type = bindingResolver.inferType(this.returnType, "<Built-in>");
