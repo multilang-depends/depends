@@ -123,6 +123,16 @@ public abstract class Entity {
 	public String toString() {
 		return "Entity [id=" + id + ", qualifiedName=" + qualifiedName + ", rawName=" + rawName + "]";
 	}
-	
+
+	public Entity getAncestorOfType(@SuppressWarnings("rawtypes") Class classType) {
+		Entity fromEntity = this;
+		while(fromEntity!=null) {
+			if (fromEntity.getClass().equals(classType))
+				return fromEntity;
+			if (fromEntity.getParent()==null) return null;
+			fromEntity = fromEntity.getParent();
+		}
+		return null;
+	}
 	
 }

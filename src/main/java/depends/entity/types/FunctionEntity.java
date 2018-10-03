@@ -56,6 +56,7 @@ public class FunctionEntity extends ContainerEntity{
 	public Collection<TypeEntity> getThrowTypes() {
 		return throwTypes;
 	}
+	
 	@Override
 	public TypeEntity lookupVarDefinition(String identifier) {
 		for (VarEntity param:parameters) {

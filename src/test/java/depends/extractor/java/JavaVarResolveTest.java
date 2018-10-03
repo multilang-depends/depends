@@ -41,8 +41,7 @@ public class JavaVarResolveTest {
         JavaFileParser parser = new JavaFileParser(src,repo);
         parser.parse();
         repo.resolveAllBindings();
-        assertEquals(15,repo.getEntity("LocalVarInferExample.setExample").getRelations().size());
-        
+        assertEquals(16,repo.getEntity("LocalVarInferExample.setExample").getRelations().size());
 	}
 	
 	@Test
@@ -52,7 +51,7 @@ public class JavaVarResolveTest {
         JavaFileParser parser = new JavaFileParser(src,repo);
         parser.parse();
         repo.resolveAllBindings();
-        assertEquals(13,repo.getEntity("test.ComplexExpressionExample.setExample").getRelations().size());
+        assertEquals(12,repo.getEntity("test.ComplexExpressionExample.setExample").getRelations().size());
 	}
 	
 }

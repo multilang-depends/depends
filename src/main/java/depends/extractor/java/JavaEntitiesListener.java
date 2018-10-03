@@ -1,12 +1,10 @@
 package depends.extractor.java;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import depends.entity.IdGenerator;
 import depends.entity.repo.EntityRepo;
-import depends.entity.types.VarEntity;
 import depends.extractor.HandlerContext;
 import depends.extractor.java.context.AnnotationProcessor;
 import depends.extractor.java.context.ClassTypeContextHelper;
@@ -27,21 +25,16 @@ import depends.javaextractor.JavaParser.EnumConstantContext;
 import depends.javaextractor.JavaParser.EnumDeclarationContext;
 import depends.javaextractor.JavaParser.ExpressionContext;
 import depends.javaextractor.JavaParser.FieldDeclarationContext;
-import depends.javaextractor.JavaParser.FormalParametersContext;
 import depends.javaextractor.JavaParser.ImportDeclarationContext;
 import depends.javaextractor.JavaParser.InterfaceDeclarationContext;
 import depends.javaextractor.JavaParser.InterfaceMethodDeclarationContext;
 import depends.javaextractor.JavaParser.LocalVariableDeclarationContext;
 import depends.javaextractor.JavaParser.MethodDeclarationContext;
 import depends.javaextractor.JavaParser.PackageDeclarationContext;
-import depends.javaextractor.JavaParser.QualifiedNameContext;
-import depends.javaextractor.JavaParser.QualifiedNameListContext;
 import depends.javaextractor.JavaParser.ResourceContext;
 import depends.javaextractor.JavaParser.TypeParameterContext;
 import depends.javaextractor.JavaParser.TypeParametersContext;
-import depends.javaextractor.JavaParser.TypeTypeOrVoidContext;
 import depends.javaextractor.JavaParserBaseListener;
-import depends.util.Tuple;
 
 public class JavaEntitiesListener extends JavaParserBaseListener {
 	private HandlerContext context;
@@ -332,7 +325,3 @@ public class JavaEntitiesListener extends JavaParserBaseListener {
 
 }
 
-/**
- * unaryExpressionNotPlusMinus : postfixExpression | '~' unaryExpression | '!'
- * unaryExpression | castExpression
- */

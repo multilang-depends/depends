@@ -1,5 +1,9 @@
 package depends.entity;
 
+/**
+ * Dependency relation object
+ *
+ */
 public class Relation {
 	private String type;
 	private Integer toId = -1;

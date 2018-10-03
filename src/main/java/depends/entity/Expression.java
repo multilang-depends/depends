@@ -49,33 +49,48 @@ public class Expression {
 		return s.toString();
 	}
 
-	public void refreshParent(HashMap<Integer, Expression> expressionRepo, TypeInfer bindingResolver) {
+	/**
+	 * deduce type of parent based on child's type
+	 * @param expressionList
+	 * @param typeInfer
+	 */
+	public void deduceParentType(HashMap<Integer, Expression> expressionList, TypeInfer typeInfer) {
 		if (this.type==null) return;
 		if (this.returnType==null) this.returnType = this.type; //we use return type as recurisely calcuation
 		if (this.parentId==null) return;
-		if (expressionRepo==null) return;
-		Expression parent = expressionRepo.get(this.parentId);
+		if (expressionList==null) return;
+		Expression parent = expressionList.get(this.parentId);
 		if (parent==null) return;
 		if (parent.type != null)return;
 		if (parent.firstChildId!=this.id) return;
 		if (parent.type!=null) return;
+		
+		/* if it is a logic expression, the return type/type is boolean. */
 		if (parent.isLogic) {
-			parent.returnType = bindingResolver.inferType(this.returnType, "<Built-in>");
-			parent.type = bindingResolver.inferType(this.returnType, "<Built-in>");
+			parent.returnType = typeInfer.inferType(this.returnType, "<Built-in>");
+			parent.type = typeInfer.inferType(this.returnType, "<Built-in>");
 		}
+		
+		/* if it is a.b, and we already get a's type, b's type could be identified easily  */
 		else if (parent.isDot && (!parent.isCall)) {
-			VarEntity returnType = bindingResolver.resolveVarBindings(this.returnType, parent.identifier);
+			VarEntity returnType = typeInfer.resolveVarBindings(this.returnType, parent.identifier);
 			if (returnType != null)
 				parent.type = returnType.getType();
-		} else if (parent.isDot && parent.isCall) {
-			FunctionEntity returnType = bindingResolver.resolveFunctionBindings(this.returnType, parent.identifier);
-			if (returnType != null){
-				parent.returnType =  returnType.getReturnType();
+		}
+		/* if it is a.foo, and we already get a's type, foo's type could be identified easily  */
+		else if (parent.isDot && parent.isCall) {
+			FunctionEntity function = typeInfer.resolveFunctionBindings(this.returnType, parent.identifier);
+			if (function != null){
+				parent.returnType =  function.getReturnType();
 			}
+			/* type is used for relation calculation, while return type is used for continuous type calculation */
 			parent.type = this.type; //in call relation, we count call in object, instead of function
-		} else
+		} 
+		/* if other situation, simple make the parent and child type same */
+		else {
 			parent.type = type;
+		}
 		
-		parent.refreshParent(expressionRepo, bindingResolver);
+		parent.deduceParentType(expressionList, typeInfer);
 	}
 }
