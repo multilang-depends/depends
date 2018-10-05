@@ -4,6 +4,7 @@ import org.antlr.v4.runtime.RuleContext;
 
 import depends.entity.Expression;
 import depends.extractor.HandlerContext;
+import depends.javaextractor.JavaParser;
 import depends.javaextractor.JavaParser.ExpressionContext;
 import depends.javaextractor.JavaParser.PrimaryContext;
 import depends.util.Tuple;
@@ -49,6 +50,14 @@ public class ExpressionUsage {
 		expression.isSet = isSet(ctx);
 		expression.isCall = ctx.methodCall()==null?false:true;
 		expression.isLogic = isLogic(ctx);
+		if (ctx.creator()!=null ||
+				ctx.methodCall()!=null)
+			expression.deriveTypeFromChild = false;
+		expression.isCall = true;
+		if (ctx.creator()!=null ||
+				ctx.innerCreator()!=null)
+			expression.isCreate = true;
+			
 	}
 
 

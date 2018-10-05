@@ -1,6 +1,7 @@
 package depends.format.matrix;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,6 +13,7 @@ public class DependencyMatrix {
     private Map<Integer, Map<Integer, Map<String, Integer>>> reMappedRelations = new HashMap<Integer, Map<Integer, Map<String, Integer>>>();
 
     private ArrayList<String> nodes;
+    private ArrayList<String> reMappedNodes;
 	private Integer relationCount=0;
     public DependencyMatrix() {
     }
@@ -56,6 +58,8 @@ public class DependencyMatrix {
 	}
 
 	public ArrayList<String> getNodes() {
+		if (reMappedRelations.size()>0) 
+			return reMappedNodes;
 		return nodes;
 	}
 
@@ -70,8 +74,16 @@ public class DependencyMatrix {
 
 	public void remapIds(EntityRepo repo) {
 		HashMap<String, Integer> nodesMap = new HashMap<>();
-		for (int i=0;i<nodes.size();i++) {
-			nodesMap.put(nodes.get(i), i);
+		reMappedNodes = new ArrayList<>(nodes);
+		reMappedNodes.sort(new Comparator<String>() {
+			@Override
+			public int compare(String o1, String o2) {
+				return o1.compareTo(o2);
+			}
+		});
+
+		for (int i=0;i<reMappedNodes.size();i++) {
+			nodesMap.put(reMappedNodes.get(i), i);
 		}
 		
 		for (Integer key:relations.keySet()) {

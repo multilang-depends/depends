@@ -60,6 +60,9 @@ public class RelationCounter {
 			if (expression.isCall) {
 				entity.addRelation(new Relation(DependencyType.RELATION_CALL,expression.type.getId(),expression.type.getQualifiedName()));
 			}
+			if (expression.isCreate) {
+				entity.addRelation(new Relation(DependencyType.RELATION_CREATE,expression.type.getId(),expression.type.getQualifiedName()));
+			}
 			else if (expression.isSet) {
 				entity.addRelation(new Relation(DependencyType.RELATION_SET,expression.type.getId(),expression.type.getQualifiedName()));
 			}else {

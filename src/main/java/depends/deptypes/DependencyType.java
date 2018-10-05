@@ -3,39 +3,17 @@ package depends.deptypes;
 import java.util.ArrayList;
 
 public class DependencyType {
-	
-    // struct->method
-    public static final String RELATION_RECEIVED_BY = "Received by";
     public static final String RELATION_RECEIVE = "Receive";
-
-    //structType/aliasType->interface
     public static final String RELATION_IMPLEMENT = "Implement";
-    public static final String RELATION_IMPLEMENTED_BY = "Implemented by";
-
-    //file->package
     public static final String RELATION_IMPORT = "Import";
-
-    //function-function; function->method; method->function; method->method
     public static final String RELATION_CALL = "Call";
-
-    //function/method->var
     public static final String RELATION_PARAMETER = "Parameter";
-
-    //function/method->var
     public static final String RELATION_RETURN = "Return";
-
-    //function/method->OperandVar
     public static final String RELATION_SET = "Set";
-
-    //function/method->OperandVar
     public static final String RELATION_USE = "Use";
-
-    public static final String RELATION_INHERIT = "Inherit";
-    
+    public static final String RELATION_INHERIT = "Extend";
 	public static final String RELATION_DEFINE = "Define";
-
-    public static final String RELATION_EMBED = "Embed";
-    public static final String RELATION_EMBED_BY = "Embeded by";
+	public static final String RELATION_CREATE = "Create";
 
     /**
      * Mask of dependencies.

@@ -65,5 +65,9 @@ public class Configure {
 	public AbstractLangWorker getWorker() {
 		return worker;
 	}
+
+	public String getOutputExcelFile() {
+		return analyzedProjectName + "_dep.xls";
+	}
 }
 

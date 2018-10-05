@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.junit.Test;
 
+import depends.entity.Entity;
 import depends.entity.repo.EntityRepo;
 
 public class ProductionErrorReproducer {
@@ -14,6 +15,8 @@ public class ProductionErrorReproducer {
         JavaFileParser parser = new JavaFileParser(src,repo);
         parser.parse();
         repo.resolveAllBindings();
+        Entity t = repo.getEntity("maze.BlueMazeFactory.makeDoor");
+        System.out.println(t);
 	}
 
 }

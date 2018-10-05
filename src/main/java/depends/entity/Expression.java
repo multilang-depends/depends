@@ -23,6 +23,8 @@ public class Expression {
 	public boolean isDot = false; // is a dot expression, will decuce variable tfype left to right
 	public boolean isCall = false;
 	public boolean isLogic = false;
+	public boolean isCreate = false;
+	public boolean deriveTypeFromChild = true;
 	List<Tuple<String, String>> relations = new ArrayList<>();
 
 	public Expression(Integer id, Integer parentId) {
@@ -62,6 +64,7 @@ public class Expression {
 		Expression parent = expressionList.get(this.parentId);
 		if (parent==null) return;
 		if (parent.type != null)return;
+		if (!parent.deriveTypeFromChild) return;
 		if (parent.firstChildId!=this.id) return;
 		if (parent.type!=null) return;
 		

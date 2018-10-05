@@ -7,6 +7,7 @@ import java.util.Set;
 
 import depends.deptypes.DependencyType;
 import depends.entity.repo.EntityRepo;
+import depends.format.excel.ExcelDataBuilder;
 import depends.format.json.JDataBuilder;
 import depends.format.json.JDepObject;
 import depends.format.json.JsonFormatter;
@@ -103,5 +104,10 @@ abstract public class AbstractLangWorker {
         XmlFormatter xmlFormatter = new XmlFormatter();
         xmlFormatter.toXml(xDepObject,configure.getOutputXmlFile());
         System.out.println("Export " + configure.getOutputXmlFile() + " successfully...");
+        
+		ExcelDataBuilder builder = new ExcelDataBuilder(dependencyMatrix);
+		builder.output(configure.getOutputExcelFile());
+		System.out.println("Export " + configure.getOutputExcelFile() + " successfully...");
+        
     }
 }
