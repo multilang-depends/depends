@@ -4,6 +4,7 @@ import static java.lang.System.exit;
 
 import depends.extractor.AbstractLangWorker;
 import depends.extractor.LangWorkers;
+import depends.extractor.cpp.CppWorker;
 import depends.extractor.java.JavaWorker;
 
 public class Main {
@@ -22,6 +23,8 @@ public class Main {
 		}
 		
 		new JavaWorker().register();
+		new CppWorker().register();
+
 		String lang = args[0];
         String inputDir = args[1];
         String usageDir = args[2];

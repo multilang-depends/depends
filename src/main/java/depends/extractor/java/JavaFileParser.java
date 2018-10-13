@@ -18,9 +18,9 @@ public class JavaFileParser implements depends.extractor.FileParser{
 	private String fileFullPath;
 	private EntityRepo entityRepo;
 	
-	public class JavaBuiltInType extends BuiltInTypeIdenfier{
+	public class BuiltInType extends BuiltInTypeIdenfier{
 		
-		public JavaBuiltInType() {
+		public BuiltInType() {
 	        super.createBuiltInTypes();
 		}
 		
@@ -44,7 +44,7 @@ public class JavaFileParser implements depends.extractor.FileParser{
 	public JavaFileParser(String fileFullPath,EntityRepo entityRepo) {
         this.fileFullPath = fileFullPath;
         this.entityRepo = entityRepo;
-        entityRepo.setBuiltInTypeIdentifier(new JavaBuiltInType());
+        entityRepo.setBuiltInTypeIdentifier(new BuiltInType());
 	}
 
 
