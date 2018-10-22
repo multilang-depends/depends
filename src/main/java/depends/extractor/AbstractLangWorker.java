@@ -26,18 +26,18 @@ abstract public class AbstractLangWorker {
 	
 	public abstract String fileSuffix();
 	
-    protected static Configure configure = Configure.getConfigureInstance();
+    private Configure configure = new Configure();
 
     DependencyMatrix dependencyMatrix;
 
     protected EntityRepo entityRepo = new EntityRepo();
     
-	public void work(String lang, String inputDir, String usageDir, String projectName, String depMask) {
+	public void work(String lang, String inputDir, String usageDir, String projectName) {
         config(lang, inputDir, usageDir, projectName,this);
         parseAllFiles();
         resolveBindings();
         identifyDependencies();
-        outputDeps(DependencyType.resolveMask(depMask));
+        outputDeps(DependencyType.allDependencies());
 	}
 
 	/**
@@ -67,8 +67,8 @@ abstract public class AbstractLangWorker {
      */
     private final void config(String lang, String inputDir, String usageDir, String projectName, AbstractLangWorker worker) {
         configure.setInputSrcPath(inputDir);
-        configure.setUsageSrcPath(usageDir);
-        configure.setAnalyzedProjectName(projectName);
+        configure.setIncludePath(usageDir);
+        configure.setProjectName(projectName);
         configure.setWorker(worker);
     }
 
@@ -94,13 +94,13 @@ abstract public class AbstractLangWorker {
 
 	private final void outputDeps(ArrayList<String> depTypes) {
         JDataBuilder jBuilder = new JDataBuilder();
-        JDepObject jDepObject = jBuilder.build(dependencyMatrix);
+        JDepObject jDepObject = jBuilder.build(dependencyMatrix,configure);
         JsonFormatter jasonFormatter = new JsonFormatter();
         jasonFormatter.toJson(jDepObject,configure.getOutputJsonFile());
         System.out.println("Export " + configure.getOutputJsonFile() + " successfully...");
 
         XDataBuilder xBuilder = new XDataBuilder();
-        XDepObject xDepObject = xBuilder.build(dependencyMatrix);
+        XDepObject xDepObject = xBuilder.build(dependencyMatrix,configure);
         XmlFormatter xmlFormatter = new XmlFormatter();
         xmlFormatter.toXml(xDepObject,configure.getOutputXmlFile());
         System.out.println("Export " + configure.getOutputXmlFile() + " successfully...");

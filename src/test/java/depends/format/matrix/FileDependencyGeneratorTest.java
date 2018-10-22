@@ -32,7 +32,7 @@ public class FileDependencyGeneratorTest {
 		TypeEntity p = new TypeEntity("test.packagenamea.ClassA",  f,typeId);
 	
 		FileEntity theEntity = new FileEntity(FILE2_NAME,file2Id);
-		Relation r = new Relation(DependencyType.RELATION_IMPORT, "test.packagenamea.ClassA");
+		Relation r = new Relation(DependencyType.IMPORT, "test.packagenamea.ClassA");
 		theEntity.addRelation(r);
 		entityRepo.add(f);
 		entityRepo.add(p);
@@ -53,7 +53,7 @@ public class FileDependencyGeneratorTest {
         Map<Integer, Map<String, Integer>> r = relations.get(file2Id);
         assertTrue(r.keySet().contains(file1Id) && relations.keySet().size()==1);
         Map<String, Integer> v = r.get(file1Id);
-        assertTrue(v.get(DependencyType.RELATION_IMPORT).intValue()==1);
+        assertTrue(v.get(DependencyType.IMPORT).intValue()==1);
 	}
 	
 	@Test
@@ -75,7 +75,7 @@ public class FileDependencyGeneratorTest {
         Map<Integer, Map<String, Integer>> r = relations.get(file2Id);
         assertTrue(r.keySet().contains(file1Id) && relations.keySet().size()==1);
         Map<String, Integer> v = r.get(file1Id);
-        assertTrue(v.get(DependencyType.RELATION_IMPORT).intValue()==1);
+        assertTrue(v.get(DependencyType.IMPORT).intValue()==1);
         
 	}
 	

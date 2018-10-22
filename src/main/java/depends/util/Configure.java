@@ -3,16 +3,12 @@ package depends.util;
 import depends.extractor.AbstractLangWorker;
 
 public class Configure {
-    private Configure() {}
+    public Configure() {}
 
-    private static Configure configure = new Configure();
-    public static Configure getConfigureInstance() {
-        return configure;
-    }
 
     private String  inputSrcPath;
-    private String  usageSrcPath;
-    private String  analyzedProjectName ;
+    private String  includeSrcPath;
+    private String  projectName ;
 
     private String  schemaVersion = "1.0";
 	private AbstractLangWorker worker;
@@ -26,28 +22,28 @@ public class Configure {
         this.inputSrcPath = inputSrcPath;
     }
 
-    public String getUsageSrcPath() {
-        return usageSrcPath;
+    public String getIncludePath() {
+        return includeSrcPath;
     }
 
-    public void setUsageSrcPath(String usageSrcPath) {
-        this.usageSrcPath = usageSrcPath;
+    public void setIncludePath(String includePath) {
+        this.includeSrcPath = includePath;
     }
 
-    public String getAnalyzedProjectName() {
-        return analyzedProjectName;
+    public String getProjectName() {
+        return projectName;
     }
 
-    public void setAnalyzedProjectName(String analyzedProjectName) {
-        this.analyzedProjectName = analyzedProjectName;
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
     }
 
     public String getOutputJsonFile() {
-        return analyzedProjectName  + "_dep.json";
+        return projectName  + "_dep.json";
     }
 
     public String getOutputXmlFile() {
-    	return analyzedProjectName + "_dep.xml";
+    	return projectName + "_dep.xml";
     }
 
     public String getSchemaVersion() {
@@ -55,19 +51,19 @@ public class Configure {
     }
 
     public String getAttributeName() {
-        return analyzedProjectName + "-sdsm";
+        return projectName + "-sdsm";
     }
 
+	public String getOutputExcelFile() {
+		return projectName + "_dep.xls";
+	}
+	
 	public void setWorker(AbstractLangWorker worker) {
 		this.worker = worker;
 	}
 
 	public AbstractLangWorker getWorker() {
 		return worker;
-	}
-
-	public String getOutputExcelFile() {
-		return analyzedProjectName + "_dep.xls";
 	}
 }
 

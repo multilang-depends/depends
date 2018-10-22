@@ -40,15 +40,15 @@ public class RelationCounter {
 	private void computeContainerRelations(ContainerEntity entity) {
 		for (VarEntity var:entity.getVars()) {
 			if (var.getType()!=null)
-				entity.addRelation(new Relation(DependencyType.RELATION_DEFINE,var.getType().getId(),var.getType().getQualifiedName()));
+				entity.addRelation(new Relation(DependencyType.DEFINE,var.getType().getId(),var.getType().getQualifiedName()));
 			else
 				System.out.println("cannot resove type of "+var.getQualifiedName());
 		}
 		for (TypeEntity type:entity.getResolvedAnnotations()) {
-			entity.addRelation(new Relation(DependencyType.RELATION_USE,type.getId(),type.getQualifiedName()));
+			entity.addRelation(new Relation(DependencyType.USE,type.getId(),type.getQualifiedName()));
 		}
 		for (TypeEntity type:entity.getResolvedTypeParameters()) {
-			entity.addRelation(new Relation(DependencyType.RELATION_USE,type.getId(),type.getQualifiedName()));
+			entity.addRelation(new Relation(DependencyType.USE,type.getId(),type.getQualifiedName()));
 		}
 		
 		HashSet<TypeEntity> usedEntities = new HashSet<>();
@@ -58,52 +58,52 @@ public class RelationCounter {
 				continue;
 			}
 			if (expression.isCall) {
-				entity.addRelation(new Relation(DependencyType.RELATION_CALL,expression.type.getId(),expression.type.getQualifiedName()));
+				entity.addRelation(new Relation(DependencyType.CALL,expression.type.getId(),expression.type.getQualifiedName()));
 			}
 			if (expression.isCreate) {
-				entity.addRelation(new Relation(DependencyType.RELATION_CREATE,expression.type.getId(),expression.type.getQualifiedName()));
+				entity.addRelation(new Relation(DependencyType.CREATE,expression.type.getId(),expression.type.getQualifiedName()));
 			}
 			else if (expression.isSet) {
-				entity.addRelation(new Relation(DependencyType.RELATION_SET,expression.type.getId(),expression.type.getQualifiedName()));
+				entity.addRelation(new Relation(DependencyType.SET,expression.type.getId(),expression.type.getQualifiedName()));
 			}else {
 				usedEntities.add(expression.type);
 			}
 		}
 		
 		for (TypeEntity usedEntity:usedEntities) {
-			entity.addRelation(new Relation(DependencyType.RELATION_USE,usedEntity.getId(),usedEntity.getQualifiedName()));
+			entity.addRelation(new Relation(DependencyType.USE,usedEntity.getId(),usedEntity.getQualifiedName()));
 		}
 	}
 
 	private void computeTypeRelations(TypeEntity type) {
 		for (TypeEntity superType:type.getInheritedTypes()) {
-			type.addRelation(new Relation(DependencyType.RELATION_INHERIT,superType.getId(),superType.getQualifiedName()));
+			type.addRelation(new Relation(DependencyType.INHERIT,superType.getId(),superType.getQualifiedName()));
 		}
 		for (TypeEntity interfaceType:type.getImplementedTypes()) {
-			type.addRelation(new Relation(DependencyType.RELATION_IMPLEMENT,interfaceType.getId(),interfaceType.getQualifiedName()));
+			type.addRelation(new Relation(DependencyType.IMPLEMENT,interfaceType.getId(),interfaceType.getQualifiedName()));
 		}
 	}
 
 	private void computeFunctionRelations(FunctionEntity func) {
 		for (TypeEntity returnType:func.getReturnTypes()) {
-			func.addRelation(new Relation(DependencyType.RELATION_RETURN,returnType.getId(),returnType.getQualifiedName()));
+			func.addRelation(new Relation(DependencyType.RETURN,returnType.getId(),returnType.getQualifiedName()));
 		}
 		for (VarEntity parameter:func.getParameters()) {
 			if (parameter.getType()!=null) {
-				func.addRelation(new Relation(DependencyType.RELATION_PARAMETER,parameter.getType().getId(),parameter.getType().getQualifiedName()));
+				func.addRelation(new Relation(DependencyType.PARAMETER,parameter.getType().getId(),parameter.getType().getQualifiedName()));
 			}else {
 				System.out.println("unsolved param: "+parameter);
 			}
 		}
 		for (TypeEntity throwType:func.getThrowTypes()) {
-			func.addRelation(new Relation(DependencyType.RELATION_USE,throwType.getId(),throwType.getQualifiedName()));
+			func.addRelation(new Relation(DependencyType.USE,throwType.getId(),throwType.getQualifiedName()));
 		}
 	}
 
 	private void computeImports(FileEntity file) {
 		List<Entity> imports = file.getResolvedImportedEntities();
 		for (Entity imported:imports) {
-			file.addRelation(new Relation(DependencyType.RELATION_IMPORT,imported.getId()));
+			file.addRelation(new Relation(DependencyType.IMPORT,imported.getId()));
 		}
 	}
 

@@ -8,8 +8,7 @@ import depends.util.Configure;
 
 public class XDataBuilder {
 
-    public XDepObject build(DependencyMatrix matrix) {
-        Configure configure = Configure.getConfigureInstance();
+    public XDepObject build(DependencyMatrix matrix,Configure configure) {
         ArrayList<String> files = matrix.getNodes();
         Map<Integer, Map<Integer, Map<String, Integer>>> finalRes = matrix.getRelations();
 

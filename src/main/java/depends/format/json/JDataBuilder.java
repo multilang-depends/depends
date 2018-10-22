@@ -10,8 +10,7 @@ import depends.util.Configure;
 
 public class JDataBuilder {
 
-    public JDepObject build(DependencyMatrix dependencyMatrix) {
-        Configure configure = Configure.getConfigureInstance();
+    public JDepObject build(DependencyMatrix dependencyMatrix,Configure configure) {
         ArrayList<String> files = dependencyMatrix.getNodes();
         Map<Integer, Map<Integer, Map<String, Integer>>> finalRes = dependencyMatrix.getRelations();
         ArrayList<JCellObject> cellObjects = buildCellObjects(finalRes); //transform finalRes into cellObjects

@@ -1,20 +1,12 @@
 package depends.extractor.cpp;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import depends.entity.IdGenerator;
 import depends.entity.repo.EntityRepo;
-import depends.entity.types.VarEntity;
 import depends.extractor.HandlerContext;
 import depends.javaextractor.CPP14BaseListener;
 import depends.javaextractor.CPP14Parser.ClassheadContext;
 import depends.javaextractor.CPP14Parser.ClassspecifierContext;
-import depends.javaextractor.CPP14Parser.DeclaratoridContext;
 import depends.javaextractor.CPP14Parser.FunctiondefinitionContext;
-import depends.javaextractor.CPP14Parser.IdexpressionContext;
-import depends.javaextractor.CPP14Parser.NoptrdeclaratorContext;
 
 public class CppEntitiesListener extends CPP14BaseListener {
 	private HandlerContext context;

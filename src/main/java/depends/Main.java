@@ -1,7 +1,5 @@
 package depends;
 
-import static java.lang.System.exit;
-
 import depends.extractor.AbstractLangWorker;
 import depends.extractor.LangWorkers;
 import depends.extractor.cpp.CppWorker;
@@ -10,16 +8,14 @@ import depends.extractor.java.JavaWorker;
 public class Main {
 
 	/**
-	 * <executable> <lang> <dir> <usage-dir[currently-ignored]> <project-name> <dep-mask> 
-	 * e.g. 
-	 * <executable> java test-dir not-care test 111111111
+	 * <executable> <lang> <dir> <include-dir> <project-name> 
+	 * <executable> java test-dir not-care test
 	 */
 	public static void main(String[] args) {
-		// System.out.println("\ninput parameters:" + "srcDir usageDir projectName
-		// deps=[111111111]");
 		if (args.length < 4) {
-			System.out.println("Not enough parameters!");
-			exit(1);
+			System.out.println("Usage");
+			System.out.println("\t<executable> <lang> <dir> <include-dir> <project-name>"); 
+			return;
 		}
 		
 		new JavaWorker().register();
@@ -27,18 +23,17 @@ public class Main {
 
 		String lang = args[0];
         String inputDir = args[1];
-        String usageDir = args[2];
+        String includeDir = args[2];
         String projectName = args[3];
-        String depMask = args[4];
 		AbstractLangWorker worker = LangWorkers.getRegistry().getWorkerOf(lang);
 		
 		if (worker == null){
 			System.out.println("Not support this language: " + args[0]);
-			exit(1);
+			return;
 		}
 
 		long startTime = System.currentTimeMillis();
-		worker.work(lang,inputDir,usageDir,projectName,depMask);
+		worker.work(lang,inputDir,includeDir,projectName);
 		long endTime = System.currentTimeMillis();
 		System.out.println("Consumed time: " + (float) ((endTime - startTime) / 1000.00) + " s,  or "
 				+ (float) ((endTime - startTime) / 60000.00) + " min.");

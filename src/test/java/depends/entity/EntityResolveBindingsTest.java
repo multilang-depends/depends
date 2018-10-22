@@ -25,7 +25,7 @@ public class EntityResolveBindingsTest {
 
 		//build a entity which have a relation to p
 		FileEntity theEntity = new FileEntity("/tmp/file2.java", 2); //we do not care file id and parent id
-		Relation r = new Relation(DependencyType.RELATION_IMPORT, "test.packagenamea.ClassA");
+		Relation r = new Relation(DependencyType.IMPORT, "test.packagenamea.ClassA");
 		theEntity.addRelation(r);
 
 		entityRepo.add(theEntity);
