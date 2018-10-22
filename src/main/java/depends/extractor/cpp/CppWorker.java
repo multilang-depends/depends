@@ -4,7 +4,7 @@ import depends.extractor.AbstractLangWorker;
 import depends.extractor.FileParser;
 
 public class CppWorker extends AbstractLangWorker {
-    private static final String LANG = "java";
+    private static final String LANG = "cpp";
     private static final String SUFFIX = ".cpp";
     
     public CppWorker() {

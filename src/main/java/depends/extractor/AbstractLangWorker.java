@@ -1,8 +1,8 @@
 package depends.extractor;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import depends.deptypes.DependencyType;
@@ -17,7 +17,7 @@ import depends.format.xml.XDataBuilder;
 import depends.format.xml.XDepObject;
 import depends.format.xml.XmlFormatter;
 import depends.util.Configure;
-import depends.util.FileUtil;
+import depends.util.FileTraversal;
 abstract public class AbstractLangWorker {
 	public void register() {
 		LangWorkers.getRegistry().register(this);
@@ -73,18 +73,23 @@ abstract public class AbstractLangWorker {
     }
 
     private final void parseAllFiles() {
-        FileUtil fileUtil = new FileUtil(configure.getInputSrcPath());
-        List<String> files = fileUtil.getFileNameList(this.fileSuffix());
         System.out.println("start parsing files...");		
-        for (String fileFullPath : files) {
-        	System.out.println("processing " + fileFullPath + "...");		
-            FileParser fileParser = getFileParser(fileFullPath);
-            try {
-                fileParser.parse();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+    	FileTraversal fileTransversal = new FileTraversal(new FileTraversal.IFileVisitor(){
+			@Override
+			public void visit(File file) {
+	            FileParser fileParser = getFileParser(file.getAbsolutePath());
+	            try {
+	                System.out.println("parsing " + file.getAbsolutePath() 
+	                		+ "...");		
+	                fileParser.parse();
+	            } catch (IOException e) {
+	                e.printStackTrace();
+	            }	
+			}
+    		
+    	});
+    	fileTransversal.extensionFilter(this.fileSuffix());
+		fileTransversal.travers(configure.getInputSrcPath());
         System.out.println("all files procceed successfully...");		
 
 	}
