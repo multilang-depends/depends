@@ -90,6 +90,21 @@
                 <artifactId>poi-ooxml</artifactId>
                 <version>3.16</version>
         </dependency>
+		<dependency> 
+			<groupId>org.eclipse.cdt</groupId>
+			<artifactId>org.eclipse.cdt.core</artifactId>
+			<version>5.11.0.201509131935</version>
+		</dependency>    
+		<dependency>
+			<groupId>de.defmacro</groupId>
+			<artifactId>eclipse-astparser</artifactId>
+			<version>8.1</version>
+		</dependency>
+		<dependency>
+		  <groupId>org.eclipse.cdt</groupId>
+		  <artifactId>org.eclipse.equinox.registry</artifactId>
+		  <version>3.8.0.v20180426-1327</version>
+		</dependency>
 	</dependencies>
 
 </project>

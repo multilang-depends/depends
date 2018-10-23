@@ -18,8 +18,8 @@ public class JavaWorker extends AbstractLangWorker {
 	}
 
 	@Override
-	public String fileSuffix() {
-		return JAVA_SUFFIX;
+	public String[] fileSuffixes() {
+		return new String[] {JAVA_SUFFIX};
 	}
 
 

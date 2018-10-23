@@ -6,13 +6,14 @@ import java.io.IOException;
 import org.junit.Test;
 
 import depends.entity.repo.EntityRepo;
+import depends.extractor.cpp.cdt.CdtCppFileParser;
 
 public class CppParameterParserTest {
 	@Test
 	public void test_parameter() throws IOException {
 		EntityRepo repo = new EntityRepo();
         String src = "./src/test/resources/cpp-code-examples/FunctionParameters.cpp";
-        CppFileParser parser = new CppFileParser(src,repo);
+        CppFileParser parser = new  CdtCppFileParser(src,repo);
         parser.parse();
         repo.resolveAllBindings();
         assertEquals(4,repo.getEntity("FunctionParameters.function_with_parameters_same_type").getRelations().size());

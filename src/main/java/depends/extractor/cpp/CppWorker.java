@@ -2,10 +2,11 @@ package depends.extractor.cpp;
 
 import depends.extractor.AbstractLangWorker;
 import depends.extractor.FileParser;
+import depends.extractor.cpp.cdt.CdtCppFileParser;
 
 public class CppWorker extends AbstractLangWorker {
     private static final String LANG = "cpp";
-    private static final String SUFFIX = ".cpp";
+    private static final String[] SUFFIX = new String[] {".cpp",".cc",".c"};
     
     public CppWorker() {
 
@@ -18,14 +19,14 @@ public class CppWorker extends AbstractLangWorker {
 	}
 
 	@Override
-	public String fileSuffix() {
+	public String[] fileSuffixes() {
 		return SUFFIX;
 	}
 
 
 	@Override
 	protected FileParser getFileParser(String fileFullPath) {
-		return new CppFileParser(fileFullPath,entityRepo);
+		return new CdtCppFileParser(fileFullPath,entityRepo);
 	}
 
 	

@@ -1,4 +1,4 @@
-package depends.extractor.cpp;
+package depends.extractor.cpp.g4;
 
 import depends.entity.IdGenerator;
 import depends.entity.repo.EntityRepo;

@@ -59,4 +59,10 @@ public class FileTraversal {
 		this.extensionFilters.add(ext.toLowerCase());
 		return this;
 	}
+
+	public void extensionFilter(String[] fileSuffixes) {
+		for (String fileSuffix:fileSuffixes){
+			extensionFilter(fileSuffix);
+		}
+	}
 }

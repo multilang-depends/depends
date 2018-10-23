@@ -1,21 +1,11 @@
 package depends.extractor.cpp;
 
-import java.io.IOException;
-
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.Lexer;
-import org.antlr.v4.runtime.tree.ParseTreeWalker;
-
 import depends.entity.repo.EntityRepo;
 import depends.extractor.BuiltInTypeIdenfier;
-import depends.javaextractor.CPP14Lexer;
-import depends.javaextractor.CPP14Parser;
 
-public class CppFileParser implements depends.extractor.FileParser {
-	private String fileFullPath;
-	private EntityRepo entityRepo;
+public abstract class CppFileParser implements depends.extractor.FileParser {
+	protected String fileFullPath;
+	protected EntityRepo entityRepo;
 
 	public class BuiltInType extends BuiltInTypeIdenfier {
 
@@ -48,15 +38,5 @@ public class CppFileParser implements depends.extractor.FileParser {
 		this.entityRepo = entityRepo;
 		entityRepo.setBuiltInTypeIdentifier(new BuiltInType());
 	}
-
-	public void parse() throws IOException {
-		CharStream input = CharStreams.fromFileName(fileFullPath);
-		Lexer lexer = new CPP14Lexer(input);
-		CommonTokenStream tokens = new CommonTokenStream(lexer);
-		CPP14Parser parser = new CPP14Parser(tokens);
-		CppEntitiesListener bridge = new CppEntitiesListener(fileFullPath, entityRepo);
-		ParseTreeWalker walker = new ParseTreeWalker();
-		walker.walk(bridge, parser.translationunit());
-	}
-
+	
 }

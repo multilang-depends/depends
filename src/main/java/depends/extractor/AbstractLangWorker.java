@@ -24,7 +24,7 @@ abstract public class AbstractLangWorker {
 	}
 	public abstract String supportedLanguage();
 	
-	public abstract String fileSuffix();
+	public abstract String[] fileSuffixes();
 	
     private Configure configure = new Configure();
 
@@ -88,7 +88,7 @@ abstract public class AbstractLangWorker {
 			}
     		
     	});
-    	fileTransversal.extensionFilter(this.fileSuffix());
+    	fileTransversal.extensionFilter(this.fileSuffixes());
 		fileTransversal.travers(configure.getInputSrcPath());
         System.out.println("all files procceed successfully...");		
 
