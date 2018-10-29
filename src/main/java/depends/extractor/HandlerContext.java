@@ -64,8 +64,8 @@ public class HandlerContext {
 		entityStack.pop();
 	}
 
-	public void foundNewImport(String importedTypeOrPackage) {
-		currentFileEntity.addImport(importedTypeOrPackage);
+	public void foundNewImport(String importedName) {
+		currentFileEntity.addImport(importedName);
 	}
 
 	public TypeEntity currentType() {

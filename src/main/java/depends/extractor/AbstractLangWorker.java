@@ -112,9 +112,9 @@ abstract public class AbstractLangWorker {
         System.out.println("Export " + configure.getOutputXmlFile() + " successfully...");
         
 		ExcelDataBuilder builder = new ExcelDataBuilder(dependencyMatrix);
-		builder.output(configure.getOutputExcelFile());
-		System.out.println("Export " + configure.getOutputExcelFile() + " successfully...");
-        
+		if (builder.output(configure.getOutputExcelFile())) {
+			System.out.println("Export " + configure.getOutputExcelFile() + " successfully...");
+		}	
     }
 	public List<String> includePaths() {
 		String[] paths = configure.getIncludePath().split("|");

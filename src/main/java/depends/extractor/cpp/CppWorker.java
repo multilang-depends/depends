@@ -6,7 +6,7 @@ import depends.extractor.cpp.cdt.CdtCppFileParser;
 
 public class CppWorker extends AbstractLangWorker {
     private static final String LANG = "cpp";
-    private static final String[] SUFFIX = new String[] {".cpp",".cc",".c"};
+    private static final String[] SUFFIX = new String[] {".cpp",".cc",".c",".h",".hpp",".hh"};
     
     public CppWorker() {
 

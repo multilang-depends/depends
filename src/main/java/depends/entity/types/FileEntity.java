@@ -20,11 +20,17 @@ public class FileEntity extends ContainerEntity{
 		super(fullName, null,fileId);
 		setQualifiedName(fullName);
 	}
-	public void addImport(String importedTypeOrPackage) {
-		String lastName = importedTypeOrPackage;
+	
+	/**
+	 * 
+	 * @param importedName could be className, package Name  in JAVA
+	 *                     could be file in C/C++
+	 */
+	public void addImport(String importedName) {
+		String lastName = importedName;
         if (lastName.indexOf(".") > 0)
         	lastName = lastName.substring(lastName.lastIndexOf(".")+1);
-        importedNames.put(lastName, importedTypeOrPackage);
+        importedNames.put(lastName, importedName);
 	}
 	public String getImport(String lastName) {
 		return importedNames.get(lastName);
@@ -32,7 +38,7 @@ public class FileEntity extends ContainerEntity{
 	@Override
 	public String getQualifiedName() {
 		if (this.getParent()==null)
-			return "";
+			return super.getQualifiedName();
 		if (this.getParent() instanceof PackageEntity)
 			return this.getParent().getQualifiedName();
 		else
@@ -43,9 +49,9 @@ public class FileEntity extends ContainerEntity{
 	}
 	@Override
 	public void inferLocalLevelTypes(TypeInfer typeInferer) {
-		for (String item:importedNames.values()) {
-			if (typeInferer.isBuiltInTypePrefix(item)) continue;
-			List<Entity> importedEntities = typeInferer.resolveImportEntity(item);
+		for (String importedName:importedNames.values()) {
+			if (typeInferer.isBuiltInTypePrefix(importedName)) continue;
+			List<Entity> importedEntities = typeInferer.resolveImportEntity(importedName);
 			this.resolvedImportedEntities.addAll(importedEntities);
 		}		
 		super.inferLocalLevelTypes(typeInferer);

@@ -44,6 +44,9 @@ public class EntityRepo implements IdGenerator,TypeInfer{
 	
 	public void add(Entity entity) {
 		allEntitiesById.put(entity.getId(), entity);
+		if (entity instanceof FileEntity) {
+			System.out.println("**FOUND " + entity.getQualifiedName());
+		}
 		if (entity.getQualifiedName()!=null)
 			allEntieisByName.put(entity.getQualifiedName(), entity);
 		if (entity.getParent()!=null)
@@ -282,9 +285,9 @@ public class EntityRepo implements IdGenerator,TypeInfer{
 	}
 
 	@Override
-	public List<Entity> resolveImportEntity(String item) {
+	public List<Entity> resolveImportEntity(String importedName) {
 		ArrayList<Entity> result = new ArrayList<>();
-		Entity imported = this.getEntity(item);
+		Entity imported = this.getEntity(importedName);
 		if (imported==null) return result;
 		if (imported instanceof PackageEntity) { 
 			//expand import of package to all classes under the package due to we dis-courage the behavior

@@ -30,7 +30,7 @@ public class GlobalIncludeMap {
 	private String expandIncludedPath(String filePath, String includedPath) {
 		if (isAbsolutePath(includedPath))
 			return includedPath;
-		//TODO:
+		//CDT could resolve all pathes like relative path, etc. so we return directly
 		return includedPath;
 	}
 

@@ -20,7 +20,12 @@ public class ExcelDataBuilder {
 		this.matrix = matrix;
 	}
 
-	public void output(String filename) {
+	public boolean output(String filename) {
+		if (matrix.getNodes().size()>255) {
+			System.out.println("We can only export small matrix(<256 items) to excel" +
+		"due to MS Office limitation");
+			return false;
+		}
 		startFile();
 		Map<Integer, Map<Integer, Map<String, Integer>>> relations = matrix.getRelations();
 		HSSFRow[] row = new HSSFRow[matrix.getNodes().size()];
@@ -56,6 +61,7 @@ public class ExcelDataBuilder {
 			}
 		}
         closeFile(filename);
+        return true;
 	}
 
 	private String buildDependencyValues(Map<String, Integer> dependencies) {
