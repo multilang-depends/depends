@@ -3,6 +3,7 @@ package depends.extractor;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import depends.deptypes.DependencyType;
@@ -115,4 +116,12 @@ abstract public class AbstractLangWorker {
 		System.out.println("Export " + configure.getOutputExcelFile() + " successfully...");
         
     }
+	public List<String> includePaths() {
+		String[] paths = configure.getIncludePath().split("|");
+		ArrayList<String> r = new ArrayList<String>();
+		for (String path:paths) {
+			r.add(path);
+		}
+		return r;
+	}
 }

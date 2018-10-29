@@ -107,6 +107,10 @@ public abstract class Entity {
 		this.qualifiedName = qualifiedName;
 	}
 
+	public void setRawName(String rawName) {
+		this.rawName = rawName;
+	}
+	
 	public String getQualifiedName() {
 		return qualifiedName;
 	}

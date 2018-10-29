@@ -1,8 +1,9 @@
 package depends.extractor.cpp.cdt;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.c.ANSICParserExtensionConfiguration;
@@ -20,82 +21,24 @@ import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
+import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
 
 import depends.entity.repo.EntityRepo;
 import depends.extractor.cpp.CppFileParser;
 
 public class CdtCppFileParser extends CppFileParser {
 
-	public CdtCppFileParser(String fileFullPath, EntityRepo entityRepo) {
+	private List<String> includeSearchPath = new ArrayList<>();
+
+	public CdtCppFileParser(String fileFullPath, EntityRepo entityRepo, List<String> includeSearchPath) {
 		super(fileFullPath, entityRepo);
+		this.includeSearchPath = includeSearchPath;
 	}
 	@Override
-	@SuppressWarnings("deprecation")
 	public void parse() throws IOException {
-		try {
-			CdtCppEntitiesListener bridge = new CdtCppEntitiesListener(fileFullPath, entityRepo);
-			CodeReader cr = new CodeReader(this.fileFullPath);
-			IASTTranslationUnit translationUnit = parse(this.fileFullPath,new String(cr.buffer));
-//			IASTPreprocessorStatement[] pre = translationUnit.getAllPreprocessorStatements();
-//			for (IASTPreprocessorStatement p:pre) {
-//				System.out.println(this.fileFullPath + "->" + p.getOriginalNode());
-//			}
-			translationUnit.accept(bridge);
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		CdtCppEntitiesListener bridge = new CdtCppEntitiesListener(fileFullPath, entityRepo, includeSearchPath );
+		IASTTranslationUnit translationUnit = (new CDTParser()).parse(this.fileFullPath);
+		translationUnit.accept(bridge);
 	}
 	
-	NullLogService NULL_LOG = new NullLogService();
-	
-	public IASTTranslationUnit parse(String file,String content   ) {
-		/*
-		 * *    QUICK_PARSE
-				Does not parse inside functions or included files
-				
-				STRUCTURAL_PARSE
-				    Does not parse inside functions but parses included files
-				
-				COMPLETE_PARSE
-				    Parses inside functions and included files
-				
-				COMPLETION_PARSE
-				    Parses inside functions and included files, stops at offsets, and optimizes symbol query lookups
-				
-				SELECTION_PARSE
-				    Parses inside functions and included files, stops at offsets, and provides semantic information about a selected range*
-		 */
-		if (file.endsWith(".c"))
-			return getTranslationUnitofC(file, content);
-		else
-			return getTranslationUnitofCPP(file, content);
-	}
-
-	private IASTTranslationUnit getTranslationUnitofC(String file, String content) {
-		IScannerExtensionConfiguration configuration = GCCScannerExtensionConfiguration
-				.getInstance();
-		IScanner scanner = new CPreprocessor(FileContent.create(file,
-				content.toCharArray()), new ScannerInfo(), ParserLanguage.C,
-				NULL_LOG, configuration, null);
-		ANSICParserExtensionConfiguration conf = new ANSICParserExtensionConfiguration();
-		
-		AbstractGNUSourceCodeParser sourceCodeParser = new GNUCSourceParser(
-				scanner, ParserMode.COMPLETE_PARSE, NULL_LOG,conf );
-		IASTTranslationUnit astTranslationUnit =  sourceCodeParser.parse();
-		return astTranslationUnit;
-	}
-	
-	private IASTTranslationUnit getTranslationUnitofCPP(String file, String content) {
-		IScannerExtensionConfiguration configuration = GPPScannerExtensionConfiguration
-				.getInstance();
-		IScanner scanner = new CPreprocessor(FileContent.create(file,
-				content.toCharArray()), new ScannerInfo(), ParserLanguage.CPP,
-				new NullLogService(), configuration, null);
-		AbstractGNUSourceCodeParser sourceCodeParser = new GNUCPPSourceParser(
-				scanner, ParserMode.COMPLETE_PARSE, new NullLogService(),
-				new GPPParserExtensionConfiguration(), null);
-		IASTTranslationUnit astTranslationUnit =  sourceCodeParser.parse();
-		return astTranslationUnit;
-	}
 }

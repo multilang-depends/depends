@@ -157,7 +157,7 @@ public class JavaEntitiesListener extends JavaParserBaseListener {
 		String methodName = ctx.IDENTIFIER().getText();
 		String returnedType = ClassTypeContextHelper.getClassName(ctx.typeTypeOrVoid());
 		FormalParameterListContextHelper helper = new FormalParameterListContextHelper(
-				ctx.formalParameters(),context.currentType(),idGenerator);
+				ctx.formalParameters(),context.typeOrFileContainer(),idGenerator);
 
 		context.foundMethodDeclarator(methodName, 
 				helper.getParameterList(),
@@ -184,7 +184,7 @@ public class JavaEntitiesListener extends JavaParserBaseListener {
 
 	@Override
 	public void enterInterfaceMethodDeclaration(InterfaceMethodDeclarationContext ctx) {
-		FormalParameterListContextHelper helper = new FormalParameterListContextHelper(ctx.formalParameters(),context.currentType(),idGenerator);
+		FormalParameterListContextHelper helper = new FormalParameterListContextHelper(ctx.formalParameters(),context.typeOrFileContainer(),idGenerator);
 		List<String> throwedType = QualitiedNameContextHelper.getNames(ctx.qualifiedNameList());
 
 		context.foundMethodDeclarator(ctx.IDENTIFIER().getText(), helper.getParameterList(),
@@ -204,7 +204,7 @@ public class JavaEntitiesListener extends JavaParserBaseListener {
 
 	@Override
 	public void enterConstructorDeclaration(ConstructorDeclarationContext ctx) {
-		FormalParameterListContextHelper helper = new FormalParameterListContextHelper(ctx.formalParameters(),context.currentType(),idGenerator);
+		FormalParameterListContextHelper helper = new FormalParameterListContextHelper(ctx.formalParameters(),context.typeOrFileContainer(),idGenerator);
 		List<String> throwedType = QualitiedNameContextHelper.getNames(ctx.qualifiedNameList());
 		context.foundMethodDeclarator(ctx.IDENTIFIER().getText(), helper.getParameterList(),ctx.IDENTIFIER().getText(), throwedType);
 		annotationProcessor.processAnnotationModifier(ctx, "classBodyDeclaration");

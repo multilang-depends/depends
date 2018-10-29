@@ -56,7 +56,7 @@ public class HandlerContext {
 		FunctionEntity functionEntity = new FunctionEntity(methodName, this.latestValidContainer(),
 				idGenerator.generateId(),returnType,parameters);
 		entityRepo.add(functionEntity);
-		this.currentType().addFunction(functionEntity);
+		this.typeOrFileContainer().addFunction(functionEntity);
 		entityStack.push(functionEntity);
 		functionEntity.addThrowTypes(throwedType);
 	}
@@ -76,6 +76,19 @@ public class HandlerContext {
 		}
 		return null;
 	}
+	
+	public ContainerEntity typeOrFileContainer() {
+		for (int i = entityStack.size() - 1; i >= 0; i--) {
+			Entity t = entityStack.get(i);
+			if (t instanceof TypeEntity)
+				return (ContainerEntity) t;
+			if (t instanceof FileEntity) {
+				return (ContainerEntity)t;
+			}
+		}
+		return null;
+	}
+
 
 	public FunctionEntity currentFunction() {
 		for (int i = entityStack.size() - 1; i >= 0; i--) {
