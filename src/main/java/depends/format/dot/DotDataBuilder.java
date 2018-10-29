@@ -26,8 +26,7 @@ public class DotDataBuilder {
 			}
 			writer.println("digraph");
 			writer.println("{");
-			Map<Integer, Map<Integer, Map<String, Integer>>> finalRes = matrix.getRelations();
-	        addRelations(writer,finalRes); 
+	        addRelations(writer,matrix.getRelations()); 
 			writer.println("}");
 			writer.close();
 			return true;
@@ -37,13 +36,12 @@ public class DotDataBuilder {
 		}
 	}
 
-	private void addRelations(PrintWriter writer, Map<Integer, Map<Integer, Map<String, Integer>>> finalRes) {
-		for (Map.Entry<Integer, Map<Integer, Map<String, Integer>>> entry1 : finalRes.entrySet()) {
-            int src = entry1.getKey();
-
-            Map<Integer, Map<String, Integer>> values1 = entry1.getValue();
-            for (Map.Entry<Integer, Map<String, Integer>> entry2: values1.entrySet()) {
-                int dst = entry2.getKey();
+	private void addRelations(PrintWriter writer, Map<Integer, Map<Integer, Map<String, Integer>>> relations) {
+		for (Map.Entry<Integer, Map<Integer, Map<String, Integer>>> relation : relations.entrySet()) {
+            int src = relation.getKey();
+            Map<Integer, Map<String, Integer>> dependencyType = relation.getValue();
+            for (Map.Entry<Integer, Map<String, Integer>> to: dependencyType.entrySet()) {
+                int dst = to.getKey();
         		writer.println("\t"+src + " -> " + dst + ";");
             }
         }

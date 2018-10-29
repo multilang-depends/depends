@@ -1,2 +1,2 @@
-#inclde "A.h"
-#inclde <A.h>
+#include  "A.h"
+#include <A.h>

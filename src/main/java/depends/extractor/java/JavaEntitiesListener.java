@@ -61,7 +61,7 @@ public class JavaEntitiesListener extends JavaParserBaseListener {
 	// Import
 	@Override
 	public void enterImportDeclaration(ImportDeclarationContext ctx) {
-		context.foundNewImport(ctx.qualifiedName().getText());
+		context.foundNewImport(ctx.qualifiedName().getText(),false);
 		super.enterImportDeclaration(ctx);
 	}
 

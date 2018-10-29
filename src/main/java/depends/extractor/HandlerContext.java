@@ -64,8 +64,15 @@ public class HandlerContext {
 		entityStack.pop();
 	}
 
-	public void foundNewImport(String importedName) {
-		currentFileEntity.addImport(importedName);
+	/**
+	 * 
+	 * @param importedName 
+	 * @param usedFilenameAsKey - to identify whether the importedName is a file name
+	 *                            in (C/C++), the value should be true due to it is a filename
+	 *                            in Java, the value should be false due to it is a package or class name
+	 */
+	public void foundNewImport(String importedName, boolean usedFilenameAsKey) {
+		currentFileEntity.addImport(importedName,usedFilenameAsKey);
 	}
 
 	public TypeEntity currentType() {

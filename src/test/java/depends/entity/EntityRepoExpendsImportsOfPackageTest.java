@@ -24,7 +24,7 @@ public class EntityRepoExpendsImportsOfPackageTest {
 		visitor.foundNewPackage(packageName);
 		
 		visitor.startFile("/tmp/thefile.java");
-		visitor.foundNewImport(packageName);
+		visitor.foundNewImport(packageName,false);
 		
 		entityRepo.resolveAllBindings();
 		
@@ -47,7 +47,7 @@ public class EntityRepoExpendsImportsOfPackageTest {
 		context.foundNewPackage(packageName);
 		
 		context.startFile("/tmp/thefile.java");
-		context.foundNewImport(packageName+".ClassA");
+		context.foundNewImport(packageName+".ClassA",false);
 		
 		entityRepo.resolveAllBindings();
 		

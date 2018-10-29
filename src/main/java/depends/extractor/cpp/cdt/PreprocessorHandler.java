@@ -1,11 +1,15 @@
 package depends.extractor.cpp.cdt;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+
+import depends.util.FileUtil;
 
 public class PreprocessorHandler {
 	GlobalIncludeMap includeMap  = GlobalIncludeMap.INSTANCE;
@@ -16,6 +20,8 @@ public class PreprocessorHandler {
 		includedFullPathNames= new ArrayList<>();
 		if (!includeMap.contains(fileName))
 			processIncludes(statements);
+		else
+			includedFullPathNames =  includeMap.get(fileName);
 		
 	}
 
@@ -30,7 +36,7 @@ public class PreprocessorHandler {
 					continue;
 				}
 				
-				this.includedFullPathNames.add(incl.getPath());
+				this.includedFullPathNames.add(FileUtil.uniqFilePath(incl.getPath()));
 				String explandedPath = includeMap.add(fileName,incl.getPath());
 				if (!includeMap.contains(explandedPath)) {
 					IASTTranslationUnit translationUnit = (new CDTParser()).parse(explandedPath);

@@ -25,6 +25,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
 
 import depends.entity.repo.EntityRepo;
 import depends.extractor.cpp.CppFileParser;
+import depends.util.FileUtil;
 
 public class CdtCppFileParser extends CppFileParser {
 
@@ -36,7 +37,7 @@ public class CdtCppFileParser extends CppFileParser {
 	}
 	@Override
 	public void parse() throws IOException {
-		CdtCppEntitiesListener bridge = new CdtCppEntitiesListener(fileFullPath, entityRepo, includeSearchPath );
+		CdtCppEntitiesListener bridge = new CdtCppEntitiesListener(FileUtil.uniqFilePath(fileFullPath), entityRepo, includeSearchPath );
 		IASTTranslationUnit translationUnit = (new CDTParser()).parse(this.fileFullPath);
 		translationUnit.accept(bridge);
 	}

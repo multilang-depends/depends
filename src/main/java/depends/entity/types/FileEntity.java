@@ -26,10 +26,13 @@ public class FileEntity extends ContainerEntity{
 	 * @param importedName could be className, package Name  in JAVA
 	 *                     could be file in C/C++
 	 */
-	public void addImport(String importedName) {
+	public void addImport(String importedName, boolean useFileAsImportedKey) {
 		String lastName = importedName;
-        if (lastName.indexOf(".") > 0)
-        	lastName = lastName.substring(lastName.lastIndexOf(".")+1);
+		if (useFileAsImportedKey) {
+			;
+		}else if (lastName.indexOf(".") > 0) {
+			lastName = lastName.substring(lastName.lastIndexOf(".")+1);
+		}
         importedNames.put(lastName, importedName);
 	}
 	public String getImport(String lastName) {

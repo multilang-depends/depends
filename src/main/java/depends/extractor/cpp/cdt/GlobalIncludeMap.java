@@ -44,4 +44,7 @@ public class GlobalIncludeMap {
         if (matcher.matches()) return true;
 		return false;
 	}
+	public List<String> get(String fileName) {
+		return includesMap.get(fileName);
+	}
 }

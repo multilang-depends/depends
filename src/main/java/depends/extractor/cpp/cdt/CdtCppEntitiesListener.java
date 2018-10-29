@@ -76,7 +76,7 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 		IASTPreprocessorStatement[] i = tu.getAllPreprocessorStatements();
 		preprocessorHandler.handlePreprocessors(tu.getAllPreprocessorStatements(),this.filePath);
 		for (String incl:preprocessorHandler.getIncludedFullPathNames()) {
-			context.foundNewImport(incl);
+			context.foundNewImport(incl,true);
 		}
 		return super.visit(tu);
 	}
