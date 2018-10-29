@@ -245,7 +245,7 @@ public class JavaEntitiesListener extends JavaParserBaseListener {
 
 	@Override
 	public void enterAnnotationMethodRest(AnnotationMethodRestContext ctx) {
-		context.foundMethodDeclarator(ctx.IDENTIFIER().getText(), new ArrayList<>(),null, null); //TODO: what's the return type of annotcation method?
+		context.foundMethodDeclarator(ctx.IDENTIFIER().getText(), new ArrayList<>(),ClassTypeContextHelper.getClassName(ctx.typeType()), new ArrayList<>());
 		super.enterAnnotationMethodRest(ctx);
 	}
 

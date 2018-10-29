@@ -333,7 +333,7 @@ annotationTypeElementDeclaration
     ;
 
 annotationTypeElementRest
-    : typeType annotationMethodOrConstantRest ';'
+    : annotationMethodOrConstantRest ';'
     | classDeclaration ';'?
     | interfaceDeclaration ';'?
     | enumDeclaration ';'?
@@ -346,11 +346,11 @@ annotationMethodOrConstantRest
     ;
 
 annotationMethodRest
-    : IDENTIFIER '(' ')' defaultValue?
+    : typeType IDENTIFIER '(' ')' defaultValue?
     ;
 
 annotationConstantRest
-    : variableDeclarators
+    : typeType variableDeclarators
     ;
 
 defaultValue

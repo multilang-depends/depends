@@ -36,6 +36,9 @@ public class FunctionEntity extends ContainerEntity{
 		this.returnTypeIdentifiers.add(returnType);
 	}
 	public void addThrowTypes(List<String> throwedType) {
+		if (throwedType==null) {
+			System.out.println("****");
+		}
 		throwTypesIdentifiers.addAll(throwedType);
 	}
 	

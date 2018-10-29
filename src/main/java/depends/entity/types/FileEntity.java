@@ -37,8 +37,9 @@ public class FileEntity extends ContainerEntity{
 	}
 	@Override
 	public String getQualifiedName() {
-		if (this.getParent()==null)
-			return super.getQualifiedName();
+		if (this.getParent()==null){
+				return "";
+		}
 		if (this.getParent() instanceof PackageEntity)
 			return this.getParent().getQualifiedName();
 		else
