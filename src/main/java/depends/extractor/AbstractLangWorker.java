@@ -8,6 +8,7 @@ import java.util.Set;
 
 import depends.deptypes.DependencyType;
 import depends.entity.repo.EntityRepo;
+import depends.format.dot.DotDataBuilder;
 import depends.format.excel.ExcelDataBuilder;
 import depends.format.json.JDataBuilder;
 import depends.format.json.JDepObject;
@@ -115,6 +116,11 @@ abstract public class AbstractLangWorker {
 		if (builder.output(configure.getOutputExcelFile())) {
 			System.out.println("Export " + configure.getOutputExcelFile() + " successfully...");
 		}	
+		
+		DotDataBuilder dotBuilder = new DotDataBuilder(dependencyMatrix);
+		if (dotBuilder.output(configure.getOutputDotFile())) {
+			System.out.println("Export " + configure.getOutputDotFile() + " successfully...");
+		}
     }
 	public List<String> includePaths() {
 		String[] paths = configure.getIncludePath().split("|");

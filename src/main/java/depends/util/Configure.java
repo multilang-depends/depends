@@ -58,6 +58,10 @@ public class Configure {
 		return projectName + "_dep.xls";
 	}
 	
+	public String getOutputDotFile() {
+		return projectName + "_dep.dot";
+	}
+	
 	public void setWorker(AbstractLangWorker worker) {
 		this.worker = worker;
 	}
@@ -65,5 +69,7 @@ public class Configure {
 	public AbstractLangWorker getWorker() {
 		return worker;
 	}
+
+
 }
 
