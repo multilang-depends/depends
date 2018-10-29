@@ -38,7 +38,7 @@ public class CdtCppFileParser extends CppFileParser {
 	@Override
 	public void parse() throws IOException {
 		CdtCppEntitiesListener bridge = new CdtCppEntitiesListener(FileUtil.uniqFilePath(fileFullPath), entityRepo, includeSearchPath );
-		IASTTranslationUnit translationUnit = (new CDTParser()).parse(this.fileFullPath);
+		IASTTranslationUnit translationUnit = (new CDTParser(includeSearchPath)).parse(this.fileFullPath);
 		translationUnit.accept(bridge);
 	}
 	

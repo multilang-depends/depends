@@ -9,8 +9,8 @@
 	<version>1.0-SNAPSHOT</version>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    	<antlr4.visitor>true</antlr4.visitor>
-    	<antlr4.listener>true</antlr4.listener>
+		<antlr4.visitor>true</antlr4.visitor>
+		<antlr4.listener>true</antlr4.listener>
 	</properties>
 	<build>
 		<plugins>
@@ -61,12 +61,12 @@
 			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
-        <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-all</artifactId>
-                <scope>test</scope>
-                <version>1.9.5</version>
-        </dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<scope>test</scope>
+			<version>1.9.5</version>
+		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.antlr/antlr4 -->
 		<dependency>
@@ -80,31 +80,50 @@
 			<artifactId>jackson-databind</artifactId>
 			<version>2.9.6</version>
 		</dependency>
-        <dependency>
-                <groupId>org.apache.poi</groupId>
-                <artifactId>poi</artifactId>
-                <version>3.16</version>
-        </dependency>
-        <dependency>
-                <groupId>org.apache.poi</groupId>
-                <artifactId>poi-ooxml</artifactId>
-                <version>3.16</version>
-        </dependency>
-		<dependency> 
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>3.16</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.16</version>
+		</dependency>
+		<dependency>
 			<groupId>org.eclipse.cdt</groupId>
 			<artifactId>org.eclipse.cdt.core</artifactId>
-			<version>5.11.0.201509131935</version>
-		</dependency>    
-		<dependency>
-			<groupId>de.defmacro</groupId>
-			<artifactId>eclipse-astparser</artifactId>
-			<version>8.1</version>
+			<version>6.5.0.201806170908</version>
 		</dependency>
 		<dependency>
-		  <groupId>org.eclipse.cdt</groupId>
-		  <artifactId>org.eclipse.equinox.registry</artifactId>
-		  <version>3.8.0.v20180426-1327</version>
+			<groupId>eclipse-photon</groupId>
+			<artifactId>org.eclipse.equinox.registry</artifactId>
+			<version>3.8.0.v20180426-1327</version>
+		</dependency>
+		<dependency>
+			<groupId>eclipse-photon</groupId>
+			<artifactId>org.eclipse.core.runtime</artifactId>
+			<version>3.14.0.v20180417-0825</version>
+		</dependency>
+		<dependency>
+			<groupId>eclipse-photon</groupId>
+			<artifactId>org.eclipse.equinox.common</artifactId>
+			<version>3.10.0.v20180412-1130</version>
+		</dependency>
+		<dependency>
+			<groupId>eclipse-photon</groupId>
+			<artifactId>org.eclipse.osgi</artifactId>
+			<version>3.13.0.v20180409-1500</version>
+		</dependency>
+		<dependency>
+			<groupId>eclipse-photon</groupId>
+			<artifactId>org.eclipse.equinox.preferences</artifactId>
+			<version>3.7.100.v20180510-1129</version>
+		</dependency>
+		<dependency>
+			<groupId>eclipse-photon</groupId>
+			<artifactId>org.eclipse.core.jobs</artifactId>
+			<version>3.10.0.v20180427-1454</version>
 		</dependency>
 	</dependencies>
-
 </project>

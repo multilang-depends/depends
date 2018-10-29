@@ -15,6 +15,11 @@ public class PreprocessorHandler {
 	GlobalIncludeMap includeMap  = GlobalIncludeMap.INSTANCE;
 	private String fileName;
 	private List<String> includedFullPathNames;
+	private List<String> includeSearchPath;
+	
+	public PreprocessorHandler(List<String> includeSearchPath) {
+		this.includeSearchPath = includeSearchPath;
+	}
 	public void handlePreprocessors(IASTPreprocessorStatement[] statements, String fileName) {
 		this.fileName = fileName;
 		includedFullPathNames= new ArrayList<>();
@@ -30,7 +35,6 @@ public class PreprocessorHandler {
 			if (statements[statementIndex] instanceof IASTPreprocessorIncludeStatement)
 			{
 				IASTPreprocessorIncludeStatement incl = (IASTPreprocessorIncludeStatement)(statements[statementIndex]);
-				
 				if (incl.getPath().isEmpty()) {
 					System.out.println("include file do not exists!"+incl.toString());
 					continue;
@@ -39,8 +43,8 @@ public class PreprocessorHandler {
 				this.includedFullPathNames.add(FileUtil.uniqFilePath(incl.getPath()));
 				String explandedPath = includeMap.add(fileName,incl.getPath());
 				if (!includeMap.contains(explandedPath)) {
-					IASTTranslationUnit translationUnit = (new CDTParser()).parse(explandedPath);
-					PreprocessorHandler processor = new PreprocessorHandler();
+					IASTTranslationUnit translationUnit = (new CDTParser(includeSearchPath)).parse(explandedPath);
+					PreprocessorHandler processor = new PreprocessorHandler(includeSearchPath);
 					processor.handlePreprocessors(translationUnit.getIncludeDirectives(),explandedPath);
 				}
 			}
@@ -49,5 +53,9 @@ public class PreprocessorHandler {
 
 	public List<String>  getIncludedFullPathNames() {
 		return this.includedFullPathNames;
+	}
+
+	public void setIncludePath(List<String> includeSearchPath) {
+		this.includeSearchPath = includeSearchPath;
 	}
 }

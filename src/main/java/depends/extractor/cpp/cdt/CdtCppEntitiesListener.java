@@ -9,19 +9,14 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
-import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
-import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
-import org.eclipse.cdt.internal.core.model.ASTStringUtil;
 
 import depends.entity.IdGenerator;
 import depends.entity.repo.EntityRepo;
@@ -31,7 +26,7 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 	private HandlerContext context;
 	private IdGenerator idGenerator;
 	private List<String> includeSearchPath = new ArrayList<>();
-	private PreprocessorHandler preprocessorHandler = new PreprocessorHandler();
+	private PreprocessorHandler preprocessorHandler ;
 	private String filePath;
 	
 	public CdtCppEntitiesListener(String fileFullPath, EntityRepo entityRepo, List<String> includeSearchPath) {
@@ -41,6 +36,7 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 		context.startFile(fileFullPath);
 		this.filePath = fileFullPath;
 		this.includeSearchPath  = includeSearchPath;
+		preprocessorHandler = new PreprocessorHandler(includeSearchPath);
 	}
 	
 	@Override
@@ -66,7 +62,7 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 
 	@Override
 	public int visit(IASTProblem problem) {
-		System.out.println("problem" + problem.getOriginalNode() + problem.getMessageWithLocation());
+		System.out.println("warning: parse error" + problem.getOriginalNode() + problem.getMessageWithLocation());
 		return super.visit(problem);
 	}
 
@@ -74,6 +70,7 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 	@Override
 	public int visit(IASTTranslationUnit tu) {
 		IASTPreprocessorStatement[] i = tu.getAllPreprocessorStatements();
+		preprocessorHandler.setIncludePath(this.includeSearchPath);
 		preprocessorHandler.handlePreprocessors(tu.getAllPreprocessorStatements(),this.filePath);
 		for (String incl:preprocessorHandler.getIncludedFullPathNames()) {
 			context.foundNewImport(incl,true);

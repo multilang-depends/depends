@@ -123,7 +123,7 @@ abstract public class AbstractLangWorker {
 		}
     }
 	public List<String> includePaths() {
-		String[] paths = configure.getIncludePath().split("|");
+		String[] paths = configure.getIncludePath().split("@");
 		ArrayList<String> r = new ArrayList<String>();
 		for (String path:paths) {
 			r.add(path);
