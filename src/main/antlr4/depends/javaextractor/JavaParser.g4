@@ -478,7 +478,7 @@ expression
     | expression '[' expression ']'
     | methodCall
     | NEW creator
-    | '(' typeType ')' expression
+    | typeCast
     | expression postfix=('++' | '--')
     | prefix=('+'|'-'|'++'|'--') expression
     | prefix=('~'|'!') expression
@@ -504,7 +504,11 @@ expression
     | typeType '::' (typeArguments? IDENTIFIER | NEW)
     | classType '::' typeArguments? NEW
     ;
-
+    
+typeCast
+    : '(' typeType ')' expression
+    ;
+    
 // Java8
 lambdaExpression
     : lambdaParameters '->' lambdaBody

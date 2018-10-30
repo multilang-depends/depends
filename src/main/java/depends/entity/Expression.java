@@ -24,6 +24,7 @@ public class Expression {
 	public boolean isCall = false;
 	public boolean isLogic = false;
 	public boolean isCreate = false;
+	public boolean isCast = false;
 	public boolean deriveTypeFromChild = true;
 	List<Tuple<String, String>> relations = new ArrayList<>();
 
@@ -73,7 +74,6 @@ public class Expression {
 			parent.returnType = typeInfer.inferType(this.returnType, "<Built-in>");
 			parent.type = typeInfer.inferType(this.returnType, "<Built-in>");
 		}
-		
 		/* if it is a.b, and we already get a's type, b's type could be identified easily  */
 		else if (parent.isDot && (!parent.isCall)) {
 			VarEntity returnType = typeInfer.resolveVarBindings(this.returnType, parent.identifier);

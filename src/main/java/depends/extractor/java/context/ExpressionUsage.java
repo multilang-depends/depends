@@ -57,6 +57,10 @@ public class ExpressionUsage {
 		if (ctx.creator()!=null ||
 				ctx.innerCreator()!=null)
 			expression.isCreate = true;
+		if (ctx.typeCast()!=null) {
+			expression.isCast=true;
+			expression.rawType = ctx.typeCast().typeType().getText();
+		}
 			
 	}
 

@@ -40,7 +40,7 @@ public class RelationCounter {
 	private void computeContainerRelations(ContainerEntity entity) {
 		for (VarEntity var:entity.getVars()) {
 			if (var.getType()!=null)
-				entity.addRelation(new Relation(DependencyType.DEFINE,var.getType().getId(),var.getType().getQualifiedName()));
+				entity.addRelation(new Relation(DependencyType.CONTAIN,var.getType().getId(),var.getType().getQualifiedName()));
 			else
 				System.out.println("cannot resove type of "+var.getQualifiedName());
 		}
@@ -63,8 +63,11 @@ public class RelationCounter {
 			if (expression.isCreate) {
 				entity.addRelation(new Relation(DependencyType.CREATE,expression.type.getId(),expression.type.getQualifiedName()));
 			}
-			else if (expression.isSet) {
-				entity.addRelation(new Relation(DependencyType.SET,expression.type.getId(),expression.type.getQualifiedName()));
+			else if (expression.isSet) { //SET is merged with USE
+				entity.addRelation(new Relation(DependencyType.USE,expression.type.getId(),expression.type.getQualifiedName()));
+			}
+			else if (expression.isCast) { 
+				entity.addRelation(new Relation(DependencyType.CAST,expression.type.getId(),expression.type.getQualifiedName()));
 			}else {
 				usedEntities.add(expression.type);
 			}
@@ -96,7 +99,7 @@ public class RelationCounter {
 			}
 		}
 		for (TypeEntity throwType:func.getThrowTypes()) {
-			func.addRelation(new Relation(DependencyType.USE,throwType.getId(),throwType.getQualifiedName()));
+			func.addRelation(new Relation(DependencyType.THROW,throwType.getId(),throwType.getQualifiedName()));
 		}
 	}
 
