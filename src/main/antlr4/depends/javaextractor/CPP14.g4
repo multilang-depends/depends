@@ -53,8 +53,131 @@ grammar CPP14;
 /*Basic concepts*/
 translationunit
 :
-	declarationseq? EOF
+	group? EOF
 ;
+
+group
+:
+	preprocessStatements
+	| declarationseq
+;
+
+/* ===============Preprocessor Start ================== */
+preprocessStatements
+:
+	ifSection 
+	| controlLine
+;
+
+
+
+ifSection
+:
+  	ifGroup elifGroups? elseGroup? endifLine
+;
+
+ifGroup
+: 	 
+  	'#' 'if' constantExpression Newline group?
+  	| '#' 'ifdef' Identifier Newline group?
+  	| '#' 'ifndef' Identifier Newline group?
+;
+
+elifGroups
+: 	 
+  	elifGroup
+  	| elifGroups elifGroup
+;
+
+elifGroup 	 
+:
+  	'#' 'elif' constantExpression Newline group?
+;
+	
+elseGroup
+: 	 
+  	'#' 'else' Newline group?
+;
+
+endifLine
+: 	 
+  	'#' 'endif' Newline
+;
+
+constantExpression
+:
+	conditionalexpression
+;
+
+
+controlLine
+:
+  	includeStatement Newline 
+  	| defineStatement Newline 
+  	| undefineStatement Newline
+  	| '#' 'line' ppTokens Newline 
+  	| '#' 'error' ppTokens? Newline 
+  	| '#' 'pragma' ppTokens? Newline 
+  	| '#' Newline
+;
+defineStatement
+:
+	'#' 'define' Identifier replacementList 
+  	| '#' 'define' Identifier '(' IdentifierList? ')' replacementList   
+  	| '#' 'define' Identifier '(' IdentifierList ',' '...' ')' replacementList  
+;
+
+includeStatement
+:
+	'#' 'include' ppTokens
+;
+
+undefineStatement
+:
+	'#' 'undef' Identifier
+;
+ppTokens
+:
+  	preprocessingToken
+  	| ppTokens preprocessingToken
+;
+replacementList
+:
+    ppTokens*
+;
+
+preprocessingToken
+: 	 
+  	headerName
+  	| Identifier
+  	| literal
+  	| preprocessingOpOrPunc
+;
+
+headerName
+:
+  	'<' headerCharSequence '>'
+  	|  '"' headerCharSequence '"'
+;
+
+headerCharSequence
+:
+   ~('\r'|'\n')*
+;
+
+preprocessingOpOrPunc
+:
+   ~('\r'|'\n')
+;
+
+IdentifierList
+:
+   Identifier
+   | IdentifierList ',' Identifier
+;
+
+/* ===============Preprocessor End ================== */
+
 
 /*Expressions*/
 primaryexpression
@@ -2356,10 +2479,10 @@ Newline
 
 BlockComment
 :
-	'/*' .*? '*/' -> skip
+	'/*' .*? '*/'
 ;
 
 LineComment
 :
-	'//' ~[\r\n]* -> skip
+	'//' ~[\r\n]*
 ;

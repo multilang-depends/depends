@@ -1,7 +1,6 @@
 package depends.extractor.cpp.cdt;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +14,6 @@ import org.eclipse.cdt.core.dom.parser.cpp.GPPScannerExtensionConfiguration;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IScanner;
-import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.NullLogService;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
@@ -27,6 +25,10 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 
 public class CDTParser {
+	public CDTParser() {
+		sysIncludePath = new String[0];
+	}
+	
 	public CDTParser(List<String> includesPath) {
 		sysIncludePath = includesPath.toArray(new String[] {});
 	}
@@ -86,7 +88,7 @@ public class CDTParser {
 				new NullLogService(), configuration, null);
 		AbstractGNUSourceCodeParser sourceCodeParser = new GNUCPPSourceParser(
 				scanner, ParserMode.COMPLETE_PARSE, new NullLogService(),
-				new GPPParserExtensionConfiguration(), null);
+				new GPPParserExtensionConfigurationExtension(), null);
 		IASTTranslationUnit astTranslationUnit =  sourceCodeParser.parse();
 		return astTranslationUnit;
 	}

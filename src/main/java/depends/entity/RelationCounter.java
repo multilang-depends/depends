@@ -42,7 +42,7 @@ public class RelationCounter {
 			if (var.getType()!=null)
 				entity.addRelation(new Relation(DependencyType.CONTAIN,var.getType().getId(),var.getType().getQualifiedName()));
 			else
-				System.out.println("cannot resove type of "+var.getQualifiedName());
+				System.out.println("cannot resolve type of "+var.getQualifiedName());
 		}
 		for (TypeEntity type:entity.getResolvedAnnotations()) {
 			entity.addRelation(new Relation(DependencyType.USE,type.getId(),type.getQualifiedName()));
@@ -54,7 +54,7 @@ public class RelationCounter {
 		HashSet<TypeEntity> usedEntities = new HashSet<>();
 		for (Expression expression:entity.expressions().values()){
 			if (expression.type==null) {
-				System.out.println("not resolved expression:" + expression.text + " in " + entity.getQualifiedName());
+//				System.out.println("not resolved expression:" + expression.text + " in " + entity.getQualifiedName());
 				continue;
 			}
 			if (expression.isCall) {

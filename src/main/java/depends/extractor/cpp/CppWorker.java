@@ -3,6 +3,7 @@ package depends.extractor.cpp;
 import depends.extractor.AbstractLangWorker;
 import depends.extractor.FileParser;
 import depends.extractor.cpp.cdt.CdtCppFileParser;
+import depends.extractor.cpp.g4.Antlr4CppFileParser;
 
 public class CppWorker extends AbstractLangWorker {
     private static final String LANG = "cpp";
@@ -26,7 +27,8 @@ public class CppWorker extends AbstractLangWorker {
 
 	@Override
 	protected FileParser getFileParser(String fileFullPath) {
-		return new CdtCppFileParser(fileFullPath,entityRepo,super.includePaths());
+	//	return new CdtCppFileParser(fileFullPath,entityRepo,super.includePaths());
+		return new Antlr4CppFileParser(fileFullPath,entityRepo,super.includePaths());
 	}
 
 	

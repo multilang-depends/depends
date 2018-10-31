@@ -1,4 +1,4 @@
-package depends.extractor.cpp;
+package depends.extractor.cpp.cdt;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import org.junit.Test;
 
 import depends.entity.repo.EntityRepo;
+import depends.extractor.cpp.CppFileParser;
 import depends.extractor.cpp.cdt.CdtCppFileParser;
 
 public class CppParameterParserTest {

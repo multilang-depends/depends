@@ -7,10 +7,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import depends.deptypes.DependencyType;
 import depends.entity.ContainerEntity;
 import depends.entity.Entity;
-import depends.entity.Expression;
 import depends.entity.IdGenerator;
 import depends.entity.Relation;
 import depends.entity.RelationCounter;
@@ -28,11 +26,10 @@ public class EntityRepo implements IdGenerator,TypeInfer{
 	public HashMap<Integer, Entity> allEntitiesById = new HashMap<>();
 	private int nextAvaliableIndex;
 	private BuiltInTypeIdenfier buildInProcessor = new NullParser();
-	private TypeEntity buildInType;
+	private static final TypeEntity buildInType = new TypeEntity("built-in", null, -1);
 	
 	public EntityRepo() {
 		nextAvaliableIndex = 0;
-		buildInType = new TypeEntity("built-in", null, -1);
 	}
 	
 	public Entity getEntity(String entityName) {
@@ -139,9 +136,6 @@ public class EntityRepo implements IdGenerator,TypeInfer{
 		if (buildInProcessor.isBuiltInTypePrefix(rawName)) return buildInType();
 		if (fromEntity==null) return null;
 		TypeEntity type = null;
-		if (rawName.contains(".")) {
-			return getTypeEntityByFullName(rawName);
-		}
 		if (rawName.equals("this")) {
 			Entity entityType = fromEntity.getAncestorOfType(TypeEntity.class);
 			if (entityType!=null) {
@@ -154,7 +148,12 @@ public class EntityRepo implements IdGenerator,TypeInfer{
 				return ((TypeEntity)entityType).getInheritedType();
 			}
 		}
-		
+		else if (rawName.contains(".")) {
+			TypeEntity t = getTypeEntityByFullName(rawName);
+			if (t!=null)
+				return t;
+		}
+
 		while(true) {
 			if (fromEntity instanceof TypeEntity) {
 				if (fromEntity.getRawName().equals(rawName))
@@ -204,19 +203,27 @@ public class EntityRepo implements IdGenerator,TypeInfer{
 		}
 		return null;
 	}
+	
+	private TypeEntity tryGetTypeEntity(String rawName, TypeEntity typeEntity, String qualifiedName) {
+		if (typeEntity.getRawName().equals(rawName)) {
+			return (TypeEntity)typeEntity;
+		}
+		if (rawName.equals(qualifiedName + typeEntity.getRawName())) {
+			return  (TypeEntity)typeEntity;
+		}
+		for (Entity child:typeEntity.getChildren()) {
+			if (child instanceof TypeEntity) {
+				TypeEntity type = tryGetTypeEntity(rawName,(TypeEntity)child,qualifiedName+typeEntity.getRawName()+".");
+				if (type!=null) return type;
+			}
+		}
+		return null;
+	}
 	private TypeEntity getTypeEntityUnder(String rawName, Entity entity) {
 		for (Entity level_1:entity.getChildren()) {
 			if (level_1 instanceof TypeEntity) {
-				if (level_1.getRawName().equals(rawName)) {
-					return (TypeEntity)level_1;
-				}
-			}
-			for (Entity level_2:level_1.getChildren()) {
-				if (level_2 instanceof TypeEntity) {
-					if (level_2.getRawName().equals(rawName)) {
-						return (TypeEntity)level_2;
-					}
-				}
+				TypeEntity type = tryGetTypeEntity(rawName,(TypeEntity)level_1,"");
+				if (type!=null) return type;
 			}
 		}
 		return null;

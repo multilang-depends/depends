@@ -2,6 +2,7 @@
 - provide a general mapping file (ask Prof. Cai)
 
 # Java
+- block varaibles with same name should be resovled.  
 - support new definition of relations (only annotation left)
 - support Annotation const
 - support lamba expression
@@ -9,17 +10,16 @@
 - support generic type reference
 - support type bound
 - is enum supported?
-
+- embded types supported?
 
 # C/C++
 - should parse all includes and remove cycling include path
-- still do not support include search path; only support standard search path
+- extract all names and perform a list for final check
 - cannot parse types which is in standard lib like std::string
 - cannot parse complex types like namespace::abc (only simple type could be solved"
 - function type of KnR
 - add check - should resolve all macros, variants, functions, class types, etc in header file; 
 - extract comments of function delcarator
-- extract all names and perform a list for final check
 - find parameter related conditional statements
 - extract set of local varaibles;
 - use STL to check whether the template is handled completely

@@ -15,18 +15,16 @@ import depends.entity.ContainerEntity;
 import depends.entity.IdGenerator;
 import depends.entity.types.VarEntity;
 
-public class MethodContext {
+public class MethodContext2 {
 	public String methodName ;
 	public List<VarEntity> parameters = new ArrayList<>();
 	public String returnType;
 	public List<String> throwedType = new ArrayList<>();
 
-	public MethodContext(IASTFunctionDefinition function, ContainerEntity containerEntity, IdGenerator idGenerator) {
-		final IASTFunctionDeclarator declarator= function.getDeclarator();
-		CdtDeclaratorContext declaratorContext = new CdtDeclaratorContext(function.getDeclarator());
+	public MethodContext2(IASTFunctionDeclarator declarator, ContainerEntity containerEntity, IdGenerator idGenerator) {
+		CdtDeclaratorContext declaratorContext = new CdtDeclaratorContext(declarator);
 		this.methodName = declaratorContext.getName();
         
-        final IASTDeclSpecifier declSpecifier= function.getDeclSpecifier();
 		final String[] parameterTypes= ASTStringUtil.getParameterSignatureArray(declarator);
 		for (String type:parameterTypes){
 			this.parameters.add(new VarEntity("", type, containerEntity, idGenerator.generateId()));
@@ -45,7 +43,7 @@ public class MethodContext {
 				this.parameters.get(i++).setRawName(knRDeclarator.getParameterNames()[i].getRawSignature());
 			}
 		}
-		this.returnType= ASTStringUtil.getReturnTypeString(declSpecifier, declarator);
+		this.returnType= "not complete";//ASTStringUtil.getReturnTypeString(declSpecifier, declarator);
 
 	}
 
