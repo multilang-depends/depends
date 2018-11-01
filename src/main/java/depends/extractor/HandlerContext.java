@@ -52,13 +52,14 @@ public class HandlerContext {
 		return currentTypeEntity;
 	}
 
-	public void foundMethodDeclarator(String methodName, Collection<VarEntity> parameters, String returnType, List<String> throwedType) {
+	public FunctionEntity foundMethodDeclarator(String methodName, String returnType, List<String> throwedType) {
 		FunctionEntity functionEntity = new FunctionEntity(methodName, this.latestValidContainer(),
-				idGenerator.generateId(),returnType,parameters);
+				idGenerator.generateId(),returnType);
 		entityRepo.add(functionEntity);
 		this.typeOrFileContainer().addFunction(functionEntity);
 		entityStack.push(functionEntity);
 		functionEntity.addThrowTypes(throwedType);
+		return functionEntity;
 	}
 	public void exitLastedEntity() {
 		entityStack.pop();

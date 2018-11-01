@@ -15,12 +15,11 @@ public class FunctionEntity extends ContainerEntity{
 	private Collection<TypeEntity> returnTypes;
 	private TypeEntity returnType;
 	private Collection<TypeEntity> throwTypes;
-
-    public FunctionEntity(String simpleName, Entity parent, Integer id, String returnType, Collection<VarEntity> parameters) {
+    public FunctionEntity(String simpleName, Entity parent, Integer id, String returnType) {
 		super(simpleName, parent,id);
 		this.returnTypes = new ArrayList<>();
 		returnTypeIdentifiers = new ArrayList<>();
-		this.parameters = parameters;
+		this.parameters = new ArrayList<>();
 		throwTypesIdentifiers = new ArrayList<>();
 		addReturnType(returnType);
 	}
@@ -65,4 +64,11 @@ public class FunctionEntity extends ContainerEntity{
 		}
 		return super.resolveVarBindings(varName);
 	}
+	public void addParameter(VarEntity var) {
+		this.parameters.add(var);
+	}
+	public void setReturnType(TypeEntity returnType) {
+		this.returnType = returnType;
+	}
+
 }

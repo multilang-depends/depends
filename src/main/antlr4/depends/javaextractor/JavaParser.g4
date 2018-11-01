@@ -128,10 +128,8 @@ classBodyDeclaration
 
 memberDeclaration
     : methodDeclaration
-    | genericMethodDeclaration
     | fieldDeclaration
     | constructorDeclaration
-    | genericConstructorDeclaration
     | interfaceDeclaration
     | annotationTypeDeclaration
     | classDeclaration
@@ -144,7 +142,7 @@ memberDeclaration
    for invalid return type after parsing.
  */
 methodDeclaration
-    : typeTypeOrVoid IDENTIFIER formalParameters ('[' ']')*
+    : typeParameters? typeTypeOrVoid IDENTIFIER formalParameters ('[' ']')*
       (THROWS qualifiedNameList)?
       methodBody
     ;
@@ -159,16 +157,10 @@ typeTypeOrVoid
     | VOID
     ;
 
-genericMethodDeclaration
-    : typeParameters methodDeclaration
-    ;
 
-genericConstructorDeclaration
-    : typeParameters constructorDeclaration
-    ;
 
 constructorDeclaration
-    : IDENTIFIER formalParameters (THROWS qualifiedNameList)? constructorBody=block
+    : typeParameters? IDENTIFIER formalParameters (THROWS qualifiedNameList)? constructorBody=block
     ;
 
 fieldDeclaration

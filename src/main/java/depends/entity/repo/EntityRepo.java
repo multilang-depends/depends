@@ -104,6 +104,10 @@ public class EntityRepo implements IdGenerator,TypeInfer{
 			if (!(entity instanceof FileEntity)) continue;
 			entity.inferTypes(this);
 		}
+		for (Entity entity:allEntitiesById.values()) {
+			if ((entity instanceof ContainerEntity))
+				((ContainerEntity)entity).resolveExpressions(this);
+		}
 	}
 	
 	public void setParent(Entity child, Entity parent) {

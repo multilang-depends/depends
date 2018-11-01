@@ -12,7 +12,8 @@ public interface TypeInfer {
 
 	static final TypeEntity buildInType = new TypeEntity("built-in", null, -1);
 	static final TypeEntity externalType = new TypeEntity("external", null, -1);
-	
+	static final TypeEntity genericParameterType = new TypeEntity("T", null, -1);
+
 	TypeEntity inferType(Entity fromEntity, String rawName, boolean typeOnly);
 
 	void setBuiltInTypeIdentifier(BuiltInTypeIdenfier fileParser);

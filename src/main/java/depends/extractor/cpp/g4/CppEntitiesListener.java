@@ -2,6 +2,7 @@ package depends.extractor.cpp.g4;
 
 import depends.entity.IdGenerator;
 import depends.entity.repo.EntityRepo;
+import depends.entity.types.FunctionEntity;
 import depends.extractor.HandlerContext;
 import depends.javaextractor.CPP14BaseListener;
 import depends.javaextractor.CPP14Parser.ClassheadContext;
@@ -33,8 +34,9 @@ public class CppEntitiesListener extends CPP14BaseListener {
 	@Override
 	public void enterFunctiondefinition(FunctiondefinitionContext ctx) {
 		FunctiondefinitionContextHelper helper = new FunctiondefinitionContextHelper(ctx);
-		context.foundMethodDeclarator(helper.getFunctionName(),
-				helper.getParameters(),helper.getReturnType(), helper.getThrowedType());
+		FunctionEntity function = context.foundMethodDeclarator(helper.getFunctionName(),
+				helper.getReturnType(), helper.getThrowedType());
+		helper.addParameters(function);
 		super.enterFunctiondefinition(ctx);
 	}
 	

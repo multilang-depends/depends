@@ -58,11 +58,13 @@ translationunit
 
 group
 :
-	preprocessStatements
-	| declarationseq
+	declarationseq
+	/*| preprocessStatements should be further check */
+	
 ;
 
 /* ===============Preprocessor Start ================== */
+/* 
 preprocessStatements
 :
 	ifSection 
@@ -175,7 +177,7 @@ IdentifierList
    Identifier
    | IdentifierList ',' Identifier
 ;
-
+*/
 /* ===============Preprocessor End ================== */
 
 

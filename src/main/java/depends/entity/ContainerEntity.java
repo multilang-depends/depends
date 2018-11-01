@@ -3,6 +3,7 @@ package depends.entity;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 import depends.entity.types.FunctionEntity;
 import depends.entity.types.TypeEntity;
@@ -31,6 +32,10 @@ public abstract class ContainerEntity extends Entity {
 
 	public void addTypeParameter(String typeName) {
 		this.typeParameters.add(typeName);
+	}
+	
+	public void addTypeParameter(List<String> parameters) {
+		this.typeParameters.addAll(parameters);
 	}
 
 	public void addVar(VarEntity var) {
@@ -87,14 +92,13 @@ public abstract class ContainerEntity extends Entity {
 		for (FunctionEntity func:this.functions) {
 			func.inferLocalLevelTypes(typeInferer);
 		}
-		resolveExpressions(typeInferer);
 	}
 
 	/**
 	 * Resolve all expression's type
 	 * @param typeInferer
 	 */
-	private void resolveExpressions(TypeInfer typeInferer) {
+	public void resolveExpressions(TypeInfer typeInferer) {
 		for (Expression expression : expressions.values()) {
 			//1. if expression's type existed, break;
 			if (expression.getType() != null)
@@ -174,5 +178,12 @@ public abstract class ContainerEntity extends Entity {
 		if (parent !=null && parent instanceof ContainerEntity)
 			return ((ContainerEntity)parent).resolveVarBindings(varName);
 		return null;
+	}
+
+	public boolean isGenericTypeParameter(String rawType) {
+		if (this.typeParameters.contains(rawType)) return true;
+		if (this.getParent()==null || !(this.getParent() instanceof ContainerEntity))
+			return false;
+		return ((ContainerEntity)getParent()).isGenericTypeParameter(rawType);
 	}
 }

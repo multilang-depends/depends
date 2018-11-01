@@ -5,6 +5,7 @@ import java.util.List;
 
 import depends.entity.IdGenerator;
 import depends.entity.repo.EntityRepo;
+import depends.entity.types.FunctionEntity;
 import depends.extractor.HandlerContext;
 import depends.extractor.java.context.AnnotationProcessor;
 import depends.extractor.java.context.ClassTypeContextHelper;
@@ -12,6 +13,7 @@ import depends.extractor.java.context.ExpressionUsage;
 import depends.extractor.java.context.FormalParameterListContextHelper;
 import depends.extractor.java.context.IdentifierContextHelper;
 import depends.extractor.java.context.QualitiedNameContextHelper;
+import depends.extractor.java.context.TypeParameterContextHelper;
 import depends.extractor.java.context.VariableDeclaratorsContextHelper;
 import depends.javaextractor.JavaParser.AnnotationConstantRestContext;
 import depends.javaextractor.JavaParser.AnnotationMethodRestContext;
@@ -156,14 +158,14 @@ public class JavaEntitiesListener extends JavaParserBaseListener {
 		List<String> throwedType = QualitiedNameContextHelper.getNames(ctx.qualifiedNameList());
 		String methodName = ctx.IDENTIFIER().getText();
 		String returnedType = ClassTypeContextHelper.getClassName(ctx.typeTypeOrVoid());
-		FormalParameterListContextHelper helper = new FormalParameterListContextHelper(
-				ctx.formalParameters(),context.typeOrFileContainer(),idGenerator);
-
-		context.foundMethodDeclarator(methodName, 
-				helper.getParameterList(),
+		FunctionEntity method = context.foundMethodDeclarator(methodName, 
 				returnedType,
 				throwedType);
-		
+		new FormalParameterListContextHelper(ctx.formalParameters(),method,idGenerator);
+		if (ctx.typeParameters()!=null) {
+			List<String> parameters = TypeParameterContextHelper.getTypeParameters(ctx.typeParameters());
+			method.addTypeParameter(parameters);
+		}
 		annotationProcessor.processAnnotationModifier(ctx, "classOrInterfaceModifier");
 		super.enterMethodDeclaration(ctx);
 	}
@@ -184,12 +186,11 @@ public class JavaEntitiesListener extends JavaParserBaseListener {
 
 	@Override
 	public void enterInterfaceMethodDeclaration(InterfaceMethodDeclarationContext ctx) {
-		FormalParameterListContextHelper helper = new FormalParameterListContextHelper(ctx.formalParameters(),context.typeOrFileContainer(),idGenerator);
 		List<String> throwedType = QualitiedNameContextHelper.getNames(ctx.qualifiedNameList());
-
-		context.foundMethodDeclarator(ctx.IDENTIFIER().getText(), helper.getParameterList(),
+		 FunctionEntity method = context.foundMethodDeclarator(ctx.IDENTIFIER().getText(),
 				ClassTypeContextHelper.getClassName(ctx.typeTypeOrVoid()), throwedType);
-		if (ctx.typeParameters() != null) {
+		 new FormalParameterListContextHelper(ctx.formalParameters(),method,idGenerator);
+		 if (ctx.typeParameters() != null) {
 			foundTypeParametersUse(ctx.typeParameters());
 		}
 		annotationProcessor.processAnnotationModifier(ctx, "interfaceMethodModifier");
@@ -204,9 +205,10 @@ public class JavaEntitiesListener extends JavaParserBaseListener {
 
 	@Override
 	public void enterConstructorDeclaration(ConstructorDeclarationContext ctx) {
-		FormalParameterListContextHelper helper = new FormalParameterListContextHelper(ctx.formalParameters(),context.typeOrFileContainer(),idGenerator);
 		List<String> throwedType = QualitiedNameContextHelper.getNames(ctx.qualifiedNameList());
-		context.foundMethodDeclarator(ctx.IDENTIFIER().getText(), helper.getParameterList(),ctx.IDENTIFIER().getText(), throwedType);
+		FunctionEntity method = context.foundMethodDeclarator(ctx.IDENTIFIER().getText(),ctx.IDENTIFIER().getText(), throwedType);
+		new FormalParameterListContextHelper(ctx.formalParameters(),method,idGenerator);
+		method.setReturnType(context.currentType());
 		annotationProcessor.processAnnotationModifier(ctx, "classBodyDeclaration");
 		super.enterConstructorDeclaration(ctx);
 	}
@@ -245,7 +247,7 @@ public class JavaEntitiesListener extends JavaParserBaseListener {
 
 	@Override
 	public void enterAnnotationMethodRest(AnnotationMethodRestContext ctx) {
-		context.foundMethodDeclarator(ctx.IDENTIFIER().getText(), new ArrayList<>(),ClassTypeContextHelper.getClassName(ctx.typeType()), new ArrayList<>());
+		context.foundMethodDeclarator(ctx.IDENTIFIER().getText(), ClassTypeContextHelper.getClassName(ctx.typeType()), new ArrayList<>());
 		super.enterAnnotationMethodRest(ctx);
 	}
 

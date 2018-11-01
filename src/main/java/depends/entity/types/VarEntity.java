@@ -1,5 +1,6 @@
 package depends.entity.types;
 
+import depends.entity.ContainerEntity;
 import depends.entity.Entity;
 import depends.entity.TypeInfer;
 
@@ -26,5 +27,12 @@ public class VarEntity extends Entity {
 	@Override
 	public void inferLocalLevelTypes(TypeInfer typeInferer) {
 		type = typeInferer.inferType(this, rawType,true);
+		if (type==null) {
+			if (((ContainerEntity)getParent()).isGenericTypeParameter(rawType)) {
+				type = TypeInfer.genericParameterType;
+			}
+		}
 	}
+
+	
 }

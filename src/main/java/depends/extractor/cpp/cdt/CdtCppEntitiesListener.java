@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 
 import depends.entity.IdGenerator;
 import depends.entity.repo.EntityRepo;
+import depends.entity.types.FunctionEntity;
 import depends.extractor.HandlerContext;
 
 public class CdtCppEntitiesListener  extends ASTVisitor {
@@ -100,7 +101,8 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 	public int visit(IASTDeclaration declaration) {
 		if (declaration instanceof IASTFunctionDefinition) {
 			MethodContext method = new MethodContext((IASTFunctionDefinition)declaration,context.lastContainer(),this.idGenerator);
-			context.foundMethodDeclarator(method.methodName, method.parameters, method.returnType, method.throwedType);
+			FunctionEntity funcEntity = context.foundMethodDeclarator(method.methodName,  method.returnType, method.throwedType);
+			method.addParameters(funcEntity);
 		}
 		return super.visit(declaration);
 	}

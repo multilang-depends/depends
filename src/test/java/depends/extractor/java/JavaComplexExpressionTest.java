@@ -18,7 +18,7 @@ public class JavaComplexExpressionTest {
         parser.parse();
         repo.resolveAllBindings();
         ContainerEntity entity  = (ContainerEntity)(repo.getEntity("ComplexExpressionTest.other"));
-        assertEquals(2,entity.getRelations().size());
+        assertEquals(3,entity.getRelations().size());
 	}
 
 }

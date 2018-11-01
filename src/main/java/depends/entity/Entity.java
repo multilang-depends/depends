@@ -1,8 +1,8 @@
 package depends.entity;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import depends.entity.repo.EntityRepo;
@@ -13,7 +13,7 @@ public abstract class Entity {
 	String qualifiedName = null;
 	String rawName = "";
 	Entity parent;
-	ArrayList<Entity> children = new ArrayList<>();
+	Set<Entity> children = new HashSet<>();
     ArrayList<Relation> relations = new ArrayList<>();
 
 	
@@ -22,6 +22,8 @@ public abstract class Entity {
 		this.rawName = rawName;
 		this.parent = parent;
 		this.setId(id);
+		if (parent!=null)
+			parent.children.add(this);
 		deduceQualifiedName();
 	}
 
@@ -105,7 +107,7 @@ public abstract class Entity {
 		this.parent = parent;
 	}
 	
-	public List<Entity> getChildren() {
+	public Collection<Entity> getChildren() {
 		return children;
 	}
 	

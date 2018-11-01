@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import depends.entity.types.FunctionEntity;
 import depends.entity.types.VarEntity;
 import depends.javaextractor.CPP14Parser.FunctiondefinitionContext;
 
@@ -32,6 +33,10 @@ public class FunctiondefinitionContextHelper {
 
 	public List<String> getThrowedType() {
 		return new ArrayList<>();
+	}
+
+	public void addParameters(FunctionEntity function) {
+		// TODO Auto-generated method stub
 	}
 
 }
