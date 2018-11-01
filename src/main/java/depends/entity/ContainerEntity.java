@@ -73,6 +73,11 @@ public abstract class ContainerEntity extends Entity {
 		ArrayList<TypeEntity> r = new ArrayList<>();
 		for (String typeParameter : identifiers) {
 			TypeEntity typeEntity = typeInferer.inferType(this, typeParameter,true);
+			if (typeEntity==null) {
+				if (((ContainerEntity)getParent()).isGenericTypeParameter(typeParameter)) {
+					typeEntity = TypeInfer.genericParameterType;
+				}
+			}
 			if (typeEntity != null)
 				r.add(typeEntity);
 		}

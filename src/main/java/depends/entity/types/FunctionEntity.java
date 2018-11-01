@@ -46,6 +46,7 @@ public class FunctionEntity extends ContainerEntity{
 		returnTypes= identiferToTypes(typeInferer,this.returnTypeIdentifiers);
 		if (returnTypes.size()>0)
 			returnType = returnTypes.iterator().next();
+
 		throwTypes= identiferToTypes(typeInferer,this.throwTypesIdentifiers);
 		super.inferLocalLevelTypes(typeInferer);
 	}

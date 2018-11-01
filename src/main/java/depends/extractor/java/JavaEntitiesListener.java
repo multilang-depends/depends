@@ -319,6 +319,7 @@ public class JavaEntitiesListener extends JavaParserBaseListener {
 					context.foundTypeParametes(ClassTypeContextHelper.getClassName(typeParam.typeBound().typeType(j)));
 				}
 			}
+			context.currentType().addTypeParameter(typeParam.IDENTIFIER().getText());
 		}
 	}
 
