@@ -28,9 +28,13 @@ public class TypeEntity extends ContainerEntity{
 		super.inferLocalLevelTypes(typeInferer);
 	}
 	public void addImplements(String typeName) {
+		if (typeName.equals(this.getRawName())) return;
+		if (implementedIdentifiers.contains(typeName)) return;
 		this.implementedIdentifiers.add(typeName);
 	}
 	public void addExtends(String typeName) {
+		if (typeName.equals(this.getRawName())) return;
+		if (inhertedTypeIdentifiers.contains(typeName)) return;
 		this.inhertedTypeIdentifiers.add(typeName);
 	}
 	public Collection<TypeEntity> getInheritedTypes() {

@@ -7,7 +7,6 @@ import java.util.HashMap;
 import depends.entity.types.FunctionEntity;
 import depends.entity.types.TypeEntity;
 import depends.entity.types.VarEntity;
-import depends.util.Tuple;
 
 public abstract class ContainerEntity extends Entity {
 	private ArrayList<VarEntity> vars;
@@ -68,7 +67,7 @@ public abstract class ContainerEntity extends Entity {
 	protected Collection<TypeEntity> identiferToTypes(TypeInfer typeInferer, Collection<String> identifiers) {
 		ArrayList<TypeEntity> r = new ArrayList<>();
 		for (String typeParameter : identifiers) {
-			TypeEntity typeEntity = typeInferer.inferType(this, typeParameter);
+			TypeEntity typeEntity = typeInferer.inferType(this, typeParameter,true);
 			if (typeEntity != null)
 				r.add(typeEntity);
 		}
@@ -98,57 +97,44 @@ public abstract class ContainerEntity extends Entity {
 	private void resolveExpressions(TypeInfer typeInferer) {
 		for (Expression expression : expressions.values()) {
 			//1. if expression's type existed, break;
-			if (expression.type != null)
+			if (expression.getType() != null)
 				continue;
 			
 			//2. if expression's rawType existed, directly infer type by rawType
 			//   if expression's rawType does not existed, infer type based on identifiers
 			if (expression.rawType != null) {
-				expression.type = typeInferer.inferType(this, expression.rawType);
-			}else if(expression.identifier != null) {
-				if (expression.identifier.contains(".")) {
-					/* if it is a qualified name */
-					Tuple<TypeEntity, String> result = typeInferer.locateTypeOfQualifiedName(this, expression.identifier);
-					if (result != null) {
-						if (result.y == null) {
-							expression.type = result.x;
-						} else {
-							expression.type = typeInferer.inferType(result.x, result.y);
-						}
-					}
-				} else {
-					/* expression identifiers could be a variable, or a type. try them */
-					expression.type = lookupVarDefinition(expression.identifier);
-					if (expression.type==null)
-						expression.type = typeInferer.inferType(this, expression.identifier);
+				expression.setType(typeInferer.inferType(this, expression.rawType,true),typeInferer);
+			}else if (expression.isDot){ //wait for previous
+				continue;
+			} else if (expression.rawType!=null) {
+				expression.setType(typeInferer.inferType(this, expression.rawType, true),typeInferer);
+				if (expression.getType() !=null) {
+					 continue;
 				}
 			}
-			
-			//3. if new found type of expression, update parent expressions
-			if (expression.type != null) {
-				expression.deduceParentType(this.expressions,typeInferer);
+			if (expression.identifier!=null) { 
+				TypeEntity type = typeInferer.inferType(this, expression.identifier, false);
+				if (type!=null) {
+					expression.setType(type,typeInferer);
+					continue;
+				}
+				if (expression.isCall) {
+					FunctionEntity func = typeInferer.resolveFunctionBindings(this, expression.identifier);
+					if (func!=null) {
+						expression.setType(func.getReturnType(),typeInferer);
+					}
+				}else {
+					VarEntity varEntity = this.resolveVarBindings(expression.identifier);
+					if (varEntity!=null) {
+						expression.setType( varEntity.getType(),typeInferer);
+					}
+				}
 			}
 		}
 	}
 
 
-	/**
-	 * Found the given type of given var;
-	 * Must be invoked after all vars' type have been resolved
-	 * Should be override if new vars have been added, for example 
-	 * Function Type could resolve parameters as vars
-	 * @param identifier  - var identifiers
-	 * @return
-	 */
-	public TypeEntity lookupVarDefinition(String identifier) {
-		for (VarEntity var : this.vars) {
-			if (var.getRawName().equals(identifier))
-				return var.getType();
-		}
-		if (this.parent != null && this.parent instanceof ContainerEntity)
-			return ((ContainerEntity) this.parent).lookupVarDefinition(identifier);
-		return null;
-	}
+	
 
 	public Collection<TypeEntity> getResolvedTypeParameters() {
 		return resolvedTypeParameters;
@@ -164,5 +150,29 @@ public abstract class ContainerEntity extends Entity {
 
 	public void setResolvedAnnotations(Collection<TypeEntity> resolvedAnnotations) {
 		this.resolvedAnnotations = resolvedAnnotations;
+	}
+
+	public String dumpExpressions() {
+		StringBuilder sb = new StringBuilder();
+		for (Expression exp:expressions.values()) {
+			sb.append(exp.toString()).append("\n");
+		}
+		return sb.toString();
+	}
+	
+	/**
+	 * To found the var. Must be invoked after all entities var binding solved
+	 * @param fromEntity
+	 * @param varName
+	 * @return
+	 */
+	public VarEntity resolveVarBindings(String varName) {
+		for (VarEntity var:getVars()) {
+			if (var.getRawName().equals(varName))
+				return var;
+		}
+		if (parent !=null && parent instanceof ContainerEntity)
+			return ((ContainerEntity)parent).resolveVarBindings(varName);
+		return null;
 	}
 }

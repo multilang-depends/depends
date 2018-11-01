@@ -41,8 +41,9 @@ public class RelationCounter {
 		for (VarEntity var:entity.getVars()) {
 			if (var.getType()!=null)
 				entity.addRelation(new Relation(DependencyType.CONTAIN,var.getType().getId(),var.getType().getQualifiedName()));
-			else
+			else {
 				System.out.println("cannot resolve type of "+var.getQualifiedName());
+			}
 		}
 		for (TypeEntity type:entity.getResolvedAnnotations()) {
 			entity.addRelation(new Relation(DependencyType.USE,type.getId(),type.getQualifiedName()));
@@ -53,23 +54,23 @@ public class RelationCounter {
 		
 		HashSet<TypeEntity> usedEntities = new HashSet<>();
 		for (Expression expression:entity.expressions().values()){
-			if (expression.type==null) {
+			if (expression.getType()==null) {
 //				System.out.println("not resolved expression:" + expression.text + " in " + entity.getQualifiedName());
 				continue;
 			}
 			if (expression.isCall) {
-				entity.addRelation(new Relation(DependencyType.CALL,expression.type.getId(),expression.type.getQualifiedName()));
+				entity.addRelation(new Relation(DependencyType.CALL,expression.getType().getId(),expression.getType().getQualifiedName()));
 			}
 			if (expression.isCreate) {
-				entity.addRelation(new Relation(DependencyType.CREATE,expression.type.getId(),expression.type.getQualifiedName()));
+				entity.addRelation(new Relation(DependencyType.CREATE,expression.getType().getId(),expression.getType().getQualifiedName()));
 			}
 			else if (expression.isSet) { //SET is merged with USE
-				entity.addRelation(new Relation(DependencyType.USE,expression.type.getId(),expression.type.getQualifiedName()));
+				entity.addRelation(new Relation(DependencyType.USE,expression.getType().getId(),expression.getType().getQualifiedName()));
 			}
 			else if (expression.isCast) { 
-				entity.addRelation(new Relation(DependencyType.CAST,expression.type.getId(),expression.type.getQualifiedName()));
+				entity.addRelation(new Relation(DependencyType.CAST,expression.getType().getId(),expression.getType().getQualifiedName()));
 			}else {
-				usedEntities.add(expression.type);
+				usedEntities.add(expression.getType());
 			}
 		}
 		

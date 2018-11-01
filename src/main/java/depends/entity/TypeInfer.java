@@ -10,7 +10,10 @@ import depends.util.Tuple;
 
 public interface TypeInfer {
 
-	TypeEntity inferType(Entity fromEntity, String rawName);
+	static final TypeEntity buildInType = new TypeEntity("built-in", null, -1);
+	static final TypeEntity externalType = new TypeEntity("external", null, -1);
+	
+	TypeEntity inferType(Entity fromEntity, String rawName, boolean typeOnly);
 
 	void setBuiltInTypeIdentifier(BuiltInTypeIdenfier fileParser);
 	
@@ -30,14 +33,6 @@ public interface TypeInfer {
 	 * @return the Function
 	 */
 	FunctionEntity resolveFunctionBindings(Entity fromEntity, String functionName);
-
-	/**
-	 * To found the var. Must be invoked after all entities var binding solved
-	 * @param fromEntity
-	 * @param varName
-	 * @return
-	 */
-	VarEntity resolveVarBindings(Entity fromEntity, String varName);
 
 	/**
 	 * To locate the types in qualified name (match the longest one
@@ -63,6 +58,9 @@ public interface TypeInfer {
 	 * @return
 	 */
 	boolean isBuiltInTypePrefix(String prefix);
+
+
+
 
 
 }

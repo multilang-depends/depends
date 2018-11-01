@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import org.junit.Test;
 
+import depends.entity.ContainerEntity;
 import depends.entity.Entity;
 import depends.entity.repo.EntityRepo;
 import depends.entity.types.FunctionEntity;
@@ -41,7 +42,9 @@ public class JavaVarResolveTest {
         JavaFileParser parser = new JavaFileParser(src,repo);
         parser.parse();
         repo.resolveAllBindings();
-        assertEquals(16,repo.getEntity("LocalVarInferExample.setExample").getRelations().size());
+        ContainerEntity e = (ContainerEntity) repo.getEntity("LocalVarInferExample.setExample");
+        System.out.println(e.dumpExpressions());
+        assertEquals(15,repo.getEntity("LocalVarInferExample.setExample").getRelations().size());
 	}
 	
 	@Test
@@ -51,7 +54,19 @@ public class JavaVarResolveTest {
         JavaFileParser parser = new JavaFileParser(src,repo);
         parser.parse();
         repo.resolveAllBindings();
-        assertEquals(12,repo.getEntity("test.ComplexExpressionExample.setExample").getRelations().size());
+        assertEquals(13,repo.getEntity("test.ComplexExpressionExample.setExample").getRelations().size());
 	}
+	
+	@Test
+	public void test_long_static_function_should_be_inferred() throws IOException {
+		EntityRepo repo = new EntityRepo();
+        String src = "./src/test/resources/java-code-examples/LongExpressionWithAbsolutePath.java";
+        JavaFileParser parser = new JavaFileParser(src,repo);
+        parser.parse();
+        repo.resolveAllBindings();
+        System.out.println(((ContainerEntity)(repo.getEntity("x.LongExpressionWithAbsolutePath.setExample"))).dumpExpressions());
+        assertEquals(5,repo.getEntity("x.LongExpressionWithAbsolutePath.setExample").getRelations().size());
+	}
+	
 	
 }

@@ -36,9 +36,6 @@ public class FunctionEntity extends ContainerEntity{
 		this.returnTypeIdentifiers.add(returnType);
 	}
 	public void addThrowTypes(List<String> throwedType) {
-		if (throwedType==null) {
-			System.out.println("****");
-		}
 		throwTypesIdentifiers.addAll(throwedType);
 	}
 	
@@ -59,16 +56,13 @@ public class FunctionEntity extends ContainerEntity{
 	public Collection<TypeEntity> getThrowTypes() {
 		return throwTypes;
 	}
-	
 	@Override
-	public TypeEntity lookupVarDefinition(String identifier) {
+	public VarEntity resolveVarBindings(String varName) {
 		for (VarEntity param:parameters) {
-			if (identifier.equals(param.getRawName())) {
-				return param.getType();
+			if (varName.equals(param.getRawName())) {
+				return param;
 			}
 		}
-		return super.lookupVarDefinition(identifier);
+		return super.resolveVarBindings(varName);
 	}
-	
-	
 }

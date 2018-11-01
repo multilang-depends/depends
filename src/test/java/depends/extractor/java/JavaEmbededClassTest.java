@@ -1,11 +1,8 @@
 package depends.extractor.java;
 
 import static org.junit.Assert.assertEquals;
-
 import java.io.IOException;
-
 import org.junit.Test;
-
 import depends.entity.repo.EntityRepo;
 
 public class JavaEmbededClassTest {

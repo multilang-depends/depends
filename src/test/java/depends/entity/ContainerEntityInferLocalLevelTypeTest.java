@@ -45,7 +45,7 @@ public class ContainerEntityInferLocalLevelTypeTest {
 		block.addAnnotation(typeRawName);
 		block.addTypeParameter(typeRawName);
 		
-		when(typeInferer.inferType(any(),matches(typeRawName))).thenReturn(type1);
+		when(typeInferer.inferType(any(),matches(typeRawName),any())).thenReturn(type1);
 		block.inferLocalLevelTypes(typeInferer);
 		
 		assertEquals(type1Id, block.getVars().get(0).getType().getId());
@@ -59,10 +59,10 @@ public class ContainerEntityInferLocalLevelTypeTest {
 		expression.rawType = typeRawName;
 		block.addExpression(expression);
 	
-		when(typeInferer.inferType(any(),matches(typeRawName))).thenReturn(type1);
+		when(typeInferer.inferType(any(),matches(typeRawName),any())).thenReturn(type1);
 		block.inferLocalLevelTypes(typeInferer);
 		
-		assertEquals(type1Id, block.expressions().get(0).type.getId());
+		assertEquals(type1Id, block.expressions().get(0).getType().getId());
 	}
 	
 	@Test
@@ -72,10 +72,10 @@ public class ContainerEntityInferLocalLevelTypeTest {
 		block.addExpression(expression);
 		block.addVar(new VarEntity("var",typeRawName,block,2));
 		
-		when(typeInferer.inferType(any(),matches(typeRawName))).thenReturn(type1);
+		when(typeInferer.inferType(any(),matches(typeRawName),any())).thenReturn(type1);
 		block.inferLocalLevelTypes(typeInferer);
 		
-		assertEquals(type1Id, block.expressions().get(0).type.getId());
+		assertEquals(type1Id, block.expressions().get(0).getType().getId());
 	}
 	
 	@Test
@@ -85,10 +85,10 @@ public class ContainerEntityInferLocalLevelTypeTest {
 		block.addExpression(expression);
 		block.addVar(new VarEntity("var",typeRawName,block,2));
 		
-		when(typeInferer.inferType(any(),matches(typeRawName))).thenReturn(type1);
+		when(typeInferer.inferType(any(),matches(typeRawName),any())).thenReturn(type1);
 		block.inferLocalLevelTypes(typeInferer);
 		
-		assertNull(block.expressions().get(0).type);
+		assertNull(block.expressions().get(0).getType());
 	}
 	
 	@Test
@@ -101,12 +101,12 @@ public class ContainerEntityInferLocalLevelTypeTest {
 		AnonymousBlock parentBlock = new AnonymousBlock(null, 1);
 		block.setParent(parentBlock);
 		parentBlock.addVar(new VarEntity("var_in_parent",typeRawName,parentBlock,2));
-		when(typeInferer.inferType(any(),matches(typeRawName))).thenReturn(type1);
+		when(typeInferer.inferType(any(),matches(typeRawName),any())).thenReturn(type1);
 
 		parentBlock.inferLocalLevelTypes(typeInferer);
 		block.inferLocalLevelTypes(typeInferer);
 		
-		assertEquals(type1Id, block.expressions().get(0).type.getId());
+		assertEquals(type1Id, block.expressions().get(0).getType().getId());
 	}
 	
 	@Test
@@ -116,7 +116,7 @@ public class ContainerEntityInferLocalLevelTypeTest {
 		block.addExpression(expression);
 		block.setParent(type1);
 		block.inferLocalLevelTypes(repo);
-		assertEquals(type1Id, block.expressions().get(0).type.getId());
+		assertEquals(type1Id, block.expressions().get(0).getType().getId());
 	}
 	
 	@Test
@@ -131,7 +131,7 @@ public class ContainerEntityInferLocalLevelTypeTest {
 		block.setParent(type2);
 
 		block.inferLocalLevelTypes(repo);
-		assertEquals(type1Id, block.expressions().get(0).type.getId());
+		assertEquals(type1Id, block.expressions().get(0).getType().getId());
 	}
 	
 	@Test
@@ -147,7 +147,7 @@ public class ContainerEntityInferLocalLevelTypeTest {
 		type2.addVar(new VarEntity("var",typeRawName,block,2));
 		type2.inferLocalLevelTypes(repo);
 		block.inferLocalLevelTypes(repo);
-		assertEquals(type1Id, block.expressions().get(0).type.getId());
+		assertEquals(type1Id, block.expressions().get(0).getType().getId());
 	}
 	
 	@Test
@@ -164,7 +164,7 @@ public class ContainerEntityInferLocalLevelTypeTest {
 		type1.inferLocalLevelTypes(repo);
 		type2.inferLocalLevelTypes(repo);
 		block.inferLocalLevelTypes(repo);
-		assertEquals(type1Id, block.expressions().get(0).type.getId());
+		assertEquals(type1Id, block.expressions().get(0).getType().getId());
 	}
 	
 	@Test
@@ -173,7 +173,7 @@ public class ContainerEntityInferLocalLevelTypeTest {
 		expression.identifier = "this";
 		type1.addExpression(expression);
 		type1.inferLocalLevelTypes(repo);
-		assertEquals(type1Id, type1.expressions().get(0).type.getId());
+		assertEquals(type1Id, type1.expressions().get(0).getType().getId());
 	}
 	
 	@Test
@@ -186,7 +186,7 @@ public class ContainerEntityInferLocalLevelTypeTest {
 		repo.add(type1);
 		repo.add(type2);
 		type2.inferLocalLevelTypes(repo);
-		assertEquals(type1Id, type2.expressions().get(0).type.getId());
+		assertEquals(type1Id, type2.expressions().get(0).getType().getId());
 	}
 	
 	@Test
@@ -201,7 +201,7 @@ public class ContainerEntityInferLocalLevelTypeTest {
 		repo.add(type2);
 		type1.inferLocalLevelTypes(repo);
 		type2.inferLocalLevelTypes(repo);
-		assertEquals(type1Id, type2.expressions().get(0).type.getId());
+		assertEquals(type1Id, type2.expressions().get(0).getType().getId());
 	}
 
 }

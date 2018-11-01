@@ -26,8 +26,7 @@ public class EntityRepo implements IdGenerator,TypeInfer{
 	public HashMap<Integer, Entity> allEntitiesById = new HashMap<>();
 	private int nextAvaliableIndex;
 	private BuiltInTypeIdenfier buildInProcessor = new NullParser();
-	private static final TypeEntity buildInType = new TypeEntity("built-in", null, -1);
-	
+
 	public EntityRepo() {
 		nextAvaliableIndex = 0;
 	}
@@ -107,127 +106,129 @@ public class EntityRepo implements IdGenerator,TypeInfer{
 		}
 	}
 	
-
-	
-	@Override
-	public VarEntity resolveVarBindings(Entity fromEntity, String varName) {
-		while(fromEntity!=null) {
-			if (fromEntity instanceof ContainerEntity) {
-				for (VarEntity var:((ContainerEntity)fromEntity).getVars()) {
-					if (var.getRawName().equals(varName))
-						return var;
-				}
-			}
-			fromEntity = fromEntity.getParent();
-		}
-		return null;
-	}
-
-	
-	
 	public void setParent(Entity child, Entity parent) {
 		child.setParent(parent);
 		parent.addChild(child);
 	}
-	
 	@Override
-	public TypeEntity inferType(Entity fromEntity, String rawName) {
-		if (buildInProcessor.isBuiltInType(rawName)) return buildInType();
-		if (buildInProcessor.isBuiltInTypePrefix(rawName)) return buildInType();
-		if (fromEntity==null) return null;
-		TypeEntity type = null;
-		if (rawName.equals("this")) {
-			Entity entityType = fromEntity.getAncestorOfType(TypeEntity.class);
-			if (entityType!=null) {
-				return (TypeEntity) entityType;
-			}
+	public TypeEntity inferType(Entity fromEntity, String rawName, boolean typeOnly) {
+		if(rawName==null) return null;
+		if (buildInProcessor.isBuiltInType(rawName)) return buildInType;
+		if (buildInProcessor.isBuiltInTypePrefix(rawName)) return buildInType;
+		
+		//qualified name will first try global name directly
+		if (rawName.contains(".")) {
+			if (this.getTypeEntityByFullName(rawName)!=null) 
+				return this.getTypeEntityByFullName(rawName);
 		}
-		else if (rawName.equals("super")) {
-			Entity entityType = fromEntity.getAncestorOfType(TypeEntity.class);
-			if (entityType!=null) {
-				return ((TypeEntity)entityType).getInheritedType();
-			}
+		
+		//first we lookup the first symbol
+		String[] names = rawName.split("\\.");
+		if (names.length==0) return null;
+		Entity type = lookupTypes(fromEntity,names[0],typeOnly);
+		if (type==null) return null;
+		if (names.length==1 ) {
+			TypeEntity actualType = getType(type);
+			if (actualType!=null) return actualType;
 		}
-		else if (rawName.contains(".")) {
-			TypeEntity t = getTypeEntityByFullName(rawName);
-			if (t!=null)
-				return t;
+		//then find the subsequent symbols
+		type = findTypesSince(type,names,1,typeOnly);
+		TypeEntity returnType = getType(type);
+		if (typeOnly)
+			return returnType;
+		else if (returnType!=null)
+			return returnType;
+		return null;
+	}
+	
+	/**
+	 * A utility function to get the entity type
+	 * @param type
+	 * @return
+	 */
+	private static TypeEntity getType(Entity type) {
+		if (type instanceof TypeEntity)
+			return (TypeEntity)type;
+		else if (type instanceof FunctionEntity) {
+			return ((FunctionEntity)type).getReturnType();
+		}else if (type instanceof VarEntity) {
+			return ((VarEntity)type).getType();
 		}
+		return null;
+	}
 
+	private TypeEntity findTypesSince(Entity sinceType, String[] names, int i, boolean typeOnly) {
+		if (i>=names.length) {
+			return (sinceType instanceof TypeEntity)? (TypeEntity)sinceType:null;
+		}
+		for (Entity child:sinceType.getChildren()) {
+			if (child.getRawName().equals(names[i]) && child instanceof TypeEntity) {
+				return findTypesSince(child,names,i+1,typeOnly);
+			}
+		}
+		return null;
+	}
+
+	private Entity lookupTypes(Entity fromEntity, String name, boolean typeOnly) {
+		if (name.equals("this")||name.equals("class")) {
+			Entity entityType = fromEntity.getAncestorOfType(TypeEntity.class);
+			return entityType;
+		}
+		else if (name.equals("super")) {
+			Entity parent = fromEntity.getAncestorOfType(TypeEntity.class);
+			if (parent!=null) {
+				return ((TypeEntity)parent).getInheritedType();
+			}
+		}
+		
+		Entity type = findTypeUnderSamePackage(fromEntity,name);
+		if (type!=null) return type;
+		type = lookupTypeInImported(fromEntity.getAncestorOfType(FileEntity.class),name);
+		return type;
+	}
+
+	private Entity lookupTypeInImported(Entity entity, String name) {
+		if (entity==null) return null;
+		if (!(entity instanceof FileEntity)) return null;
+		FileEntity fileEntity = (FileEntity)entity;
+		String importedString = fileEntity.getImport(name);
+		if (importedString==null) return null;	
+		Entity type = this.getTypeEntityByFullName(importedString);
+		if (type!=null) return type;
+		return externalType;
+	}
+
+	private TypeEntity findTypeUnderSamePackage(Entity fromEntity,String name) {
 		while(true) {
-			if (fromEntity instanceof TypeEntity) {
-				if (fromEntity.getRawName().equals(rawName))
-					return (TypeEntity)fromEntity;
-				FunctionEntity var = resolveFunctionBindings(fromEntity,rawName);	
-				if (var!=null)
-					return var.getReturnType(); 				
-			}
-			if (fromEntity instanceof FileEntity) {
-				String importedFullName = ((FileEntity)fromEntity).getImport(rawName);
-				if (importedFullName!=null)
-					return getTypeEntityByFullName(importedFullName);
-				type = this.getTypeEntityUnder(rawName,fromEntity);
-				if(type!=null) return type;
-			}
-			if (fromEntity instanceof PackageEntity){
-				type = this.getTypeEntityUnder(rawName,fromEntity);
-				if(type!=null) return type;
-			}
-			if (fromEntity instanceof ContainerEntity) {
-				VarEntity var = resolveVarBindings(fromEntity,rawName);	
-				if (var!=null)
-					return var.getType(); 
+			if (fromEntity.getRawName().equals(name) && fromEntity instanceof TypeEntity)
+				return (TypeEntity)fromEntity;
+			for (Entity child:fromEntity.getChildren()) {
+				if (child.getRawName().equals(name) && child instanceof TypeEntity)
+					return (TypeEntity)child;
+				if (child instanceof FileEntity) {
+					for (Entity classUnderFile:child.getChildren()) {
+						if (classUnderFile.getRawName().equals(name) && classUnderFile instanceof TypeEntity)
+							return (TypeEntity)classUnderFile;
+					}
+				}
 			}
 			fromEntity = fromEntity.getParent();
 			if (fromEntity==null) break;
 		}
-		
-		type = getTypeEntityByFullName(rawName);
-		return type;
+		return null;
+
 	}
-	
 
 
-	private TypeEntity buildInType() {
-		return this.buildInType;
-	}
 	private TypeEntity getTypeEntityByFullName(String rawName) {
-		if (buildInProcessor.isBuiltInType(rawName)) return buildInType();
-		if (buildInProcessor.isBuiltInTypePrefix(rawName)) return buildInType();
 		Entity entity = this.getEntity(rawName);
+		if(entity ==null) return null;
 		if (entity instanceof TypeEntity) {
 			return (TypeEntity)entity;
 		}
-		if (entity instanceof PackageEntity) {
-			return getTypeEntityUnder(rawName, entity);
-		}
 		return null;
 	}
 	
-	private TypeEntity tryGetTypeEntity(String rawName, TypeEntity typeEntity, String qualifiedName) {
-		if (typeEntity.getRawName().equals(rawName)) {
-			return (TypeEntity)typeEntity;
-		}
-		if (rawName.equals(qualifiedName + typeEntity.getRawName())) {
-			return  (TypeEntity)typeEntity;
-		}
-		for (Entity child:typeEntity.getChildren()) {
-			if (child instanceof TypeEntity) {
-				TypeEntity type = tryGetTypeEntity(rawName,(TypeEntity)child,qualifiedName+typeEntity.getRawName()+".");
-				if (type!=null) return type;
-			}
-		}
-		return null;
-	}
-	private TypeEntity getTypeEntityUnder(String rawName, Entity entity) {
-		for (Entity level_1:entity.getChildren()) {
-			if (level_1 instanceof TypeEntity) {
-				TypeEntity type = tryGetTypeEntity(rawName,(TypeEntity)level_1,"");
-				if (type!=null) return type;
-			}
-		}
-		return null;
-	}
 	
 	public void setBuiltInTypeIdentifier(BuiltInTypeIdenfier buildInProcessor) {
 		this.buildInProcessor = buildInProcessor;
@@ -237,7 +238,7 @@ public class EntityRepo implements IdGenerator,TypeInfer{
 	public Tuple<TypeEntity, String> locateTypeOfQualifiedName(ContainerEntity fromEntity, String qualifiedName) {
 		String localName = null;
 		while (true) {
-			TypeEntity type = inferType(fromEntity, qualifiedName);
+			TypeEntity type = inferType(fromEntity, qualifiedName,false);
 			if (type != null)
 				return new Tuple<TypeEntity, String>(type, localName);
 			int lpos = qualifiedName.lastIndexOf(".");
@@ -246,7 +247,7 @@ public class EntityRepo implements IdGenerator,TypeInfer{
 			localName = localName == null ? qualifiedName.substring(lpos + 1)
 					: localName + "." + qualifiedName.substring(lpos + 1);
 			qualifiedName = qualifiedName.substring(0, lpos);
-			type = inferType(fromEntity, qualifiedName);
+			type = inferType(fromEntity, qualifiedName,false);
 			return new Tuple<TypeEntity, String>(type,localName);
 		}
 	}

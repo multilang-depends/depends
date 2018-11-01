@@ -64,7 +64,7 @@ public class JavaEntitiesListener extends JavaParserBaseListener {
 		context.foundNewImport(ctx.qualifiedName().getText(),false);
 		super.enterImportDeclaration(ctx);
 	}
-
+	
 	///////////////////////
 	// Class or Interface
 	// classDeclaration | enumDeclaration | interfaceDeclaration |

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import depends.entity.repo.EntityRepo;
+import depends.entity.types.PackageEntity;
 
 public abstract class Entity {
 	int id=-1;
@@ -24,6 +25,11 @@ public abstract class Entity {
 		deduceQualifiedName();
 	}
 
+    public String getPackageName() {
+		Entity packageEntity = this.getAncestorOfType(PackageEntity.class);
+		return packageEntity==null?"":packageEntity.getQualifiedName();
+	}
+    
 	private void deduceQualifiedName() {
 		if (this.rawName.contains(".")) {
 			this.qualifiedName = this.rawName;
@@ -138,5 +144,4 @@ public abstract class Entity {
 		}
 		return null;
 	}
-	
 }

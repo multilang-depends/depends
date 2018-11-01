@@ -6,6 +6,7 @@ import depends.entity.Expression;
 import depends.extractor.HandlerContext;
 import depends.javaextractor.JavaParser;
 import depends.javaextractor.JavaParser.ExpressionContext;
+import depends.javaextractor.JavaParser.MethodCallContext;
 import depends.javaextractor.JavaParser.PrimaryContext;
 import depends.util.Tuple;
 
@@ -23,67 +24,76 @@ public class ExpressionUsage {
 		if (parent!=null) {
 			Expression parentExpression = context.lastContainer().expressions().get(parent.hashCode());
 			if (parentExpression.firstChildId==null) parentExpression.firstChildId = expression.id;
+			expression.parent = parentExpression;
 		}
 		
 		context.lastContainer().addExpression(expression);
 		expression.text = ctx.getText(); //for debug purpose. no actual effect
-		Tuple<String, String> nodeInfo = getExpressionType(ctx);
-		if (nodeInfo!=null) {
-			expression.rawType = nodeInfo.x;
-			expression.identifier = nodeInfo.y;
+		if (ctx.primary()!=null) {
+			tryFillExpressionTypeAndIdentifier(ctx.primary(),expression);
+			return;
 		}
-		if (expression.identifier==null && ctx.IDENTIFIER()!=null)
-			expression.identifier = ctx.IDENTIFIER().getText();
-		else if (expression.identifier==null && ctx.methodCall()!=null) {
-			if (ctx.methodCall().THIS()!=null) {
-				expression.identifier = "this";
-			}else if (ctx.methodCall().SUPER()!=null) {
-				expression.identifier = "super";
-			}else {
-				expression.identifier = ctx.methodCall().IDENTIFIER().getText();
-			}
-		}
-		else if (expression.identifier==null && (ctx.NEW()!=null && ctx.creator()!=null)){
-			expression.identifier = CreatorContextHelper.getCreatorType(ctx.creator());
-		}
-		expression.isDot = isDot(ctx);
+		
 		expression.isSet = isSet(ctx);
 		expression.isCall = ctx.methodCall()==null?false:true;
 		expression.isLogic = isLogic(ctx);
-		if (ctx.creator()!=null ||
-				ctx.methodCall()!=null)
-			expression.deriveTypeFromChild = false;
-		expression.isCall = true;
-		if (ctx.creator()!=null ||
-				ctx.innerCreator()!=null)
+		if (ctx.creator()!=null ||ctx.innerCreator()!=null){
 			expression.isCreate = true;
+		}		
+/**
+ *    | expression bop='.'
+      ( IDENTIFIER
+      | methodCall
+      | THIS
+      | NEW nonWildcardTypeArguments? innerCreator
+      | SUPER superSuffix
+      | explicitGenericInvocation
+      )
+ */
+		expression.isDot = isDot(ctx);
+		if (expression.isDot) {
+			if (ctx.IDENTIFIER()!=null)
+				expression.identifier = ctx.IDENTIFIER().getText();
+			else if (ctx.methodCall()!=null)
+				expression.identifier = getMethodCallIdentifier(ctx.methodCall());
+			else if (ctx.THIS()!=null)
+				expression.identifier = "this";
+			else if (ctx.innerCreator()!=null) //innner creator like new List(){}
+				expression.identifier =  ctx.innerCreator().IDENTIFIER().getText();
+			else if (ctx.SUPER()!=null)
+				expression.identifier = "super";
+			return;
+		}
+		//method call
+		if (ctx.methodCall()!=null) {
+			expression.identifier = getMethodCallIdentifier(ctx.methodCall());
+			expression.isCall = true;
+		}
+		//new 
+		if (ctx.NEW()!=null & ctx.creator()!=null) {
+			expression.rawType = CreatorContextHelper.getCreatorType(ctx.creator());
+			expression.isCall = true;
+		}
+
 		if (ctx.typeCast()!=null) {
 			expression.isCast=true;
 			expression.rawType = ctx.typeCast().typeType().getText();
 		}
-			
+		if (ctx.creator()!=null ||ctx.methodCall()!=null) {
+			expression.deriveTypeFromChild = false;
+		}
 	}
 
-
-
-	/**
-	 * To determine the return type of the expression, 
-	 * @param ctx
-	 * @return Tuple.x -> expression type
-	 *         Tuple.y -> var name (if has)
-	 */
-	public Tuple<String, String> getExpressionType(ExpressionContext ctx) {
-		Tuple<String, String> primaryInfo = getPrimaryType(ctx.primary());
-		if (primaryInfo!=null) return primaryInfo;
-		if (ctx.typeType()!=null && ctx.expression()!=null) {
-			return new Tuple<String,String>(ctx.typeType().getText(),"");
+	private String getMethodCallIdentifier(MethodCallContext methodCall) {
+		if (methodCall.THIS()!=null) {
+			return "this";
+		}else if (methodCall.SUPER()!=null) {
+			return "super";
+		}else {
+			return methodCall.IDENTIFIER().getText();
 		}
-		if (ctx.NEW()!=null & ctx.creator()!=null) {
-			return new Tuple<String,String>(CreatorContextHelper.getCreatorType(ctx.creator()),"");
-		}
-		return null;
 	}
-	
+
 	private boolean isDot(ExpressionContext ctx) {
 		if (ctx.bop!=null)
 			if (ctx.bop.getText().equals(".")) return true;
@@ -128,37 +138,26 @@ public class ExpressionUsage {
 //    | typeTypeOrVoid '.' CLASS
 //    | nonWildcardTypeArguments (explicitGenericInvocationSuffix | THIS arguments) //Just USE relation
 //    
-	private Tuple<String, String> getPrimaryType(PrimaryContext ctx) {
-		String type =null;
-		String varName = "";
-		if (ctx==null) return null;
+	private void tryFillExpressionTypeAndIdentifier(PrimaryContext ctx, Expression expression) {
+		if (ctx.expression()!=null) return; 
 		//1. we only handle leaf node. if there is still expression,
 		//   the type will be determined by child node in the expression
-		if (ctx.expression()!=null) return null; 
 		if (ctx.literal()!=null) {
 		//2. if it is a build-in type like "hello"(string), 10(integer), etc.
-			type = "<Built-in>";
-			varName = ctx.literal().getText();
+			expression.rawType = "<Built-in>";
+			expression.identifier = ctx.literal().getText();
 		}else if (ctx.IDENTIFIER()!=null) {
 		//2. if it is a var name, dertermine the type based on context.
-			varName = ctx.IDENTIFIER().getText();
+			expression.identifier = ctx.IDENTIFIER().getText();
 		}else if (ctx.typeTypeOrVoid()!=null) {
 		//3. if given type directly
-			type = ClassTypeContextHelper.getClassName(ctx.typeTypeOrVoid());
+			expression.rawType = ClassTypeContextHelper.getClassName(ctx.typeTypeOrVoid());
 		}else if (ctx.THIS()!=null){
-			varName = "this";
-			//TODO: deduce this type
+			expression.identifier = "this";
 		}else if (ctx.SUPER()!=null){
-			varName = "super";
-			//TODO: deduce super type
-		}else {
-			System.out.println("TODO: .g4, line 533: nonWildcardTypeArguments (explicitGenericInvocationSuffix | THIS arguments)");
-			System.out.println(ctx.getText());
+			expression.identifier = "super";
 		}
-		return new Tuple<String, String> (type,varName);
 	}
-
-
 
 	private RuleContext findParentInStack(RuleContext ctx) {
 		if (ctx==null) return null;

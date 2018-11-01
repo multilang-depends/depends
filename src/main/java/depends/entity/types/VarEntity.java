@@ -25,6 +25,6 @@ public class VarEntity extends Entity {
 
 	@Override
 	public void inferLocalLevelTypes(TypeInfer typeInferer) {
-		type = typeInferer.inferType(this, rawType);
+		type = typeInferer.inferType(this, rawType,true);
 	}
 }
