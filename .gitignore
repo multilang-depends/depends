@@ -1,3 +1,5 @@
+.~*
+*.swp
 *.class
 *.log
 .idea/
@@ -10,3 +12,4 @@ out/
 META-INF/
 result/
 java_design_pattern_test/
+lang

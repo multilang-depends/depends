@@ -6,9 +6,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class GlobalIncludeMap {
+public class FileIndex {
 
-	public static final GlobalIncludeMap INSTANCE = new GlobalIncludeMap();
 	HashMap<String,List<String>> includesMap = new HashMap<>();
 	/**
 	 * Whether the file already contains in the map;

@@ -2,13 +2,11 @@
 - provide a general mapping file (ask Prof. Cai)
 
 # Java
-- check constructor's return type (should be class type)
 - block varaibles with same name should be resovled.  
 - support new definition of relations (only annotation left)
 - support Annotation const
 - support lamba expression
 - support java 8 method reference
-- support generic type reference
 - support type bound
 - g4: line533 expression identifier/rawType under explicitGenericInvocation  nonWildcardTypeArguments (explicitGenericInvocationSuffix | THIS arguments)
 - SUPER superSuffix do not supported yet.

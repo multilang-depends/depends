@@ -53,133 +53,8 @@ grammar CPP14;
 /*Basic concepts*/
 translationunit
 :
-	group? EOF
+	declaration* EOF
 ;
-
-group
-:
-	declarationseq
-	/*| preprocessStatements should be further check */
-	
-;
-
-/* ===============Preprocessor Start ================== */
-/* 
-preprocessStatements
-:
-	ifSection 
-	| controlLine
-;
-
-
-
-ifSection
-:
-  	ifGroup elifGroups? elseGroup? endifLine
-;
-
-ifGroup
-: 	 
-  	'#' 'if' constantExpression Newline group?
-  	| '#' 'ifdef' Identifier Newline group?
-  	| '#' 'ifndef' Identifier Newline group?
-;
-
-elifGroups
-: 	 
-  	elifGroup
-  	| elifGroups elifGroup
-;
-
-elifGroup 	 
-:
-  	'#' 'elif' constantExpression Newline group?
-;
-	
-elseGroup
-: 	 
-  	'#' 'else' Newline group?
-;
-
-endifLine
-: 	 
-  	'#' 'endif' Newline
-;
-
-constantExpression
-:
-	conditionalexpression
-;
-
-
-controlLine
-:
-  	includeStatement Newline 
-  	| defineStatement Newline 
-  	| undefineStatement Newline
-  	| '#' 'line' ppTokens Newline 
-  	| '#' 'error' ppTokens? Newline 
-  	| '#' 'pragma' ppTokens? Newline 
-  	| '#' Newline
-;
-defineStatement
-:
-	'#' 'define' Identifier replacementList 
-  	| '#' 'define' Identifier '(' IdentifierList? ')' replacementList   
-  	| '#' 'define' Identifier '(' IdentifierList ',' '...' ')' replacementList  
-;
-
-includeStatement
-:
-	'#' 'include' ppTokens
-;
-
-undefineStatement
-:
-	'#' 'undef' Identifier
-;
-ppTokens
-:
-  	preprocessingToken
-  	| ppTokens preprocessingToken
-;
-replacementList
-:
-    ppTokens*
-;
-
-preprocessingToken
-: 	 
-  	headerName
-  	| Identifier
-  	| literal
-  	| preprocessingOpOrPunc
-;
-
-headerName
-:
-  	'<' headerCharSequence '>'
-  	|  '"' headerCharSequence '"'
-;
-
-headerCharSequence
-:
-   ~('\r'|'\n')*
-;
-
-preprocessingOpOrPunc
-:
-   ~('\r'|'\n')
-;
-
-IdentifierList
-:
-   Identifier
-   | IdentifierList ',' Identifier
-;
-*/
-/* ===============Preprocessor End ================== */
-
 
 /*Expressions*/
 primaryexpression
@@ -525,7 +400,7 @@ statement
 	| attributespecifierseq? selectionstatement
 	| attributespecifierseq? iterationstatement
 	| attributespecifierseq? jumpstatement
-	| declarationstatement
+	| blockdeclaration
 	| attributespecifierseq? tryblock
 ;
 
@@ -605,12 +480,6 @@ declarationstatement
 	blockdeclaration
 ;
 
-/*Declarations*/
-declarationseq
-:
-	declaration
-	| declarationseq declaration
-;
 
 declaration
 :
@@ -650,7 +519,7 @@ simpledeclaration
 
 static_assertdeclaration
 :
-	Static_assert '(' constantexpression ',' Stringliteral ')' ';'
+	Static_assert '(' constantexpression ',' stringliterals ')' ';'
 ;
 
 emptydeclaration
@@ -861,7 +730,7 @@ unnamednamespacedefinition
 
 namespacebody
 :
-	declarationseq?
+	declaration*
 ;
 
 namespacealias
@@ -892,12 +761,12 @@ usingdirective
 
 asmdefinition
 :
-	Asm '(' Stringliteral ')' ';'
+	Asm '(' stringliterals ')' ';'
 ;
 
 linkagespecification
 :
-	Extern Stringliteral '{' declarationseq? '}'
+	Extern Stringliteral '{' declaration* '}'
 	| Extern Stringliteral declaration
 ;
 
@@ -2138,17 +2007,12 @@ theoperator
 ;
 
 /*Lexer*/
-fragment
-Hexquad
-:
-	HEXADECIMALDIGIT HEXADECIMALDIGIT HEXADECIMALDIGIT HEXADECIMALDIGIT
-;
 
 fragment
 Universalcharactername
 :
-	'\\u' Hexquad
-	| '\\U' Hexquad Hexquad
+	'\\u' [0-9a-fA-F]*
+	| '\\U' [0-9a-fA-F]*
 ;
 
 Identifier
@@ -2190,9 +2054,9 @@ literal
 	Integerliteral
 	| Characterliteral
 	| Floatingliteral
-	| Stringliteral
+	| stringliterals
 	| booleanliteral
-	| pointerliteral
+	| Nullptr
 	| userdefinedliteral
 ;
 
@@ -2388,6 +2252,11 @@ Floatingsuffix
 	[flFL]
 ;
 
+stringliterals
+:
+Stringliteral Stringliteral*
+;
+
 Stringliteral
 :
 	Encodingprefix? '"' Schar* '"'
@@ -2423,10 +2292,6 @@ booleanliteral
 	| True
 ;
 
-pointerliteral
-:
-	Nullptr
-;
 
 userdefinedliteral
 :
@@ -2438,33 +2303,28 @@ userdefinedliteral
 
 Userdefinedintegerliteral
 :
-	Decimalliteral Udsuffix
-	| Octalliteral Udsuffix
-	| Hexadecimalliteral Udsuffix
-	| Binaryliteral Udsuffix
+	Decimalliteral Identifier
+	| Octalliteral Identifier
+	| Hexadecimalliteral Identifier
+	| Binaryliteral Identifier
 ;
 
 Userdefinedfloatingliteral
 :
-	Fractionalconstant Exponentpart? Udsuffix
-	| Digitsequence Exponentpart Udsuffix
+	Fractionalconstant Exponentpart? Identifier
+	| Digitsequence Exponentpart Identifier
 ;
 
 Userdefinedstringliteral
 :
-	Stringliteral Udsuffix
+	Stringliteral Identifier
 ;
 
 Userdefinedcharacterliteral
 :
-	Characterliteral Udsuffix
+	Characterliteral Identifier
 ;
 
-fragment
-Udsuffix
-:
-	Identifier
-;
 
 Whitespace
 :
@@ -2481,10 +2341,10 @@ Newline
 
 BlockComment
 :
-	'/*' .*? '*/'
+	'/*' .*? '*/' -> channel(HIDDEN)
 ;
 
 LineComment
 :
-	'//' ~[\r\n]*
+	'//' ~[\r\n]* ->  channel(HIDDEN)
 ;

@@ -29,15 +29,18 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 	private List<String> includeSearchPath = new ArrayList<>();
 	private PreprocessorHandler preprocessorHandler ;
 	private String filePath;
+	private Object fileI;
+	private FileIndex fileIndex;
 	
-	public CdtCppEntitiesListener(String fileFullPath, EntityRepo entityRepo, List<String> includeSearchPath) {
+	public CdtCppEntitiesListener(String fileFullPath, EntityRepo entityRepo, List<String> includeSearchPath, FileIndex fileIndex) {
 		super(true);
 		this.context = new HandlerContext(entityRepo);
 		idGenerator = entityRepo;
 		context.startFile(fileFullPath);
 		this.filePath = fileFullPath;
 		this.includeSearchPath  = includeSearchPath;
-		preprocessorHandler = new PreprocessorHandler(includeSearchPath);
+		this.fileIndex = fileIndex;
+		preprocessorHandler = new PreprocessorHandler(includeSearchPath,fileIndex);
 	}
 	
 	@Override

@@ -12,25 +12,27 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import depends.util.FileUtil;
 
 public class PreprocessorHandler {
-	GlobalIncludeMap includeMap  = GlobalIncludeMap.INSTANCE;
+	FileIndex fileIndex ;
 	private String fileName;
 	private List<String> includedFullPathNames;
 	private List<String> includeSearchPath;
 	
-	public PreprocessorHandler(List<String> includeSearchPath) {
+	public PreprocessorHandler(List<String> includeSearchPath, FileIndex fileIndex) {
 		this.includeSearchPath = includeSearchPath;
+		this.fileIndex = fileIndex;
 	}
 	public void handlePreprocessors(IASTPreprocessorStatement[] statements, String fileName) {
 		this.fileName = fileName;
 		includedFullPathNames= new ArrayList<>();
-		if (!includeMap.contains(fileName))
+		if (!fileIndex.contains(fileName))
 			processIncludes(statements);
 		else
-			includedFullPathNames =  includeMap.get(fileName);
+			includedFullPathNames =  fileIndex.get(fileName);
 		
 	}
 
 	private void processIncludes(IASTPreprocessorStatement[] statements) {
+		System.out.println(statements.length);
 		for (int statementIndex=0;statementIndex<statements.length;statementIndex++) {
 			if (statements[statementIndex] instanceof IASTPreprocessorIncludeStatement)
 			{
@@ -41,10 +43,10 @@ public class PreprocessorHandler {
 				}
 				
 				this.includedFullPathNames.add(FileUtil.uniqFilePath(incl.getPath()));
-				String explandedPath = includeMap.add(fileName,incl.getPath());
-				if (!includeMap.contains(explandedPath)) {
+				String explandedPath = fileIndex.add(fileName,incl.getPath());
+				if (!fileIndex.contains(explandedPath)) {
 					IASTTranslationUnit translationUnit = (new CDTParser(includeSearchPath)).parse(explandedPath);
-					PreprocessorHandler processor = new PreprocessorHandler(includeSearchPath);
+					PreprocessorHandler processor = new PreprocessorHandler(includeSearchPath, fileIndex);
 					processor.handlePreprocessors(translationUnit.getIncludeDirectives(),explandedPath);
 				}
 			}

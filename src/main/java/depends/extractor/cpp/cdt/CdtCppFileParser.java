@@ -30,14 +30,16 @@ import depends.util.FileUtil;
 public class CdtCppFileParser extends CppFileParser {
 
 	private List<String> includeSearchPath = new ArrayList<>();
+	private FileIndex fileIndex;
 
-	public CdtCppFileParser(String fileFullPath, EntityRepo entityRepo, List<String> includeSearchPath) {
+	public CdtCppFileParser(String fileFullPath, EntityRepo entityRepo, List<String> includeSearchPath, FileIndex fileIndex) {
 		super(fileFullPath, entityRepo);
 		this.includeSearchPath = includeSearchPath;
+		this.fileIndex = fileIndex;
 	}
 	@Override
 	public void parse() throws IOException {
-		CdtCppEntitiesListener bridge = new CdtCppEntitiesListener(FileUtil.uniqFilePath(fileFullPath), entityRepo, includeSearchPath );
+		CdtCppEntitiesListener bridge = new CdtCppEntitiesListener(FileUtil.uniqFilePath(fileFullPath), entityRepo, includeSearchPath, fileIndex );
 		IASTTranslationUnit translationUnit = (new CDTParser(includeSearchPath)).parse(this.fileFullPath);
 		translationUnit.accept(bridge);
 	}

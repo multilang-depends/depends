@@ -1,6 +1,8 @@
 package depends.extractor.cpp.cdt;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,7 +11,6 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.c.ANSICParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.c.GCCScannerExtensionConfiguration;
-import org.eclipse.cdt.core.dom.parser.cpp.GPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.GPPScannerExtensionConfiguration;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.FileContent;
@@ -25,15 +26,25 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 
 public class CDTParser {
+	List<String> sysIncludePath = new ArrayList<>();
+
 	public CDTParser() {
-		sysIncludePath = new String[0];
 	}
 	
 	public CDTParser(List<String> includesPath) {
-		sysIncludePath = includesPath.toArray(new String[] {});
+		for (String f:includesPath) {
+			File file = new File(f);
+			if (file.exists()) {
+				try {
+					sysIncludePath.add(file.getCanonicalPath());
+				} catch (IOException e) {
+				}
+			}else {
+				System.err.println("include path " + f + " does not exist!");
+			}
+		}
 	}
 	NullLogService NULL_LOG = new NullLogService();
-	String[] sysIncludePath = new String[] {};
 	Map<String, String> macroMap = new HashMap<>();
 	public IASTTranslationUnit parse(String file   ) {
 		/*
@@ -70,7 +81,7 @@ public class CDTParser {
 				.getInstance();
 
 		IScanner scanner = new CPreprocessor(FileContent.create(file,
-				content.toCharArray()),  new ScannerInfo(macroMap,sysIncludePath), ParserLanguage.C,
+				content.toCharArray()),  new ScannerInfo(macroMap,sysIncludePath.toArray(new String[] {})), ParserLanguage.C,
 				NULL_LOG, configuration, null);
 		ANSICParserExtensionConfiguration conf = new ANSICParserExtensionConfiguration();
 		
@@ -84,7 +95,7 @@ public class CDTParser {
 		IScannerExtensionConfiguration configuration = GPPScannerExtensionConfiguration
 				.getInstance();
 		IScanner scanner = new CPreprocessor(FileContent.create(file,
-				content.toCharArray()), new ScannerInfo(new HashMap<>(),sysIncludePath), ParserLanguage.CPP,
+				content.toCharArray()), new ScannerInfo(new HashMap<>(),sysIncludePath.toArray(new String[] {})), ParserLanguage.CPP,
 				new NullLogService(), configuration, null);
 		AbstractGNUSourceCodeParser sourceCodeParser = new GNUCPPSourceParser(
 				scanner, ParserMode.COMPLETE_PARSE, new NullLogService(),
