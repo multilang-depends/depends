@@ -65,4 +65,29 @@ if (a){}
     }
 }
 
+bool TypeInvStackSortCriterion::operator() (const void* a1, const void * a2) const
+{
+  const Interface* p1 = (const Interface*)a1;
+  const Interface* p2 = (const Interface*)a2;
+
+  //Note:  lower slot first
+  //       high abstract layer first
+  //       in same abstract, lower ifType first
+  if (p1->slot()!=p2->slot())
+  {
+    return p1->slot()<p2->slot();
+  }
+
+  if (p1->getAbstractLayer()!=p2->getAbstractLayer())
+  {
+    // high layer first
+    return p2->getAbstractLayer()<p1->getAbstractLayer();
+  }
+
+  if (p1->type() != p2->type())
+  {
+    return p1->type()<p2->type();
+  }
+  return p1->logical()< p2->logical();
+}
 

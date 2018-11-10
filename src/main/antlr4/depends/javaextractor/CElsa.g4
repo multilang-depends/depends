@@ -71,20 +71,19 @@ stringBlock:
    |templateId
 ;
 
-template :
-   'template'
-;
-
  qualifiedId :
-   '::'? nestedNameSpecifier template? unqualifiedId  # qualifiedIdOfNameSpace
-   |'::' Identifier                                   # qualifiedIdOfGlobalId 
-   |'::' operatorFunctionId                           # qualifiedIdOfOperatorFunction
-   |'::' templateId                                   # qualifiedIdOfTemplateId
+   DotDot? nestedNameSpecifier Template? unqualifiedId 
+   |NestedName
+   |NestedName operatorFunc
+   |Identifier DotDot operatorFunctionId
+   |DotDot Identifier                                   
+   |DotDot operatorFunctionId                          
+   |DotDot templateId                                   
 ;
 
  nestedNameSpecifier :
-   classOrNamespaceName '::' nestedNameSpecifier?|
-   classOrNamespaceName '::' 'template' nestedNameSpecifier
+   classOrNamespaceName DotDot nestedNameSpecifier?|
+   classOrNamespaceName DotDot Template nestedNameSpecifier
 ;
 
  classOrNamespaceName :
@@ -107,17 +106,17 @@ expression
     : primaryExpression
     | expression bop='.'
     (
-    	template? idExpression
+    	Template? idExpression
     	|pseudoDestructorName
     )
-    | expression bop='::'
+    | expression bop=DotDot
     (
-    	template? idExpression
+    	Template? idExpression
     	|pseudoDestructorName
     )
     |expression bop='->'
     (
-    	template? idExpression
+    	Template? idExpression
     	|pseudoDestructorName
     )
     | prefix=('+'|'-'|'++'|'--'|'*'|'&'|'!'|'~') expression
@@ -125,8 +124,8 @@ expression
     | expression '[' expression ']'
     | 'sizeof' expression
     |  'sizeof' '(' typeId ')'
-    | 'typename' '::'? nestedNameSpecifier Identifier '(' expressionList ')'
-    | 'typename' '::'? nestedNameSpecifier template? templateId '(' expressionList ')'
+    | 'typename' DotDot? nestedNameSpecifier Identifier '(' expressionList ')'
+    | 'typename' DotDot? nestedNameSpecifier Template? templateId '(' expressionList ')'
     | simpleTypeSpecifier '(' expressionList ')'    
     | expression postfix=('++' | '--')
     | 'dynamic_cast'     '<' typeId '>' '(' expression ')'
@@ -169,15 +168,15 @@ expressions :
 ;
 
  pseudoDestructorName :
-   '::'? nestedNameSpecifier? typeName '::' '~' typeName|
-   '::'? nestedNameSpecifier 'template' templateId '::' '~' typeName|
-   '::'? nestedNameSpecifier? '~' typeName
+   DotDot? nestedNameSpecifier? typeName DotDot '~' typeName|
+   DotDot? nestedNameSpecifier Template templateId DotDot '~' typeName|
+   DotDot? nestedNameSpecifier? '~' typeName
 ;
 
 
  newExpression :
-   '::'? 'new' newPlacement? newTypeId newInitializer?|
-   '::'? 'new' newPlacement? '(' typeId ')' newInitializer?
+   DotDot? 'new' newPlacement? newTypeId newInitializer?|
+   DotDot? 'new' newPlacement? '(' typeId ')' newInitializer?
 ;
 
  newPlacement :
@@ -193,8 +192,8 @@ expressions :
 ;
 
  deleteExpression :
-   '::'? 'delete' expression|
-   '::'? 'delete' '[' ']' expression
+   DotDot? 'delete' expression|
+   DotDot? 'delete' '[' ']' expression
 ;
 
 
@@ -302,18 +301,21 @@ functionPtr:
 
 
  storageClassSpecifier :
-   'auto'|
-   'register'|
-   'static'|
-   'extern'|
-   'mutable'
+   Auto|
+   Register|
+   Static|
+   Extern|
+   Mutable
 ;
 
- functionSpecifier :
-   'inline'|
-   'virtual'|
-   'explicit'
+functionSpecifier :
+   Inline|
+   Virtual|
+   Explicit
 ;
+
+
+
 
 typeSpecifier :
    simpleTypeSpecifier|
@@ -325,8 +327,9 @@ typeSpecifier :
 ;
 
  simpleTypeSpecifier :
-   '::'? nestedNameSpecifier? typeName|
-   '::'? nestedNameSpecifier 'template' templateId|
+   DotDot? nestedNameSpecifier? typeName|
+   NestedName |
+   DotDot? nestedNameSpecifier Template templateId|
    'char'|
    'wchar_t'|
    'bool'|
@@ -347,10 +350,10 @@ typeSpecifier :
 ;
 
  elaboratedTypeSpecifier :
-   classKey '::'? nestedNameSpecifier? Identifier|
-   'enum' '::'? nestedNameSpecifier? Identifier|
-   'typename' '::'? nestedNameSpecifier Identifier|
-   'typename' '::'? nestedNameSpecifier template? templateId
+   classKey DotDot? nestedNameSpecifier? Identifier|
+   'enum' DotDot? nestedNameSpecifier? Identifier|
+   'typename' DotDot? nestedNameSpecifier Identifier|
+   'typename' DotDot? nestedNameSpecifier Template? templateId
 ;
 
  enumSpecifier :
@@ -375,16 +378,17 @@ typeSpecifier :
 ;
 
  qualifiedNamespaceSpecifier :
-   '::'? nestedNameSpecifier? namespaceName
+   DotDot? nestedNameSpecifier? namespaceName
 ;
 
  usingDeclaration :
-   'using' 'typename'? '::'? nestedNameSpecifier unqualifiedId ';'|
-   'using' '::' unqualifiedId ';'
+   'using' 'typename'? DotDot? nestedNameSpecifier unqualifiedId ';'|
+   'using' 'typename'? NestedName |
+   'using' DotDot unqualifiedId ';'
 ;
 
  usingDirective :
-   'using' 'namespace' '::'? nestedNameSpecifier? namespaceName ';'
+   'using' 'namespace' DotDot? nestedNameSpecifier? namespaceName ';'
 ;
 
  asmDefinition :
@@ -392,14 +396,16 @@ typeSpecifier :
 ;
 
  linkageSpecification :
-   'extern' Stringliteral '{' declaration* '}'|
-   'extern' Stringliteral declaration
+   Extern Stringliteral '{' declaration* '}'|
+   Extern Stringliteral declaration
 ;
+
+
 
 
 // -------------------- a.7 declarators --------------------
 
- declarator :
+declarator :
    declaratorId 
    |ptrOperator declaratorId 
    |declaratorId+ parameters cvQualifierSeq? exceptionSpecification? 
@@ -417,7 +423,7 @@ parameters:
    '*' cvQualifierSeq?|
    '&'  |
    '[' ']'|
-   '::'? nestedNameSpecifier '*' cvQualifierSeq?     // pointer to member
+   DotDot? nestedNameSpecifier '*' cvQualifierSeq?     // pointer to member
 ;
 
  cvQualifierSeq :
@@ -431,7 +437,7 @@ parameters:
 
  declaratorId :
    idExpression|
-   '::'? nestedNameSpecifier? typeName
+   DotDot? nestedNameSpecifier? typeName
 ;
 
  typeId :
@@ -494,12 +500,13 @@ functionDefinition :
 ;
 
  memberDeclaration :
-   functionDefinition ';'?|
-   declSpecifier* memberDeclaratorList? ';'|
-   '::'? nestedNameSpecifier template? unqualifiedId ';'|
-   usingDeclaration|
-   templateDeclaration |
-   macroInvocation
+   functionDefinition ';'?                                    #memberDeclarationFunctionDefine
+   |declSpecifier* memberDeclaratorList? ';'                  #memberDeclarationGeneral
+   |DotDot? nestedNameSpecifier Template? unqualifiedId ';'   #memberDeclarationDontKnow1
+   |NestedName ';'                                            #memberDeclarationDontKnow2
+   |usingDeclaration                                          #memberDeclarationUsing
+   |templateDeclaration                                       #memberDeclarationTemplate
+   |macroInvocation                                           #memberDeclarationMacro
 ;
 
  memberDeclaratorList :
@@ -507,9 +514,9 @@ functionDefinition :
 ;
 
  memberDeclarator :
-   declarator pureSpecifier?|           // for when declarator is a function type
-   declarator constantInitializer?|     // for when it is any other type
-   Identifier? ':' expression  // bitfield with optional name
+   declarator pureSpecifier?            #memberFunction
+   |declarator constantInitializer?     #memberOther
+   |Identifier? ':' expression          #memberWithBitField
 ;
 
  pureSpecifier :
@@ -528,15 +535,17 @@ functionDefinition :
 ;
 
  baseSpecifierList :
-   baseSpecifier|
-   baseSpecifierList ',' baseSpecifier
+   baseSpecifier ( ',' baseSpecifier)*
 ;
  
 
  baseSpecifier :
-   '::'? nestedNameSpecifier? className|
-   'virtual' accessSpecifier? '::'? nestedNameSpecifier? className|
-   accessSpecifier 'virtual'?   '::'? nestedNameSpecifier? className
+   DotDot? nestedNameSpecifier? className|
+   NestedName |
+   Virtual accessSpecifier? DotDot? nestedNameSpecifier? className|
+   Virtual accessSpecifier? DotDot? NestedName|
+   accessSpecifier Virtual?   DotDot? nestedNameSpecifier? className|
+   accessSpecifier Virtual?   DotDot? NestedName
 ;
 
  accessSpecifier :
@@ -549,7 +558,7 @@ functionDefinition :
 // -------------------- a.10 special member functions --------------------
 
  conversionFunctionId :
-   'operator' typeSpecifier+ 
+   Operator typeSpecifier+ 
 ;
 
  ctorInitializer :
@@ -562,16 +571,20 @@ functionDefinition :
 
  memInitializerId :
 
-   '::'? nestedNameSpecifier? className|
+   DotDot? nestedNameSpecifier? className|
    Identifier
 ;
+
+
 
 
 // -------------------- a.11 overloading --------------------
 
  operatorFunctionId :
-   'operator' operatorFunc
+   Operator operatorFunc
 ;
+
+
 
  operatorFunc :
    'new'|
@@ -621,7 +634,7 @@ functionDefinition :
 
 // -------------------- a.12 templates --------------------
 templateDeclaration :
-   'template' '<' templateParameterList '>' declaration
+   Template '<' templateParameterList '>' declaration
 ;
 
  templateParameterList :
@@ -638,8 +651,8 @@ templateDeclaration :
    'class' Identifier? '=' typeId|
    'typename' Identifier? '=' typeId|
    'typename' Identifier?|
-   'template' '<' templateParameterList '>' 'class' Identifier?|
-   'template' '<' templateParameterList '>' 'class' Identifier? '=' idExpression
+   Template '<' templateParameterList '>' 'class' Identifier?|
+   Template '<' templateParameterList '>' 'class' Identifier? '=' idExpression
 ;
 
 
@@ -657,12 +670,13 @@ templateId :
 ;
 
  explicitInstantiation :
-   'template' declaration
+   Template declaration
 ;
 
  explicitSpecialization :
-   'template' '<' '>' declaration
+   Template '<' '>' declaration
 ;
+
 
 // -------------------- a.13 exception handling --------------------
 
@@ -717,7 +731,21 @@ Directive
     '#' ~[\n]* -> channel(HIDDEN)
 ;
 
+Operator: 'operator';  
+Template: 'template';
+Mutable: 'mutable';
+Static: 'static';
+Extern: 'extern';
+Register: 'register';
+Auto: 'auto';
+Virtual: 'virtual';
+Inline: 'inline';
+Explicit: 'explicit';
 
+
+NestedName:
+    DotDot? Identifier (DotDot Identifier)+
+;
 
 // Literals
 
@@ -735,6 +763,7 @@ Universalcharactername
 	| '\\U' [0-9a-fA-F]*
 ;
 
+
 Identifier
 :
 /*
@@ -748,6 +777,10 @@ Identifier
 		| DIGIT
 	)*
 ;
+
+// symbols
+DotDot: '::';
+
 
 fragment
 Identifiernondigit
@@ -769,6 +802,8 @@ DIGIT
 	[0-9]
 ;
 
+
+
 literal
 :
 	stringBlock
@@ -779,6 +814,8 @@ literal
 	| 'nullptr'
 	| 'null'
 ;
+
+  
 
 Integerliteral
 :
