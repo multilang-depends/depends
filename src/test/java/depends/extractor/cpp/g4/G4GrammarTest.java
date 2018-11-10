@@ -24,10 +24,18 @@ public class G4GrammarTest {
 		Lexer lexer = new CPP14Lexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		CPP14Parser parser = new CPP14Parser(tokens);
+		parser.translationunit();  
+	}
+	
+	
+	@Test
+	public void testTypedefWith2Stage_ParseErrorNotSuccess() throws IOException {
+        String src = "./src/test/resources/cpp-code-examples/g4GrammarTest/testTypeDef.h";
+		CharStream input = CharStreams.fromFileName(src);
+		Lexer lexer = new CPP14Lexer(input);
+		CommonTokenStream tokens = new CommonTokenStream(lexer);
+		CPP14Parser parser = new CPP14Parser(tokens);
 		parser.getInterpreter().setPredictionMode(PredictionMode.SLL);
-		ParseTreeWalker walker = new ParseTreeWalker();
-		ParseTreeListener visitor = new CPP14BaseListener() ;
-		walker.walk(visitor, parser.translationunit());
 		try {
 		    parser.translationunit();  // STAGE 1
 		}

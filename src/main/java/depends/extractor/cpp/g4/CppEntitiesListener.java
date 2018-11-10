@@ -9,6 +9,7 @@ import depends.entity.IdGenerator;
 import depends.entity.repo.EntityRepo;
 import depends.entity.types.FunctionEntity;
 import depends.extractor.HandlerContext;
+import depends.extractor.cpp.g4.helper.FunctiondefinitionContextHelper;
 import depends.javaextractor.CPP14BaseListener;
 import depends.javaextractor.CPP14Lexer;
 import depends.javaextractor.CPP14Parser.ClassheadContext;
@@ -26,6 +27,8 @@ public class CppEntitiesListener extends CPP14BaseListener {
 		idGenerator = entityRepo;
 		context.startFile(fileFullPath);
 	}
+	
+	
 	@Override
 	public void enterClasshead(ClassheadContext ctx) {
 		if (ctx.classheadname().classname().Identifier()!=null)
@@ -46,18 +49,26 @@ public class CppEntitiesListener extends CPP14BaseListener {
 		}
 		super.exitClassspecifier(ctx);
 	}
+	
+	/**
+	functiondefinition
+	:
+		attributespecifierseq? declspecifierseq? declarator virtspecifierseq?
+		functionbody
+	;
+	 */
 	@Override
 	public void enterFunctiondefinition(FunctiondefinitionContext ctx) {
-//		FunctiondefinitionContextHelper helper = new FunctiondefinitionContextHelper(ctx);
-//		FunctionEntity function = context.foundMethodDeclarator(helper.getFunctionName(),
-//				helper.getReturnType(), helper.getThrowedType());
-//		helper.addParameters(function);
+		FunctiondefinitionContextHelper helper = new FunctiondefinitionContextHelper(ctx);
+		FunctionEntity function = context.foundMethodDeclarator(helper.getFunctionName(),
+				helper.getReturnType(), helper.getThrowedType());
+		helper.addParameters(function);
 		super.enterFunctiondefinition(ctx);
 	}
 	
 	@Override
 	public void exitFunctiondefinition(FunctiondefinitionContext ctx)  {
-//		context.exitLastedEntity();
+		context.exitLastedEntity();
 		super.exitFunctiondefinition(ctx);
 	}
 	

@@ -13,9 +13,9 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import depends.entity.repo.EntityRepo;
 import depends.extractor.cpp.CppFileParser;
-import depends.javaextractor.CPP14BaseListener;
-import depends.javaextractor.CPP14Lexer;
-import depends.javaextractor.CPP14Parser;
+import depends.javaextractor.CElsaBaseListener;
+import depends.javaextractor.CElsaLexer;
+import depends.javaextractor.CElsaParser;
 
 public class Antlr4CppFileParser extends CppFileParser {
 
@@ -26,19 +26,19 @@ public class Antlr4CppFileParser extends CppFileParser {
 	@Override
 	public void parse() throws IOException {
 		CharStream input = CharStreams.fromFileName(fileFullPath);
-		Lexer lexer = new CPP14Lexer(input);
+		Lexer lexer = new CElsaLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
-		CPP14Parser parser = new CPP14Parser(tokens);
-		parser.getInterpreter().setPredictionMode(PredictionMode.SLL);
+		CElsaParser parser = new CElsaParser(tokens);
+		//parser.getInterpreter().setPredictionMode(PredictionMode.SLL);
 		ParseTree tree = null;
 		try {
-		    tree = parser.translationunit();  // STAGE 1
+		    tree = parser.translationUnit();  // STAGE 1
 		}
 		catch (Exception ex) {
 		    tokens.reset(); // rewind input stream
 		    parser.reset();
 		    parser.getInterpreter().setPredictionMode(PredictionMode.LL);
-		    tree = parser.translationunit();  // STAGE 2
+		    tree = parser.translationUnit();  // STAGE 2
 		}
 		CppEntitiesListener bridge = new CppEntitiesListener(tokens,fileFullPath, entityRepo);
 		ParseTreeWalker walker = new ParseTreeWalker();

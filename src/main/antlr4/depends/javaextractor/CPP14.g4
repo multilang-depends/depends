@@ -480,7 +480,7 @@ declarationstatement
 	blockdeclaration
 ;
 
-
+// functiondefinition
 declaration
 :
 	blockdeclaration
@@ -493,6 +493,7 @@ declaration
 	| emptydeclaration
 	| attributedeclaration
 ;
+
 
 blockdeclaration
 :
@@ -544,8 +545,7 @@ declspecifier
 
 declspecifierseq
 :
-	declspecifier attributespecifierseq?
-	| declspecifier declspecifierseq
+	declspecifier declspecifier* attributespecifierseq? 
 ;
 
 storageclassspecifier
@@ -850,22 +850,15 @@ initdeclarator
 
 declarator
 :
-	ptrdeclarator
-	| noptrdeclarator parametersandqualifiers trailingreturntype
-;
-
-ptrdeclarator
-:
-	noptrdeclarator
-	| ptroperator ptrdeclarator
+	noptrdeclarator noptrdeclarator* parametersandqualifiers? trailingreturntype?
 ;
 
 noptrdeclarator
 :
-	declaratorid attributespecifierseq?
-	| noptrdeclarator parametersandqualifiers
+	noptrdeclarator parametersandqualifiers
+	| declaratorid attributespecifierseq?
 	| noptrdeclarator '[' constantexpression? ']' attributespecifierseq?
-	| '(' ptrdeclarator ')'
+	| '(' noptrdeclarator noptrdeclarator* ')'
 ;
 
 parametersandqualifiers

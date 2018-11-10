@@ -10,8 +10,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import depends.extractor.cpp.CppFileParser;
+import depends.extractor.cpp.CppParserTest;
 
-public class IncludeRelationTest extends CdtParserTest{
+public class IncludeRelationTest extends CppParserTest{
     @Before
     public void setUp() {
     	super.init();

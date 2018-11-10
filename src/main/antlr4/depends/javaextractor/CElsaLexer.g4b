@@ -1,0 +1,187 @@
+lexer grammar CElsaLexer;
+//keywords
+TOK_ASM:'asm';
+TOK_AUTO:'auto';
+TOK_BREAK:'break';
+TOK_BOOL:'bool';
+TOK_CASE:'case';
+TOK_CATCH:'catch';
+TOK_CDECL:'cdecl';
+TOK_CHAR:'char';
+TOK_CLASS:'class';
+TOK_CONST:'const';
+TOK_CONST_CAST:'const_cast';
+TOK_CONTINUE:'continue';
+TOK_DEFAULT:'default';
+TOK_DELETE:'delete';
+TOK_DO:'do';
+TOK_DOUBLE:'double';
+TOK_DYNAMIC_CAST:'dynamic_cast';
+TOK_ELSE:'else';
+TOK_ENUM:'enum';
+TOK_EXPLICIT:'explicit';
+TOK_EXPORT:'export';
+TOK_EXTERN:'extern';
+TOK_FALSE:'false';
+TOK_FLOAT:'float';
+TOK_FOR:'for';
+TOK_FRIEND:'friend';
+TOK_GOTO:'goto';
+TOK_IF:'if';
+TOK_INLINE:'inline';
+TOK_INT:'int';
+TOK_LONG:'long';
+TOK_MUTABLE:'mutable';
+TOK_NAMESPACE:'namespace';
+TOK_NEW:'new';
+TOK_OPERATOR:'operator';
+TOK_PASCAL:'pascal';
+TOK_PRIVATE:'private';
+TOK_PROTECTED:'protected';
+TOK_PUBLIC:'public';
+TOK_REGISTER:'register';
+TOK_REINTERPRET_CAST:'reinterpret_cast';
+TOK_RETURN:'return';
+TOK_SHORT:'short';
+TOK_SIGNED:'signed';
+TOK_SIZEOF:'sizeof';
+TOK_STATIC:'static';
+TOK_STATIC_CAST:'static_cast';
+TOK_STRUCT:'struct';
+TOK_SWITCH:'switch';
+TOK_TEMPLATE:'template';
+TOK_THIS:'this';
+TOK_THROW:'throw';
+TOK_TRUE:'true';
+TOK_TRY:'try';
+TOK_TYPEDEF:'typedef';
+TOK_TYPEID:'typeid';
+TOK_TYPENAME:'typename';
+TOK_UNION:'union';
+TOK_UNSIGNED:'unsigned';
+TOK_USING:'using';
+TOK_VIRTUAL:'virtual';
+TOK_VOID:'void';
+TOK_VOLATILE:'volatile';
+TOK_WCHAR_T:'wchar_t';
+TOK_WHILE:'while';
+
+//operators
+TOK_LPAREN:'(';
+TOK_RPAREN:')';
+TOK_LBRACKET:'[';
+TOK_RBRACKET:']';
+TOK_ARROW:'->';
+TOK_COLONCOLON:'::';
+TOK_DOT:'.';
+TOK_BANG:'!';
+TOK_TILDE:'~';
+TOK_PLUS:'+';
+TOK_MINUS:'-';
+TOK_PLUSPLUS:'++';
+TOK_MINUSMINUS:'--';
+TOK_AND:'&';
+TOK_STAR:'*';
+TOK_DOTSTAR:'.*';
+TOK_ARROWSTAR:'->*';
+TOK_SLASH:'/';
+TOK_PERCENT:'%';
+TOK_LEFTSHIFT:'<<';
+TOK_RIGHTSHIFT:'>>';
+TOK_LESSTHAN:'<';
+TOK_LESSEQ:'<=';
+TOK_GREATERTHAN:'>';
+TOK_GREATEREQ:'>=';
+TOK_EQUALEQUAL:'==';
+TOK_NOTEQUAL:'!=';
+TOK_XOR:'^';
+TOK_OR:'|';
+TOK_ANDAND:'&&';
+TOK_OROR:'||';
+TOK_QUESTION:'?';
+TOK_COLON:':';
+TOK_EQUAL:'=';
+TOK_STAREQUAL:'*=';
+TOK_SLASHEQUAL:'/=';
+TOK_PERCENTEQUAL:'%=';
+TOK_PLUSEQUAL:'+=';
+TOK_MINUSEQUAL:'-=';
+TOK_ANDEQUAL:'&=';
+TOK_XOREQUAL:'^=';
+TOK_OREQUAL:'|=';
+TOK_LEFTSHIFTEQUAL:'<<=';
+TOK_RIGHTSHIFTEQUAL:'>>=';
+TOK_COMMA:',';
+TOK_ELLIPSIS:'...';
+TOK_SEMICOLON:';';
+TOK_LBRACE:'{';
+TOK_RBRACE:'}';
+
+// Literals
+
+DECIMAL_LITERAL:    ('0' | [1-9] (Digits? | '_'+ Digits)) [lL]?;
+HEX_LITERAL:        '0' [xX] [0-9a-fA-F] ([0-9a-fA-F_]* [0-9a-fA-F])? [lL]?;
+OCT_LITERAL:        '0' '_'* [0-7] ([0-7_]* [0-7])? [lL]?;
+BINARY_LITERAL:     '0' [bB] [01] ([01_]* [01])? [lL]?;
+                    
+FLOAT_LITERAL:      (Digits '.' Digits? | '.' Digits) ExponentPart? [fFdD]?
+             |       Digits (ExponentPart [fFdD]? | [fFdD])
+             ;
+
+HEX_FLOAT_LITERAL:  '0' [xX] (HexDigits '.'? | HexDigits? '.' HexDigits) [pP] [+-]? Digits [fFdD]?;
+
+BOOL_LITERAL:       'true'
+            |       'false'
+            ;
+
+CHAR_LITERAL:       '\'' (~['\\\r\n] | EscapeSequence) '\'';
+
+STRING_LITERAL:     '"' (~["\\\r\n] | EscapeSequence)* '"';
+
+NULL_LITERAL:       'null';
+
+
+// Whitespace and comments
+
+WS:                 [ \t\r\n\u000C]+ -> channel(HIDDEN);
+COMMENT:            '/*' .*? '*/'    -> channel(HIDDEN);
+LINE_COMMENT:       '//' ~[\r\n]*    -> channel(HIDDEN);
+
+// Identifiers
+
+IDENTIFIER:         Letter LetterOrDigit*;
+
+// Fragment rules
+
+fragment ExponentPart
+    : [eE] [+-]? Digits
+    ;
+
+fragment EscapeSequence
+    : '\\' [btnfr"'\\]
+    | '\\' ([0-3]? [0-7])? [0-7]
+    | '\\' 'u'+ HexDigit HexDigit HexDigit HexDigit
+    ;
+
+fragment HexDigits
+    : HexDigit ((HexDigit | '_')* HexDigit)?
+    ;
+
+fragment HexDigit
+    : [0-9a-fA-F]
+    ;
+
+fragment Digits
+    : [0-9] ([0-9_]* [0-9])?
+    ;
+
+fragment LetterOrDigit
+    : Letter
+    | [0-9]
+    ;
+
+fragment Letter
+    : [a-zA-Z$_] // these are the "java letters" below 0x7F
+    | ~[\u0000-\u007F\uD800-\uDBFF] // covers all characters above 0x7F which are not a surrogate
+    | [\uD800-\uDBFF] [\uDC00-\uDFFF] // covers UTF-16 surrogate pairs encodings for U+10000 to U+10FFFF
+    ;

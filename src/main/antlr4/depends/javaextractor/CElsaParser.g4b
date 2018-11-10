@@ -1,0 +1,903 @@
+parser grammar CElsaParser;
+
+options { tokenVocab=CElsaLexer ;}
+
+translationUnit :
+   declaration* EOF
+;
+
+declaration :
+   blockDeclaration|
+   functionDefinition|
+   templateDeclaration|
+   explicitInstantiation|
+   explicitSpecialization|
+   linkageSpecification|
+   namespaceDefinition
+;
+
+// -------------------- a.1 keywords --------------------
+
+typedefName :
+   IDENTIFIER
+;
+
+namespaceName :
+   originalNamespaceName|
+   namespaceAlias
+;
+
+ originalNamespaceName :
+   IDENTIFIER
+;
+
+ namespaceAlias :
+   IDENTIFIER
+;
+
+ className :
+   IDENTIFIER|
+   templateId
+;
+
+ enumName :
+   IDENTIFIER
+;
+
+ templateName :
+   IDENTIFIER
+;
+
+
+literal :
+   DECIMAL_LITERAL|
+   HEX_LITERAL |
+   OCT_LITERAL |
+   BINARY_LITERAL |
+   CHAR_LITERAL|
+   FLOAT_LITERAL|
+   HEX_FLOAT_LITERAL|
+   STRING_LITERAL|
+   BOOL_LITERAL |
+   NULL_LITERAL 
+;
+
+// -------------------- a.4 expressions --------------------
+
+ primaryExpression :
+   literal|
+   'this'|
+   '(' expression ')'|
+   idExpression
+;
+
+ idExpression :
+   unqualifiedId|
+   qualifiedId
+;
+
+ unqualifiedId :
+   IDENTIFIER|
+   operatorFunctionId|
+   conversionFunctionId|
+   '~' className|
+   templateId
+;
+
+colonColon :
+   '::'
+;
+
+template :
+   'template'
+;
+
+ qualifiedId :
+   colonColon? nestedNameSpecifier template? unqualifiedId|
+   '::' IDENTIFIER|
+   '::' operatorFunctionId|
+   '::' templateId
+;
+
+ nestedNameSpecifier :
+   classOrNamespaceName '::' nestedNameSpecifier?|
+   classOrNamespaceName '::' 'template' nestedNameSpecifier
+;
+
+ classOrNamespaceName :
+   className|
+   namespaceName
+;                                                
+
+ postfixExpression :
+   primaryExpression|
+   postfixExpression '[' expression ']'|
+   postfixExpression '(' expressionList? ')'|
+   simpleTypeSpecifier '(' expressionList? ')'|
+   'typename' colonColon? nestedNameSpecifier IDENTIFIER '(' expressionList? ')'|
+   'typename' colonColon? nestedNameSpecifier template? templateId '(' expressionList? ')'|
+   postfixExpression '.' template? idExpression|
+   postfixExpression '' template? idExpression|
+   postfixExpression '.' pseudoDestructorName|
+   postfixExpression '' pseudoDestructorName|
+   postfixExpression '++'|
+   postfixExpression '--'|
+   'dynamic_cast'     '<' typeId '>' '(' expression ')'|
+   'static_cast'      '<' typeId '>' '(' expression ')'|
+   'reinterpret_cast' '<' typeId '>' '(' expression ')'|
+   'const_cast'       '<' typeId '>' '(' expression ')'|
+   'typeid' '(' expression ')'|
+   'typeid' '(' typeId ')'
+;
+
+expressionList :
+   assignmentExpression (',' assignmentExpression)*
+;
+
+ pseudoDestructorName :
+   colonColon? nestedNameSpecifier? typeName '::' '~' typeName|
+   colonColon? nestedNameSpecifier 'template' templateId '::' '~' typeName|
+   colonColon? nestedNameSpecifier? '~' typeName
+;
+
+unaryExpression :
+   postfixExpression|
+   '++' castExpression|
+   '--' castExpression|
+   unaryOperator castExpression|
+   'sizeof' unaryExpression|
+   'sizeof' '(' typeId ')'|
+   newExpression|
+   deleteExpression
+;
+
+ unaryOperator :
+   '*'|
+   '&'|
+   '+'|
+   '-'|
+   '!'|
+   '~'
+;
+  
+
+ newExpression :
+   colonColon? 'new' newPlacement? newTypeId newInitializer?|
+   colonColon? 'new' newPlacement? '(' typeId ')' newInitializer?
+;
+
+ newPlacement :
+   '(' expressionList ')'
+;                           
+
+ newTypeId :
+   typeSpecifierSeq newDeclarator?
+;
+
+ newDeclarator :
+   ptrOperator newDeclarator?|
+   directNewDeclarator
+;
+
+ directNewDeclarator :
+   '[' expression ']'|
+   directNewDeclarator '[' constantExpression ']'
+;
+
+ newInitializer :
+   '(' expressionList? ')'
+;
+
+ deleteExpression :
+   colonColon? 'delete' castExpression|
+   colonColon? 'delete' '[' ']' castExpression
+;
+
+ castExpression :
+   unaryExpression|
+   '(' typeId ')' castExpression
+;
+
+ pmExpression :
+   castExpression|
+   pmExpression '.*' castExpression|
+   pmExpression '*' castExpression
+;
+
+ multiplicativeExpression :
+   pmExpression|
+   multiplicativeExpression '*' pmExpression|
+   multiplicativeExpression '/' pmExpression|
+   multiplicativeExpression '%' pmExpression
+;
+
+ additiveExpression :
+   multiplicativeExpression|
+   additiveExpression '+' multiplicativeExpression|
+   additiveExpression '-' multiplicativeExpression
+;
+
+ shiftExpression :
+   additiveExpression|
+   shiftExpression '<<' additiveExpression|
+   shiftExpression '>>' additiveExpression
+;
+
+ relationalExpression :
+   shiftExpression|
+   relationalExpression '<' shiftExpression|
+   relationalExpression '>' shiftExpression|
+   relationalExpression '<=' shiftExpression|
+   relationalExpression '>=' shiftExpression
+;
+
+ equalityExpression :
+   relationalExpression|
+   equalityExpression '==' relationalExpression|
+   equalityExpression '!=' relationalExpression
+;
+
+ andExpression :
+   equalityExpression|
+   andExpression '&' equalityExpression
+;
+
+ exclusiveOrExpression :
+   andExpression|
+   exclusiveOrExpression '^' andExpression
+;
+
+ inclusiveOrExpression :
+   exclusiveOrExpression|
+   inclusiveOrExpression '|' exclusiveOrExpression
+;
+
+ logicalAndExpression :
+   inclusiveOrExpression|
+   logicalAndExpression '&&' inclusiveOrExpression
+;
+
+ logicalOrExpression :
+   logicalAndExpression|
+   logicalOrExpression '||' logicalAndExpression
+;
+
+ conditionalExpression :
+   logicalOrExpression|
+   logicalOrExpression '?' expression ':' assignmentExpression
+;
+
+ assignmentExpression :
+   conditionalExpression|
+   logicalOrExpression assignmentOperator assignmentExpression|
+   throwExpression
+;
+
+ assignmentOperator :
+   '='|
+   '*='|
+   '/='|
+   '%='|
+   '+='|
+   '-='|
+   '>>='|
+   '<<='|
+   '&='|
+   '^='|
+   '|='
+;
+
+ expression :
+   assignmentExpression|
+   expression ',' assignmentExpression
+;
+
+ constantExpression :
+   conditionalExpression
+;
+
+
+// -------------------- a.5 statements --------------------
+
+ statement :
+   labeledStatement|
+   expressionStatement|
+   compoundStatement|
+   selectionStatement|
+   iterationStatement|
+   jumpStatement|
+   declarationStatement|
+   tryBlock
+;
+
+ labeledStatement :
+   IDENTIFIER ':' statement|
+   'case' constantExpression ':' statement|
+   'default' ':' statement|      // note: linux kernel contains 'switch (..) : ... default: ;' ..
+;
+
+
+ expressionStatement :
+   expression? '|'
+;
+
+
+ compoundStatement :
+   ':' statementSeq? ';'
+;
+
+ statementSeq :
+   statement|
+   statementSeq statement
+;
+
+ selectionStatement :
+   'if' '(' condition ')' statement|
+   'if' '(' condition ')' statement 'else' statement|
+   'switch' '(' condition ')' statement
+;
+
+ condition :
+   expression|
+   typeSpecifierSeq declarator '=' assignmentExpression|    
+;
+  
+ iterationStatement :
+   'while' '(' condition ')' statement|
+   'do' statement 'while' '(' expression ')' '|'|
+   'for' '(' forInitStatement condition? '|' expression? ')' statement
+;
+
+ forInitStatement :
+   expressionStatement|
+   simpleDeclaration
+;
+
+ jumpStatement :
+   'break' '|'|
+   'continue' '|'|
+   'return' expression? '|'|
+   'goto' IDENTIFIER '|'
+;
+
+ declarationStatement :
+   blockDeclaration
+;
+
+
+// -------------------- a.6 declarations --------------------
+
+ declarationSeq :
+   declaration|
+   declarationSeq declaration
+;
+
+ 
+
+ blockDeclaration :
+   simpleDeclaration|
+   asmDefinition|
+   namespaceAliasDefinition|
+   usingDeclaration|
+   usingDirective
+;
+
+
+simpleDeclaration :
+   declSpecifierSeq? initDeclaratorList? '|'
+;
+
+ declSpecifier :
+   storageClassSpecifier|
+   typeSpecifier|
+   functionSpecifier|
+   'friend'|
+   'typedef'
+;
+
+ declSpecifierSeq :
+   declSpecifierSeq? declSpecifier
+;
+
+ storageClassSpecifier :
+   'auto'|
+   'register'|
+   'static'|
+   'extern'|
+   'mutable'
+;
+
+ functionSpecifier :
+   'inline'|
+   'virtual'|
+   'explicit'
+;
+
+// repeated in spec
+// typedefName :
+//   IDENTIFIER|
+//; 
+
+ typeSpecifier :
+   simpleTypeSpecifier|
+   classSpecifier|
+   enumSpecifier|
+   elaboratedTypeSpecifier|
+   cvQualifier
+;
+
+ simpleTypeSpecifier :
+   colonColon? nestedNameSpecifier? typeName|
+   colonColon? nestedNameSpecifier 'template' templateId|
+   'char'|
+   'wchar_t'|
+   'bool'|
+   'short'|
+   'int'|
+   'long'|
+   'signed'|
+   'unsigned'|
+   'float'|
+   'double'|
+   'void'
+;
+
+ typeName :
+   className|
+   enumName|
+   typedefName
+;
+
+ elaboratedTypeSpecifier :
+   classKey colonColon? nestedNameSpecifier? IDENTIFIER|
+   'enum' colonColon? nestedNameSpecifier? IDENTIFIER|
+   'typename' colonColon? nestedNameSpecifier IDENTIFIER|
+   'typename' colonColon? nestedNameSpecifier template? templateId
+;
+
+// this is repeated in the spec
+// enumName :
+//   IDENTIFIER|
+//;
+
+ enumSpecifier :
+   'enum' IDENTIFIER? ':' enumeratorList? ';'
+;
+
+ enumeratorList :
+   enumeratorDefinition|
+   enumeratorList ',' enumeratorDefinition
+;
+
+ enumeratorDefinition :
+   enumerator|
+   enumerator '=' constantExpression
+;
+
+ enumerator :
+   IDENTIFIER
+;
+
+ namespaceDefinition :
+   namedNamespaceDefinition|
+   unnamedNamespaceDefinition
+;
+
+ namedNamespaceDefinition :
+   originalNamespaceDefinition|
+   extensionNamespaceDefinition
+;
+
+ originalNamespaceDefinition :
+   'namespace' IDENTIFIER ':' namespaceBody ';'
+;
+
+ extensionNamespaceDefinition :
+   'namespace' originalNamespaceName ':' namespaceBody ';'
+;
+
+ unnamedNamespaceDefinition :
+   'namespace' ':' namespaceBody ';'
+;
+
+
+namespaceBody :
+   declarationSeq?
+;
+
+ namespaceAliasDefinition :
+   'namespace' IDENTIFIER '=' qualifiedNamespaceSpecifier '|'
+;
+
+ qualifiedNamespaceSpecifier :
+   colonColon? nestedNameSpecifier? namespaceName
+;
+
+ usingDeclaration :
+   'using' 'typename'? colonColon? nestedNameSpecifier unqualifiedId '|'|
+   'using' '::' unqualifiedId '|'
+;
+
+ usingDirective :
+   'using' 'namespace' colonColon? nestedNameSpecifier? namespaceName '|'
+;
+
+ asmDefinition :
+   'asm' '(' STRING_LITERAL ')' '|'
+;
+
+ linkageSpecification :
+   'extern' STRING_LITERAL ':' declarationSeq? ';'|
+   'extern' STRING_LITERAL declaration
+;
+
+
+// -------------------- a.7 declarators --------------------
+
+ initDeclaratorList :
+   initDeclarator|
+   initDeclaratorList ',' initDeclarator
+;
+
+ initDeclarator :
+   declarator initializer?
+;
+
+ declarator :
+   directDeclarator|
+   ptrOperator declarator
+;
+
+ directDeclarator :
+   declaratorId|
+   directDeclarator '(' parameterDeclarationClause ')' cvQualifierSeq? exceptionSpecification?|
+   directDeclarator '[' constantExpression? ']'|
+   '(' declarator ')'
+;
+
+ ptrOperator :
+   '*' cvQualifierSeq?|
+   '&'|
+   colonColon? nestedNameSpecifier '*' cvQualifierSeq?|     // pointer to member
+;
+
+ cvQualifierSeq :
+   cvQualifier cvQualifierSeq?
+;
+
+ cvQualifier :
+   'const'|
+   'volatile'
+;
+
+ declaratorId :
+   idExpression|
+   colonColon? nestedNameSpecifier? typeName
+;
+
+ typeId :
+   typeSpecifierSeq abstractDeclarator?
+;
+
+ typeSpecifierSeq :
+   typeSpecifier typeSpecifier*
+;
+
+ abstractDeclarator :
+   ptrOperator abstractDeclarator?|
+   directAbstractDeclarator
+;
+     
+ directAbstractDeclarator :
+   directAbstractDeclarator? '(' parameterDeclarationClause ')' cvQualifierSeq? exceptionSpecification?|
+   directAbstractDeclarator? '[' constantExpression? ']'|
+   '(' abstractDeclarator ')'
+;
+
+
+ parameterDeclarationClause :
+   parameterDeclarationList? '...'?|
+   parameterDeclarationList ',' '...'
+;
+
+ parameterDeclarationList :
+   parameterDeclaration|
+   parameterDeclarationList ',' parameterDeclaration
+;
+
+ parameterDeclaration :
+   declSpecifierSeq declarator|
+   declSpecifierSeq declarator '=' assignmentExpression|
+   declSpecifierSeq abstractDeclarator?|
+   declSpecifierSeq abstractDeclarator? '=' assignmentExpression
+;
+
+
+functionDefinition :
+   declSpecifierSeq? declarator ctorInitializer? functionBody|
+   declSpecifierSeq? declarator functionTryBlock
+;
+
+ functionBody :
+   compoundStatement
+;
+
+ initializer :
+   '=' initializerClause|
+   '(' expressionList ')'
+;
+
+ initializerClause :
+   assignmentExpression|
+   ':' initializerList ','? ';'|
+   ':' ';'
+;
+
+ initializerList :
+   initializerClause|
+   initializerList ',' initializerClause
+;
+
+
+// -------------------- a.8 classes --------------------
+
+
+ classSpecifier :
+   classHead ':' memberSpecification? ';'
+;
+
+ classHead :
+   classKey IDENTIFIER? baseClause?|
+   classKey nestedNameSpecifier IDENTIFIER baseClause?|
+   classKey nestedNameSpecifier? templateId baseClause?
+;
+
+ classKey :
+   'class'|
+   'struct'|
+   'union'
+;
+  
+ memberSpecification :
+   memberDeclaration memberSpecification?|
+   accessSpecifier ':' memberSpecification?
+;
+
+ memberDeclaration :
+   declSpecifierSeq? memberDeclaratorList? '|'|
+   functionDefinition '|'?|
+   colonColon? nestedNameSpecifier template? unqualifiedId '|'|
+   usingDeclaration|
+   templateDeclaration
+;
+
+ memberDeclaratorList :
+   memberDeclarator|
+   memberDeclaratorList ',' memberDeclarator
+;
+
+ memberDeclarator :
+
+   declarator pureSpecifier?|           // for when declarator is a function type
+   declarator constantInitializer?|     // for when it is any other type
+   IDENTIFIER? ':' constantExpression|  // bitfield with optional name
+;
+
+ pureSpecifier :
+   '=' DECIMAL_LITERAL|         // standard says '0' here but that's not one of my TOKens..
+;
+
+ constantInitializer: 
+   '=' constantExpression
+;
+
+
+// -------------------- a.9 derived classes --------------------
+
+ baseClause :
+   ':' baseSpecifierList
+;
+
+ baseSpecifierList :
+   baseSpecifier|
+   baseSpecifierList ',' baseSpecifier
+;
+ 
+
+ baseSpecifier :
+   colonColon? nestedNameSpecifier? className|
+   'virtual' accessSpecifier? colonColon? nestedNameSpecifier? className|
+   accessSpecifier 'virtual'?   colonColon? nestedNameSpecifier? className
+;
+
+ accessSpecifier :
+   'private'|
+   'protected'|
+   'public'
+;
+
+
+// -------------------- a.10 special member functions --------------------
+
+ conversionFunctionId :
+   'operator' conversionTypeId
+;
+
+ conversionTypeId :
+   typeSpecifierSeq conversionDeclarator?
+;
+
+ conversionDeclarator :
+   ptrOperator conversionDeclarator?
+;
+
+ ctorInitializer :
+   ':' memInitializerList
+;
+
+// q: why right recursion?
+ memInitializerList :
+   memInitializer|
+   memInitializer ',' memInitializerList
+;                                          
+
+// q: what is a mem-initializer?
+// a: 'member initializer', in constructors after the ':' but before ':'
+ memInitializer :
+   memInitializerId '(' expressionList? ')'
+;
+
+ memInitializerId :
+
+   colonColon? nestedNameSpecifier? className|
+   IDENTIFIER
+;
+
+
+// -------------------- a.11 overloading --------------------
+
+ operatorFunctionId :
+   'operator' operator
+;
+
+ operator :
+   'new'|
+   'delete'|
+   'new' '[' ']'|
+   'delete' '[' ']'|
+   '+'|
+   '-'|
+   '*'|
+   '/'|
+   '%'|
+   '^'|
+   '&'|
+   '|'|
+   '~'|
+   '!'|
+   '='|
+   '<'|
+   '>'|
+   '+='|
+   '-='|
+   '*='|
+   '/='|
+   '%='|
+   '^='|
+   '&='|
+   '|='|
+   '<<'|
+   '>>'|
+   '>>='|
+   '<<='|
+   '=='|
+   '!='|
+   '<='|
+   '>='|
+   '&&'|
+   '||'|
+   '++'|
+   '--'|
+   ','|
+   '*'|
+   ''|
+   '(' ')'|
+   '[' ']'
+;
+
+
+// -------------------- a.12 templates --------------------
+templateDeclaration :
+   'template' '<' templateParameterList '>' declaration
+;
+
+ templateParameterList :
+   templateParameter|
+   templateParameterList ',' templateParameter
+;
+
+ templateParameter :
+   typeParameter|
+   parameterDeclaration
+;
+
+ typeParameter :
+   'class' IDENTIFIER?|
+   'class' IDENTIFIER? '=' typeId|
+   'typename' IDENTIFIER?|
+   'typename' IDENTIFIER? '=' typeId|
+   'template' '<' templateParameterList '>' 'class' IDENTIFIER?|
+   'template' '<' templateParameterList '>' 'class' IDENTIFIER? '=' idExpression
+;
+
+
+templateId :
+   templateName '<' templateArgumentList? '>'
+;
+
+// repeated in spec
+// templateName :
+//   IDENTIFIER|
+//; 
+
+ templateArgumentList :
+   templateArgument|
+   templateArgumentList ',' templateArgument
+;
+
+ templateArgument :
+
+   assignmentExpression|
+   typeId|
+   idExpression
+;
+
+ explicitInstantiation :
+   'template' declaration
+;
+
+ explicitSpecialization :
+   'template' '<' '>' declaration
+;
+
+
+// -------------------- a.13 exception handling --------------------
+
+ tryBlock :
+   'try' compoundStatement handlerSeq
+;
+
+ functionTryBlock :
+   'try' ctorInitializer? functionBody handlerSeq
+;
+
+ handlerSeq :
+   handler handler*
+;
+
+ handler :
+   'catch' '(' exceptionDeclaration ')' compoundStatement
+;
+
+ exceptionDeclaration :
+   typeSpecifierSeq declarator|
+   typeSpecifierSeq abstractDeclarator|
+   typeSpecifierSeq|
+   '...'
+;
+
+ throwExpression :
+   'throw' assignmentExpression?
+;
+
+ exceptionSpecification :
+   'throw' '(' typeIdList? ')'
+;
+
+ typeIdList :
+   typeId|
+   typeIdList ',' typeId
+;
+
+
+

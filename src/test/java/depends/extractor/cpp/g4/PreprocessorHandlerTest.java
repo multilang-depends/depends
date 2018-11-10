@@ -47,8 +47,7 @@ public class PreprocessorHandlerTest {
 		
 	}
 	@Test
-	public void test() throws IOException {
-		EntityRepo repo = new EntityRepo();
+	public void testPreprocessor() throws IOException {
         String src = "./src/test/resources/cpp-code-examples/includesTest/PreprocessorTest.cpp";
         
 		CharStream input = CharStreams.fromFileName(src);
@@ -65,8 +64,7 @@ public class PreprocessorHandlerTest {
 	}
 
 	@Test
-	public void test2() throws IOException {
-		EntityRepo repo = new EntityRepo();
+	public void testG4ContainsPreprocessor() throws IOException {
         String src = "./src/test/resources/cpp-code-examples/includesTest/PreprocessorTest.cpp";
         
 		CharStream input = CharStreams.fromFileName(src);
