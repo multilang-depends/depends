@@ -7,14 +7,14 @@ unsigned long l1;
 ulong l2;
  
 // 更复杂的 typedef
-typedef int int_t, *intp_t, (&fp)(int, ulong), arr_t[10];
+// typedef int int_t, *intp_t, (&fp)(int, ulong), arr_t[10];
  
 // 下列二个对象拥有同一类型
 int a1[10];
 arr_t a2;
  
 // 避免必须写 "struct C" 的常见 C 手法
-typedef struct {int a; int b;} S, *pS;
+typedef struct {int a; int b;} S;
  
 // 下列二个对象拥有相同类型
 pS ps1;
@@ -36,3 +36,6 @@ struct add_const {
 typedef struct Node {
     struct listNode* next; // 声明名为 listNode 的新的（不完整）结构体类型
 } listNode; // 错误：与先前声明的结构体名冲突
+
+
+

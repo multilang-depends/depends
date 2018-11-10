@@ -13,16 +13,17 @@ declaration :
    explicitInstantiation|
    explicitSpecialization|
    linkageSpecification|
-   namespaceDefinition
+   namespaceDefinition |
+   expressionList //only for old style c
 ;
 
 macroInvocation:
-   methodCall ;
+   Identifier ('<' templateArgumentList? '>')? ('(' expressionList? ')')+ ;
 
 // -------------------- a.1 keywords --------------------
 
 typedefName :
-   IDENTIFIER
+   Identifier
 ;
 
 namespaceName :
@@ -31,41 +32,29 @@ namespaceName :
 ;
 
  originalNamespaceName :
-   IDENTIFIER
+   Identifier
 ;
 
  namespaceAlias :
-   IDENTIFIER
+   Identifier
 ;
 
  className :
-   IDENTIFIER|
+   Identifier|
    templateId
 ;
 
  enumName :
-   IDENTIFIER
+   Identifier
 ;
 
  templateName :
-   IDENTIFIER
+   Identifier
 ;
 
 
-literal :
-   DECIMAL_LITERAL|
-   HEX_LITERAL |
-   OCT_LITERAL |
-   BINARY_LITERAL |
-   CHAR_LITERAL|
-   FLOAT_LITERAL|
-   HEX_FLOAT_LITERAL|
-   StringBlock|
-   BOOL_LITERAL |
-   NULL_LITERAL 
-;
-StringBlock:
-   STRING_LITERAL+ ;
+stringBlock:
+   Stringliteral Stringliteral* ;
 
 // -------------------- a.4 expressions --------------------
 
@@ -75,11 +64,11 @@ StringBlock:
 ;
 
  unqualifiedId :
-   IDENTIFIER|
-   operatorFunctionId|
-   conversionFunctionId|
-   '~' className|
-   templateId
+   Identifier
+   |'~' className
+   |operatorFunctionId
+   |conversionFunctionId
+   |templateId
 ;
 
 template :
@@ -87,10 +76,10 @@ template :
 ;
 
  qualifiedId :
-   '::'? nestedNameSpecifier template? unqualifiedId|
-   '::' IDENTIFIER|
-   '::' operatorFunctionId|
-   '::' templateId
+   '::'? nestedNameSpecifier template? unqualifiedId  # qualifiedIdOfNameSpace
+   |'::' Identifier                                   # qualifiedIdOfGlobalId 
+   |'::' operatorFunctionId                           # qualifiedIdOfOperatorFunction
+   |'::' templateId                                   # qualifiedIdOfTemplateId
 ;
 
  nestedNameSpecifier :
@@ -109,8 +98,10 @@ template :
    '(' expression ')'|
    idExpression |
    newExpression|
-   deleteExpression
+   deleteExpression |
+   throwExpression
 ;
+
 
 expression
     : primaryExpression
@@ -118,26 +109,23 @@ expression
     (
     	template? idExpression
     	|pseudoDestructorName
-    	|methodCall
     )
     | expression bop='::'
     (
     	template? idExpression
     	|pseudoDestructorName
-    	|methodCall
     )
     |expression bop='->'
     (
     	template? idExpression
     	|pseudoDestructorName
-        |methodCall
     )
     | prefix=('+'|'-'|'++'|'--'|'*'|'&'|'!'|'~') expression
-    | methodCall
-    | expression '[' expressionList ']'
+    | expression ('<' templateArgumentList? '>')? (expressionList)+
+    | expression '[' expression ']'
     | 'sizeof' expression
     |  'sizeof' '(' typeId ')'
-    | 'typename' '::'? nestedNameSpecifier IDENTIFIER '(' expressionList ')'
+    | 'typename' '::'? nestedNameSpecifier Identifier '(' expressionList ')'
     | 'typename' '::'? nestedNameSpecifier template? templateId '(' expressionList ')'
     | simpleTypeSpecifier '(' expressionList ')'    
     | expression postfix=('++' | '--')
@@ -163,13 +151,20 @@ expression
       bop=('=' | '+=' | '-=' | '*=' | '/=' | '&=' | '|=' | '^=' | '>>=' | '>>>=' | '<<=' | '%=')
       expression
 	;
-	
+expressionList:
+expressions 
+| '(' expressions? ')'
+| '{' expressionList (',' expressionList)* '}'
+| '(' expressionList ')'
+;
+/* 	
 methodCall: 
-	'~'? IDENTIFIER '(' expressionList? ')'
+	'~'? Identifier ('<' templateArgumentList? '>')? ('(' expressionList? ')')+
+	|'(' '*'? Identifier ')' ('<' templateArgumentList? '>')? ('(' expressionList? ')')+
 	|'this' '->' '(' expressionList? ')'
 	;
-	
-expressionList :
+*/
+expressions :
    expression (',' expression)*
 ;
 
@@ -224,14 +219,14 @@ expressionList :
 ;
 
  labeledStatement :
-   IDENTIFIER ':' statement|
+   Identifier ':' statement|
    'case' expression ':' statement|
    'default' ':' statement      // note: linux kernel contains 'switch (..) : ... default: ;' ..
 ;
 
 
  expressionStatement :
-   expression ';'
+   expressionList ';'
 ;
 
 compoundStatement
@@ -245,14 +240,14 @@ compoundStatement
 ;
 
  condition :
-   expression|
-   typeSpecifier+ declarator '=' expression 
+   expressionList
+   //| typeSpecifier+ declarator '=' expression 
 ;
   
  iterationStatement :
    'while' '(' condition ')' statement|
-   'do' statement 'while' '(' expression ')' ';'|
-   'for' '(' forInitStatement condition? ';' expression? ')' statement
+   'do' statement 'while' '(' condition ')' ';'|
+   'for' '(' forInitStatement condition? ';' expressionList? ')' statement
 ;
 
  forInitStatement :
@@ -264,7 +259,7 @@ compoundStatement
    'break' ';'|
    'continue' ';'|
    'return' expression? ';'|
-   'goto' IDENTIFIER ';'
+   'goto' Identifier ';'
 ;
 
 
@@ -297,9 +292,13 @@ initDeclarator :
    storageClassSpecifier|
    typeSpecifier |
    functionSpecifier|
+   functionPtr |
    'friend'|
    'typedef'
 ;
+functionPtr:
+    '(' '*' idExpression ')' parameters;
+
 
 
  storageClassSpecifier :
@@ -348,14 +347,14 @@ typeSpecifier :
 ;
 
  elaboratedTypeSpecifier :
-   classKey '::'? nestedNameSpecifier? IDENTIFIER|
-   'enum' '::'? nestedNameSpecifier? IDENTIFIER|
-   'typename' '::'? nestedNameSpecifier IDENTIFIER|
+   classKey '::'? nestedNameSpecifier? Identifier|
+   'enum' '::'? nestedNameSpecifier? Identifier|
+   'typename' '::'? nestedNameSpecifier Identifier|
    'typename' '::'? nestedNameSpecifier template? templateId
 ;
 
  enumSpecifier :
-   'enum' IDENTIFIER? '{' enumeratorList? ','? '}'
+   'enum' Identifier? '{' enumeratorList? ','? '}'
 ;
 
  enumeratorList :
@@ -363,16 +362,16 @@ typeSpecifier :
 ;
 
  enumeratorDefinition :
-   IDENTIFIER |
-   IDENTIFIER '=' expression
+   Identifier |
+   Identifier '=' expression
 ;
 
  namespaceDefinition :
-   'namespace' IDENTIFIER? '{' declaration* '}'
+   'namespace' Identifier? '{' declaration* '}'
 ;
 
  namespaceAliasDefinition :
-   'namespace' IDENTIFIER '=' qualifiedNamespaceSpecifier ';'
+   'namespace' Identifier '=' qualifiedNamespaceSpecifier ';'
 ;
 
  qualifiedNamespaceSpecifier :
@@ -389,27 +388,35 @@ typeSpecifier :
 ;
 
  asmDefinition :
-   'asm' '(' StringBlock ')' ';'
+   'asm' '(' stringBlock ')' ';'
 ;
 
  linkageSpecification :
-   'extern' STRING_LITERAL '{' declaration* '}'|
-   'extern' STRING_LITERAL declaration
+   'extern' Stringliteral '{' declaration* '}'|
+   'extern' Stringliteral declaration
 ;
 
 
 // -------------------- a.7 declarators --------------------
 
  declarator :
-   declaratorId |
-   declaratorId+ '(' parameterDeclarationClause? ')' cvQualifierSeq? exceptionSpecification?|
-   declaratorId+ '[' expression? ']'|
-   '(' declarator ')'
+   declaratorId 
+   |ptrOperator declaratorId 
+   |declaratorId+ parameters cvQualifierSeq? exceptionSpecification? 
+   |declaratorId+ '[' expression? ']'
+   |declaratorId+ parameters simpleDeclaration*  
+   |'(' declarator ')'
 ;
+parameters: 
+'(' parameterDeclarationClause? ')' |
+'(' parameters ')' 
+;
+ 	
 
  ptrOperator :
    '*' cvQualifierSeq?|
    '&'  |
+   '[' ']'|
    '::'? nestedNameSpecifier '*' cvQualifierSeq?     // pointer to member
 ;
 
@@ -433,7 +440,7 @@ typeSpecifier :
 
 
  parameterDeclarationClause :
-   parameterDeclaration (',' parameterDeclaration)*  '...'?
+   parameterDeclaration (',' parameterDeclaration)*  (',' '...')?
 ;
 
  parameterDeclaration :
@@ -457,16 +464,10 @@ functionDefinition :
 ;
 
  initializerClause :
-   expression|
-   '{' initializerList ','? '}'|
-   '{' '}'
+   '{'  expressionList ','? '}'|
+   '{' '}' |
+   expressionList
 ;
-
- initializerList :
-   initializerClause|
-   initializerList ',' initializerClause
-;
-
 
 // -------------------- a.8 classes --------------------
 
@@ -476,8 +477,8 @@ functionDefinition :
 ;
 
  classHead :
-   classKey IDENTIFIER? baseClause?|
-   classKey nestedNameSpecifier IDENTIFIER baseClause?|
+   classKey Identifier? baseClause?|
+   classKey nestedNameSpecifier Identifier baseClause?|
    classKey nestedNameSpecifier? templateId baseClause?
 ;
 
@@ -508,11 +509,11 @@ functionDefinition :
  memberDeclarator :
    declarator pureSpecifier?|           // for when declarator is a function type
    declarator constantInitializer?|     // for when it is any other type
-   IDENTIFIER? ':' expression  // bitfield with optional name
+   Identifier? ':' expression  // bitfield with optional name
 ;
 
  pureSpecifier :
-   '=' DECIMAL_LITERAL        // standard says '0' here but that's not one of my TOKens..
+   '=' Integerliteral        // standard says '0' here but that's not one of my TOKens..
 ;
 
  constantInitializer: 
@@ -562,7 +563,7 @@ functionDefinition :
  memInitializerId :
 
    '::'? nestedNameSpecifier? className|
-   IDENTIFIER
+   Identifier
 ;
 
 
@@ -633,12 +634,12 @@ templateDeclaration :
 ;
 
  typeParameter :
-   'class' IDENTIFIER?|
-   'class' IDENTIFIER? '=' typeId|
-   'typename' IDENTIFIER? '=' typeId|
-   'typename' IDENTIFIER?|
-   'template' '<' templateParameterList '>' 'class' IDENTIFIER?|
-   'template' '<' templateParameterList '>' 'class' IDENTIFIER? '=' idExpression
+   'class' Identifier?|
+   'class' Identifier? '=' typeId|
+   'typename' Identifier? '=' typeId|
+   'typename' Identifier?|
+   'template' '<' templateParameterList '>' 'class' Identifier?|
+   'template' '<' templateParameterList '>' 'class' Identifier? '=' idExpression
 ;
 
 
@@ -701,7 +702,10 @@ templateId :
 ;
 
 
+
 /*Preprocessing directives*/
+LINE_ESCAPE:       '\\' ('\r' '\n'? | '\n') -> skip;
+
 
 MultiLineMacro
 :
@@ -717,39 +721,133 @@ Directive
 
 // Literals
 
-DECIMAL_LITERAL:    ('0' | [1-9] (Digits? | '_'+ Digits)) [lL]?;
-HEX_LITERAL:        '0' [xX] [0-9a-fA-F] ([0-9a-fA-F_]* [0-9a-fA-F])? [lL]?;
-OCT_LITERAL:        '0' '_'* [0-7] ([0-7_]* [0-7])? [lL]?;
-BINARY_LITERAL:     '0' [bB] [01] ([01_]* [01])? [lL]?;
-                    
-FLOAT_LITERAL:      (Digits '.' Digits? | '.' Digits) ExponentPart? [fFdD]?
-             |       Digits (ExponentPart [fFdD]? | [fFdD])
-             ;
-
-HEX_FLOAT_LITERAL:  '0' [xX] (HexDigits '.'? | HexDigits? '.' HexDigits) [pP] [+-]? Digits [fFdD]?;
-
-BOOL_LITERAL:       'true'
-            |       'false'
-            ;
-
-CHAR_LITERAL:       '\'' (~['\\\r\n] | EscapeSequence) '\'';
-
-STRING_LITERAL:     '"' (~["\\\r\n] | EscapeSequence)* '"' ;
-
-NULL_LITERAL:       'null';
-
-
 // Whitespace and comments
 
 WS:                 [ \t\r\n\u000C]+ -> channel(HIDDEN);
 COMMENT:            '/*' .*? '*/'    -> channel(HIDDEN);
 LINE_COMMENT:       '//' ~[\r\n]*    -> channel(HIDDEN);
+GCC_ATTRIBUTE :     '__attribute__' '((' Stringliteral '))' ->skip;
 
-// Identifiers
+fragment
+Universalcharactername
+:
+	'\\u' [0-9a-fA-F]*
+	| '\\U' [0-9a-fA-F]*
+;
+
+Identifier
+:
+/*
+	Identifiernondigit
+	| Identifier Identifiernondigit
+	| Identifier DIGIT
+	*/
+	Identifiernondigit
+	(
+		Identifiernondigit
+		| DIGIT
+	)*
+;
+
+fragment
+Identifiernondigit
+:
+	NONDIGIT
+	| Universalcharactername
+	/* other implementation defined characters*/
+;
+
+fragment
+NONDIGIT
+:
+	[a-zA-Z_]
+;
+
+fragment
+DIGIT
+:
+	[0-9]
+;
+
+literal
+:
+	stringBlock
+	| Integerliteral
+	| Characterliteral
+	| Floatingliteral
+	| Booleanliteral
+	| 'nullptr'
+	| 'null'
+;
+
+Integerliteral
+:
+	Decimalliteral
+	| Octalliteral
+	| Hexadecimalliteral 
+	| Binaryliteral 
+;
+
+
+Decimalliteral:    ('0' | [1-9] (Digits? | '_'+ Digits)) Integersuffix?;
+Hexadecimalliteral:        '0' [xX] [0-9a-fA-F] ([0-9a-fA-F_]* [0-9a-fA-F])? Integersuffix?;
+Octalliteral:        '0' '_'* [0-7] ([0-7_]* [0-7])? Integersuffix?;
+Binaryliteral:     '0' [bB] [01] ([01_]* [01])? Integersuffix?;
+                    
+Floatingliteral:      (Digits '.' Digits? | '.' Digits) ExponentPart? [fFdD]?
+             |       Digits (ExponentPart [fFdD]? | [fFdD])
+             ;
+
+Booleanliteral:       'true'
+            |       'false'
+            ;
+
+Characterliteral:       '\'' (~['\\\r\n] | EscapeSequence) '\'' |
+                        '\'' '\\' [xX] [0-9a-fA-F]+ '\'';
+
+Stringliteral:    ('u8'| 'u'| 'U'| 'L')? '"' (~["\r\n\\] | EscapeSequence | '\\\n' | '\\\r\n' | '\\\r')* '"' ;
+
+//Stringliteral:    ('u8'| 'u'| 'U'| 'L')? '"' SChar* '"' ;
+
+
+fragment
+SChar
+    :   ~["\\\r\n]
+    |   EscapeSequence
+    |   '\\\n'   // Added line
+    |   '\\\r\n' // Added line
+    ;
 
 IDENTIFIER:         Letter LetterOrDigit*;
 
 // Fragment rules
+fragment
+Integersuffix
+:
+	Unsignedsuffix Longsuffix?
+	| Unsignedsuffix Longlongsuffix?
+	| Longsuffix Unsignedsuffix?
+	| Longlongsuffix Unsignedsuffix?
+;
+
+fragment
+Unsignedsuffix
+:
+	[uU]
+;
+
+fragment
+Longsuffix
+:
+	[lL]
+;
+
+fragment
+Longlongsuffix
+:
+	'll'
+	| 'LL'
+;
 
 fragment ExponentPart
     : [eE] [+-]? Digits
@@ -758,7 +856,6 @@ fragment ExponentPart
 fragment EscapeSequence
     : '\\' [btnfr"'\\]
     | '\\' ([0-3]? [0-7])? [0-7]
-    | '\\x' ([0-3]? [0-7])? [0-7]
     | '\\' 'u'+ HexDigit HexDigit HexDigit HexDigit
     ;
 
@@ -784,3 +881,4 @@ fragment Letter
     | ~[\u0000-\u007F\uD800-\uDBFF] // covers all characters above 0x7F which are not a surrogate
     | [\uD800-\uDBFF] [\uDC00-\uDFFF] // covers UTF-16 surrogate pairs encodings for U+10000 to U+10FFFF
     ;
+

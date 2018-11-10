@@ -35,6 +35,7 @@ public class Antlr4CppFileParser extends CppFileParser {
 		    tree = parser.translationUnit();  // STAGE 1
 		}
 		catch (Exception ex) {
+			System.out.print("reset");
 		    tokens.reset(); // rewind input stream
 		    parser.reset();
 		    parser.getInterpreter().setPredictionMode(PredictionMode.LL);

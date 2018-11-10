@@ -1,10 +1,13 @@
+static const char sch2[] = "ac" ;
+
+
 static const char sch[] = "{\"type\": \"record\"";
 
-static const char sch2[] = u"{" ;
+static const char sch2[] = "aaa"  ;
+
 
 asm (
-u"abc"
-u"aaa"
+"abc""123"
 );
 
   

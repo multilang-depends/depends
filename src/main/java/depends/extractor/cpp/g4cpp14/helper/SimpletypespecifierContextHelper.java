@@ -1,4 +1,4 @@
-package depends.extractor.cpp.g4.helper;
+package depends.extractor.cpp.g4cpp14.helper;
 
 import depends.javaextractor.CPP14Parser.SimpletypespecifierContext;
 
