@@ -90,11 +90,11 @@
 			<artifactId>poi-ooxml</artifactId>
 			<version>3.16</version>
 		</dependency>
-<!-- 		<dependency>
+ 	<!-- 	<dependency>
 			<groupId>org.eclipse.cdt</groupId>
 			<artifactId>org.eclipse.cdt.core</artifactId>
 			<version>6.5.0.201806170908</version>
-		</dependency>-->
+		</dependency> -->
 		<dependency>
 			<groupId>eclipse-photon</groupId>
 			<artifactId>org.eclipse.equinox.registry</artifactId>

@@ -1,9 +1,10 @@
 package depends.extractor.cpp.cdt;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
+import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -11,6 +12,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -22,43 +24,21 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
+import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 
-import depends.entity.IdGenerator;
-import depends.entity.repo.EntityRepo;
-import depends.extractor.HandlerContext;
 import depends.util.Tuple;
 
-public class CdtCppEntitiesListener  extends ASTVisitor {
+public class CdtAstVisitor  extends ASTVisitor {
 
-	private HandlerContext context;
-	private IdGenerator idGenerator;
-	private List<String> includeSearchPath = new ArrayList<>();
-	private PreprocessorHandler preprocessorHandler ;
-	private String filePath;
-	private FileIndex fileIndex;
-	
-	public CdtCppEntitiesListener(String fileFullPath, EntityRepo entityRepo, List<String> includeSearchPath, FileIndex fileIndex) {
+	private IASTTranslationUnit root;
+	CommentManager commentManager;
+
+	public CdtAstVisitor( IASTTranslationUnit translationUnit, List<String> includeSearchPath, FileIndex fileIndex) {
 		super(true);
-		this.context = new HandlerContext(entityRepo);
-		idGenerator = entityRepo;
-		context.startFile(fileFullPath);
-		this.filePath = fileFullPath;
-		this.includeSearchPath  = includeSearchPath;
-		this.fileIndex = fileIndex;
-		preprocessorHandler = new PreprocessorHandler(includeSearchPath,fileIndex);
+		root = translationUnit;
+		commentManager = new CommentManager(translationUnit);
 	}
 
-	@Override
-	public int visit(IASTTranslationUnit tu) {
-//		IASTPreprocessorStatement[] i = tu.getAllPreprocessorStatements();
-//		preprocessorHandler.setIncludePath(this.includeSearchPath);
-//		preprocessorHandler.handlePreprocessors(tu.getAllPreprocessorStatements(),this.filePath);
-//		for (String incl:preprocessorHandler.getIncludedFullPathNames()) {
-//			context.foundNewImport(incl,true);
-//		}
-		return super.visit(tu);
-	}
-	
 	@Override
 	public int visit(IASTName name) {
 		return super.visit(name);
@@ -72,8 +52,16 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 	}
 
 
-
-	
+	@Override
+	public int visit(IASTTranslationUnit tu) {
+//		IASTPreprocessorStatement[] i = tu.getAllPreprocessorStatements();
+//		preprocessorHandler.setIncludePath(this.includeSearchPath);
+//		preprocessorHandler.handlePreprocessors(tu.getAllPreprocessorStatements(),this.filePath);
+//		for (String incl:preprocessorHandler.getIncludedFullPathNames()) {
+//			context.foundNewImport(incl,true);
+//		}
+		return super.visit(tu);
+	}
 
 
 
@@ -83,6 +71,14 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 		if (expression instanceof IASTFunctionCallExpression) {
 			IASTFunctionCallExpression callExpression = (IASTFunctionCallExpression)expression;
 			System.out.println("**call " + callExpression.getFunctionNameExpression().toString());
+		}
+		if (expression instanceof IASTCastExpression) {
+			IASTCastExpression expr = (IASTCastExpression)expression;
+			System.out.println("**cast to " + ASTStringUtil.getName(expr.getTypeId().getDeclSpecifier()));
+		}
+		if (expression instanceof IASTFieldReference) {
+			IASTFieldReference expr = (IASTFieldReference)expression;
+			System.out.println("**access member of  " +expr.getFieldName());
 		}
 		return super.visit(expression);
 	}
@@ -149,6 +145,7 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 			System.out.println("**found IASTFunctionDeclarator -->>" + declarator.getName());
 			System.out.println("**" + declarator.getFileLocation().getStartingLineNumber());
 			String returnType = null;
+			System.out.println(commentManager.getLeadingCommentText(declarator.getParent().getFileLocation().getNodeOffset()));
 			if ( declarator.getParent() instanceof IASTSimpleDeclaration) {
 				IASTSimpleDeclaration decl = (IASTSimpleDeclaration)(declarator.getParent());
 				returnType = ASTStringUtil.getName(decl.getDeclSpecifier());
@@ -163,7 +160,21 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 		return super.visit(declarator);
 	}
 
-
+	public IASTComment findComment(int startOffset) {
+		
+		IASTComment[] comments = ((ASTTranslationUnit) root).getComments();
+		int i=0;
+		for (;i<comments.length;i++) {
+			IASTComment c = comments[i];
+			int gap = startOffset-(c.getFileLocation().getNodeOffset()+
+					c.getFileLocation().getNodeLength());
+			if (gap>0 && gap<10) {
+				break;
+			}
+			if (gap<0) return null;
+		}
+		return i>=comments.length?null:comments[i];
+	}
 	
 	@Override
 	public int visit(IASTParameterDeclaration parameterDeclaration) {

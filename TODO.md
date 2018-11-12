@@ -3,6 +3,8 @@
 
 # Java
 - block varaibles with same name should be resovled.  
+- override functions (same type but different parameters)
+
 - support new definition of relations (only annotation left)
 - support Annotation const
 - support lamba expression

@@ -10,7 +10,10 @@ public class Tuple<X, Y>
         this.y = y;
     }
 
-    public void setX(X x) {
+    public Tuple() {
+    }
+
+	public void setX(X x) {
         this.x = x;
     }
 
