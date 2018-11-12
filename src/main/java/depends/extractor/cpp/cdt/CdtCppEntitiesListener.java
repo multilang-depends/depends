@@ -9,18 +9,17 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 
 import depends.entity.IdGenerator;
 import depends.entity.repo.EntityRepo;
-import depends.entity.types.FunctionEntity;
 import depends.extractor.HandlerContext;
 
 public class CdtCppEntitiesListener  extends ASTVisitor {
@@ -71,14 +70,15 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 	}
 
 
+
 	@Override
 	public int visit(IASTTranslationUnit tu) {
-		IASTPreprocessorStatement[] i = tu.getAllPreprocessorStatements();
-		preprocessorHandler.setIncludePath(this.includeSearchPath);
-		preprocessorHandler.handlePreprocessors(tu.getAllPreprocessorStatements(),this.filePath);
-		for (String incl:preprocessorHandler.getIncludedFullPathNames()) {
-			context.foundNewImport(incl,true);
-		}
+//		IASTPreprocessorStatement[] i = tu.getAllPreprocessorStatements();
+//		preprocessorHandler.setIncludePath(this.includeSearchPath);
+//		preprocessorHandler.handlePreprocessors(tu.getAllPreprocessorStatements(),this.filePath);
+//		for (String incl:preprocessorHandler.getIncludedFullPathNames()) {
+//			context.foundNewImport(incl,true);
+//		}
 		return super.visit(tu);
 	}
 
@@ -86,9 +86,9 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 
 	@Override
 	public int leave(IASTDeclaration declaration) {
-		if (declaration instanceof IASTFunctionDefinition) {
-			context.exitLastedEntity();
-		}
+//		if (declaration instanceof IASTFunctionDefinition) {
+//			context.exitLastedEntity();
+//		}
 		return super.leave(declaration);
 	}
 
@@ -99,24 +99,14 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 		return super.leave(declarator);
 	}
 
-
 	@Override
-	public int visit(IASTDeclaration declaration) {
-		if (declaration instanceof IASTFunctionDefinition) {
-			MethodContext method = new MethodContext((IASTFunctionDefinition)declaration,context.lastContainer(),this.idGenerator);
-			FunctionEntity funcEntity = context.foundMethodDeclarator(method.methodName,  method.returnType, method.throwedType);
-			method.addParameters(funcEntity);
-		}
-		return super.visit(declaration);
+	public int visit(IASTDeclSpecifier declSpec) {
+//		if (declSpec instanceof ICPPASTCompositeTypeSpecifier) {
+//			ICPPASTCompositeTypeSpecifier etype = (ICPPASTCompositeTypeSpecifier)declSpec;
+//			context.foundNewType(etype.getName().toString());
+//		}
+		return super.visit(declSpec);
 	}
-
-	
-	@Override
-	public int visit(IASTTypeId typeId) {
-		// TODO Auto-generated method stub
-		return super.visit(typeId);
-	}
-
 
 	@Override
 	public int leave(IASTDeclSpecifier declSpec) {
@@ -124,20 +114,54 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 		return super.leave(declSpec);
 	}
 
+	
+	@Override
+	public int visit(IASTDeclaration declaration) {
+		if (declaration instanceof IASTFunctionDefinition) {
+			IASTFunctionDefinition function = (IASTFunctionDefinition)declaration;
+			CdtDeclaratorContext c = new CdtDeclaratorContext(function.getDeclarator());
+//			System.out.println(c.getName());
+						//MethodContext method = new MethodContext((IASTFunctionDefinition)declaration,context.lastContainer(),this.idGenerator);
+//			FunctionEntity funcEntity = context.foundMethodDeclarator(method.methodName,  method.returnType, method.throwedType);
+//			method.addParameters(funcEntity);
+		}
+		return super.visit(declaration);
+	}
 
 	@Override
-	public int visit(IASTDeclSpecifier declSpec) {
-		if (declSpec instanceof ICPPASTCompositeTypeSpecifier) {
-			ICPPASTCompositeTypeSpecifier etype = (ICPPASTCompositeTypeSpecifier)declSpec;
-			context.foundNewType(etype.getName().toString());
-		}
-		return super.visit(declSpec);
+	public int visit(IASTTypeId typeId) {
+		// TODO Auto-generated method stub
+		return super.visit(typeId);
 	}
+
+
+
+
+	
 
 
 	@Override
 	public int visit(IASTDeclarator declarator) {
-		// TODO Auto-generated method stub
+		CdtDeclaratorContext c = new CdtDeclaratorContext(declarator);
+		//System.out.println(c.getName());
+		//System.out.println("---");
+		if (declarator.getParent() instanceof IASTSimpleDeclaration) {
+			
+		}
+		else if (declarator.getParent() instanceof IASTParameterDeclaration) {
+			
+		}
+		else if (declarator.getParent() instanceof IASTFunctionDefinition) {
+			
+		}
+		else if (declarator.getParent() instanceof IASTFunctionDeclarator){
+			
+		}else if (declarator.getParent() instanceof IASTTypeId) {
+			
+		}else {
+			System.out.println("**" + declarator.getParent().getClass().getName());
+			System.out.println(declarator.getParent().getRawSignature());
+		}
 		return super.visit(declarator);
 	}
 	

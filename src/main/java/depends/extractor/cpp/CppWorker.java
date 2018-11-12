@@ -29,8 +29,8 @@ public class CppWorker extends AbstractLangWorker {
 
 	@Override
 	protected FileParser getFileParser(String fileFullPath) {
-		//return new CdtCppFileParser(fileFullPath,entityRepo,super.includePaths(),fileIndex);
-		return new Antlr4CppFileParser(fileFullPath,entityRepo,super.includePaths());
+		return new CdtCppFileParser(fileFullPath,entityRepo,super.includePaths(),fileIndex);
+		//return new Antlr4CppFileParser(fileFullPath,entityRepo,super.includePaths());
 	}
 
 	

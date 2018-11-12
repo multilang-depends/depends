@@ -40,7 +40,7 @@ public class CDTParser {
 				} catch (IOException e) {
 				}
 			}else {
-				System.err.println("include path " + f + " does not exist!");
+				//System.err.println("include path " + f + " does not exist!");
 			}
 		}
 	}

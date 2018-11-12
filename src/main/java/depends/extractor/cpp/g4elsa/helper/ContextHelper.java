@@ -8,6 +8,7 @@ import depends.javaextractor.CElsaParser.ClassNameContext;
 import depends.javaextractor.CElsaParser.ClassOrNamespaceNameContext;
 import depends.javaextractor.CElsaParser.ClassSpecifierContext;
 import depends.javaextractor.CElsaParser.ConversionFunctionIdContext;
+import depends.javaextractor.CElsaParser.DeclSpecifierContext;
 import depends.javaextractor.CElsaParser.DeclaratorContext;
 import depends.javaextractor.CElsaParser.DeclaratorIdContext;
 import depends.javaextractor.CElsaParser.ElaboratedTypeSpecifierContext;
@@ -203,6 +204,15 @@ public class ContextHelper {
 			declarator = declarator.declarator();
 			if (declarator==null) return new ArrayList<>();
 		}
+	}
+	
+	public String getTypeNameOf(List<DeclSpecifierContext> declSpecifiers) {
+		if (declSpecifiers==null) return "";
+		for (DeclSpecifierContext declSpecifier:declSpecifiers) {
+			if (declSpecifier.typeSpecifier()==null) continue;
+				return getName(declSpecifier.typeSpecifier());
+		}
+		return "";
 	}
 
 }

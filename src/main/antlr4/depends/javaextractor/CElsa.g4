@@ -1,5 +1,8 @@
 grammar CElsa;
 
+@lexer::members{
+	public static final int CHANNEL_COMMENT = 2;
+}
 
 translationUnit :
    declaration* EOF
@@ -370,11 +373,11 @@ typeSpecifier :
 ;
 
  namespaceDefinition :
-   'namespace' Identifier? '{' declaration* '}'
+   Namespace Identifier? '{' declaration* '}'
 ;
 
  namespaceAliasDefinition :
-   'namespace' Identifier '=' qualifiedNamespaceSpecifier ';'
+   Namespace Identifier '=' qualifiedNamespaceSpecifier ';'
 ;
 
  qualifiedNamespaceSpecifier :
@@ -382,18 +385,20 @@ typeSpecifier :
 ;
 
  usingDeclaration :
-   'using' 'typename'? DotDot? nestedNameSpecifier unqualifiedId ';'|
-   'using' 'typename'? NestedName |
-   'using' DotDot unqualifiedId ';'
+   Using 'typename'? DotDot? nestedNameSpecifier unqualifiedId ';'|
+   Using 'typename'? NestedName |
+   Using DotDot unqualifiedId ';'
 ;
 
  usingDirective :
-   'using' 'namespace' DotDot? nestedNameSpecifier? namespaceName ';'
+   Using Namespace DotDot? nestedNameSpecifier? namespaceName ';'
 ;
 
+
  asmDefinition :
-   'asm' '(' stringBlock ')' ';'
+   Asm '(' stringBlock ')' ';'
 ;
+
 
  linkageSpecification :
    Extern Stringliteral '{' declaration* '}'|
@@ -741,7 +746,9 @@ Auto: 'auto';
 Virtual: 'virtual';
 Inline: 'inline';
 Explicit: 'explicit';
-
+Namespace: 'namespace';
+Using: 'using';
+Asm: 'asm';
 
 NestedName:
     DotDot? Identifier (DotDot Identifier)+
@@ -752,9 +759,9 @@ NestedName:
 // Whitespace and comments
 
 WS:                 [ \t\r\n\u000C]+ -> channel(HIDDEN);
-COMMENT:            '/*' .*? '*/'    -> channel(HIDDEN);
-LINE_COMMENT:       '//' ~[\r\n]*    -> channel(HIDDEN);
-GCC_ATTRIBUTE :     '__attribute__' '((' Stringliteral '))' ->skip;
+COMMENT:            '/*' .*? '*/'    -> channel(2);
+LINE_COMMENT:       '//' ~[\r\n]*    -> channel(2);
+GCC_ATTRIBUTE :     '__attribute__' '((' Identifier '))' ->skip;
 
 fragment
 Universalcharactername
