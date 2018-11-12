@@ -1,8 +1,5 @@
 package depends.extractor.cpp.cdt;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -32,30 +29,24 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 
 	private HandlerContext context;
 	private IdGenerator idGenerator;
-	private List<String> includeSearchPath = new ArrayList<>();
-	private PreprocessorHandler preprocessorHandler ;
-	private String filePath;
-	private FileIndex fileIndex;
-	
-	public CdtCppEntitiesListener(String fileFullPath, EntityRepo entityRepo, List<String> includeSearchPath, FileIndex fileIndex) {
+	private PreprocessorHandler preprocessorHandler;
+	private EntityRepo entityRepo;
+	public CdtCppEntitiesListener(String fileFullPath, EntityRepo entityRepo, PreprocessorHandler preprocessorHandler) {
 		super(true);
 		this.context = new HandlerContext(entityRepo);
 		idGenerator = entityRepo;
+		this.entityRepo = entityRepo;
 		context.startFile(fileFullPath);
-		this.filePath = fileFullPath;
-		this.includeSearchPath  = includeSearchPath;
-		this.fileIndex = fileIndex;
-		preprocessorHandler = new PreprocessorHandler(includeSearchPath,fileIndex);
+		this.preprocessorHandler = preprocessorHandler;
 	}
 
 	@Override
 	public int visit(IASTTranslationUnit tu) {
-//		IASTPreprocessorStatement[] i = tu.getAllPreprocessorStatements();
-//		preprocessorHandler.setIncludePath(this.includeSearchPath);
-//		preprocessorHandler.handlePreprocessors(tu.getAllPreprocessorStatements(),this.filePath);
-//		for (String incl:preprocessorHandler.getIncludedFullPathNames()) {
-//			context.foundNewImport(incl,true);
-//		}
+		for (String incl:preprocessorHandler.getDirectIncludedFiles(tu.getAllPreprocessorStatements())) {
+			context.foundNewImport(incl,true);
+			CdtCppFileParser importedParser = new CdtCppFileParser(incl, entityRepo, preprocessorHandler);
+			importedParser.parse(false);
+		}
 		return super.visit(tu);
 	}
 	
@@ -70,12 +61,6 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 		System.out.println("warning: parse error" + problem.getOriginalNode() + problem.getMessageWithLocation());
 		return super.visit(problem);
 	}
-
-
-
-	
-
-
 
 	
 	@Override

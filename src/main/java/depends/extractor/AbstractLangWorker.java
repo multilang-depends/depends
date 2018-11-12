@@ -21,6 +21,9 @@ import depends.format.xml.XmlFormatter;
 import depends.util.Configure;
 import depends.util.FileTraversal;
 abstract public class AbstractLangWorker {
+	public AbstractLangWorker(Configure configure) {
+		this.configure = configure;
+	}
 	public void register() {
 		LangWorkers.getRegistry().register(this);
 	}
@@ -28,20 +31,32 @@ abstract public class AbstractLangWorker {
 	
 	public abstract String[] fileSuffixes();
 	
-    private Configure configure = new Configure();
+    private Configure configure ;
 
     DependencyMatrix dependencyMatrix;
 
     protected EntityRepo entityRepo = new EntityRepo();
     
-	public void work(String lang, String inputDir, String usageDir, String projectName) {
-        config(lang, inputDir, usageDir, projectName,this);
+	public void work() {
         parseAllFiles();
         resolveBindings();
         identifyDependencies();
+        outputErrors();
         outputDeps(DependencyType.allDependencies());
 	}
 
+	private void outputErrors() {
+		List<String> errors = getErrors();
+		for (String e:errors) {
+			System.err.println(e);
+		}
+	}
+	
+	/**
+	 * Errors during all execution steps. could be extend as several methods in future
+	 * @return
+	 */
+	public abstract List<String> getErrors();
 	/**
 	 * 
 	 * @return unsolved bindings
@@ -59,19 +74,6 @@ abstract public class AbstractLangWorker {
         FileDependencyGenerator dependencyGenerator= new FileDependencyGenerator();
         dependencyMatrix  = dependencyGenerator.buildWithRemap(entityRepo);
         System.out.println("dependencie data generating done successfully...");	 	
-    }
-	/**
-     * parse the input parameter, save into configure
-     * @param inputDir
-     * @param usageDir
-     * @param projectName
-     * @param templateWork 
-     */
-    private final void config(String lang, String inputDir, String usageDir, String projectName, AbstractLangWorker worker) {
-        configure.setInputSrcPath(inputDir);
-        configure.setIncludePath(usageDir);
-        configure.setProjectName(projectName);
-        configure.setWorker(worker);
     }
 
     private final void parseAllFiles() {

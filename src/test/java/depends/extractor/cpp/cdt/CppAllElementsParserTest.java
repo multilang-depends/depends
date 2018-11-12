@@ -17,32 +17,32 @@ public class CppAllElementsParserTest extends CppParserTest{
 	@Test
 	public void shouldFoundNamespaceDefinition() throws IOException {
 	    String src = "./src/test/resources/cpp-code-examples/elementsTest/Elements.cpp";
-	    CppFileParser parser = new  CdtCppFileParser(src,repo, new ArrayList<>(), fileIndex );
+	    CppFileParser parser = new  CdtCppFileParser(src,repo, preprocessorHandler );
         parser.parse();
 	}
 
 	@Test
 	public void shouldFoundNamespaceUsing() throws IOException {
 	    String src = "./src/test/resources/cpp-code-examples/elementsTest/Elements.cpp";
-	    CppFileParser parser = new  CdtCppFileParser(src,repo, new ArrayList<>(), fileIndex );
+	    CppFileParser parser = new  CdtCppFileParser(src,repo, preprocessorHandler );
         parser.parse();
 	}
 	
 	public void shouldFoundClassStructEnumUnionDefintion() throws IOException {
 	    String src = "./src/test/resources/cpp-code-examples/elementsTest/Elements.cpp";
-	    CppFileParser parser = new  CdtCppFileParser(src,repo, new ArrayList<>(), fileIndex );
+	    CppFileParser parser = new  CdtCppFileParser(src,repo, preprocessorHandler );
         parser.parse();
 	}
 	
 	public void shouldFoundSimpleMethodAndmemberMethodDeclarator() throws IOException {
 	    String src = "./src/test/resources/cpp-code-examples/elementsTest/Elements.cpp";
-	    CppFileParser parser = new  CdtCppFileParser(src,repo, new ArrayList<>(), fileIndex );
+	    CppFileParser parser = new  CdtCppFileParser(src,repo, preprocessorHandler );
         parser.parse();
 	}
 	
 	public void shouldFoundClassVarsAndMethodVars() throws IOException {
 	    String src = "./src/test/resources/cpp-code-examples/elementsTest/Elements.cpp";
-	    CppFileParser parser = new  CdtCppFileParser(src,repo, new ArrayList<>(), fileIndex );
+	    CppFileParser parser = new  CdtCppFileParser(src,repo, preprocessorHandler );
         parser.parse();
 	}
 	

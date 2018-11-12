@@ -1,13 +1,16 @@
 package depends.extractor.cpp;
 
+import java.util.ArrayList;
+
 import depends.entity.repo.EntityRepo;
-import depends.extractor.cpp.cdt.FileIndex;
+import depends.extractor.cpp.cdt.PreprocessorHandler;
 
 public abstract class CppParserTest {
 	protected EntityRepo repo = new EntityRepo();
-    protected FileIndex fileIndex = new FileIndex();
-    public void init() {
+    protected PreprocessorHandler preprocessorHandler;
+
+	public void init() {
     	repo = new EntityRepo();
-    	fileIndex = new FileIndex();
+    	preprocessorHandler = new PreprocessorHandler(new ArrayList<>());
     }
 }

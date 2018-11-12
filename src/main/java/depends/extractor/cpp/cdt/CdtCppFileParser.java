@@ -5,43 +5,45 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
-import org.eclipse.cdt.core.dom.parser.c.ANSICParserExtensionConfiguration;
-import org.eclipse.cdt.core.dom.parser.c.GCCScannerExtensionConfiguration;
-import org.eclipse.cdt.core.dom.parser.cpp.GPPParserExtensionConfiguration;
-import org.eclipse.cdt.core.dom.parser.cpp.GPPScannerExtensionConfiguration;
-import org.eclipse.cdt.core.parser.CodeReader;
-import org.eclipse.cdt.core.parser.FileContent;
-import org.eclipse.cdt.core.parser.IScanner;
-import org.eclipse.cdt.core.parser.NullLogService;
-import org.eclipse.cdt.core.parser.ParserLanguage;
-import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.core.parser.ScannerInfo;
-import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
-import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
-import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
-import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
 
+import depends.entity.Entity;
 import depends.entity.repo.EntityRepo;
+import depends.entity.types.FileEntity;
 import depends.extractor.cpp.CppFileParser;
 import depends.util.FileUtil;
 
 public class CdtCppFileParser extends CppFileParser {
 
-	private List<String> includeSearchPath = new ArrayList<>();
-	private FileIndex fileIndex;
+	private PreprocessorHandler preprocessorHandler ;
 
-	public CdtCppFileParser(String fileFullPath, EntityRepo entityRepo, List<String> includeSearchPath, FileIndex fileIndex) {
+	public CdtCppFileParser(String fileFullPath, EntityRepo entityRepo,PreprocessorHandler preprocessorHandler) {
 		super(fileFullPath, entityRepo);
-		this.includeSearchPath = includeSearchPath;
-		this.fileIndex = fileIndex;
+		this.preprocessorHandler = preprocessorHandler;
+
 	}
 	@Override
 	public void parse() throws IOException {
-		//CdtCppEntitiesListener bridge = new CdtCppEntitiesListener(FileUtil.uniqFilePath(fileFullPath), entityRepo, includeSearchPath, fileIndex );
-		IASTTranslationUnit translationUnit = (new CDTParser(includeSearchPath)).parse(this.fileFullPath);
-		CdtAstVisitor bridge = new CdtAstVisitor(translationUnit,includeSearchPath, fileIndex);
+		parse(true);
+	}
+	
+	/**
+	 * 
+	 * @param isInScope whether the parse is invoked by project file or an 'indirect' included file
+	 */
+	public void parse(boolean isInScope) {
+		String uniqPath = FileUtil.uniqFilePath(fileFullPath);
+		
+		/** If file already exist, skip it */
+		Entity fileEntity = entityRepo.getEntity(uniqPath);
+		if (fileEntity!=null && fileEntity instanceof FileEntity) {
+			FileEntity t = ((FileEntity)fileEntity);
+			if (!t.isInProjectScope() && isInScope)
+				t.setInProjectScope(true);
+			return;
+		}
+		
+		CdtCppEntitiesListener bridge = new CdtCppEntitiesListener(FileUtil.uniqFilePath(fileFullPath), entityRepo, preprocessorHandler );
+		IASTTranslationUnit translationUnit = (new CDTParser(preprocessorHandler.getIncludePaths())).parse(this.fileFullPath);
 		translationUnit.accept(bridge);
 	}
 	

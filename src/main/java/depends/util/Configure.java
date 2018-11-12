@@ -3,16 +3,17 @@ package depends.util;
 import depends.extractor.AbstractLangWorker;
 
 public class Configure {
-    public Configure() {}
+    public Configure(String lang, String inputDir, String includeDir, String projectName) {
+        setInputSrcPath(inputDir);
+        setIncludePath(includeDir);
+        setProjectName(projectName);
+    }
 
-
-    private String  inputSrcPath;
+	private String  inputSrcPath;
     private String  includeSrcPath;
     private String  projectName ;
 
     private String  schemaVersion = "1.0";
-	private AbstractLangWorker worker;
-
 
     public String getInputSrcPath() {
         return inputSrcPath;
@@ -61,15 +62,6 @@ public class Configure {
 	public String getOutputDotFile() {
 		return projectName + "_dep.dot";
 	}
-	
-	public void setWorker(AbstractLangWorker worker) {
-		this.worker = worker;
-	}
-
-	public AbstractLangWorker getWorker() {
-		return worker;
-	}
-
 
 }
 

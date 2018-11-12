@@ -1,63 +1,49 @@
 package depends.extractor.cpp.cdt;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 
 import depends.util.FileUtil;
 
 public class PreprocessorHandler {
-	FileIndex fileIndex ;
-	private String fileName;
-	private List<String> includedFullPathNames;
-	private List<String> includeSearchPath;
-	
-	public PreprocessorHandler(List<String> includeSearchPath, FileIndex fileIndex) {
-		this.includeSearchPath = includeSearchPath;
-		this.fileIndex = fileIndex;
+	private HashMap<String, String> notExistedIncludedFiles = new HashMap<>();
+	public Collection<String> getNotExistedIncludedFiles() {
+		return notExistedIncludedFiles.values();
 	}
-	public void handlePreprocessors(IASTPreprocessorStatement[] statements, String fileName) {
-		this.fileName = fileName;
-		includedFullPathNames= new ArrayList<>();
-		if (!fileIndex.contains(fileName))
-			processIncludes(statements);
-		else
-			includedFullPathNames =  fileIndex.get(fileName);
-		
+	private List<String> includePaths;
+	public PreprocessorHandler(List<String> includePaths){
+		notExistedIncludedFiles = new HashMap<>();
+		this.setIncludePaths(includePaths);
 	}
-
-	private void processIncludes(IASTPreprocessorStatement[] statements) {
-		System.out.println(statements.length);
+	public List<String> getDirectIncludedFiles(IASTPreprocessorStatement[] statements) {
+		ArrayList<String> includedFullPathNames = new ArrayList<>();
 		for (int statementIndex=0;statementIndex<statements.length;statementIndex++) {
 			if (statements[statementIndex] instanceof IASTPreprocessorIncludeStatement)
 			{
 				IASTPreprocessorIncludeStatement incl = (IASTPreprocessorIncludeStatement)(statements[statementIndex]);
-				if (incl.getPath().isEmpty()) {
-					System.out.println("include file do not exists!"+incl.toString());
+				String path = FileUtil.uniqFilePath(incl.getPath());
+				System.out.println(path);
+				System.out.println(incl.toString());
+				includedFullPathNames.add(path);
+				if (!FileUtil.existFile(path)) {
+					if (!notExistedIncludedFiles.containsKey(path)) {
+						notExistedIncludedFiles.put(path,"Error: " + path + " does not exist in include path!");
+					}
 					continue;
-				}
-				
-				this.includedFullPathNames.add(FileUtil.uniqFilePath(incl.getPath()));
-				String explandedPath = fileIndex.add(fileName,incl.getPath());
-				if (!fileIndex.contains(explandedPath)) {
-					IASTTranslationUnit translationUnit = (new CDTParser(includeSearchPath)).parse(explandedPath);
-					PreprocessorHandler processor = new PreprocessorHandler(includeSearchPath, fileIndex);
-					processor.handlePreprocessors(translationUnit.getIncludeDirectives(),explandedPath);
 				}
 			}
 		}
+		return includedFullPathNames;
 	}
-
-	public List<String>  getIncludedFullPathNames() {
-		return this.includedFullPathNames;
+	public List<String> getIncludePaths() {
+		return includePaths;
 	}
-
-	public void setIncludePath(List<String> includeSearchPath) {
-		this.includeSearchPath = includeSearchPath;
+	public void setIncludePaths(List<String> includePaths) {
+		this.includePaths = includePaths;
 	}
 }

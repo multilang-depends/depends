@@ -29,7 +29,7 @@ public class IncludeRelationTest extends CppParserTest{
 	    	    };
 	    
 	    for (String src:srcs) {
-		    CppFileParser parser = new  CdtCppFileParser(src,repo, new ArrayList<>(), fileIndex );
+		    CppFileParser parser = new  CdtCppFileParser(src,repo, preprocessorHandler );
 		    parser.parse();
 	    }
         repo.resolveAllBindings();
@@ -45,7 +45,7 @@ public class IncludeRelationTest extends CppParserTest{
 	    	    };
 	    
 	    for (String src:srcs) {
-		    CppFileParser parser = new  CdtCppFileParser(src,repo, new ArrayList<>(), fileIndex );
+		    CppFileParser parser = new  CdtCppFileParser(src,repo, preprocessorHandler );
 		    parser.parse();
 	    }
         repo.resolveAllBindings();
@@ -63,7 +63,7 @@ public class IncludeRelationTest extends CppParserTest{
 	    List<String> includePaths = new ArrayList<>();
 	    includePaths.add("./src/test/resources/cpp-code-examples/includesTest/path/");
 	    for (String src:srcs) {
-			CppFileParser parser = new  CdtCppFileParser(src,repo, includePaths, fileIndex );
+		    CppFileParser parser = new  CdtCppFileParser(src,repo, preprocessorHandler );
 		    parser.parse();
 	    }
         repo.resolveAllBindings();

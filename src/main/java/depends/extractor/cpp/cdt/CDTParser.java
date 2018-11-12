@@ -47,31 +47,11 @@ public class CDTParser {
 	NullLogService NULL_LOG = new NullLogService();
 	Map<String, String> macroMap = new HashMap<>();
 	public IASTTranslationUnit parse(String file   ) {
-		/*
-		 * *    QUICK_PARSE
-				Does not parse inside functions or included files
-				
-				STRUCTURAL_PARSE
-				    Does not parse inside functions but parses included files
-				
-				COMPLETE_PARSE
-				    Parses inside functions and included files
-				
-				COMPLETION_PARSE
-				    Parses inside functions and included files, stops at offsets, and optimizes symbol query lookups
-				
-				SELECTION_PARSE
-				    Parses inside functions and included files, stops at offsets, and provides semantic information about a selected range*
-		 */
 		CodeReader cr;
 		try {
 			cr = new CodeReader(file);
-//			if (file.endsWith(".c"))
-//				return getTranslationUnitofC(file, new String(cr.buffer));
-//			else
-				return getTranslationUnitofCPP(file,new String(cr.buffer));
+			return getTranslationUnitofCPP(file,new String(cr.buffer));
 		} catch (IOException e) {
-			System.err.println("File " + file + " does not exists!");
 		}
 		return new CASTTranslationUnit();
 	}

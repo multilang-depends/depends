@@ -28,7 +28,7 @@ public class HandlerContext {
 	}
 
 	public FileEntity startFile(String fileName) {
-		currentFileEntity = new FileEntity(fileName, idGenerator.generateId());
+		currentFileEntity = new FileEntity(fileName, idGenerator.generateId(),true);
 		entityStack.push(currentFileEntity);
 		entityRepo.add(currentFileEntity);
 		return currentFileEntity;

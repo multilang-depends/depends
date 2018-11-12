@@ -21,7 +21,7 @@ public class EntityGetAncestorTest {
 	@Before
 	public void setup() {
 		//create a file 
-		FileEntity f = new FileEntity("/tmp/file.java",fileId);
+		FileEntity f = new FileEntity("/tmp/file.java",fileId,true);
 		TypeEntity p = new TypeEntity("test.packagenamea.ClassA",  f,typeId);
 		entityRepo.add(f);
 		entityRepo.add(p);

@@ -12,4 +12,8 @@ public class FileUtil {
 		}
 		return filePath;
 	}
+
+	public static boolean existFile(String path) {
+		return new File(path).exists();
+	}
 }

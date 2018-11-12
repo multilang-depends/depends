@@ -30,12 +30,10 @@ import depends.util.Tuple;
 
 public class CdtAstVisitor  extends ASTVisitor {
 
-	private IASTTranslationUnit root;
 	CommentManager commentManager;
 
-	public CdtAstVisitor( IASTTranslationUnit translationUnit, List<String> includeSearchPath, FileIndex fileIndex) {
+	public CdtAstVisitor( IASTTranslationUnit translationUnit) {
 		super(true);
-		root = translationUnit;
 		commentManager = new CommentManager(translationUnit);
 	}
 
@@ -160,22 +158,6 @@ public class CdtAstVisitor  extends ASTVisitor {
 		return super.visit(declarator);
 	}
 
-	public IASTComment findComment(int startOffset) {
-		
-		IASTComment[] comments = ((ASTTranslationUnit) root).getComments();
-		int i=0;
-		for (;i<comments.length;i++) {
-			IASTComment c = comments[i];
-			int gap = startOffset-(c.getFileLocation().getNodeOffset()+
-					c.getFileLocation().getNodeLength());
-			if (gap>0 && gap<10) {
-				break;
-			}
-			if (gap<0) return null;
-		}
-		return i>=comments.length?null:comments[i];
-	}
-	
 	@Override
 	public int visit(IASTParameterDeclaration parameterDeclaration) {
 		Tuple<String, String> parameter = new Tuple<String, String>();

@@ -12,13 +12,17 @@ import depends.entity.TypeInfer;
 public class FileEntity extends ContainerEntity{
 	private List<String> importedNames = new ArrayList<>();
 	private ArrayList<Entity> resolvedImportedEntities = new ArrayList<>();
-
+	private boolean isInProjectScope = false;
 	public List<Entity> getResolvedImportedEntities() {
 		return resolvedImportedEntities;
 	}
-	public FileEntity(String fullName, int fileId) {
+	public FileEntity(String fullName, int fileId, boolean isInProjectScope) {
 		super(fullName, null,fileId);
 		setQualifiedName(fullName);
+	}
+	
+	public FileEntity(String fullName, int fileId) {
+		this(fullName,fileId,true);
 	}
 	
 	/**
@@ -57,5 +61,11 @@ public class FileEntity extends ContainerEntity{
 			this.resolvedImportedEntities.addAll(importedEntities);
 		}		
 		super.inferLocalLevelTypes(typeInferer);
+	}
+	public boolean isInProjectScope() {
+		return isInProjectScope;
+	}
+	public void setInProjectScope(boolean isInProjectScope) {
+		this.isInProjectScope = isInProjectScope;
 	}
 }
