@@ -39,12 +39,12 @@ import depends.javaextractor.JavaParser.TypeParametersContext;
 import depends.javaextractor.JavaParserBaseListener;
 
 public class JavaEntitiesListener extends JavaParserBaseListener {
-	private HandlerContext context;
+	private JavaHandlerContext context;
 	private AnnotationProcessor annotationProcessor;
 	private ExpressionUsage expressionUsage;
 	private IdGenerator idGenerator;
 	public JavaEntitiesListener(String fileFullPath, EntityRepo entityRepo) {
-		this.context = new HandlerContext(entityRepo);
+		this.context = new JavaHandlerContext(entityRepo);
 		idGenerator = entityRepo;
 		annotationProcessor = new AnnotationProcessor(context);
 		expressionUsage = new ExpressionUsage(context);

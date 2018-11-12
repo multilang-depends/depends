@@ -5,6 +5,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import depends.entity.IdGenerator;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.HandlerContext;
+import depends.extractor.cpp.cdt.CppHandlerContext;
 import depends.extractor.cpp.g4cpp14.helper.CommentsUtil;
 import depends.extractor.cpp.g4elsa.helper.FunctionDefinitionContextHelper;
 import depends.extractor.cpp.g4elsa.helper.MemberDeclarationGeneralContextHelper;
@@ -21,7 +22,7 @@ public class CppEntitiesListener extends CElsaBaseListener {
 	
 	public CppEntitiesListener(CommonTokenStream tokens, String fileFullPath, EntityRepo entityRepo) {
 		this.tokens = tokens;
-		this.context = new HandlerContext(entityRepo);
+		this.context = new CppHandlerContext(entityRepo);
 		idGenerator = entityRepo;
 		context.startFile(fileFullPath);
 	}

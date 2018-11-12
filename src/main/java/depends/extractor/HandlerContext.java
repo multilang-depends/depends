@@ -14,12 +14,12 @@ import depends.entity.types.PackageEntity;
 import depends.entity.types.TypeEntity;
 import depends.entity.types.VarEntity;
 
-public class HandlerContext {
-	private EntityRepo entityRepo;
-	private IdGenerator idGenerator;
+public abstract class HandlerContext {
+	protected EntityRepo entityRepo;
+	protected IdGenerator idGenerator;
 
-	private FileEntity currentFileEntity;
-	Stack<Entity> entityStack = new Stack<Entity>();
+	protected FileEntity currentFileEntity;
+	protected Stack<Entity> entityStack = new Stack<Entity>();
 
 	public HandlerContext(EntityRepo entityRepo) {
 		this.entityRepo = entityRepo;
@@ -34,20 +34,15 @@ public class HandlerContext {
 		return currentFileEntity;
 	}
 
-	public Entity foundNewPackage(String packageName) {
-		Entity pkgEntity = entityRepo.getEntity(packageName);
-		if (pkgEntity == null) {
-			pkgEntity = new PackageEntity(packageName, idGenerator.generateId());
-			entityRepo.add(pkgEntity);
-		}
-		entityRepo.setParent(currentFileEntity,pkgEntity);
-		return pkgEntity;
-	}
+	
 
 	public Entity foundNewType(String classOrInterfaceName) {
-		Entity currentTypeEntity = new TypeEntity(classOrInterfaceName, this.latestValidContainer(),
+		Entity currentTypeEntity = entityRepo.getEntity(classOrInterfaceName);
+		if (currentTypeEntity==null) {
+			currentTypeEntity = new TypeEntity(classOrInterfaceName, this.latestValidContainer(),
 				idGenerator.generateId());
-		entityRepo.add(currentTypeEntity);
+		 	entityRepo.add(currentTypeEntity);
+		}
 		entityStack.push(currentTypeEntity);
 		return currentTypeEntity;
 	}

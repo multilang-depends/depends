@@ -9,12 +9,12 @@ import depends.entity.Entity;
 import depends.entity.TypeInfer;
 
 public class FunctionEntity extends ContainerEntity{
-	private List<String> returnTypeIdentifiers;
+	private List<String> returnTypeIdentifiers = new ArrayList<>();
 	Collection<VarEntity> parameters;
-    Collection<String> throwTypesIdentifiers; 
-	private Collection<TypeEntity> returnTypes;
+    Collection<String> throwTypesIdentifiers = new ArrayList<>(); 
+	private Collection<TypeEntity> returnTypes = new ArrayList<>();
 	private TypeEntity returnType;
-	private Collection<TypeEntity> throwTypes;
+	private Collection<TypeEntity> throwTypes = new ArrayList<>();
     public FunctionEntity(String simpleName, Entity parent, Integer id, String returnType) {
 		super(simpleName, parent,id);
 		this.returnTypes = new ArrayList<>();

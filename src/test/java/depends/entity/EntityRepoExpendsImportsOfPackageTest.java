@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import depends.entity.repo.EntityRepo;
 import depends.extractor.HandlerContext;
+import depends.extractor.java.JavaHandlerContext;
 import depends.format.matrix.DependencyMatrix;
 import depends.format.matrix.FileDependencyGenerator;
 
@@ -17,7 +18,7 @@ public class EntityRepoExpendsImportsOfPackageTest {
 	public void testExpendsPackageImports() {
 		EntityRepo entityRepo = new EntityRepo();
 
-		HandlerContext visitor = new HandlerContext(entityRepo);
+		JavaHandlerContext visitor = new JavaHandlerContext(entityRepo);
 		visitor.startFile("/tmp/fileA.java");
 		visitor.foundNewPackage(packageName);
 		visitor.startFile("/tmp/fileB.java");
@@ -38,7 +39,7 @@ public class EntityRepoExpendsImportsOfPackageTest {
 	public void testNormalImportNoNeedExpansion() {
 		EntityRepo entityRepo = new EntityRepo();
 
-		HandlerContext context = new HandlerContext(entityRepo);
+		JavaHandlerContext context = new JavaHandlerContext(entityRepo);
 		context.startFile("/tmp/fileA.java");
 		context.foundNewPackage(packageName);
 		context.foundNewType("ClassA");;
