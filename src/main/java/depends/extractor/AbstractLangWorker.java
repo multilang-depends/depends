@@ -23,6 +23,7 @@ import depends.util.FileTraversal;
 abstract public class AbstractLangWorker {
 	public AbstractLangWorker(Configure configure) {
 		this.configure = configure;
+		entityRepo = new EntityRepo();
 	}
 	public void register() {
 		LangWorkers.getRegistry().register(this);

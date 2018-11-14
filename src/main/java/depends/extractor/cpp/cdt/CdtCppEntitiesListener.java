@@ -23,8 +23,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 
+import depends.entity.Entity;
 import depends.entity.IdGenerator;
 import depends.entity.repo.EntityRepo;
+import depends.entity.types.FunctionEntity;
+import depends.entity.types.TypeEntity;
+import depends.entity.types.VarEntity;
 import depends.util.Tuple;
 
 public class CdtCppEntitiesListener  extends ASTVisitor {
@@ -44,10 +48,12 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 
 	@Override
 	public int visit(IASTTranslationUnit tu) {
+		System.out.println(tu.getFilePath());
+		System.out.println(tu.getAllPreprocessorStatements().length);
 		for (String incl:preprocessorHandler.getDirectIncludedFiles(tu.getAllPreprocessorStatements())) {
-			context.foundNewImport(incl,true);
-			CdtCppFileParser importedParser = new CdtCppFileParser(incl, entityRepo, preprocessorHandler);
-			importedParser.parse(false);
+//			context.foundNewImport(incl,true);
+//			CdtCppFileParser importedParser = new CdtCppFileParser(incl, entityRepo, preprocessorHandler);
+//			importedParser.parse(false);
 		}
 		return super.visit(tu);
 	}
@@ -78,7 +84,7 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 	public int visit(IASTDeclSpecifier declSpec) {
 		if (declSpec instanceof IASTCompositeTypeSpecifier) {
 			IASTCompositeTypeSpecifier type = (IASTCompositeTypeSpecifier)declSpec;
-			context.foundNewType(type.getName().toString());
+			Entity typeEntity = context.foundNewType(type.getName().toString());
 		}
 		else if (declSpec instanceof  IASTEnumerationSpecifier) {
 			IASTEnumerationSpecifier type = (IASTEnumerationSpecifier)declSpec;
@@ -111,14 +117,19 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 				IASTSimpleDeclaration decl = (IASTSimpleDeclaration)(declarator.getParent());
 				returnType = ASTStringUtil.getName(decl.getDeclSpecifier());
 				//TODO: it is just a declaration; should not put it into stack
-//				System.out.println("**found IASTFunctionDeclarator -->>" + );
-//				System.out.println("**" + declarator.getFileLocation().getStartingLineNumber());
+				System.out.println("**found IASTFunctionDeclarator -->>" + decl.getRawSignature() );
+				System.out.println("**" + declarator.getFileLocation().getStartingLineNumber());
 			}
 			else if ( declarator.getParent() instanceof IASTFunctionDefinition) {
 				IASTFunctionDefinition decl = (IASTFunctionDefinition)declarator.getParent();
 				returnType= ASTStringUtil.getReturnTypeString(decl.getDeclSpecifier(), decl.getDeclarator());
+				String rawName = declarator.getName().toString();
+				FunctionEntity namedEntity = entityRepo.resolveFunctionBindings(context.currentFile(), rawName);
+				if (namedEntity!=null) {
+					rawName = namedEntity.getQualifiedName();
+				}
+				context.foundMethodDeclarator(rawName, returnType, new ArrayList<>());
 				//TODO: should process duplicate names
-				context.foundMethodDeclarator(declarator.getName().toString(), returnType, new ArrayList<>());
 			}
 		}
 		return super.visit(declarator);
@@ -155,6 +166,8 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 					context.foundVarDefintion(var.y, var.x);
 				}
 			}
+		}else {
+			System.out.println(declaration.getRawSignature());
 		}
 		return super.visit(declaration);
 	}
@@ -186,12 +199,6 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 //		}
 		return super.visit(expression);
 	}
-	
-	
-
-	
-	
-	
 
 
 	@Override
@@ -199,7 +206,12 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 		Tuple<String, String> parameter = new Tuple<String, String>();
 		parameter.x = ASTStringUtil.getName(parameterDeclaration.getDeclSpecifier());
 		parameter.y = parameterDeclaration.getDeclarator().getName().toString();
-		System.out.println("** parameterDeclaration = " + parameter);
+		if (context.currentFunction()!=null) {
+			VarEntity var = new VarEntity(parameter.y,parameter.x,context.currentFunction(),idGenerator.generateId());
+			context.currentFunction().addParameter(var );
+		}else {
+			System.out.println("** parameterDeclaration = " + parameter);
+		}
 		return super.visit(parameterDeclaration);
 	}
 	

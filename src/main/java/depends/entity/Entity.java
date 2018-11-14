@@ -33,6 +33,7 @@ public abstract class Entity {
 	}
     
 	private void deduceQualifiedName() {
+		rawName = rawName.replace("::","." );
 		if (this.rawName.contains(".")) {
 			this.qualifiedName = this.rawName;
 			return; //already qualified
@@ -50,7 +51,9 @@ public abstract class Entity {
 			return;
 		}
 		this.qualifiedName= parent.getQualifiedName()+"." + rawName;
-
+		if (rawName.startsWith(".")) {
+			rawName = rawName.substring(2);
+		}
 	}
 
 

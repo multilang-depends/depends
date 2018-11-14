@@ -19,6 +19,7 @@ import depends.entity.types.PackageEntity;
 import depends.entity.types.TypeEntity;
 import depends.entity.types.VarEntity;
 import depends.extractor.BuiltInTypeIdenfier;
+import depends.extractor.ImportLookupStrategy;
 import depends.util.Tuple;
 
 public class EntityRepo implements IdGenerator,TypeInfer{
@@ -26,6 +27,14 @@ public class EntityRepo implements IdGenerator,TypeInfer{
 	public HashMap<Integer, Entity> allEntitiesById = new HashMap<>();
 	private int nextAvaliableIndex;
 	private BuiltInTypeIdenfier buildInProcessor = new NullParser();
+	private ImportLookupStrategy importLookupStrategy;
+	public ImportLookupStrategy getImportLookupStrategy() {
+		return importLookupStrategy;
+	}
+
+	public void setImportLookupStrategy(ImportLookupStrategy importLookupStrategy) {
+		this.importLookupStrategy = importLookupStrategy;
+	}
 
 	public EntityRepo() {
 		nextAvaliableIndex = 0;
@@ -173,7 +182,7 @@ public class EntityRepo implements IdGenerator,TypeInfer{
 		return null;
 	}
 
-	private Entity lookupTypes(Entity fromEntity, String name, boolean typeOnly) {
+	public Entity lookupTypes(Entity fromEntity, String name, boolean typeOnly) {
 		if (name.equals("this")||name.equals("class")) {
 			Entity entityType = fromEntity.getAncestorOfType(TypeEntity.class);
 			return entityType;
@@ -187,20 +196,19 @@ public class EntityRepo implements IdGenerator,TypeInfer{
 		
 		Entity type = findTypeUnderSamePackage(fromEntity,name);
 		if (type!=null) return type;
-		type = lookupTypeInImported(fromEntity.getAncestorOfType(FileEntity.class),name);
+		type = lookupTypeInImported(fromEntity.getAncestorOfType(FileEntity.class),name, typeOnly);
 		return type;
 	}
 
-	private Entity lookupTypeInImported(Entity entity, String name) {
+	private Entity lookupTypeInImported(Entity entity, String name, boolean typeOnly) {
 		if (entity==null) return null;
 		if (!(entity instanceof FileEntity)) return null;
 		FileEntity fileEntity = (FileEntity)entity;
-		String importedString = fileEntity.getImport(name);
-		if (importedString==null) return null;	
-		Entity type = this.getTypeEntityByFullName(importedString);
+		Entity type = importLookupStrategy.lookupImportedType(name, fileEntity,this,typeOnly);
 		if (type!=null) return type;
 		return externalType;
 	}
+
 
 	private TypeEntity findTypeUnderSamePackage(Entity fromEntity,String name) {
 		while(true) {
@@ -224,7 +232,7 @@ public class EntityRepo implements IdGenerator,TypeInfer{
 	}
 
 
-	private TypeEntity getTypeEntityByFullName(String rawName) {
+	public TypeEntity getTypeEntityByFullName(String rawName) {
 		Entity entity = this.getEntity(rawName);
 		if(entity ==null) return null;
 		if (entity instanceof TypeEntity) {

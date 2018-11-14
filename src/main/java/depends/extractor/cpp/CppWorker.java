@@ -7,6 +7,7 @@ import depends.extractor.AbstractLangWorker;
 import depends.extractor.FileParser;
 import depends.extractor.cpp.cdt.CdtCppFileParser;
 import depends.extractor.cpp.cdt.PreprocessorHandler;
+import depends.extractor.java.JavaImportLookupStrategy;
 import depends.util.Configure;
 
 public class CppWorker extends AbstractLangWorker {
@@ -16,6 +17,7 @@ public class CppWorker extends AbstractLangWorker {
     public CppWorker(Configure configure) {
     	super(configure);
     	preprocessorHandler = new PreprocessorHandler(super.includePaths());
+    	entityRepo.setImportLookupStrategy(new CppImportLookupStrategy());
     }
 
 

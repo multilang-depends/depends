@@ -13,6 +13,7 @@ public class JavaWorker extends AbstractLangWorker {
     
     public JavaWorker(Configure configure) {
     	super(configure);
+    	entityRepo.setImportLookupStrategy(new JavaImportLookupStrategy());
     }
 
 

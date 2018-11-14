@@ -11,6 +11,7 @@ public abstract class CppParserTest {
 
 	public void init() {
     	repo = new EntityRepo();
+    	repo.setImportLookupStrategy(new CppImportLookupStrategy());
     	preprocessorHandler = new PreprocessorHandler(new ArrayList<>());
     }
 }

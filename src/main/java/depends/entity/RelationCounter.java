@@ -99,11 +99,7 @@ public class RelationCounter {
 				System.out.println("unsolved param: "+parameter);
 			}
 		}
-		if (func==null || func.getThrowTypes()==null) {
-			System.out.println("ERROR");
-		}
 		for (TypeEntity throwType:func.getThrowTypes()) {
-			
 			func.addRelation(new Relation(DependencyType.THROW,throwType.getId(),throwType.getQualifiedName()));
 		}
 	}

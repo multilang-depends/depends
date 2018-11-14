@@ -16,13 +16,13 @@
 
 
 # C/C++
+- should resolve operator overriding
 - should parse all includes and remove cycling include path
 - extract all names and perform a list for final check
 - cannot parse types which is in standard lib like std::string
 - cannot parse complex types like namespace::abc (only simple type could be solved"
 - function type of KnR
 - add check - should resolve all macros, variants, functions, class types, etc in header file; 
-- extract comments of function delcarator
 - find parameter related conditional statements
 - extract set of local varaibles;
 - use STL to check whether the template is handled completely
