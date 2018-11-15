@@ -1,7 +1,6 @@
-#include "PrecedenceDeclaration.hpp"
 #include "BeContained.h"
+#include "PrecedenceDeclaration.hpp"
 
-#define A 1
 void UnderTest::foo(BeContained* p){
     p = 0;
 }

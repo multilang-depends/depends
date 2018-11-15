@@ -39,22 +39,26 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 	private EntityRepo entityRepo;
 	public CdtCppEntitiesListener(String fileFullPath, EntityRepo entityRepo, PreprocessorHandler preprocessorHandler) {
 		super(true);
+		System.out.println("enter construct -->  " + fileFullPath);
 		this.context = new CppHandlerContext(entityRepo);
 		idGenerator = entityRepo;
 		this.entityRepo = entityRepo;
 		context.startFile(fileFullPath);
 		this.preprocessorHandler = preprocessorHandler;
+		System.out.println("exit  construct  -->  " + fileFullPath);
 	}
 
 	@Override
 	public int visit(IASTTranslationUnit tu) {
-		System.out.println(tu.getFilePath());
+		System.out.println("enter tu -->  " + context.currentFile().getRawName());
 		System.out.println(tu.getAllPreprocessorStatements().length);
 		for (String incl:preprocessorHandler.getDirectIncludedFiles(tu.getAllPreprocessorStatements())) {
-//			context.foundNewImport(incl,true);
-//			CdtCppFileParser importedParser = new CdtCppFileParser(incl, entityRepo, preprocessorHandler);
-//			importedParser.parse(false);
+			context.foundNewImport(incl,true);
+			CdtCppFileParser importedParser = new CdtCppFileParser(incl, entityRepo, preprocessorHandler);
+			importedParser.parse(false);
 		}
+		System.out.println("exit tu -->  " + context.currentFile().getRawName());
+
 		return super.visit(tu);
 	}
 	

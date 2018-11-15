@@ -19,6 +19,7 @@ public class CdtCppFileParser extends CppFileParser {
 	public CdtCppFileParser(String fileFullPath, EntityRepo entityRepo,PreprocessorHandler preprocessorHandler) {
 		super(fileFullPath, entityRepo);
 		this.preprocessorHandler = preprocessorHandler;
+		this.fileFullPath = FileUtil.uniqFilePath(fileFullPath);
 
 	}
 	@Override
@@ -31,10 +32,8 @@ public class CdtCppFileParser extends CppFileParser {
 	 * @param isInScope whether the parse is invoked by project file or an 'indirect' included file
 	 */
 	public void parse(boolean isInScope) {
-		String uniqPath = FileUtil.uniqFilePath(fileFullPath);
-		
 		/** If file already exist, skip it */
-		Entity fileEntity = entityRepo.getEntity(uniqPath);
+		Entity fileEntity = entityRepo.getEntity(fileFullPath);
 		if (fileEntity!=null && fileEntity instanceof FileEntity) {
 			FileEntity t = ((FileEntity)fileEntity);
 			if (!t.isInProjectScope() && isInScope)
@@ -42,8 +41,8 @@ public class CdtCppFileParser extends CppFileParser {
 			return;
 		}
 		
-		CdtCppEntitiesListener bridge = new CdtCppEntitiesListener(FileUtil.uniqFilePath(fileFullPath), entityRepo, preprocessorHandler );
-		IASTTranslationUnit translationUnit = (new CDTParser(preprocessorHandler.getIncludePaths())).parse(this.fileFullPath);
+		CdtCppEntitiesListener bridge = new CdtCppEntitiesListener(fileFullPath, entityRepo, preprocessorHandler );
+		IASTTranslationUnit translationUnit = (new CDTParser(preprocessorHandler.getIncludePaths())).parse(fileFullPath);
 		translationUnit.accept(bridge);
 	}
 	
