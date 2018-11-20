@@ -1,6 +1,5 @@
 package depends.extractor;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Stack;
 
@@ -10,7 +9,7 @@ import depends.entity.IdGenerator;
 import depends.entity.repo.EntityRepo;
 import depends.entity.types.FileEntity;
 import depends.entity.types.FunctionEntity;
-import depends.entity.types.PackageEntity;
+import depends.entity.types.TypeAliasEntity;
 import depends.entity.types.TypeEntity;
 import depends.entity.types.VarEntity;
 
@@ -19,8 +18,8 @@ public abstract class HandlerContext {
 	protected IdGenerator idGenerator;
 
 	protected FileEntity currentFileEntity;
-	protected Stack<Entity> entityStack = new Stack<Entity>();
 
+	
 	public HandlerContext(EntityRepo entityRepo) {
 		this.entityRepo = entityRepo;
 		this.idGenerator = entityRepo;
@@ -29,7 +28,7 @@ public abstract class HandlerContext {
 
 	public FileEntity startFile(String fileName) {
 		currentFileEntity = new FileEntity(fileName, idGenerator.generateId(),true);
-		entityStack.push(currentFileEntity);
+		pushToStack(currentFileEntity);
 		entityRepo.add(currentFileEntity);
 		return currentFileEntity;
 	}
@@ -37,28 +36,33 @@ public abstract class HandlerContext {
 	
 
 	public Entity foundNewType(String classOrInterfaceName) {
-		Entity currentTypeEntity = entityRepo.getEntity(classOrInterfaceName);
-		if (currentTypeEntity==null) {
-			currentTypeEntity = new TypeEntity(classOrInterfaceName, this.latestValidContainer(),
-				idGenerator.generateId());
-		 	entityRepo.add(currentTypeEntity);
-		}
-		entityStack.push(currentTypeEntity);
+		TypeEntity currentTypeEntity = new TypeEntity(classOrInterfaceName, this.latestValidContainer(),
+			idGenerator.generateId());
+		pushToStack(currentTypeEntity);
+	 	entityRepo.add(currentTypeEntity);
 		return currentTypeEntity;
 	}
 
+	public void foundNewTypeAlias(String aliasName, String originalName) {
+		if (aliasName.equals(originalName)) return; //it is a tricky, we treat same name no different. 
+		//indeed it is not perfect -> the right match should depends on no-bare format like "struct a" instead of "a"
+		TypeAliasEntity currentTypeEntity = new TypeAliasEntity(aliasName, this.latestValidContainer(),
+				idGenerator.generateId(),originalName );
+	 	entityRepo.add(currentTypeEntity);
+		return ;		
+	}
+	
 	public FunctionEntity foundMethodDeclarator(String methodName, String returnType, List<String> throwedType) {
 		FunctionEntity functionEntity = new FunctionEntity(methodName, this.latestValidContainer(),
 				idGenerator.generateId(),returnType);
 		entityRepo.add(functionEntity);
 		this.typeOrFileContainer().addFunction(functionEntity);
-		entityStack.push(functionEntity);
+		pushToStack(functionEntity);
 		functionEntity.addThrowTypes(throwedType);
 		return functionEntity;
 	}
-	public void exitLastedEntity() {
-		entityStack.pop();
-	}
+	
+
 
 	/**
 	 * 
@@ -137,6 +141,9 @@ public abstract class HandlerContext {
 	}
 
 	public void foundExtends(String typeName) {
+		if (currentType()==null) {
+			System.out.println("error: type do not exist");
+		}
 		currentType().addExtends(typeName);
 	}
 
@@ -162,4 +169,16 @@ public abstract class HandlerContext {
 		String type = lastContainer().getRawName();
 		foundVarDefintion(varName,type);
 	}
+	
+	protected Stack<Entity> entityStack = new Stack<Entity>();
+
+	private void pushToStack(Entity entity) {
+		entityStack.push(entity);
+	}
+	
+	
+	public void exitLastedEntity() {
+		entityStack.pop();
+	}
+	
 }

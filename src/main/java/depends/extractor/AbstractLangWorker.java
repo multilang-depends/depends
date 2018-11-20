@@ -6,7 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.codehaus.plexus.util.FileUtils;
+
 import depends.deptypes.DependencyType;
+import depends.entity.Entity;
 import depends.entity.repo.EntityRepo;
 import depends.format.dot.DotDataBuilder;
 import depends.format.excel.ExcelDataBuilder;
@@ -43,6 +46,7 @@ abstract public class AbstractLangWorker {
         resolveBindings();
         identifyDependencies();
         outputErrors();
+        Entity e = entityRepo.getEntity("ItfMgnt.Mutex");
         outputDeps(DependencyType.allDependencies());
 	}
 
@@ -126,10 +130,18 @@ abstract public class AbstractLangWorker {
 		}
     }
 	public List<String> includePaths() {
-		String[] paths = configure.getIncludePath().split("@");
+		String[] paths = configure.getIncludePath().split(";");
 		ArrayList<String> r = new ArrayList<String>();
 		for (String path:paths) {
-			r.add(path);
+			if (FileUtils.fileExists(path)) {
+				if (!r.contains(path))
+					r.add(path);
+			}
+			path = configure.getInputSrcPath() +File.separator+path;
+			if (FileUtils.fileExists(path)) {
+				if (!r.contains(path))
+					r.add(path);
+			}
 		}
 		return r;
 	}

@@ -10,6 +10,7 @@ import java.util.Set;
 import depends.entity.ContainerEntity;
 import depends.entity.Entity;
 import depends.entity.IdGenerator;
+import depends.entity.MultiDeclareEntities;
 import depends.entity.Relation;
 import depends.entity.RelationCounter;
 import depends.entity.TypeInfer;
@@ -49,12 +50,21 @@ public class EntityRepo implements IdGenerator,TypeInfer{
 	
 	public void add(Entity entity) {
 		allEntitiesById.put(entity.getId(), entity);
-		if (entity.getQualifiedName()!=null) {
-			if (entity.getQualifiedName().isEmpty()) {
-				allEntieisByName.put(entity.getRawName(), entity);
+		String name = entity.getRawName();
+		if (entity.getQualifiedName()!=null && !(entity.getQualifiedName().isEmpty()) ) {
+			name = entity.getQualifiedName();
+		}
+		if (allEntieisByName.containsKey(name)) {
+			Entity existedEntity = allEntieisByName.get(name);
+			if (existedEntity instanceof MultiDeclareEntities) {
+				((MultiDeclareEntities)existedEntity).add(entity);
 			}else {
-				allEntieisByName.put(entity.getQualifiedName(), entity);
+				MultiDeclareEntities eMultiDeclare = new MultiDeclareEntities(existedEntity,this.generateId());
+				eMultiDeclare.add(entity);
+				allEntieisByName.put(name, eMultiDeclare);
 			}
+		}else {
+			allEntieisByName.put(name, entity);
 		}
 		if (entity.getParent()!=null)
 			this.setParent(entity, entity.getParent());
@@ -138,7 +148,7 @@ public class EntityRepo implements IdGenerator,TypeInfer{
 		//first we lookup the first symbol
 		String[] names = rawName.split("\\.");
 		if (names.length==0) return null;
-		Entity type = lookupTypes(fromEntity,names[0],typeOnly);
+		Entity type = lookupTypes(fromEntity,names[0],typeOnly,true);
 		if (type==null) return null;
 		if (names.length==1 ) {
 			TypeEntity actualType = getType(type);
@@ -182,7 +192,7 @@ public class EntityRepo implements IdGenerator,TypeInfer{
 		return null;
 	}
 
-	public Entity lookupTypes(Entity fromEntity, String name, boolean typeOnly) {
+	public Entity lookupTypes(Entity fromEntity, String name, boolean typeOnly, boolean searcImport) {
 		if (name.equals("this")||name.equals("class")) {
 			Entity entityType = fromEntity.getAncestorOfType(TypeEntity.class);
 			return entityType;
@@ -196,7 +206,8 @@ public class EntityRepo implements IdGenerator,TypeInfer{
 		
 		Entity type = findTypeUnderSamePackage(fromEntity,name);
 		if (type!=null) return type;
-		type = lookupTypeInImported(fromEntity.getAncestorOfType(FileEntity.class),name, typeOnly);
+		if (searcImport)
+			type = lookupTypeInImported(fromEntity.getAncestorOfType(FileEntity.class),name, typeOnly);
 		return type;
 	}
 
@@ -209,18 +220,30 @@ public class EntityRepo implements IdGenerator,TypeInfer{
 		return externalType;
 	}
 
+	private TypeEntity tryToFindTypeEntityWithName(Entity fromEntity, String name) {
+		if (fromEntity.getRawName().equals(name) && fromEntity instanceof TypeEntity)
+			return (TypeEntity)fromEntity;
+		if (fromEntity.getRawName().equals(name) && fromEntity instanceof MultiDeclareEntities) {
+			for (Entity declaredEntitiy:((MultiDeclareEntities)fromEntity).getEntities()) {
+				if (declaredEntitiy.getRawName().equals(name) && declaredEntitiy instanceof TypeEntity) {
+					return (TypeEntity)declaredEntitiy;
+				}
+			}
+		}
+		return null;
+	}
 
 	private TypeEntity findTypeUnderSamePackage(Entity fromEntity,String name) {
 		while(true) {
-			if (fromEntity.getRawName().equals(name) && fromEntity instanceof TypeEntity)
-				return (TypeEntity)fromEntity;
+			TypeEntity type = tryToFindTypeEntityWithName(fromEntity,name);
+			if (type!=null)  return type;
 			for (Entity child:fromEntity.getChildren()) {
-				if (child.getRawName().equals(name) && child instanceof TypeEntity)
-					return (TypeEntity)child;
+				type = tryToFindTypeEntityWithName(child,name);
+				if (type!=null)  return type;
 				if (child instanceof FileEntity) {
 					for (Entity classUnderFile:child.getChildren()) {
-						if (classUnderFile.getRawName().equals(name) && classUnderFile instanceof TypeEntity)
-							return (TypeEntity)classUnderFile;
+						type = tryToFindTypeEntityWithName(classUnderFile,name);
+						if (type!=null)  return type;
 					}
 				}
 			}
@@ -268,9 +291,8 @@ public class EntityRepo implements IdGenerator,TypeInfer{
 	@Override
 	public FunctionEntity resolveFunctionBindings(Entity fromEntity, String functionName) {
 		while(fromEntity!=null) {
-			if (fromEntity instanceof TypeEntity) {
-				TypeEntity theType = (TypeEntity)fromEntity;
-				FunctionEntity func = findFunctionFromType(theType, functionName);
+			if (fromEntity instanceof ContainerEntity) {
+				FunctionEntity func = findFunctionFromType( (ContainerEntity)fromEntity, functionName);
 				if (func!=null) return func;
 			}
 			fromEntity = fromEntity.getParent();
@@ -278,20 +300,23 @@ public class EntityRepo implements IdGenerator,TypeInfer{
 		return null;
 	}
 
-	private FunctionEntity findFunctionFromType(TypeEntity type, String functionName) {
+	private FunctionEntity findFunctionFromType(ContainerEntity type, String functionName) {
 		for (FunctionEntity var:type.getFunctions()) {
 			if (var.getRawName().equals(functionName))
 				return var;
 		}
 		FunctionEntity funcType = null; 
-		for (TypeEntity inhertedType:type.getInheritedTypes()) {
-			funcType= findFunctionFromType(inhertedType,functionName);
-			if (funcType==null) break;
-		}
-		if (funcType!=null) return funcType;
-		for (TypeEntity implType:type.getImplementedTypes()) {
-			funcType= findFunctionFromType(implType,functionName);
-			if (funcType==null) break;
+		if (type instanceof TypeEntity) {
+			TypeEntity typeType = (TypeEntity)type;
+			for (TypeEntity inhertedType:typeType.getInheritedTypes()) {
+				funcType= findFunctionFromType(inhertedType,functionName);
+				if (funcType==null) break;
+			}
+			if (funcType!=null) return funcType;
+			for (TypeEntity implType:typeType.getImplementedTypes()) {
+				funcType= findFunctionFromType(implType,functionName);
+				if (funcType==null) break;
+			}
 		}
 		return funcType;
 	}

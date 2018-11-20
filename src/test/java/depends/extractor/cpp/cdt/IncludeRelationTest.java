@@ -9,6 +9,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+import depends.entity.types.TypeAliasEntity;
 import depends.extractor.cpp.CppFileParser;
 import depends.extractor.cpp.CppParserTest;
 
@@ -69,5 +70,22 @@ public class IncludeRelationTest extends CppParserTest{
         repo.resolveAllBindings();
         File f = new File(srcs[0]);
         assertEquals(1,repo.getEntity(f.getCanonicalPath()).getRelations().size());
+	}
+	
+	
+	@Test
+	public void test_type_t_should_be_treat_as_structure() throws IOException {
+	    String[] srcs = new String[] {
+	    		"./src/test/resources/cpp-code-examples/typedefTest.cpp",
+	    	    };
+	    
+	    for (String src:srcs) {
+		    CppFileParser parser = new  CdtCppFileParser(src,repo, preprocessorHandler );
+		    parser.parse();
+	    }
+        repo.resolveAllBindings();
+        File f = new File(srcs[0]);
+        assertEquals("abc",((TypeAliasEntity)repo.getEntity("abc_t")).getOriginType().getRawName());
+        
 	}
 }

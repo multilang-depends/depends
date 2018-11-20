@@ -12,13 +12,9 @@ public class CppHandlerContext extends HandlerContext {
 	}
 
 	public Entity foundNamespace(String nampespaceName) {
-		Entity pkgEntity = entityRepo.getEntity(nampespaceName);
-		if (pkgEntity == null) {
-			pkgEntity = new PackageEntity(nampespaceName, idGenerator.generateId());
-			entityRepo.add(pkgEntity);
-		}
+		PackageEntity pkgEntity = new PackageEntity(nampespaceName, currentFile(),idGenerator.generateId());
+		entityRepo.add(pkgEntity);
 		entityStack.push(pkgEntity);
 		return pkgEntity;
 	}
-
 }

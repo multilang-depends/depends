@@ -27,8 +27,6 @@ public class PreprocessorHandler {
 			{
 				IASTPreprocessorIncludeStatement incl = (IASTPreprocessorIncludeStatement)(statements[statementIndex]);
 				String path = FileUtil.uniqFilePath(incl.getPath());
-				System.out.println(path);
-				System.out.println(incl.toString());
 				includedFullPathNames.add(path);
 				if (!FileUtil.existFile(path)) {
 					if (!notExistedIncludedFiles.containsKey(path)) {

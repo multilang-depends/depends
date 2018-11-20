@@ -71,6 +71,8 @@ import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 
+import depends.entity.TypeInfer;
+
 /**
  * This is a utility class to help convert AST elements to strings.
  * 
@@ -397,6 +399,33 @@ public class ASTStringUtil {
 		}
 		return buffer;
 	}
+	public static String getTypeIdString(IASTTypeId typeId) {
+		StringBuilder sb = new StringBuilder();
+		return appendBareTypeIdString(sb,typeId).toString();
+	}
+	private static StringBuilder appendBareTypeIdString(StringBuilder buffer, IASTTypeId typeId) {
+		return appendBareDeclSpecifierString(buffer, typeId.getDeclSpecifier());
+	}
+
+	private static StringBuilder appendBareDeclSpecifierString(StringBuilder buffer, IASTDeclSpecifier declSpecifier) {
+		if (declSpecifier instanceof IASTCompositeTypeSpecifier) {
+			final IASTCompositeTypeSpecifier compositeTypeSpec= (IASTCompositeTypeSpecifier) declSpecifier;
+			appendBareNameString(buffer, compositeTypeSpec.getName());
+		} else if (declSpecifier instanceof IASTElaboratedTypeSpecifier) {
+			final IASTElaboratedTypeSpecifier elaboratedTypeSpec= (IASTElaboratedTypeSpecifier) declSpecifier;
+			appendBareNameString(buffer, elaboratedTypeSpec.getName());
+		} else if (declSpecifier instanceof IASTEnumerationSpecifier) {
+			final IASTEnumerationSpecifier enumerationSpec= (IASTEnumerationSpecifier) declSpecifier;
+			appendBareNameString(buffer, enumerationSpec.getName());
+		} else if (declSpecifier instanceof IASTSimpleDeclSpecifier) {
+			final IASTSimpleDeclSpecifier simpleDeclSpec= (IASTSimpleDeclSpecifier) declSpecifier;
+			buffer.append(TypeInfer.buildInType.getRawName());
+		} else if (declSpecifier instanceof IASTNamedTypeSpecifier) {
+			final IASTNamedTypeSpecifier namedTypeSpec= (IASTNamedTypeSpecifier) declSpecifier;
+			appendBareNameString(buffer, namedTypeSpec.getName());
+		}
+		return buffer;
+	}
 
 	private static StringBuilder appendTypeIdString(StringBuilder buffer, IASTTypeId typeId) {
 		appendDeclSpecifierString(buffer, typeId.getDeclSpecifier());
@@ -515,6 +544,9 @@ public class ASTStringUtil {
 		if (declSpecifier.isVolatile()) {
 			buffer.append(Keywords.VOLATILE).append(' ');
 		}
+
+//			buffer.append(Keywords.TYPEDEF).append(' ');
+//			break)
 //		if (declSpecifier.isInline()) {
 //			buffer.append(Keywords.INLINE).append(' ');
 //		}
@@ -706,6 +738,25 @@ public class ASTStringUtil {
 		return appendNameString(buffer, name, false);
 	}
 
+	private static StringBuilder appendBareNameString(StringBuilder buffer, IASTName name) {
+		if (name instanceof ICPPASTQualifiedName) {
+			final ICPPASTQualifiedName qualifiedName= (ICPPASTQualifiedName) name;
+				final ICPPASTNameSpecifier[] segments= qualifiedName.getAllSegments();
+				for (int i = 0; i < segments.length; i++) {
+					if (i > 0) {
+						buffer.append(".");
+					}
+					appendQualifiedNameString(buffer, segments[i]);
+				}
+		} else if (name instanceof ICPPASTTemplateId) {
+			final ICPPASTTemplateId templateId= (ICPPASTTemplateId) name;
+			appendQualifiedNameString(buffer, templateId.getTemplateName());
+		} else if (name != null) {
+			buffer.append(name.getSimpleID());
+		}
+		return buffer;
+	}
+	
 	private static StringBuilder appendNameString(StringBuilder buffer, IASTName name, boolean qualified) {
 		if (name instanceof ICPPASTQualifiedName) {
 			final ICPPASTQualifiedName qualifiedName= (ICPPASTQualifiedName) name;
@@ -732,7 +783,7 @@ public class ASTStringUtil {
 				}
 				final IASTNode argument= templateArguments[i];
 				if (argument instanceof IASTTypeId) {
-					appendTypeIdString(buffer, (IASTTypeId) argument);
+					appendBareTypeIdString(buffer, (IASTTypeId) argument);
 				} else if (argument instanceof IASTExpression) {
 					final IASTExpression expression= (IASTExpression) argument;
 					appendExpressionString(buffer, expression);
@@ -1167,6 +1218,6 @@ public class ASTStringUtil {
 
 	public static String getName(IASTDeclSpecifier decl) {
 		StringBuilder buffer = new StringBuilder();
-		return ASTStringUtil.appendDeclSpecifierString(buffer,decl ).toString();
+		return ASTStringUtil.appendBareDeclSpecifierString(buffer,decl).toString();
 	}
 }

@@ -33,13 +33,18 @@ public class FileEntity extends ContainerEntity{
 	public void addImport(String importedName, boolean useFileAsImportedKey) {
         importedNames.add(importedName);
 	}
+	
 	public String getImport(String lastName) {
-		for(String importName:importedNames) {
-			if (importName.endsWith(lastName))
-				return importName;
+		if (!lastName.startsWith(".")) lastName = "."+lastName;
+		for (Entity imported: resolvedImportedEntities) {
+			String name = imported.getQualifiedName();
+			if (!name.startsWith(".")) name = "."+name;
+			if (imported.getQualifiedName().endsWith(lastName))
+				return imported.getQualifiedName();
 		}
 		return null;
 	}
+	
 	@Override
 	public String getQualifiedName() {
 		if (this.getParent()==null){
