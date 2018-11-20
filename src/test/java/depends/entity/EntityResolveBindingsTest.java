@@ -1,22 +1,21 @@
 package depends.entity;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
 import depends.deptypes.DependencyType;
-import depends.entity.Relation;
 import depends.entity.repo.EntityRepo;
 import depends.entity.types.FileEntity;
-import depends.entity.types.PackageEntity;
 import depends.entity.types.TypeEntity;
+import depends.extractor.java.JavaImportLookupStrategy;
 
 public class EntityResolveBindingsTest {
 
 	@Test
 	public void testResolveBindings() {
 		EntityRepo entityRepo = new EntityRepo();
-
+		entityRepo.setImportLookupStrategy(new JavaImportLookupStrategy());
 		//create a file 
 		FileEntity f = new FileEntity("/tmp/file.java",0);
 		TypeEntity p = new TypeEntity("test.packagenamea.ClassA",  f,1);

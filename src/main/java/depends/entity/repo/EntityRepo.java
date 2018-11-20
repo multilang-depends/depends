@@ -1,6 +1,5 @@
 package depends.entity.repo;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,11 +15,11 @@ import depends.entity.RelationCounter;
 import depends.entity.TypeInfer;
 import depends.entity.types.FileEntity;
 import depends.entity.types.FunctionEntity;
-import depends.entity.types.PackageEntity;
 import depends.entity.types.TypeEntity;
 import depends.entity.types.VarEntity;
 import depends.extractor.BuiltInTypeIdenfier;
 import depends.extractor.ImportLookupStrategy;
+import depends.extractor.java.JavaImportLookupStrategy;
 import depends.importtypes.Import;
 import depends.util.Tuple;
 
@@ -29,7 +28,7 @@ public class EntityRepo implements IdGenerator,TypeInfer{
 	public HashMap<Integer, Entity> allEntitiesById = new HashMap<>();
 	private int nextAvaliableIndex;
 	private BuiltInTypeIdenfier buildInProcessor = new NullParser();
-	private ImportLookupStrategy importLookupStrategy;
+	private ImportLookupStrategy importLookupStrategy = new JavaImportLookupStrategy();
 	public ImportLookupStrategy getImportLookupStrategy() {
 		return importLookupStrategy;
 	}

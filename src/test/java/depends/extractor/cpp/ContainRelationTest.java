@@ -75,17 +75,5 @@ public class ContainRelationTest extends CppParserTest{
         assertEquals(2,repo.getEntity("UnderTest.foo").getRelations().size());
 	}
 	
-	@Test
-	public void enum_contains() throws IOException {
-	    String[] srcs = new String[] {
-	    		"./src/test/resources/cpp-code-examples/relationContain/Enum.hpp",
-	    	    };
-	    
-	    for (String src:srcs) {
-		    CppFileParser parser = new  CdtCppFileParser(src,repo, preprocessorHandler );
-		    parser.parse();
-	    }
-        repo.resolveAllBindings();
-        assertEquals(1,repo.getEntity("C").getRelations().size());
-	}
+	
 }

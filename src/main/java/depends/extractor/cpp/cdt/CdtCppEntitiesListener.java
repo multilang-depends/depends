@@ -16,6 +16,8 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
@@ -88,6 +90,13 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 		if (declSpec instanceof IASTCompositeTypeSpecifier) {
 			IASTCompositeTypeSpecifier type = (IASTCompositeTypeSpecifier)declSpec;
 			context.foundNewType(type.getName().toString());
+			if (declSpec instanceof ICPPASTCompositeTypeSpecifier) {
+				ICPPASTBaseSpecifier[] baseSpecififers = ((ICPPASTCompositeTypeSpecifier)declSpec).getBaseSpecifiers();
+				for (ICPPASTBaseSpecifier baseSpecififer:baseSpecififers) {
+					String extendName = new String(baseSpecififer.getNameSpecifier().toCharArray());
+					context.foundExtends(extendName);
+				}
+			}
 		}
 		else if (declSpec instanceof  IASTEnumerationSpecifier) {
 			IASTEnumerationSpecifier type = (IASTEnumerationSpecifier)declSpec;
@@ -166,6 +175,7 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 	// Variables
 	@Override
 	public int visit(IASTDeclaration declaration) {
+		
 		if (declaration instanceof ICPPASTUsingDeclaration) {
 			String ns = ((ICPPASTUsingDeclaration)declaration).getName().toString().replace("::", ".");
 			context.foundNewImport(new PackageWildCardImport(ns));
@@ -175,6 +185,7 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 			context.foundNewImport(new ExactMatchImport(ns));
 		}
 		else if (declaration instanceof IASTSimpleDeclaration ) {
+
 			for (IASTDeclarator declarator:((IASTSimpleDeclaration) declaration).getDeclarators()) {
 				IASTDeclSpecifier declSpecifier = ((IASTSimpleDeclaration) declaration).getDeclSpecifier();
 				//Found new typedef definition

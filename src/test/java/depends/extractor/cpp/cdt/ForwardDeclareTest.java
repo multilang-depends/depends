@@ -3,17 +3,13 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import depends.entity.Entity;
-import depends.entity.types.TypeAliasEntity;
 import depends.extractor.cpp.CppFileParser;
 import depends.extractor.cpp.CppParserTest;
-import depends.format.dot.DotDataBuilder;
 import depends.format.matrix.DependencyMatrix;
 import depends.format.matrix.FileDependencyGenerator;
 

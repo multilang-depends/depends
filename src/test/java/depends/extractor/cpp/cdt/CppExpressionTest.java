@@ -22,7 +22,7 @@ public class CppExpressionTest extends CppParserTest{
 	    CppFileParser parser = new  CdtCppFileParser(src,repo, preprocessorHandler );
         parser.parse();
         repo.resolveAllBindings();
-        assertEquals(16,repo.getEntity("foo").getRelations().size());
+        assertEquals(18,repo.getEntity("foo").getRelations().size());
 	}
 
 }
