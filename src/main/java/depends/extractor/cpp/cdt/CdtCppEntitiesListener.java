@@ -67,6 +67,7 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 	@Override
 	public int visit(ICPPASTNamespaceDefinition namespaceDefinition) {
 		context.foundNamespace(namespaceDefinition.getName().toString());
+		context.foundNewImport(namespaceDefinition.getName().toString().replace("::", "."),false);
 		return super.visit(namespaceDefinition);
 	}
 	

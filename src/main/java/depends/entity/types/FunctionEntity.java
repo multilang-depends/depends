@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import depends.addons.InvalidTypeChecker;
 import depends.entity.ContainerEntity;
 import depends.entity.Entity;
 import depends.entity.TypeInfer;
@@ -42,6 +43,12 @@ public class FunctionEntity extends ContainerEntity{
 	public void inferLocalLevelTypes(TypeInfer typeInferer) {
 		for (VarEntity param:parameters) {
 			param.inferLocalLevelTypes(typeInferer);
+			if (InvalidTypeChecker.getInst().isInvalid(param.getRawType()) &&
+					(param.getType()==null ||
+					param.getType()==TypeInfer.externalType)) {
+				System.out.println("...");
+				param.inferLocalLevelTypes(typeInferer);
+			}
 		}
 		returnTypes= identiferToTypes(typeInferer,this.returnTypeIdentifiers);
 		if (returnTypes.size()>0)

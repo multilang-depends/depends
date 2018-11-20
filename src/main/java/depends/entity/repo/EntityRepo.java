@@ -135,6 +135,15 @@ public class EntityRepo implements IdGenerator,TypeInfer{
 	}
 	@Override
 	public TypeEntity inferType(Entity fromEntity, String rawName, boolean typeOnly) {
+		return inferType(fromEntity, rawName, typeOnly, true) ;
+	}
+	
+	@Override
+	public TypeEntity inferTypeWithoutImportSearch(Entity fromEntity, String rawName, boolean typeOnly) {
+		return inferType(fromEntity, rawName, typeOnly, false) ;
+	}
+
+	private TypeEntity inferType(Entity fromEntity, String rawName, boolean typeOnly, boolean searchImport) {
 		if(rawName==null) return null;
 		if (buildInProcessor.isBuiltInType(rawName)) return buildInType;
 		if (buildInProcessor.isBuiltInTypePrefix(rawName)) return buildInType;
@@ -148,7 +157,7 @@ public class EntityRepo implements IdGenerator,TypeInfer{
 		//first we lookup the first symbol
 		String[] names = rawName.split("\\.");
 		if (names.length==0) return null;
-		Entity type = lookupTypes(fromEntity,names[0],typeOnly,true);
+		Entity type = lookupTypes(fromEntity,names[0],typeOnly,searchImport);
 		if (type==null) return null;
 		if (names.length==1 ) {
 			TypeEntity actualType = getType(type);
@@ -192,7 +201,7 @@ public class EntityRepo implements IdGenerator,TypeInfer{
 		return null;
 	}
 
-	public Entity lookupTypes(Entity fromEntity, String name, boolean typeOnly, boolean searcImport) {
+	private Entity lookupTypes(Entity fromEntity, String name, boolean typeOnly, boolean searcImport) {
 		if (name.equals("this")||name.equals("class")) {
 			Entity entityType = fromEntity.getAncestorOfType(TypeEntity.class);
 			return entityType;
@@ -223,6 +232,9 @@ public class EntityRepo implements IdGenerator,TypeInfer{
 	private TypeEntity tryToFindTypeEntityWithName(Entity fromEntity, String name) {
 		if (fromEntity.getRawName().equals(name) && fromEntity instanceof TypeEntity)
 			return (TypeEntity)fromEntity;
+		if (fromEntity.getRawName().equals(name) && fromEntity instanceof VarEntity) {
+			return ((VarEntity)fromEntity).getType();
+		}
 		if (fromEntity.getRawName().equals(name) && fromEntity instanceof MultiDeclareEntities) {
 			for (Entity declaredEntitiy:((MultiDeclareEntities)fromEntity).getEntities()) {
 				if (declaredEntitiy.getRawName().equals(name) && declaredEntitiy instanceof TypeEntity) {

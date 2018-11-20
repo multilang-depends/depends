@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
+import depends.addons.InvalidTypeChecker;
+import depends.entity.repo.EntityRepo;
 import depends.entity.types.FunctionEntity;
 import depends.entity.types.TypeEntity;
 import depends.entity.types.VarEntity;
@@ -93,6 +96,13 @@ public abstract class ContainerEntity extends Entity {
 		resolvedAnnotations = identiferToTypes(typeInferer, annotations);
 		for (VarEntity var : this.vars) {
 			var.inferLocalLevelTypes(typeInferer);
+			VarEntity param = var;
+			if (InvalidTypeChecker.getInst().isInvalid(param.getRawType()) &&
+					(param.getType()==null ||
+					param.getType()==TypeInfer.externalType)) {
+				System.out.println("...");
+				param.inferLocalLevelTypes(typeInferer);
+			}
 		}
 		for (FunctionEntity func:this.functions) {
 			func.inferLocalLevelTypes(typeInferer);
@@ -191,4 +201,26 @@ public abstract class ContainerEntity extends Entity {
 			return false;
 		return ((ContainerEntity)getParent()).isGenericTypeParameter(rawType);
 	}
+
+	@Override
+	public Set<String> resolveBinding(EntityRepo registry) {
+		Set<String> unsolved =  super.resolveBinding(registry);
+		for (VarEntity var:this.vars) {
+			if (var.getType()==null)
+				unsolved.add(var.getRawType());
+			else if (var.getType()==(TypeInfer.externalType))
+				unsolved.add(var.getRawType());
+		}
+		for (FunctionEntity func:this.functions) {
+			for (VarEntity param:func.getParameters()) {
+				if (param.getType()==null)
+					unsolved.add(param.getRawType());
+				else if (param.getType()==(TypeInfer.externalType))
+					unsolved.add(param.getRawType());
+			}
+		}
+		return unsolved;
+	}
+	
+	
 }

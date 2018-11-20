@@ -15,6 +15,7 @@ public interface TypeInfer {
 	static final TypeEntity genericParameterType = new TypeEntity("T", null, -1);
 
 	TypeEntity inferType(Entity fromEntity, String rawName, boolean typeOnly);
+	TypeEntity inferTypeWithoutImportSearch(Entity fromEntity, String rawName, boolean typeOnly);
 
 	void setBuiltInTypeIdentifier(BuiltInTypeIdenfier fileParser);
 	
@@ -59,6 +60,7 @@ public interface TypeInfer {
 	 * @return
 	 */
 	boolean isBuiltInTypePrefix(String prefix);
+
 
 
 

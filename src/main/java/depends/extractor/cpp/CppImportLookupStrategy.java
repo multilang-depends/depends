@@ -1,5 +1,6 @@
 package depends.extractor.cpp;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 import depends.entity.Entity;
@@ -18,8 +19,14 @@ public class CppImportLookupStrategy implements ImportLookupStrategy {
 			if (importedItem instanceof FileEntity) {
 				FileEntity importedFile = (FileEntity) repo.getEntity(file);
 				if (importedFile==null) continue;
-				Entity entity = repo.lookupTypes(importedFile,name,typeOnly,false);
+				Entity entity = repo.inferTypeWithoutImportSearch(importedFile,name,typeOnly);
 				if (entity!=null) return entity;
+				ArrayList<String> namespaces = new ArrayList<>(fileSet);
+				for (String ns:namespaces) {
+					String nameWithPrefix = ns + "." + name;
+					entity = repo.inferTypeWithoutImportSearch(importedFile,nameWithPrefix,typeOnly);
+					if (entity!=null) return entity;				
+				}
 			}else {
 				String importedString = fileEntity.getImport(name);
 				if (importedString==null) continue;	

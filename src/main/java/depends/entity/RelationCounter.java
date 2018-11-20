@@ -41,9 +41,6 @@ public class RelationCounter {
 		for (VarEntity var:entity.getVars()) {
 			if (var.getType()!=null)
 				entity.addRelation(new Relation(DependencyType.CONTAIN,var.getType().getId(),var.getType().getQualifiedName()));
-			else {
-				System.out.println("cannot resolve type of "+var.getQualifiedName());
-			}
 		}
 		for (TypeEntity type:entity.getResolvedAnnotations()) {
 			entity.addRelation(new Relation(DependencyType.USE,type.getId(),type.getQualifiedName()));
@@ -93,11 +90,8 @@ public class RelationCounter {
 			func.addRelation(new Relation(DependencyType.RETURN,returnType.getId(),returnType.getQualifiedName()));
 		}
 		for (VarEntity parameter:func.getParameters()) {
-			if (parameter.getType()!=null) {
+			if (parameter.getType()!=null) 
 				func.addRelation(new Relation(DependencyType.PARAMETER,parameter.getType().getId(),parameter.getType().getQualifiedName()));
-			}else {
-				System.out.println("unsolved param: "+parameter);
-			}
 		}
 		for (TypeEntity throwType:func.getThrowTypes()) {
 			func.addRelation(new Relation(DependencyType.THROW,throwType.getId(),throwType.getQualifiedName()));
