@@ -9,6 +9,8 @@ import depends.extractor.HandlerContext;
 import depends.extractor.java.JavaHandlerContext;
 import depends.format.matrix.DependencyMatrix;
 import depends.format.matrix.FileDependencyGenerator;
+import depends.importtypes.ExactMatchImport;
+import depends.importtypes.PackageWildCardImport;
 
 public class EntityRepoExpendsImportsOfPackageTest {
 
@@ -25,7 +27,7 @@ public class EntityRepoExpendsImportsOfPackageTest {
 		visitor.foundNewPackage(packageName);
 		
 		visitor.startFile("/tmp/thefile.java");
-		visitor.foundNewImport(packageName,false);
+		visitor.foundNewImport(new PackageWildCardImport(packageName));
 		
 		entityRepo.resolveAllBindings();
 		
@@ -48,7 +50,7 @@ public class EntityRepoExpendsImportsOfPackageTest {
 		context.foundNewPackage(packageName);
 		
 		context.startFile("/tmp/thefile.java");
-		context.foundNewImport(packageName+".ClassA",false);
+		context.foundNewImport(new ExactMatchImport(packageName+".ClassA"));
 		
 		entityRepo.resolveAllBindings();
 		

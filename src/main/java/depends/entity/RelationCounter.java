@@ -99,16 +99,16 @@ public class RelationCounter {
 	}
 
 	private void computeImports(FileEntity file) {
-//		List<Entity> imports = file.getResolvedImportedEntities();
-//		for (Entity imported:imports) {
-//			if (imported instanceof FileEntity)
-//			{
-//				if (((FileEntity)imported).isInProjectScope())
-//					file.addRelation(new Relation(DependencyType.IMPORT,imported.getId()));
-//			}else {
-//				file.addRelation(new Relation(DependencyType.IMPORT,imported.getId()));
-//			}
-//		}
+		List<Entity> imports = file.getImportedRelationEntities();
+		for (Entity imported:imports) {
+			if (imported instanceof FileEntity)
+			{
+				if (((FileEntity)imported).isInProjectScope())
+					file.addRelation(new Relation(DependencyType.IMPORT,imported.getId()));
+			}else {
+				file.addRelation(new Relation(DependencyType.IMPORT,imported.getId()));
+			}
+		}
 	}
 
 }

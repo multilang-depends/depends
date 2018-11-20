@@ -21,6 +21,7 @@ import depends.entity.types.TypeEntity;
 import depends.entity.types.VarEntity;
 import depends.extractor.BuiltInTypeIdenfier;
 import depends.extractor.ImportLookupStrategy;
+import depends.importtypes.Import;
 import depends.util.Tuple;
 
 public class EntityRepo implements IdGenerator,TypeInfer{
@@ -44,6 +45,7 @@ public class EntityRepo implements IdGenerator,TypeInfer{
 	public Entity getEntity(String entityName) {
 		return allEntieisByName.get(entityName);
 	}
+	
 	public Entity getEntity(Integer entityId) {
 		return allEntitiesById.get(entityId);
 	}
@@ -344,18 +346,18 @@ public class EntityRepo implements IdGenerator,TypeInfer{
 	}
 
 	@Override
-	public List<Entity> resolveImportEntity(String importedName) {
-		ArrayList<Entity> result = new ArrayList<>();
-		Entity imported = this.getEntity(importedName);
-		if (imported==null) return result;
-		if (imported instanceof PackageEntity) { 
-			//expand import of package to all classes under the package due to we dis-courage the behavior
-			for (Entity child:imported.getChildren()) {
-				result.add(child);
-			}
-		}else {
-			result.add(imported);
-		}
-		return result;
+	
+	public List<Entity> getImportedRelationEntities(List<Import> importedNames){
+		return importLookupStrategy.getImportedRelationEntities(importedNames,this);
 	}
+	
+	@Override
+	public List<Entity> getImportedTypes(List<Import> importedNames){
+		return importLookupStrategy.getImportedTypes(importedNames,this);
+	}
+	@Override
+	public List<Entity> getImportedFiles(List<Import> importedNames){
+		return importLookupStrategy.getImportedFiles(importedNames,this);
+	}
+
 }

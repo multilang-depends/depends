@@ -12,6 +12,7 @@ import depends.entity.types.FunctionEntity;
 import depends.entity.types.TypeAliasEntity;
 import depends.entity.types.TypeEntity;
 import depends.entity.types.VarEntity;
+import depends.importtypes.Import;
 
 public abstract class HandlerContext {
 	protected EntityRepo entityRepo;
@@ -64,15 +65,8 @@ public abstract class HandlerContext {
 	
 
 
-	/**
-	 * 
-	 * @param importedName 
-	 * @param usedFilenameAsKey - to identify whether the importedName is a file name
-	 *                            in (C/C++), the value should be true due to it is a filename
-	 *                            in Java, the value should be false due to it is a package or class name
-	 */
-	public void foundNewImport(String importedName, boolean usedFilenameAsKey) {
-		currentFileEntity.addImport(importedName,usedFilenameAsKey);
+	public void foundNewImport(Import imported) {
+		currentFileEntity.addImport(imported);
 	}
 
 	public TypeEntity currentType() {

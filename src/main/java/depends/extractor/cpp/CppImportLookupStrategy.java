@@ -2,18 +2,28 @@ package depends.extractor.cpp;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import depends.entity.Entity;
 import depends.entity.repo.EntityRepo;
 import depends.entity.types.FileEntity;
+import depends.entity.types.TypeEntity;
 import depends.extractor.ImportLookupStrategy;
+import depends.importtypes.FileImport;
+import depends.importtypes.Import;
 
 public class CppImportLookupStrategy implements ImportLookupStrategy {
-
 	@Override
 	public Entity lookupImportedType(String name, FileEntity fileEntity, EntityRepo repo, boolean typeOnly) {
+		String importedString = fileEntity.importedSuffixMatch(name);
+		if (importedString!=null) {
+			TypeEntity r = repo.getTypeEntityByFullName(importedString);
+			if (r!=null) return r;
+		}
+		
 		HashSet<String> fileSet = new HashSet<>();
-		foundIncludedFiles(fileSet, fileEntity,repo);
+		foundIncludedFiles(fileSet, fileEntity.getImportedFiles(),repo);
+		
 		for (String file:fileSet) {
 			Entity importedItem = repo.getEntity(file);
 			if (importedItem instanceof FileEntity) {
@@ -21,30 +31,57 @@ public class CppImportLookupStrategy implements ImportLookupStrategy {
 				if (importedFile==null) continue;
 				Entity entity = repo.inferTypeWithoutImportSearch(importedFile,name,typeOnly);
 				if (entity!=null) return entity;
-				ArrayList<String> namespaces = new ArrayList<>(fileSet);
-				for (String ns:namespaces) {
-					String nameWithPrefix = ns + "." + name;
+				 List<Entity> namespaces = fileEntity.getImportedTypes();
+				for (Entity ns:namespaces) {
+					String nameWithPrefix = ns.getQualifiedName() + "." + name;
 					entity = repo.inferTypeWithoutImportSearch(importedFile,nameWithPrefix,typeOnly);
 					if (entity!=null) return entity;				
 				}
-			}else {
-				String importedString = fileEntity.getImport(name);
-				if (importedString==null) continue;	
-				return repo.getTypeEntityByFullName(importedString);
 			}
 		}		
 		return null;
 	}
 
-	private void foundIncludedFiles(HashSet<String> fileSet, FileEntity fileEntity, EntityRepo repo) {
-		for (String file:fileEntity.imports()) {
-			if (fileSet.contains(file)) continue;
-			fileSet.add(file);
-			Entity f = repo.getEntity(file);
-			if (f==null ) continue;
-			if (!(f instanceof FileEntity)) continue;
-			foundIncludedFiles(fileSet,(FileEntity)f,repo);
+	private void foundIncludedFiles(HashSet<String> fileSet, List<Entity> importedFiles, EntityRepo repo) {
+		for (Entity file:importedFiles) {
+			if (file==null ) continue;
+			if (!(file instanceof FileEntity)) continue;
+			if (fileSet.contains(file.getRawName())) continue;
+			fileSet.add(file.getRawName());
+			foundIncludedFiles(fileSet,((FileEntity)file).getImportedFiles(),repo);
 		}
+	}
+	
+	
+	@Override
+	public List<Entity> getImportedRelationEntities(List<Import> importedList, EntityRepo repo) {
+		ArrayList<Entity> result = new ArrayList<>();
+		for (Import importedItem:importedList) {
+			if (importedItem instanceof FileImport) {
+				Entity imported = repo.getEntity(importedItem.getContent());
+				if (imported==null) continue;
+				result.add(imported);
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public List<Entity> getImportedTypes(List<Import> importedList, EntityRepo repo) {
+		ArrayList<Entity> result = new ArrayList<>();
+		for (Import importedItem:importedList) {
+			if (!(importedItem instanceof FileImport)) {
+				Entity imported = repo.getEntity(importedItem.getContent());
+				if (imported==null) continue;
+				result.add(imported);
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public List<Entity> getImportedFiles(List<Import> importedList, EntityRepo repo) {
+		return getImportedRelationEntities(importedList,repo);
 	}
 
 }

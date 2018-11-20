@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-import depends.addons.InvalidTypeChecker;
 import depends.entity.repo.EntityRepo;
 import depends.entity.types.FunctionEntity;
 import depends.entity.types.TypeEntity;
@@ -96,13 +95,6 @@ public abstract class ContainerEntity extends Entity {
 		resolvedAnnotations = identiferToTypes(typeInferer, annotations);
 		for (VarEntity var : this.vars) {
 			var.inferLocalLevelTypes(typeInferer);
-			VarEntity param = var;
-			if (InvalidTypeChecker.getInst().isInvalid(param.getRawType()) &&
-					(param.getType()==null ||
-					param.getType()==TypeInfer.externalType)) {
-				System.out.println("...");
-				param.inferLocalLevelTypes(typeInferer);
-			}
 		}
 		for (FunctionEntity func:this.functions) {
 			func.inferLocalLevelTypes(typeInferer);

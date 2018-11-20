@@ -15,6 +15,7 @@ import depends.extractor.java.context.IdentifierContextHelper;
 import depends.extractor.java.context.QualitiedNameContextHelper;
 import depends.extractor.java.context.TypeParameterContextHelper;
 import depends.extractor.java.context.VariableDeclaratorsContextHelper;
+import depends.importtypes.ExactMatchImport;
 import depends.javaextractor.JavaParser.AnnotationConstantRestContext;
 import depends.javaextractor.JavaParser.AnnotationMethodRestContext;
 import depends.javaextractor.JavaParser.AnnotationTypeDeclarationContext;
@@ -63,7 +64,7 @@ public class JavaEntitiesListener extends JavaParserBaseListener {
 	// Import
 	@Override
 	public void enterImportDeclaration(ImportDeclarationContext ctx) {
-		context.foundNewImport(ctx.qualifiedName().getText(),false);
+		context.foundNewImport(new ExactMatchImport(ctx.qualifiedName().getText()));
 		super.enterImportDeclaration(ctx);
 	}
 	

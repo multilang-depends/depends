@@ -8,37 +8,38 @@ import java.util.List;
 import depends.entity.ContainerEntity;
 import depends.entity.Entity;
 import depends.entity.TypeInfer;
+import depends.importtypes.ExactMatchImport;
+import depends.importtypes.FileImport;
+import depends.importtypes.Import;
+import depends.importtypes.PackageWildCardImport;
 
-public class FileEntity extends ContainerEntity{
-	private List<String> importedNames = new ArrayList<>();
-	private ArrayList<Entity> resolvedImportedEntities = new ArrayList<>();
+public class FileEntity extends ContainerEntity {
+	private List<Import> importedNames = new ArrayList<>();
 	private boolean isInProjectScope = false;
-	public List<Entity> getResolvedImportedEntities() {
-		return resolvedImportedEntities;
-	}
+	private List<Entity> importedRelationEntities = new ArrayList<>();
+	private List<Entity> importedFiles = new ArrayList<>();
+	private List<Entity> importedTypes = new ArrayList<>();
+
 	public FileEntity(String fullName, int fileId, boolean isInProjectScope) {
-		super(fullName, null,fileId);
+		super(fullName, null, fileId);
 		setQualifiedName(fullName);
 	}
-	
+
 	public FileEntity(String fullName, int fileId) {
-		this(fullName,fileId,true);
+		this(fullName, fileId, true);
+	}
+
+	public void addImport(Import imported) {
+		importedNames.add(imported);
 	}
 	
-	/**
-	 * 
-	 * @param importedName could be className, package Name  in JAVA
-	 *                     could be file in C/C++
-	 */
-	public void addImport(String importedName, boolean useFileAsImportedKey) {
-        importedNames.add(importedName);
-	}
-	
-	public String getImport(String lastName) {
-		if (!lastName.startsWith(".")) lastName = "."+lastName;
-		for (Entity imported: resolvedImportedEntities) {
+	public String importedSuffixMatch(String lastName) {
+		if (!lastName.startsWith("."))
+			lastName = "." + lastName;
+		for (Entity imported : this.importedTypes) {
 			String name = imported.getQualifiedName();
-			if (!name.startsWith(".")) name = "."+name;
+			if (!name.startsWith("."))
+				name = "." + name;
 			if (imported.getQualifiedName().endsWith(lastName))
 				return imported.getQualifiedName();
 		}
@@ -47,30 +48,41 @@ public class FileEntity extends ContainerEntity{
 	
 	@Override
 	public String getQualifiedName() {
-		if (this.getParent()==null){
-				return "";
+		if (this.getParent() == null) {
+			return "";
 		}
 		if (this.getParent() instanceof PackageEntity)
 			return this.getParent().getQualifiedName();
 		else
 			return super.getQualifiedName();
 	}
-	public Collection<String> imports() {
-		return importedNames;
-	}
+
 	@Override
 	public void inferLocalLevelTypes(TypeInfer typeInferer) {
-		for (String importedName:importedNames) {
-			if (typeInferer.isBuiltInTypePrefix(importedName)) continue;
-			List<Entity> importedEntities = typeInferer.resolveImportEntity(importedName);
-			this.resolvedImportedEntities.addAll(importedEntities);
-		}		
+		this.importedRelationEntities = typeInferer.getImportedRelationEntities(importedNames);
+		this.importedTypes = typeInferer.getImportedTypes(importedNames);
+		this.importedFiles = typeInferer.getImportedFiles(importedNames);
 		super.inferLocalLevelTypes(typeInferer);
 	}
+
 	public boolean isInProjectScope() {
 		return isInProjectScope;
 	}
+
 	public void setInProjectScope(boolean isInProjectScope) {
 		this.isInProjectScope = isInProjectScope;
 	}
+
+	public List<Entity> getImportedRelationEntities() {
+		return importedRelationEntities;
+	}
+
+	public List<Entity> getImportedFiles() {
+		return importedFiles;
+	}
+
+	public List<Entity> getImportedTypes() {
+		return importedTypes;
+	}
+
 }

@@ -4,8 +4,8 @@ import java.util.List;
 
 import depends.entity.types.FunctionEntity;
 import depends.entity.types.TypeEntity;
-import depends.entity.types.VarEntity;
 import depends.extractor.BuiltInTypeIdenfier;
+import depends.importtypes.Import;
 import depends.util.Tuple;
 
 public interface TypeInfer {
@@ -19,14 +19,6 @@ public interface TypeInfer {
 
 	void setBuiltInTypeIdentifier(BuiltInTypeIdenfier fileParser);
 	
-	/**
-	 * To found the imported types/methods/vars. 
-	 * @param fromEntity
-	 * @param functionName
-	 * @return the Function
-	 */
-	List<Entity> resolveImportEntity(String item);
-
 	
 	/**
 	 * To found the function. Must be invoked after all entities function binding solved
@@ -60,10 +52,8 @@ public interface TypeInfer {
 	 * @return
 	 */
 	boolean isBuiltInTypePrefix(String prefix);
-
-
-
-
-
+	List<Entity> getImportedRelationEntities(List<Import> importedNames);
+	List<Entity> getImportedTypes(List<Import> importedNames);
+	List<Entity> getImportedFiles(List<Import> importedNames);
 
 }

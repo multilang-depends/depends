@@ -27,6 +27,9 @@ import depends.entity.IdGenerator;
 import depends.entity.repo.EntityRepo;
 import depends.entity.types.FunctionEntity;
 import depends.entity.types.VarEntity;
+import depends.importtypes.ExactMatchImport;
+import depends.importtypes.FileImport;
+import depends.importtypes.PackageWildCardImport;
 import depends.util.Tuple;
 
 public class CdtCppEntitiesListener  extends ASTVisitor {
@@ -49,7 +52,7 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 	@Override
 	public int visit(IASTTranslationUnit tu) {
 		for (String incl:preprocessorHandler.getDirectIncludedFiles(tu.getAllPreprocessorStatements())) {
-			context.foundNewImport(incl,true);
+			context.foundNewImport(new FileImport(incl));
 			CdtCppFileParser importedParser = new CdtCppFileParser(incl, entityRepo, preprocessorHandler);
 			importedParser.parse(false);
 		}
@@ -66,8 +69,9 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 	// PACKAGES
 	@Override
 	public int visit(ICPPASTNamespaceDefinition namespaceDefinition) {
-		context.foundNamespace(namespaceDefinition.getName().toString());
-		context.foundNewImport(namespaceDefinition.getName().toString().replace("::", "."),false);
+		String ns = namespaceDefinition.getName().toString().replace("::", ".");
+		context.foundNamespace(ns);
+		context.foundNewImport(new PackageWildCardImport(ns));
 		return super.visit(namespaceDefinition);
 	}
 	
@@ -163,10 +167,12 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 	@Override
 	public int visit(IASTDeclaration declaration) {
 		if (declaration instanceof ICPPASTUsingDeclaration) {
-			context.foundNewImport(((ICPPASTUsingDeclaration)declaration).getName().toString().replace("::", "."), false);
+			String ns = ((ICPPASTUsingDeclaration)declaration).getName().toString().replace("::", ".");
+			context.foundNewImport(new PackageWildCardImport(ns));
 		}
 		else if (declaration instanceof ICPPASTUsingDirective) {
-			context.foundNewImport(((ICPPASTUsingDirective)declaration).getQualifiedName().toString().replace("::", "."), false);
+			String ns = ((ICPPASTUsingDirective)declaration).getQualifiedName().toString().replace("::", ".");
+			context.foundNewImport(new ExactMatchImport(ns));
 		}
 		else if (declaration instanceof IASTSimpleDeclaration ) {
 			for (IASTDeclarator declarator:((IASTSimpleDeclaration) declaration).getDeclarators()) {
