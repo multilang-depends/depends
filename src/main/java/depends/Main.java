@@ -37,6 +37,7 @@ public class Main {
 
 		long startTime = System.currentTimeMillis();
 		worker.work();
+		worker.outputResult();
 		long endTime = System.currentTimeMillis();
 		System.out.println("Consumed time: " + (float) ((endTime - startTime) / 1000.00) + " s,  or "
 				+ (float) ((endTime - startTime) / 60000.00) + " min.");

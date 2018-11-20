@@ -45,9 +45,6 @@ abstract public class AbstractLangWorker {
         parseAllFiles();
         resolveBindings();
         identifyDependencies();
-        outputErrors();
-        Entity e = entityRepo.getEntity("ItfMgnt.Mutex");
-        outputDeps(DependencyType.allDependencies());
 	}
 
 	private void outputErrors() {
@@ -144,5 +141,12 @@ abstract public class AbstractLangWorker {
 			}
 		}
 		return r;
+	}
+	public void outputResult() {
+        outputErrors();
+        outputDeps(DependencyType.allDependencies());
+	}
+	public DependencyMatrix getDependencies() {
+		return dependencyMatrix;
 	}
 }

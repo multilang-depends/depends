@@ -35,7 +35,6 @@ import depends.importtypes.PackageWildCardImport;
 import depends.util.Tuple;
 
 public class CdtCppEntitiesListener  extends ASTVisitor {
-
 	private CppHandlerContext context;
 	private IdGenerator idGenerator;
 	private PreprocessorHandler preprocessorHandler;
