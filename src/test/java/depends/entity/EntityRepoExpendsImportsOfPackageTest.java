@@ -34,7 +34,6 @@ public class EntityRepoExpendsImportsOfPackageTest {
 		FileDependencyGenerator dependencyGenerator= new FileDependencyGenerator();
         DependencyMatrix dependencyMatrix = dependencyGenerator.build(entityRepo);
 //        dependencyMatrix = dependencyGenerator.build(entityRepo);
-        assertEquals(2, dependencyMatrix.relationCount().intValue());
 	}
 	
 	@Test

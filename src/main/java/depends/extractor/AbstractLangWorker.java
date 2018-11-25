@@ -149,4 +149,7 @@ abstract public class AbstractLangWorker {
 	public DependencyMatrix getDependencies() {
 		return dependencyMatrix;
 	}
+	public EntityRepo getEntityRepo() {
+		return this.entityRepo;
+	}
 }

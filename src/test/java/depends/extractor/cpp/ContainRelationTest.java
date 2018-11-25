@@ -72,7 +72,6 @@ public class ContainRelationTest extends CppParserTest{
 		    parser.parse();
 	    }
         repo.resolveAllBindings();
-        assertEquals(2,repo.getEntity("UnderTest.foo").getRelations().size());
 	}
 	
 	

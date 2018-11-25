@@ -50,7 +50,19 @@
 					</descriptorRefs>
 				</configuration>
 			</plugin>
-
+			<!-- <plugin>
+				<configuration>
+				 <targetTests>
+				  <param>depends.*</param>
+				  </targetTests>
+				 <targetClasses>
+				  <param>depends.*</param>
+				 </targetClasses>
+				</configuration>			
+			    <groupId>org.pitest</groupId>
+			    <artifactId>pitest-maven</artifactId>
+			    <version>1.4.3</version>
+			 </plugin> -->
 		</plugins>
 	</build>
 

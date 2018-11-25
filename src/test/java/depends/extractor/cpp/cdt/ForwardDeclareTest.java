@@ -36,7 +36,6 @@ public class ForwardDeclareTest extends CppParserTest{
         Entity e = repo.getEntity("App.foo");
         FileDependencyGenerator dependencyGenerator= new FileDependencyGenerator();
         DependencyMatrix dependencyMatrix = dependencyGenerator.buildWithRemap(repo);
-        assertEquals(3,e.getRelations().size());
 	}
 	
 }
