@@ -26,6 +26,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTProblemDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTVisibilityLabel;
 
 import depends.entity.IdGenerator;
+import depends.entity.TypeInfer;
 import depends.entity.repo.EntityRepo;
 import depends.entity.types.FunctionEntity;
 import depends.entity.types.VarEntity;
@@ -56,6 +57,15 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 			context.foundNewImport(new FileImport(incl));
 			CdtCppFileParser importedParser = new CdtCppFileParser(incl, entityRepo, preprocessorHandler);
 			importedParser.parse(false);
+		}
+		MacroExtractor macroExtractor = new MacroExtractor(tu.getAllPreprocessorStatements());
+		for (String var:macroExtractor.getMacroVars()) {
+			context.foundVarDefintion(var,TypeInfer.buildInType.getRawName());
+		}
+		
+		for (String var:macroExtractor.getMacroFuncs()) {
+			context.foundMethodDeclarator(var, TypeInfer.buildInType.getRawName(), new ArrayList<>());
+			context.exitLastedEntity();
 		}
 		return super.visit(tu);
 	}
@@ -221,8 +231,6 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 		return super.visit(enumerator);
 	}
 	
-	//Expressions
-	
 	@Override
 	public int visit(IASTExpression expression) {
 		expressionUsage.foundExpression(expression);
@@ -238,7 +246,7 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 			VarEntity var = new VarEntity(parameter.y,parameter.x,context.currentFunction(),idGenerator.generateId());
 			context.currentFunction().addParameter(var );
 		}else {
-			System.out.println("** parameterDeclaration = " + parameter);
+			//System.out.println("** parameterDeclaration = " + parameter);
 		}
 		return super.visit(parameterDeclaration);
 	}

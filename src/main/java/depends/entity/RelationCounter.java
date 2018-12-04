@@ -49,29 +49,30 @@ public class RelationCounter {
 			entity.addRelation(new Relation(DependencyType.USE,type.getId(),type.getQualifiedName()));
 		}
 		
-		HashSet<TypeEntity> usedEntities = new HashSet<>();
+		HashSet<Entity> usedEntities = new HashSet<>();
 		for (Expression expression:entity.expressions().values()){
-			if (expression.getType()==null) {
-//				System.out.println("not resolved expression:" + expression.text + " in " + entity.getQualifiedName());
+			Entity referredEntity = expression.getReferredEntity();
+			if (referredEntity==null) {
 				continue;
 			}
+			
 			if (expression.isCall) {
-				entity.addRelation(new Relation(DependencyType.CALL,expression.getType().getId(),expression.getType().getQualifiedName()));
+				entity.addRelation(new Relation(DependencyType.CALL,referredEntity.getId(),referredEntity.getQualifiedName()));
 			}
 			if (expression.isCreate) {
-				entity.addRelation(new Relation(DependencyType.CREATE,expression.getType().getId(),expression.getType().getQualifiedName()));
+				entity.addRelation(new Relation(DependencyType.CREATE,referredEntity.getId(),referredEntity.getQualifiedName()));
 			}
 			else if (expression.isSet) { //SET is merged with USE
-				entity.addRelation(new Relation(DependencyType.USE,expression.getType().getId(),expression.getType().getQualifiedName()));
+				entity.addRelation(new Relation(DependencyType.USE,referredEntity.getId(),referredEntity.getQualifiedName()));
 			}
 			else if (expression.isCast) { 
-				entity.addRelation(new Relation(DependencyType.CAST,expression.getType().getId(),expression.getType().getQualifiedName()));
+				entity.addRelation(new Relation(DependencyType.CAST,referredEntity.getId(),referredEntity.getQualifiedName()));
 			}else {
-				usedEntities.add(expression.getType());
+				usedEntities.add(expression.getReferredEntity());
 			}
 		}
 		
-		for (TypeEntity usedEntity:usedEntities) {
+		for (Entity usedEntity:usedEntities) {
 			entity.addRelation(new Relation(DependencyType.USE,usedEntity.getId(),usedEntity.getQualifiedName()));
 		}
 	}

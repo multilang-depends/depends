@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import depends.entity.Entity;
 import depends.entity.TypeInfer;
+import depends.entity.TypeInfer.InferData;
 
 public class TypeAliasEntity extends TypeEntity{
 	TypeEntity originType = new EmptyTypeEntity();
@@ -14,7 +15,10 @@ public class TypeAliasEntity extends TypeEntity{
 	}
 	@Override
 	public void inferLocalLevelTypes(TypeInfer typeInferer) {
-		TypeEntity type = typeInferer.inferType(this, originTypeName, true);
+		InferData r = typeInferer.inferType(this, originTypeName);
+		TypeEntity type = null;
+		if (r!=null) 
+			type = r.type;
 		if (type!=null)
 			originType = type;
 		if (type == this) {

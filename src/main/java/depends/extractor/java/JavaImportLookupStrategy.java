@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import depends.entity.Entity;
+import depends.entity.TypeInfer.InferData;
 import depends.entity.repo.EntityRepo;
 import depends.entity.types.FileEntity;
 import depends.entity.types.PackageEntity;
@@ -12,7 +13,7 @@ import depends.importtypes.Import;
 
 public class JavaImportLookupStrategy implements ImportLookupStrategy{
 	@Override
-	public Entity lookupImportedType(String name, FileEntity fileEntity, EntityRepo repo, boolean typeOnly) {
+	public InferData lookupImportedType(String name, FileEntity fileEntity, EntityRepo repo) {
 		//Java Strategy
 		String importedString = fileEntity.importedSuffixMatch(name);
 		if (importedString==null) return null;	
@@ -47,4 +48,7 @@ public class JavaImportLookupStrategy implements ImportLookupStrategy{
 	public List<Entity> getImportedFiles(List<Import> importedList, EntityRepo repo) {
 		return new ArrayList<Entity>();
 	}
+
+
+
 }

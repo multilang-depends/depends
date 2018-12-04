@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import depends.entity.TypeInfer.InferData;
 import depends.entity.repo.EntityRepo;
 import depends.entity.types.FunctionEntity;
 import depends.entity.types.TypeEntity;
@@ -74,7 +75,7 @@ public abstract class ContainerEntity extends Entity {
 	protected Collection<TypeEntity> identiferToTypes(TypeInfer typeInferer, Collection<String> identifiers) {
 		ArrayList<TypeEntity> r = new ArrayList<>();
 		for (String typeParameter : identifiers) {
-			TypeEntity typeEntity = typeInferer.inferType(this, typeParameter,true);
+			TypeEntity typeEntity = typeInferer.inferTypeType(this, typeParameter);
 			if (typeEntity==null) {
 				if (((ContainerEntity)getParent()).isGenericTypeParameter(typeParameter)) {
 					typeEntity = TypeInfer.genericParameterType;
@@ -114,30 +115,31 @@ public abstract class ContainerEntity extends Entity {
 			//2. if expression's rawType existed, directly infer type by rawType
 			//   if expression's rawType does not existed, infer type based on identifiers
 			if (expression.rawType != null) {
-				expression.setType(typeInferer.inferType(this, expression.rawType,true),typeInferer);
+				expression.setType(typeInferer.inferTypeType(this, expression.rawType),null,typeInferer);
 			}else if (expression.isDot){ //wait for previous
 				continue;
 			} else if (expression.rawType!=null) {
-				expression.setType(typeInferer.inferType(this, expression.rawType, true),typeInferer);
+				expression.setType(typeInferer.inferTypeType(this, expression.rawType),null,typeInferer);
 				if (expression.getType() !=null) {
 					 continue;
 				}
 			}
 			if (expression.identifier!=null) { 
-				TypeEntity type = typeInferer.inferType(this, expression.identifier, false);
+				//TODO: how to infer type also include vars
+				InferData type = typeInferer.inferType(this, expression.identifier);
 				if (type!=null) {
-					expression.setType(type,typeInferer);
+					expression.setType(type.type,type.entity,typeInferer);
 					continue;
 				}
 				if (expression.isCall) {
 					FunctionEntity func = typeInferer.resolveFunctionBindings(this, expression.identifier);
 					if (func!=null) {
-						expression.setType(func.getReturnType(),typeInferer);
+						expression.setType(func.getReturnType(),func,typeInferer);
 					}
 				}else {
 					VarEntity varEntity = this.resolveVarBindings(expression.identifier);
 					if (varEntity!=null) {
-						expression.setType( varEntity.getType(),typeInferer);
+						expression.setType( varEntity.getType(),varEntity,typeInferer);
 					}
 				}
 			}

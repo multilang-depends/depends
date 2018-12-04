@@ -5,7 +5,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorFunctionStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorObjectStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 
 import depends.util.FileUtil;
@@ -34,10 +36,21 @@ public class PreprocessorHandler {
 					}
 					continue;
 				}
+			}else if (statements[statementIndex] instanceof IASTPreprocessorFunctionStyleMacroDefinition) {
+				System.out.println(statements[statementIndex].getRawSignature());
+				IASTPreprocessorFunctionStyleMacroDefinition funcMacro = (IASTPreprocessorFunctionStyleMacroDefinition)statements[statementIndex];
+				System.out.println(funcMacro.getName());
+			}else if (statements[statementIndex] instanceof IASTPreprocessorObjectStyleMacroDefinition) {
+				System.out.println(statements[statementIndex].getRawSignature());
+				IASTPreprocessorObjectStyleMacroDefinition varMacro = (IASTPreprocessorObjectStyleMacroDefinition)statements[statementIndex];
+				System.out.println(varMacro.getName());
 			}
+			
 		}
 		return includedFullPathNames;
 	}
+	
+	
 	public List<String> getIncludePaths() {
 		return includePaths;
 	}

@@ -3,6 +3,7 @@ package depends.entity.types;
 import depends.entity.ContainerEntity;
 import depends.entity.Entity;
 import depends.entity.TypeInfer;
+import depends.entity.TypeInfer.InferData;
 
 public class VarEntity extends Entity {
 	private String rawType;
@@ -26,7 +27,9 @@ public class VarEntity extends Entity {
 
 	@Override
 	public void inferLocalLevelTypes(TypeInfer typeInferer) {
-		type = typeInferer.inferType(this, rawType,true);
+		InferData r = typeInferer.inferType(this, rawType);
+		if (r==null) return;
+		type = r.type;
 		if (type==null) {
 			if (((ContainerEntity)getParent()).isGenericTypeParameter(rawType)) {
 				type = TypeInfer.genericParameterType;

@@ -28,13 +28,17 @@ public class Expression {
 	public boolean isCast = false;
 	public boolean deriveTypeFromChild = true;
 	List<Tuple<String, String>> relations = new ArrayList<>();
+	private Entity referredEntity;
 	public TypeEntity getType() {
 		return type;
 	}
 
-	public void setType(TypeEntity type, TypeInfer typeInferer) {
+	public void setType(TypeEntity type, Entity referredEntity, TypeInfer typeInferer) {
 		if (this.type!=null) return;
 		this.type = type;
+		this.referredEntity  = referredEntity;
+		if (this.referredEntity==null)
+			this.referredEntity = type;
 		deduceParentType(typeInferer);
 	}
 	
@@ -70,34 +74,38 @@ public class Expression {
 		if (parent.type != null)return;
 		if (parent.firstChildId!=this.id) return;
 		if (this.type.equals(TypeInfer.buildInType)) {
-			parent.setType(TypeInfer.buildInType,typeInfer);
+			parent.setType(TypeInfer.buildInType,TypeInfer.buildInType,typeInfer);
 			return;
 		}else if (this.type.equals(TypeInfer.externalType)){
-			parent.setType(TypeInfer.externalType,typeInfer);
+			parent.setType(TypeInfer.externalType,TypeInfer.externalType,typeInfer);
 			return;
 		}
 		
 		/* if it is a logic expression, the return type/type is boolean. */
 		if (parent.isLogic) {
-			parent.setType(TypeInfer.buildInType,typeInfer);
+			parent.setType(TypeInfer.buildInType,null,typeInfer);
 		}
 		/* if it is a.b, and we already get a's type, b's type could be identified easily  */
 		else if (parent.isDot) {
 			if (parent.isCall) {
 				FunctionEntity func = typeInfer.resolveFunctionBindings(this.getType(), parent.identifier);
 				if (func!=null)
-					parent.setType(func.getReturnType(), typeInfer);
+					parent.setType(func.getReturnType(), func,typeInfer);
 			}else {
-				parent.setType(typeInfer.inferType(this.getType(), parent.identifier, true),typeInfer);
+				parent.setType(typeInfer.inferTypeType(this.getType(), parent.identifier),null,typeInfer);
 				if (parent.type!=null) return;
 				VarEntity var = this.getType().resolveVarBindings(parent.identifier);
 				if (var!=null)
-					parent.setType(var.getType(), typeInfer);
+					parent.setType(var.getType(),var, typeInfer);
 			}
 		}
 		/* if other situation, simple make the parent and child type same */
 		else {
-			parent.setType(type, typeInfer);
+			parent.setType(type, null, typeInfer);
 		}
+	}
+
+	public Entity getReferredEntity() {
+		return referredEntity;
 	}
 }
