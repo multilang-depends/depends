@@ -4,9 +4,9 @@ import org.antlr.v4.runtime.RuleContext;
 
 import depends.entity.Expression;
 import depends.extractor.HandlerContext;
-import depends.javaextractor.JavaParser.ExpressionContext;
-import depends.javaextractor.JavaParser.MethodCallContext;
-import depends.javaextractor.JavaParser.PrimaryContext;
+import depends.extractor.java.JavaParser.ExpressionContext;
+import depends.extractor.java.JavaParser.MethodCallContext;
+import depends.extractor.java.JavaParser.PrimaryContext;
 
 public class ExpressionUsage {
 	HandlerContext context;

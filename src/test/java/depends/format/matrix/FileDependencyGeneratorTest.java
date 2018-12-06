@@ -9,12 +9,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import depends.deptypes.DependencyType;
-import depends.entity.Entity;
-import depends.entity.Relation;
 import depends.entity.Inferer;
+import depends.entity.Relation;
 import depends.entity.repo.EntityRepo;
 import depends.entity.types.FileEntity;
-import depends.entity.types.PackageEntity;
 import depends.entity.types.TypeEntity;
 import depends.extractor.java.JavaBuiltInType;
 import depends.extractor.java.JavaImportLookupStrategy;
@@ -42,7 +40,6 @@ public class FileDependencyGeneratorTest {
 		entityRepo.add(f);
 		entityRepo.add(p);
 		entityRepo.add(theEntity);
-		
 		inferer.resolveAllBindings();
 	}
 
@@ -75,15 +72,10 @@ public class FileDependencyGeneratorTest {
         	file2Id = 1;
         	file1Id = 0;
         }
-        	
         assertTrue(relations.keySet().contains(file2Id) && relations.keySet().size()==1);
         Map<Integer, Map<String, Integer>> r = relations.get(file2Id);
         assertTrue(r.keySet().contains(file1Id) && relations.keySet().size()==1);
         Map<String, Integer> v = r.get(file1Id);
         assertTrue(v.get(DependencyType.IMPORT).intValue()==1);
-        
 	}
-	
-	
-
 }

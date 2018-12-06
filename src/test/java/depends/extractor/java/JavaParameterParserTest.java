@@ -7,7 +7,6 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
-import depends.entity.JavaParserTest;
 import depends.entity.repo.EntityRepo;
 
 public class JavaParameterParserTest extends JavaParserTest {

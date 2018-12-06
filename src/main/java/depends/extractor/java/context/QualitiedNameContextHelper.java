@@ -3,8 +3,8 @@ package depends.extractor.java.context;
 import java.util.ArrayList;
 import java.util.List;
 
-import depends.javaextractor.JavaParser.QualifiedNameContext;
-import depends.javaextractor.JavaParser.QualifiedNameListContext;
+import depends.extractor.java.JavaParser.QualifiedNameContext;
+import depends.extractor.java.JavaParser.QualifiedNameListContext;
 
 public class QualitiedNameContextHelper {
 	public static String getName(QualifiedNameContext ctx) {

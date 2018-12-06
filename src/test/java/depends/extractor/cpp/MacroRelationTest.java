@@ -26,7 +26,7 @@ public class MacroRelationTest extends CppParserTest{
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
-        assertEquals(1,repo.getEntity("foo").getRelations().size());
+        assertEquals(3,repo.getEntity("foo").getRelations().size());
 	}
 	
 	

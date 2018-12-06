@@ -8,7 +8,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import depends.entity.ContainerEntity;
-import depends.entity.JavaParserTest;
 
 public class JavaComplexExpressionTest extends JavaParserTest {
 	@Before

@@ -1,8 +1,8 @@
 package depends.extractor.java.context;
 
-import depends.javaextractor.JavaParser.ClassOrInterfaceTypeContext;
-import depends.javaextractor.JavaParser.TypeTypeContext;
-import depends.javaextractor.JavaParser.TypeTypeOrVoidContext;
+import depends.extractor.java.JavaParser.ClassOrInterfaceTypeContext;
+import depends.extractor.java.JavaParser.TypeTypeContext;
+import depends.extractor.java.JavaParser.TypeTypeOrVoidContext;
 
 public class ClassTypeContextHelper {
 

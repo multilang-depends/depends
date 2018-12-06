@@ -6,7 +6,7 @@ import java.util.List;
 import org.antlr.v4.runtime.RuleContext;
 
 import depends.extractor.HandlerContext;
-import depends.javaextractor.JavaParser.AnnotationContext;
+import depends.extractor.java.JavaParser.AnnotationContext;
 
 public class AnnotationProcessor {
 	private HandlerContext context;

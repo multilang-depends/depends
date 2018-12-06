@@ -8,12 +8,12 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import depends.entity.IdGenerator;
 import depends.entity.types.FunctionEntity;
 import depends.entity.types.VarEntity;
-import depends.javaextractor.JavaParser.FormalParameterContext;
-import depends.javaextractor.JavaParser.FormalParameterListContext;
-import depends.javaextractor.JavaParser.FormalParametersContext;
-import depends.javaextractor.JavaParser.LastFormalParameterContext;
-import depends.javaextractor.JavaParser.TypeTypeContext;
-import depends.javaextractor.JavaParser.VariableModifierContext;
+import depends.extractor.java.JavaParser.FormalParameterContext;
+import depends.extractor.java.JavaParser.FormalParameterListContext;
+import depends.extractor.java.JavaParser.FormalParametersContext;
+import depends.extractor.java.JavaParser.LastFormalParameterContext;
+import depends.extractor.java.JavaParser.TypeTypeContext;
+import depends.extractor.java.JavaParser.VariableModifierContext;
 
 public class FormalParameterListContextHelper {
 

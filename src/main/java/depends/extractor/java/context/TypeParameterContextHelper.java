@@ -3,8 +3,8 @@ package depends.extractor.java.context;
 import java.util.ArrayList;
 import java.util.List;
 
-import depends.javaextractor.JavaParser.TypeParameterContext;
-import depends.javaextractor.JavaParser.TypeParametersContext;
+import depends.extractor.java.JavaParser.TypeParameterContext;
+import depends.extractor.java.JavaParser.TypeParametersContext;
 
 public class TypeParameterContextHelper {
 

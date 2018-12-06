@@ -7,8 +7,6 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
-import depends.entity.JavaParserTest;
-
 public class JavaTypeInferUnderSamePackageTest extends JavaParserTest{
 	@Before
 	public void setUp() {

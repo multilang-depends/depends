@@ -1,6 +1,6 @@
 package depends.extractor.java.context;
 
-import depends.javaextractor.JavaParser.CreatorContext;
+import depends.extractor.java.JavaParser.CreatorContext;
 
 public class CreatorContextHelper {
 

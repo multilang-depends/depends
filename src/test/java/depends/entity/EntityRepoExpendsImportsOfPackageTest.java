@@ -5,9 +5,8 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
-import depends.entity.repo.EntityRepo;
-import depends.extractor.HandlerContext;
 import depends.extractor.java.JavaHandlerContext;
+import depends.extractor.java.JavaParserTest;
 import depends.format.matrix.DependencyMatrix;
 import depends.format.matrix.FileDependencyGenerator;
 import depends.importtypes.ExactMatchImport;

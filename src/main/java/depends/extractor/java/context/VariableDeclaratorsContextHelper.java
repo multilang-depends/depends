@@ -3,10 +3,10 @@ package depends.extractor.java.context;
 import java.util.ArrayList;
 import java.util.List;
 
-import depends.javaextractor.JavaParser.ConstantDeclaratorContext;
-import depends.javaextractor.JavaParser.VariableDeclaratorContext;
-import depends.javaextractor.JavaParser.VariableDeclaratorIdContext;
-import depends.javaextractor.JavaParser.VariableDeclaratorsContext;
+import depends.extractor.java.JavaParser.ConstantDeclaratorContext;
+import depends.extractor.java.JavaParser.VariableDeclaratorContext;
+import depends.extractor.java.JavaParser.VariableDeclaratorIdContext;
+import depends.extractor.java.JavaParser.VariableDeclaratorsContext;
 
 public class VariableDeclaratorsContextHelper {
 

@@ -9,7 +9,6 @@ import org.junit.Test;
 
 import depends.entity.ContainerEntity;
 import depends.entity.Entity;
-import depends.entity.JavaParserTest;
 import depends.entity.types.FunctionEntity;
 import depends.entity.types.TypeEntity;
 
@@ -47,7 +46,7 @@ public class JavaVarResolveTest extends JavaParserTest{
         inferer.resolveAllBindings();
         ContainerEntity e = (ContainerEntity) entityRepo.getEntity("LocalVarInferExample.setExample");
         System.out.println(e.dumpExpressions());
-        assertEquals(15,entityRepo.getEntity("LocalVarInferExample.setExample").getRelations().size());
+        assertEquals(16,entityRepo.getEntity("LocalVarInferExample.setExample").getRelations().size());
 	}
 	
 	@Test
@@ -56,7 +55,7 @@ public class JavaVarResolveTest extends JavaParserTest{
         JavaFileParser parser = createParser(src);
         parser.parse();
         inferer.resolveAllBindings();
-        assertEquals(20,entityRepo.getEntity("test.ComplexExpressionExample.setExample").getRelations().size());
+        assertEquals(23,entityRepo.getEntity("test.ComplexExpressionExample.setExample").getRelations().size());
 	}
 	
 	@Test
