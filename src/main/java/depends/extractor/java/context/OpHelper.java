@@ -24,11 +24,7 @@ public class OpHelper {
 				|| op.equals("==")
 				|| op.equals("!=") || op.equals("&&") || op.equals("||") || op.equals("?");
 	}
-	public static boolean isArithmetic(String op) {
-		return op.equals("+") || op.equals("-") || op.equals("*") || op.equals("/") || op.equals("%")
-				|| op.equals("&") || op.equals("|") || op.equals("^") || op.equals(">>") || op.equals(">>>")
-				|| op.equals("<<") || op.equals("~") || op.equals("!") ;
-	}
+
 	public static boolean isAssigment(String op) {
 		return op.equals("=") || op.equals("+=") || op.equals("-=") || op.equals("*=") || op.equals("/=")
 				|| op.equals("&=") || op.equals("|=") || op.equals("^=") || op.equals(">>=") || op.equals(">>>=")

@@ -1,10 +1,8 @@
 package depends.format.xml;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 public class XmlFormatter {
@@ -15,12 +13,8 @@ public class XmlFormatter {
             Marshaller marshaller = jaxbContext.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             marshaller.marshal(xDepObject, new FileOutputStream(xmlFileName));
-        } catch (JAXBException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
 }

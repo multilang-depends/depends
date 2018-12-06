@@ -9,11 +9,8 @@ public class CreatorContextHelper {
 		if (creator.createdName()==null) return creator.getText();
 		if (creator.createdName().IDENTIFIER()==null)
 			return creator.createdName().getText();
-		if (creator.createdName().IDENTIFIER()==null)
-			return creator.createdName().getText();
 		if (creator.createdName().IDENTIFIER().size()>0)
 			return creator.createdName().IDENTIFIER(0).getText();
 		return null;
 	}
-
 }
