@@ -3,11 +3,11 @@ package depends.extractor.cpp;
 import java.util.ArrayList;
 import java.util.List;
 
+import depends.entity.Inferer;
 import depends.extractor.AbstractLangWorker;
 import depends.extractor.FileParser;
 import depends.extractor.cpp.cdt.CdtCppFileParser;
 import depends.extractor.cpp.cdt.PreprocessorHandler;
-import depends.extractor.java.JavaImportLookupStrategy;
 import depends.util.Configure;
 
 public class CppWorker extends AbstractLangWorker {
@@ -17,7 +17,7 @@ public class CppWorker extends AbstractLangWorker {
     public CppWorker(Configure configure) {
     	super(configure);
     	preprocessorHandler = new PreprocessorHandler(super.includePaths());
-    	entityRepo.setImportLookupStrategy(new CppImportLookupStrategy());
+		inferer = new Inferer(entityRepo,new CppImportLookupStrategy(),new CppBuiltInType());
     }
 
 
@@ -34,7 +34,7 @@ public class CppWorker extends AbstractLangWorker {
 
 	@Override
 	protected FileParser getFileParser(String fileFullPath) {
-		return new CdtCppFileParser(fileFullPath,entityRepo,preprocessorHandler);
+		return new CdtCppFileParser(fileFullPath,entityRepo,preprocessorHandler,inferer);
 		//return new Antlr4CppFileParser(fileFullPath,entityRepo,super.includePaths());
 	}
 

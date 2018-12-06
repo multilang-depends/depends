@@ -3,10 +3,8 @@ package depends.extractor.java;
 import java.util.ArrayList;
 import java.util.List;
 
-import depends.entity.IdGenerator;
 import depends.entity.repo.EntityRepo;
 import depends.entity.types.FunctionEntity;
-import depends.extractor.HandlerContext;
 import depends.extractor.java.context.AnnotationProcessor;
 import depends.extractor.java.context.ClassTypeContextHelper;
 import depends.extractor.java.context.ExpressionUsage;
@@ -43,10 +41,11 @@ public class JavaEntitiesListener extends JavaParserBaseListener {
 	private JavaHandlerContext context;
 	private AnnotationProcessor annotationProcessor;
 	private ExpressionUsage expressionUsage;
-	private IdGenerator idGenerator;
+	private EntityRepo entityRepo;
+
 	public JavaEntitiesListener(String fileFullPath, EntityRepo entityRepo) {
 		this.context = new JavaHandlerContext(entityRepo);
-		idGenerator = entityRepo;
+		this.entityRepo = entityRepo;
 		annotationProcessor = new AnnotationProcessor(context);
 		expressionUsage = new ExpressionUsage(context);
 		context.startFile(fileFullPath);
@@ -67,7 +66,7 @@ public class JavaEntitiesListener extends JavaParserBaseListener {
 		context.foundNewImport(new ExactMatchImport(ctx.qualifiedName().getText()));
 		super.enterImportDeclaration(ctx);
 	}
-	
+
 	///////////////////////
 	// Class or Interface
 	// classDeclaration | enumDeclaration | interfaceDeclaration |
@@ -159,11 +158,9 @@ public class JavaEntitiesListener extends JavaParserBaseListener {
 		List<String> throwedType = QualitiedNameContextHelper.getNames(ctx.qualifiedNameList());
 		String methodName = ctx.IDENTIFIER().getText();
 		String returnedType = ClassTypeContextHelper.getClassName(ctx.typeTypeOrVoid());
-		FunctionEntity method = context.foundMethodDeclarator(methodName, 
-				returnedType,
-				throwedType);
-		new FormalParameterListContextHelper(ctx.formalParameters(),method,idGenerator);
-		if (ctx.typeParameters()!=null) {
+		FunctionEntity method = context.foundMethodDeclarator(methodName, returnedType, throwedType);
+		new FormalParameterListContextHelper(ctx.formalParameters(), method, entityRepo);
+		if (ctx.typeParameters() != null) {
 			List<String> parameters = TypeParameterContextHelper.getTypeParameters(ctx.typeParameters());
 			method.addTypeParameter(parameters);
 		}
@@ -188,10 +185,10 @@ public class JavaEntitiesListener extends JavaParserBaseListener {
 	@Override
 	public void enterInterfaceMethodDeclaration(InterfaceMethodDeclarationContext ctx) {
 		List<String> throwedType = QualitiedNameContextHelper.getNames(ctx.qualifiedNameList());
-		 FunctionEntity method = context.foundMethodDeclarator(ctx.IDENTIFIER().getText(),
+		FunctionEntity method = context.foundMethodDeclarator(ctx.IDENTIFIER().getText(),
 				ClassTypeContextHelper.getClassName(ctx.typeTypeOrVoid()), throwedType);
-		 new FormalParameterListContextHelper(ctx.formalParameters(),method,idGenerator);
-		 if (ctx.typeParameters() != null) {
+		new FormalParameterListContextHelper(ctx.formalParameters(), method, entityRepo);
+		if (ctx.typeParameters() != null) {
 			foundTypeParametersUse(ctx.typeParameters());
 		}
 		annotationProcessor.processAnnotationModifier(ctx, "interfaceMethodModifier");
@@ -207,8 +204,9 @@ public class JavaEntitiesListener extends JavaParserBaseListener {
 	@Override
 	public void enterConstructorDeclaration(ConstructorDeclarationContext ctx) {
 		List<String> throwedType = QualitiedNameContextHelper.getNames(ctx.qualifiedNameList());
-		FunctionEntity method = context.foundMethodDeclarator(ctx.IDENTIFIER().getText(),ctx.IDENTIFIER().getText(), throwedType);
-		new FormalParameterListContextHelper(ctx.formalParameters(),method,idGenerator);
+		FunctionEntity method = context.foundMethodDeclarator(ctx.IDENTIFIER().getText(), ctx.IDENTIFIER().getText(),
+				throwedType);
+		new FormalParameterListContextHelper(ctx.formalParameters(), method, entityRepo);
 		method.setReturnType(context.currentType());
 		annotationProcessor.processAnnotationModifier(ctx, "classBodyDeclaration");
 		super.enterConstructorDeclaration(ctx);
@@ -224,8 +222,8 @@ public class JavaEntitiesListener extends JavaParserBaseListener {
 	// Field
 	@Override
 	public void enterFieldDeclaration(FieldDeclarationContext ctx) {
-		 List<String> varNames = VariableDeclaratorsContextHelper.getVariables(ctx.variableDeclarators());
-		 String type = ClassTypeContextHelper.getClassName(ctx.typeType());
+		List<String> varNames = VariableDeclaratorsContextHelper.getVariables(ctx.variableDeclarators());
+		String type = ClassTypeContextHelper.getClassName(ctx.typeType());
 		context.foundVarDefinition(varNames, type);
 		annotationProcessor.processAnnotationModifier(ctx, "classBodyDeclaration");
 		super.enterFieldDeclaration(ctx);
@@ -238,17 +236,18 @@ public class JavaEntitiesListener extends JavaParserBaseListener {
 		annotationProcessor.processAnnotationModifier(ctx, "interfaceBodyDeclaration");
 		super.enterConstDeclaration(ctx);
 	}
-	
+
 	@Override
 	public void enterEnumConstant(EnumConstantContext ctx) {
-		if (ctx.IDENTIFIER()!=null)
-		context.foundEnumConstDefinition(ctx.IDENTIFIER().getText());
+		if (ctx.IDENTIFIER() != null)
+			context.foundEnumConstDefinition(ctx.IDENTIFIER().getText());
 		super.enterEnumConstant(ctx);
 	}
 
 	@Override
 	public void enterAnnotationMethodRest(AnnotationMethodRestContext ctx) {
-		context.foundMethodDeclarator(ctx.IDENTIFIER().getText(), ClassTypeContextHelper.getClassName(ctx.typeType()), new ArrayList<>());
+		context.foundMethodDeclarator(ctx.IDENTIFIER().getText(), ClassTypeContextHelper.getClassName(ctx.typeType()),
+				new ArrayList<>());
 		super.enterAnnotationMethodRest(ctx);
 	}
 
@@ -323,9 +322,4 @@ public class JavaEntitiesListener extends JavaParserBaseListener {
 			context.currentType().addTypeParameter(typeParam.IDENTIFIER().getText());
 		}
 	}
-
-
-	
-
 }
-

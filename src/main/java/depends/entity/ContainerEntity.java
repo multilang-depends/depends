@@ -4,14 +4,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
-import depends.entity.TypeInfer.InferData;
-import depends.entity.repo.EntityRepo;
 import depends.entity.types.FunctionEntity;
 import depends.entity.types.TypeEntity;
 import depends.entity.types.VarEntity;
 
+/**
+ * ContainerEntity for example file, class, method, etc.
+ * they could contain vars, functions, ecpressions, type parameters, etc.
+ */
 public abstract class ContainerEntity extends Entity {
 	private ArrayList<VarEntity> vars;
 	private ArrayList<FunctionEntity> functions;
@@ -21,10 +22,6 @@ public abstract class ContainerEntity extends Entity {
 	private Collection<TypeEntity> resolvedTypeParameters = new ArrayList<>();
 	private Collection<TypeEntity> resolvedAnnotations = new ArrayList<>();
 
-	public void addAnnotation(String name) {
-		this.annotations.add(name);
-	}
-
 	public ContainerEntity(String rawName, Entity parent, Integer id) {
 		super(rawName, parent, id);
 		vars = new ArrayList<>();
@@ -32,7 +29,11 @@ public abstract class ContainerEntity extends Entity {
 		expressions = new HashMap<>();
 		typeParameters = new ArrayList<>();
 	}
-
+	
+	public void addAnnotation(String name) {
+		this.annotations.add(name);
+	}
+	
 	public void addTypeParameter(String typeName) {
 		this.typeParameters.add(typeName);
 	}
@@ -68,17 +69,17 @@ public abstract class ContainerEntity extends Entity {
 	/**
 	 * A common utility function used to transfer the identifiers 
 	 * to types.
-	 * @param typeInferer - the inferer object 
+	 * @param inferer - the inferer object 
 	 * @param identifiers - the identifiers will be translated
 	 * @return The translated Types
 	 */
-	protected Collection<TypeEntity> identiferToTypes(TypeInfer typeInferer, Collection<String> identifiers) {
+	protected Collection<TypeEntity> identiferToTypes(Inferer inferer, Collection<String> identifiers) {
 		ArrayList<TypeEntity> r = new ArrayList<>();
 		for (String typeParameter : identifiers) {
-			TypeEntity typeEntity = typeInferer.inferTypeType(this, typeParameter);
+			TypeEntity typeEntity = inferer.inferTypeFromName(this, typeParameter);
 			if (typeEntity==null) {
 				if (((ContainerEntity)getParent()).isGenericTypeParameter(typeParameter)) {
-					typeEntity = TypeInfer.genericParameterType;
+					typeEntity = Inferer.genericParameterType;
 				}
 			}
 			if (typeEntity != null)
@@ -91,22 +92,22 @@ public abstract class ContainerEntity extends Entity {
 	 * For all data in the class, infer their types.
 	 * Should be override in sub-classes 
 	 */
-	public void inferLocalLevelTypes(TypeInfer typeInferer) {
-		setResolvedTypeParameters(identiferToTypes(typeInferer, typeParameters));
-		resolvedAnnotations = identiferToTypes(typeInferer, annotations);
+	public void inferLocalLevelEntities(Inferer inferer) {
+		resolvedTypeParameters = identiferToTypes(inferer, typeParameters);
+		resolvedAnnotations = identiferToTypes(inferer, annotations);
 		for (VarEntity var : this.vars) {
-			var.inferLocalLevelTypes(typeInferer);
+			var.inferLocalLevelEntities(inferer);
 		}
 		for (FunctionEntity func:this.functions) {
-			func.inferLocalLevelTypes(typeInferer);
+			func.inferLocalLevelEntities(inferer);
 		}
 	}
 
 	/**
 	 * Resolve all expression's type
-	 * @param typeInferer
+	 * @param inferer
 	 */
-	public void resolveExpressions(TypeInfer typeInferer) {
+	public void resolveExpressions(Inferer inferer) {
 		for (Expression expression : expressions.values()) {
 			//1. if expression's type existed, break;
 			if (expression.getType() != null)
@@ -115,31 +116,30 @@ public abstract class ContainerEntity extends Entity {
 			//2. if expression's rawType existed, directly infer type by rawType
 			//   if expression's rawType does not existed, infer type based on identifiers
 			if (expression.rawType != null) {
-				expression.setType(typeInferer.inferTypeType(this, expression.rawType),null,typeInferer);
+				expression.setType(inferer.inferTypeFromName(this, expression.rawType),null,inferer);
 			}else if (expression.isDot){ //wait for previous
 				continue;
 			} else if (expression.rawType!=null) {
-				expression.setType(typeInferer.inferTypeType(this, expression.rawType),null,typeInferer);
+				expression.setType(inferer.inferTypeFromName(this, expression.rawType),null,inferer);
 				if (expression.getType() !=null) {
 					 continue;
 				}
 			}
 			if (expression.identifier!=null) { 
-				//TODO: how to infer type also include vars
-				InferData type = typeInferer.inferType(this, expression.identifier);
-				if (type!=null) {
-					expression.setType(type.type,type.entity,typeInferer);
+				Entity entity = inferer.resolveName(this, expression.identifier, true);
+				if (entity!=null) {
+					expression.setType(entity.getType(),entity,inferer);
 					continue;
 				}
 				if (expression.isCall) {
-					FunctionEntity func = typeInferer.resolveFunctionBindings(this, expression.identifier);
+					FunctionEntity func = this.lookupFunctionInVisibleScope(expression.identifier);
 					if (func!=null) {
-						expression.setType(func.getReturnType(),func,typeInferer);
+						expression.setType(func.getType(),func,inferer);
 					}
 				}else {
-					VarEntity varEntity = this.resolveVarBindings(expression.identifier);
+					VarEntity varEntity = this.lookupVarsInVisibleScope(expression.identifier);
 					if (varEntity!=null) {
-						expression.setType( varEntity.getType(),varEntity,typeInferer);
+						expression.setType( varEntity.getType(),varEntity,inferer);
 					}
 				}
 			}
@@ -153,17 +153,11 @@ public abstract class ContainerEntity extends Entity {
 		return resolvedTypeParameters;
 	}
 
-	public void setResolvedTypeParameters(Collection<TypeEntity> resolvedTypeParameters) {
-		this.resolvedTypeParameters = resolvedTypeParameters;
-	}
 
 	public Collection<TypeEntity> getResolvedAnnotations() {
 		return resolvedAnnotations;
 	}
 
-	public void setResolvedAnnotations(Collection<TypeEntity> resolvedAnnotations) {
-		this.resolvedAnnotations = resolvedAnnotations;
-	}
 
 	public String dumpExpressions() {
 		StringBuilder sb = new StringBuilder();
@@ -173,21 +167,7 @@ public abstract class ContainerEntity extends Entity {
 		return sb.toString();
 	}
 	
-	/**
-	 * To found the var. Must be invoked after all entities var binding solved
-	 * @param fromEntity
-	 * @param varName
-	 * @return
-	 */
-	public VarEntity resolveVarBindings(String varName) {
-		for (VarEntity var:getVars()) {
-			if (var.getRawName().equals(varName))
-				return var;
-		}
-		if (parent !=null && parent instanceof ContainerEntity)
-			return ((ContainerEntity)parent).resolveVarBindings(varName);
-		return null;
-	}
+
 
 	public boolean isGenericTypeParameter(String rawType) {
 		if (this.typeParameters.contains(rawType)) return true;
@@ -196,25 +176,51 @@ public abstract class ContainerEntity extends Entity {
 		return ((ContainerEntity)getParent()).isGenericTypeParameter(rawType);
 	}
 
-	@Override
-	public Set<String> resolveBinding(EntityRepo registry) {
-		Set<String> unsolved =  super.resolveBinding(registry);
-		for (VarEntity var:this.vars) {
-			if (var.getType()==null)
-				unsolved.add(var.getRawType());
-			else if (var.getType()==(TypeInfer.externalType))
-				unsolved.add(var.getRawType());
+	protected FunctionEntity lookupFunctionLocally(String functionName) {
+		for (FunctionEntity func : getFunctions()) {
+			if (func.getRawName().equals(functionName))
+				return func;
 		}
-		for (FunctionEntity func:this.functions) {
-			for (VarEntity param:func.getParameters()) {
-				if (param.getType()==null)
-					unsolved.add(param.getRawType());
-				else if (param.getType()==(TypeInfer.externalType))
-					unsolved.add(param.getRawType());
-			}
-		}
-		return unsolved;
+		return null;
 	}
 	
+	public FunctionEntity lookupFunctionInVisibleScope(String functionName) {
+		ContainerEntity fromEntity = this;
+		while (fromEntity != null) {
+			if (fromEntity instanceof ContainerEntity) {
+				FunctionEntity func = ((ContainerEntity) fromEntity).lookupFunctionLocally(functionName);
+				if (func != null)
+					return func;
+			}
+			fromEntity = (ContainerEntity) this.getAncestorOfType(ContainerEntity.class);
+		}
+		return null;
+	}
 	
+	/**
+	 * To found the var. Must be invoked after all entities var binding solved
+	 * @param fromEntity
+	 * @param varName
+	 * @return
+	 */
+	public VarEntity lookupVarsInVisibleScope(String varName) {
+		ContainerEntity fromEntity = this;
+		while (fromEntity != null) {
+			if (fromEntity instanceof ContainerEntity) {
+				VarEntity var = ((ContainerEntity) fromEntity).lookupVarLocally(varName);
+				if (var != null)
+					return var;
+			}
+			fromEntity = (ContainerEntity) this.getAncestorOfType(ContainerEntity.class);
+		}
+		return null;
+	}
+
+	private VarEntity lookupVarLocally(String varName) {
+		for (VarEntity var:getVars()) {
+			if (var.getRawName().equals(varName))
+				return var;
+		}
+		return null;
+	}
 }

@@ -28,10 +28,10 @@ public class ForwardDeclareTest extends CppParserTest{
 	    	    };
 	    
 	    for (String src:srcs) {
-		    CppFileParser parser = new  CdtCppFileParser(src,repo, preprocessorHandler );
+		    CppFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-        repo.resolveAllBindings();
+	    inferer.resolveAllBindings();
         File f = new File(srcs[0]);
         Entity e = repo.getEntity("App.foo");
         FileDependencyGenerator dependencyGenerator= new FileDependencyGenerator();

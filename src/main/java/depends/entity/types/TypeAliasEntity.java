@@ -3,8 +3,7 @@ package depends.entity.types;
 import java.util.Collection;
 
 import depends.entity.Entity;
-import depends.entity.TypeInfer;
-import depends.entity.TypeInfer.InferData;
+import depends.entity.Inferer;
 
 public class TypeAliasEntity extends TypeEntity{
 	TypeEntity originType = new EmptyTypeEntity();
@@ -14,17 +13,17 @@ public class TypeAliasEntity extends TypeEntity{
 		this.originTypeName = originTypeName;
 	}
 	@Override
-	public void inferLocalLevelTypes(TypeInfer typeInferer) {
-		InferData r = typeInferer.inferType(this, originTypeName);
+	public void inferLocalLevelEntities(Inferer inferer) {
+		Entity entity = inferer.resolveName(this, originTypeName, true);
 		TypeEntity type = null;
-		if (r!=null) 
-			type = r.type;
+		if (entity!=null) 
+			type = entity.getType();
 		if (type!=null)
 			originType = type;
 		if (type == this) {
 			System.err.println("cannot typedef as self");
 		}
-		originType.inferLocalLevelTypes(typeInferer);
+		originType.inferLocalLevelEntities(inferer);
 	}
 	@Override
 	public Collection<TypeEntity> getInheritedTypes() {

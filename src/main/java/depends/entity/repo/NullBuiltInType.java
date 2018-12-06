@@ -1,8 +1,8 @@
 package depends.entity.repo;
 
-import depends.extractor.BuiltInTypeIdenfier;
+import depends.extractor.BuiltInType;
 
-public class NullParser extends BuiltInTypeIdenfier {
+public class NullBuiltInType extends BuiltInType {
 
 	@Override
 	public String[] getBuiltInTypeStr() {

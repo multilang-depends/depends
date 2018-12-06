@@ -2,42 +2,25 @@ package depends.entity;
 
 /**
  * Dependency relation object
- *
  */
 public class Relation {
 	private String type;
-	private Integer toId = -1;
-	private String toFullName;
-	public Relation(String type, String rhsFullName) {
-		this.type = type;
-		this.toFullName = rhsFullName;
-	}
-	public Relation(String type, Integer fileId) {
-		this.type = type;
-		this.toId = fileId;
-	}
+	private Entity toEntity;
 	
-	public Relation(String type, Integer fileId,String rhsFullName) {
+	public Relation(String type, Entity toEntity) {
+		this.toEntity = toEntity;
 		this.type = type;
-		this.toId = fileId;
-		this.toFullName = rhsFullName;
 	}
-	
 	public String getType() {
 		return type;
 	}
-	public Integer getToId() {
-		return toId;
-	}
-	public String getToFullName() {
-		return toFullName;
-	}
-	public void refreshToId(int rhs) {
-		this.toId  = rhs;
-	}
+
 	@Override
 	public String toString() {
-		return "Relation[" + type + "]-->" + toId + "(" + toFullName + ")";
+		return "Relation[" + type + "]-->" + toEntity.getId() + "(" + toEntity.getQualifiedName() + ")";
+	}
+	public Entity getEntity() {
+		return toEntity;
 	}
 	
 }

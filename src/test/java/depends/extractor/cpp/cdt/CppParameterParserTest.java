@@ -19,9 +19,9 @@ public class CppParameterParserTest extends CppParserTest{
 	@Test
 	public void test_parameter() throws IOException {
 	    String src = "./src/test/resources/cpp-code-examples/FunctionParameters.cpp";
-	    CppFileParser parser = new  CdtCppFileParser(src,repo, preprocessorHandler );
+	    CppFileParser parser = createParser(src);
         parser.parse();
-        repo.resolveAllBindings();
+        inferer.resolveAllBindings();
         assertEquals(4,repo.getEntity("FunctionParameters.function_with_parameters_same_type").getRelations().size());
 	}
 

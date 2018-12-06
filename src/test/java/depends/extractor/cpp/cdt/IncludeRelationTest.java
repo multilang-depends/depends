@@ -30,10 +30,10 @@ public class IncludeRelationTest extends CppParserTest{
 	    	    };
 	    
 	    for (String src:srcs) {
-		    CppFileParser parser = new  CdtCppFileParser(src,repo, preprocessorHandler );
+		    CppFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-        repo.resolveAllBindings();
+	    inferer.resolveAllBindings();
         File f = new File(srcs[0]);
         assertEquals(3,repo.getEntity(f.getCanonicalPath()).getRelations().size());
 	}
@@ -46,10 +46,10 @@ public class IncludeRelationTest extends CppParserTest{
 	    	    };
 	    
 	    for (String src:srcs) {
-		    CppFileParser parser = new  CdtCppFileParser(src,repo, preprocessorHandler );
+		    CppFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-        repo.resolveAllBindings();
+	    inferer.resolveAllBindings();
         File f = new File(srcs[0]);
         assertEquals(1,repo.getEntity(f.getCanonicalPath()).getRelations().size());
 	}
@@ -64,10 +64,10 @@ public class IncludeRelationTest extends CppParserTest{
 	    List<String> includePaths = new ArrayList<>();
 	    includePaths.add("./src/test/resources/cpp-code-examples/includesTest/path/");
 	    for (String src:srcs) {
-		    CppFileParser parser = new  CdtCppFileParser(src,repo, preprocessorHandler );
+		    CppFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-        repo.resolveAllBindings();
+	    inferer.resolveAllBindings();
         File f = new File(srcs[0]);
         assertEquals(1,repo.getEntity(f.getCanonicalPath()).getRelations().size());
 	}
@@ -80,10 +80,10 @@ public class IncludeRelationTest extends CppParserTest{
 	    	    };
 	    
 	    for (String src:srcs) {
-		    CppFileParser parser = new  CdtCppFileParser(src,repo, preprocessorHandler );
+		    CppFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-        repo.resolveAllBindings();
+	    inferer.resolveAllBindings();
         File f = new File(srcs[0]);
         assertEquals("abc",((TypeAliasEntity)repo.getEntity("abc_t")).getOriginType().getRawName());
         

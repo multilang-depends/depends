@@ -21,10 +21,10 @@ public class ContainRelationTest extends CppParserTest{
 	    	    };
 	    
 	    for (String src:srcs) {
-		    CppFileParser parser = new  CdtCppFileParser(src,repo, preprocessorHandler );
+		    CppFileParser parser = new  CdtCppFileParser(src,repo, preprocessorHandler,inferer );
 		    parser.parse();
 	    }
-        repo.resolveAllBindings();
+	    inferer.resolveAllBindings();
         assertEquals(1,repo.getEntity("UnderTest").getRelations().size());
 	}
 	
@@ -36,10 +36,10 @@ public class ContainRelationTest extends CppParserTest{
 	    	    };
 	    
 	    for (String src:srcs) {
-		    CppFileParser parser = new  CdtCppFileParser(src,repo, preprocessorHandler );
+		    CppFileParser parser = new  CdtCppFileParser(src,repo, preprocessorHandler,inferer );
 		    parser.parse();
 	    }
-        repo.resolveAllBindings();
+	    inferer.resolveAllBindings();
         assertEquals(2,repo.getEntity("UnderTest").getRelations().size());
 	}
 	
@@ -51,10 +51,10 @@ public class ContainRelationTest extends CppParserTest{
 	    	    };
 	    
 	    for (String src:srcs) {
-		    CppFileParser parser = new  CdtCppFileParser(src,repo, preprocessorHandler );
+		    CppFileParser parser = new  CdtCppFileParser(src,repo, preprocessorHandler,inferer );
 		    parser.parse();
 	    }
-        repo.resolveAllBindings();
+	    inferer.resolveAllBindings();
         assertEquals(2,repo.getEntity("UnderTest").getRelations().size());
 	}
 	
@@ -68,10 +68,10 @@ public class ContainRelationTest extends CppParserTest{
 	    	    };
 	    
 	    for (String src:srcs) {
-		    CppFileParser parser = new  CdtCppFileParser(src,repo, preprocessorHandler );
+		    CppFileParser parser = new  CdtCppFileParser(src,repo, preprocessorHandler ,inferer);
 		    parser.parse();
 	    }
-        repo.resolveAllBindings();
+	    inferer.resolveAllBindings();
 	}
 	
 	

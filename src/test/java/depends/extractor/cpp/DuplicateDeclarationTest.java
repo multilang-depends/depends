@@ -7,8 +7,6 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
-import depends.extractor.cpp.cdt.CdtCppFileParser;
-
 public class DuplicateDeclarationTest extends CppParserTest {
 	 @Before
 	    public void setUp() {
@@ -23,10 +21,12 @@ public class DuplicateDeclarationTest extends CppParserTest {
 			    	    };
 			    
 			    for (String src:srcs) {
-				    CppFileParser parser = new  CdtCppFileParser(src,repo, preprocessorHandler );
+				    CppFileParser parser = createParser(src);
 				    parser.parse();
 			    }
-		        repo.resolveAllBindings();
+			    inferer.resolveAllBindings();
 		        assertEquals(6,repo.getEntity("X.invoke").getRelations().size());
 		}
+
+
 }

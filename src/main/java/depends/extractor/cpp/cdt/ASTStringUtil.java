@@ -71,7 +71,7 @@ import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 
-import depends.entity.TypeInfer;
+import depends.entity.Inferer;
 
 /**
  * This is a utility class to help convert AST elements to strings.
@@ -419,7 +419,7 @@ public class ASTStringUtil {
 			appendBareNameString(buffer, enumerationSpec.getName());
 		} else if (declSpecifier instanceof IASTSimpleDeclSpecifier) {
 			final IASTSimpleDeclSpecifier simpleDeclSpec= (IASTSimpleDeclSpecifier) declSpecifier;
-			buffer.append(TypeInfer.buildInType.getRawName());
+			buffer.append(Inferer.buildInType.getRawName());
 		} else if (declSpecifier instanceof IASTNamedTypeSpecifier) {
 			final IASTNamedTypeSpecifier namedTypeSpec= (IASTNamedTypeSpecifier) declSpecifier;
 			appendBareNameString(buffer, namedTypeSpec.getName());

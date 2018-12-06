@@ -27,10 +27,10 @@ public class extendsTest extends CppParserTest{
 	    	    };
 	    
 	    for (String src:srcs) {
-		    CppFileParser parser = new  CdtCppFileParser(src,repo, preprocessorHandler );
+		    CppFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-        repo.resolveAllBindings();
+	    inferer.resolveAllBindings();
         File f = new File(srcs[0]);
         Entity e = repo.getEntity("B");
         assertEquals(2,e.getRelations().size());

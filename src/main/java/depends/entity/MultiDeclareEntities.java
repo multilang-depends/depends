@@ -4,6 +4,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import depends.entity.types.TypeEntity;
+
+/**
+ * MultiDeclareEntity is a special container, which is used as a wrapper
+ * of multi-declaration. for example, 
+ * in C++, a function could be declared in different place with the same signature.
+ */
 public class MultiDeclareEntities extends ContainerEntity {
 	List<ContainerEntity> entities = new ArrayList<>();
 	public MultiDeclareEntities(Entity entity, int id ) {
@@ -13,9 +20,9 @@ public class MultiDeclareEntities extends ContainerEntity {
 	}
 
 	@Override
-	public void inferLocalLevelTypes(TypeInfer typeInferer) {
+	public void inferLocalLevelEntities(Inferer inferer) {
 		for (Entity entity:entities) {
-			entity.inferLocalLevelTypes(typeInferer);
+			entity.inferLocalLevelEntities(inferer);
 		}
 	}
 
@@ -35,5 +42,14 @@ public class MultiDeclareEntities extends ContainerEntity {
 			children.addAll(entity.getChildren());
 		}
 		return children;
+	}
+
+	@Override
+	public TypeEntity getType() {
+		for (Entity entity:entities) {
+			if(entity.getType()!=null);
+				return entity.getType();
+		}
+		return null;
 	}
 }

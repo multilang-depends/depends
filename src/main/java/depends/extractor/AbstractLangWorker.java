@@ -9,7 +9,8 @@ import java.util.Set;
 import org.codehaus.plexus.util.FileUtils;
 
 import depends.deptypes.DependencyType;
-import depends.entity.Entity;
+import depends.entity.RelationCounter;
+import depends.entity.Inferer;
 import depends.entity.repo.EntityRepo;
 import depends.format.dot.DotDataBuilder;
 import depends.format.excel.ExcelDataBuilder;
@@ -24,6 +25,14 @@ import depends.format.xml.XmlFormatter;
 import depends.util.Configure;
 import depends.util.FileTraversal;
 abstract public class AbstractLangWorker {
+	public abstract String supportedLanguage();
+	public abstract String[] fileSuffixes();
+
+	private Configure configure ;
+	protected Inferer inferer;
+	protected EntityRepo entityRepo;
+	DependencyMatrix dependencyMatrix;
+
 	public AbstractLangWorker(Configure configure) {
 		this.configure = configure;
 		entityRepo = new EntityRepo();
@@ -31,15 +40,7 @@ abstract public class AbstractLangWorker {
 	public void register() {
 		LangWorkers.getRegistry().register(this);
 	}
-	public abstract String supportedLanguage();
 	
-	public abstract String[] fileSuffixes();
-	
-    private Configure configure ;
-
-    DependencyMatrix dependencyMatrix;
-
-    protected EntityRepo entityRepo = new EntityRepo();
     
 	public void work() {
         parseAllFiles();
@@ -64,17 +65,16 @@ abstract public class AbstractLangWorker {
 	 * @return unsolved bindings
  	 */
     protected void resolveBindings() {
-        System.out.println("start resolve bindings...");
-        Set<String> unsolved = entityRepo.resolveAllBindings();
+		System.out.println("Resolve types and bindings of variables, methods and expressions....");
+        Set<String> unsolved = inferer.resolveAllBindings();
         if (unsolved.size()>0)
         	System.err.println("The following items are unsolved." + unsolved);
-        System.out.println("bindings resolved successfully...");
+        System.out.println("types and bindings resolved successfully...");
     }
     
     private void identifyDependencies(){
-        System.out.println("dependencie data generating...");	
-        FileDependencyGenerator dependencyGenerator= new FileDependencyGenerator();
-        dependencyMatrix  = dependencyGenerator.buildWithRemap(entityRepo);
+		System.out.println("dependencie data generating...");	
+        dependencyMatrix  = (new FileDependencyGenerator()).buildWithRemap(entityRepo);
         System.out.println("dependencie data generating done successfully...");	 	
     }
 

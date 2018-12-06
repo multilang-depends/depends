@@ -19,9 +19,9 @@ public class CppExpressionTest extends CppParserTest{
 	@Test
 	public void test_expressions() throws IOException {
 	    String src = "./src/test/resources/cpp-code-examples/Expressions.cpp";
-	    CppFileParser parser = new  CdtCppFileParser(src,repo, preprocessorHandler );
+	    CppFileParser parser = createParser(src);
         parser.parse();
-        repo.resolveAllBindings();
+        inferer.resolveAllBindings();
         assertEquals(18,repo.getEntity("foo").getRelations().size());
 	}
 

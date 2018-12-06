@@ -7,7 +7,7 @@ import java.util.List;
 
 import depends.entity.ContainerEntity;
 import depends.entity.Entity;
-import depends.entity.TypeInfer;
+import depends.entity.Inferer;
 import depends.importtypes.ExactMatchImport;
 import depends.importtypes.FileImport;
 import depends.importtypes.Import;
@@ -33,6 +33,14 @@ public class FileEntity extends ContainerEntity {
 		importedNames.add(imported);
 	}
 	
+	/**
+	 * To match the imported name by suffix
+	 * for example:
+	 *    import a.b.ClassX;
+	 * the b.ClassX, ClassX , a.b.classX should be matched
+	 * @param lastName
+	 * @return
+	 */
 	public String importedSuffixMatch(String lastName) {
 		if (!lastName.startsWith("."))
 			lastName = "." + lastName;
@@ -58,11 +66,11 @@ public class FileEntity extends ContainerEntity {
 	}
 
 	@Override
-	public void inferLocalLevelTypes(TypeInfer typeInferer) {
-		this.importedRelationEntities = typeInferer.getImportedRelationEntities(importedNames);
-		this.importedTypes = typeInferer.getImportedTypes(importedNames);
-		this.importedFiles = typeInferer.getImportedFiles(importedNames);
-		super.inferLocalLevelTypes(typeInferer);
+	public void inferLocalLevelEntities(Inferer inferer) {
+		this.importedRelationEntities = inferer.getImportedRelationEntities(importedNames);
+		this.importedTypes = inferer.getImportedTypes(importedNames);
+		this.importedFiles = inferer.getImportedFiles(importedNames);
+		super.inferLocalLevelEntities(inferer);
 	}
 
 	public boolean isInProjectScope() {

@@ -17,7 +17,6 @@ public class RelationCounter {
 	public RelationCounter(Collection<Entity> entities) {
 		this.entities = entities;
 	}
-
 	
 	public void computeRelations() {
 		for (Entity entity:entities) {
@@ -40,13 +39,13 @@ public class RelationCounter {
 	private void computeContainerRelations(ContainerEntity entity) {
 		for (VarEntity var:entity.getVars()) {
 			if (var.getType()!=null)
-				entity.addRelation(new Relation(DependencyType.CONTAIN,var.getType().getId(),var.getType().getQualifiedName()));
+				entity.addRelation(new Relation(DependencyType.CONTAIN,var.getType()));
 		}
 		for (TypeEntity type:entity.getResolvedAnnotations()) {
-			entity.addRelation(new Relation(DependencyType.USE,type.getId(),type.getQualifiedName()));
+			entity.addRelation(new Relation(DependencyType.USE,type));
 		}
 		for (TypeEntity type:entity.getResolvedTypeParameters()) {
-			entity.addRelation(new Relation(DependencyType.USE,type.getId(),type.getQualifiedName()));
+			entity.addRelation(new Relation(DependencyType.USE,type));
 		}
 		
 		HashSet<Entity> usedEntities = new HashSet<>();
@@ -57,45 +56,45 @@ public class RelationCounter {
 			}
 			
 			if (expression.isCall) {
-				entity.addRelation(new Relation(DependencyType.CALL,referredEntity.getId(),referredEntity.getQualifiedName()));
+				entity.addRelation(new Relation(DependencyType.CALL,referredEntity));
 			}
 			if (expression.isCreate) {
-				entity.addRelation(new Relation(DependencyType.CREATE,referredEntity.getId(),referredEntity.getQualifiedName()));
+				entity.addRelation(new Relation(DependencyType.CREATE,referredEntity));
 			}
 			else if (expression.isSet) { //SET is merged with USE
-				entity.addRelation(new Relation(DependencyType.USE,referredEntity.getId(),referredEntity.getQualifiedName()));
+				entity.addRelation(new Relation(DependencyType.USE,referredEntity));
 			}
 			else if (expression.isCast) { 
-				entity.addRelation(new Relation(DependencyType.CAST,referredEntity.getId(),referredEntity.getQualifiedName()));
+				entity.addRelation(new Relation(DependencyType.CAST,referredEntity));
 			}else {
 				usedEntities.add(expression.getReferredEntity());
 			}
 		}
 		
 		for (Entity usedEntity:usedEntities) {
-			entity.addRelation(new Relation(DependencyType.USE,usedEntity.getId(),usedEntity.getQualifiedName()));
+			entity.addRelation(new Relation(DependencyType.USE,usedEntity));
 		}
 	}
 
 	private void computeTypeRelations(TypeEntity type) {
 		for (TypeEntity superType:type.getInheritedTypes()) {
-			type.addRelation(new Relation(DependencyType.INHERIT,superType.getId(),superType.getQualifiedName()));
+			type.addRelation(new Relation(DependencyType.INHERIT,superType));
 		}
 		for (TypeEntity interfaceType:type.getImplementedTypes()) {
-			type.addRelation(new Relation(DependencyType.IMPLEMENT,interfaceType.getId(),interfaceType.getQualifiedName()));
+			type.addRelation(new Relation(DependencyType.IMPLEMENT,interfaceType));
 		}
 	}
 
 	private void computeFunctionRelations(FunctionEntity func) {
 		for (TypeEntity returnType:func.getReturnTypes()) {
-			func.addRelation(new Relation(DependencyType.RETURN,returnType.getId(),returnType.getQualifiedName()));
+			func.addRelation(new Relation(DependencyType.RETURN,returnType));
 		}
 		for (VarEntity parameter:func.getParameters()) {
 			if (parameter.getType()!=null) 
-				func.addRelation(new Relation(DependencyType.PARAMETER,parameter.getType().getId(),parameter.getType().getQualifiedName()));
+				func.addRelation(new Relation(DependencyType.PARAMETER,parameter.getType()));
 		}
 		for (TypeEntity throwType:func.getThrowTypes()) {
-			func.addRelation(new Relation(DependencyType.THROW,throwType.getId(),throwType.getQualifiedName()));
+			func.addRelation(new Relation(DependencyType.THROW,throwType));
 		}
 	}
 
@@ -105,9 +104,9 @@ public class RelationCounter {
 			if (imported instanceof FileEntity)
 			{
 				if (((FileEntity)imported).isInProjectScope())
-					file.addRelation(new Relation(DependencyType.IMPORT,imported.getId()));
+					file.addRelation(new Relation(DependencyType.IMPORT,imported));
 			}else {
-				file.addRelation(new Relation(DependencyType.IMPORT,imported.getId()));
+				file.addRelation(new Relation(DependencyType.IMPORT,imported));
 			}
 		}
 	}

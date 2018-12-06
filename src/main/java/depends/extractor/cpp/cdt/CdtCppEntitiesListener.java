@@ -26,7 +26,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTProblemDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTVisibilityLabel;
 
 import depends.entity.IdGenerator;
-import depends.entity.TypeInfer;
+import depends.entity.Inferer;
 import depends.entity.repo.EntityRepo;
 import depends.entity.types.FunctionEntity;
 import depends.entity.types.VarEntity;
@@ -40,12 +40,14 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 	private IdGenerator idGenerator;
 	private PreprocessorHandler preprocessorHandler;
 	private EntityRepo entityRepo;
+	Inferer inferer;
 	private ExpressionUsage expressionUsage;
-	public CdtCppEntitiesListener(String fileFullPath, EntityRepo entityRepo, PreprocessorHandler preprocessorHandler) {
+	public CdtCppEntitiesListener(String fileFullPath, EntityRepo entityRepo, PreprocessorHandler preprocessorHandler,Inferer inferer) {
 		super(true);
 		this.context = new CppHandlerContext(entityRepo);
 		idGenerator = entityRepo;
 		this.entityRepo = entityRepo;
+		this.inferer = inferer;
 		context.startFile(fileFullPath);
 		this.preprocessorHandler = preprocessorHandler;
 		expressionUsage = new ExpressionUsage(context);
@@ -55,16 +57,16 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 	public int visit(IASTTranslationUnit tu) {
 		for (String incl:preprocessorHandler.getDirectIncludedFiles(tu.getAllPreprocessorStatements())) {
 			context.foundNewImport(new FileImport(incl));
-			CdtCppFileParser importedParser = new CdtCppFileParser(incl, entityRepo, preprocessorHandler);
+			CdtCppFileParser importedParser = new CdtCppFileParser(incl, entityRepo, preprocessorHandler,inferer);
 			importedParser.parse(false);
 		}
 		MacroExtractor macroExtractor = new MacroExtractor(tu.getAllPreprocessorStatements());
 		for (String var:macroExtractor.getMacroVars()) {
-			context.foundVarDefintion(var,TypeInfer.buildInType.getRawName());
+			context.foundVarDefintion(var,Inferer.buildInType.getRawName());
 		}
 		
 		for (String var:macroExtractor.getMacroFuncs()) {
-			context.foundMethodDeclarator(var, TypeInfer.buildInType.getRawName(), new ArrayList<>());
+			context.foundMethodDeclarator(var, Inferer.buildInType.getRawName(), new ArrayList<>());
 			context.exitLastedEntity();
 		}
 		return super.visit(tu);
@@ -138,7 +140,7 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 				IASTSimpleDeclaration decl = (IASTSimpleDeclaration)(declarator.getParent());
 				returnType = ASTStringUtil.getName(decl.getDeclSpecifier());
 				String rawName = declarator.getName().toString();
-				FunctionEntity namedEntity = entityRepo.resolveFunctionBindings(context.currentFile(), rawName);
+				FunctionEntity namedEntity = context.currentFile().lookupFunctionInVisibleScope(rawName);
 				if (namedEntity!=null) {
 					rawName = namedEntity.getQualifiedName();
 				}
@@ -148,7 +150,7 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 				IASTFunctionDefinition decl = (IASTFunctionDefinition)declarator.getParent();
 				returnType= ASTStringUtil.getReturnTypeString(decl.getDeclSpecifier(), decl.getDeclarator());
 				String rawName = declarator.getName().toString();
-				FunctionEntity namedEntity = entityRepo.resolveFunctionBindings(context.currentFile(), rawName);
+				FunctionEntity namedEntity = context.currentFile().lookupFunctionInVisibleScope(rawName);
 				if (namedEntity!=null) {
 					rawName = namedEntity.getQualifiedName();
 				}

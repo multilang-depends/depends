@@ -2,6 +2,7 @@ package depends.entity;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import depends.entity.repo.EntityRepo;
@@ -12,14 +13,15 @@ import depends.format.matrix.FileDependencyGenerator;
 import depends.importtypes.ExactMatchImport;
 import depends.importtypes.PackageWildCardImport;
 
-public class EntityRepoExpendsImportsOfPackageTest {
+public class EntityRepoExpendsImportsOfPackageTest extends JavaParserTest  {
 
 	private static final String packageName = "packagex";
-
+	@Before
+	public void setUp() {
+		super.init();
+	}
 	@Test
 	public void testExpendsPackageImports() {
-		EntityRepo entityRepo = new EntityRepo();
-
 		JavaHandlerContext visitor = new JavaHandlerContext(entityRepo);
 		visitor.startFile("/tmp/fileA.java");
 		visitor.foundNewPackage(packageName);
@@ -29,7 +31,7 @@ public class EntityRepoExpendsImportsOfPackageTest {
 		visitor.startFile("/tmp/thefile.java");
 		visitor.foundNewImport(new PackageWildCardImport(packageName));
 		
-		entityRepo.resolveAllBindings();
+		inferer.resolveAllBindings();
 		
 		FileDependencyGenerator dependencyGenerator= new FileDependencyGenerator();
         DependencyMatrix dependencyMatrix = dependencyGenerator.build(entityRepo);
@@ -38,8 +40,6 @@ public class EntityRepoExpendsImportsOfPackageTest {
 	
 	@Test
 	public void testNormalImportNoNeedExpansion() {
-		EntityRepo entityRepo = new EntityRepo();
-
 		JavaHandlerContext context = new JavaHandlerContext(entityRepo);
 		context.startFile("/tmp/fileA.java");
 		context.foundNewPackage(packageName);
@@ -51,7 +51,7 @@ public class EntityRepoExpendsImportsOfPackageTest {
 		context.startFile("/tmp/thefile.java");
 		context.foundNewImport(new ExactMatchImport(packageName+".ClassA"));
 		
-		entityRepo.resolveAllBindings();
+		inferer.resolveAllBindings();
 		
 		FileDependencyGenerator dependencyGenerator= new FileDependencyGenerator();
         DependencyMatrix dependencyMatrix = dependencyGenerator.build(entityRepo);

@@ -6,7 +6,7 @@ import java.util.List;
 
 import depends.entity.ContainerEntity;
 import depends.entity.Entity;
-import depends.entity.TypeInfer;
+import depends.entity.Inferer;
 
 public class FunctionEntity extends ContainerEntity{
 	private List<String> returnTypeIdentifiers = new ArrayList<>();
@@ -27,7 +27,8 @@ public class FunctionEntity extends ContainerEntity{
 		return returnTypes;
 	}
 	
-	public TypeEntity getReturnType() {
+	@Override
+	public TypeEntity getType() {
 		return returnType;
 	}
 
@@ -39,16 +40,16 @@ public class FunctionEntity extends ContainerEntity{
 	}
 	
 	@Override
-	public void inferLocalLevelTypes(TypeInfer typeInferer) {
+	public void inferLocalLevelEntities(Inferer inferer) {
 		for (VarEntity param:parameters) {
-			param.inferLocalLevelTypes(typeInferer);
+			param.inferLocalLevelEntities(inferer);
 		}
-		returnTypes= identiferToTypes(typeInferer,this.returnTypeIdentifiers);
+		returnTypes= identiferToTypes(inferer,this.returnTypeIdentifiers);
 		if (returnTypes.size()>0)
 			returnType = returnTypes.iterator().next();
 
-		throwTypes= identiferToTypes(typeInferer,this.throwTypesIdentifiers);
-		super.inferLocalLevelTypes(typeInferer);
+		throwTypes= identiferToTypes(inferer,this.throwTypesIdentifiers);
+		super.inferLocalLevelEntities(inferer);
 	}
 	public Collection<VarEntity> getParameters() {
 		return parameters;
@@ -57,13 +58,13 @@ public class FunctionEntity extends ContainerEntity{
 		return throwTypes;
 	}
 	@Override
-	public VarEntity resolveVarBindings(String varName) {
+	public VarEntity lookupVarsInVisibleScope(String varName) {
 		for (VarEntity param:parameters) {
 			if (varName.equals(param.getRawName())) {
 				return param;
 			}
 		}
-		return super.resolveVarBindings(varName);
+		return super.lookupVarsInVisibleScope(varName);
 	}
 	public void addParameter(VarEntity var) {
 		this.parameters.add(var);

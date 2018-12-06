@@ -4,10 +4,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import depends.entity.types.TypeEntity;
 
-import depends.entity.repo.EntityRepo;
-import depends.entity.types.PackageEntity;
-
+/**
+ * Entity is the root of all entities, including file, package, module, 
+ * class, method/function etc.
+ * Each entity has unique id, name,qualifiedName, parent, children
+ * We also use entity to record relations 
+ */
 public abstract class Entity {
 	int id=-1;
 	String qualifiedName = null;
@@ -21,17 +25,20 @@ public abstract class Entity {
 		this.qualifiedName = null;
 		this.rawName = rawName;
 		this.parent = parent;
-		this.setId(id);
+		this.id = id;
 		if (parent!=null)
 			parent.children.add(this);
 		deduceQualifiedName();
 	}
 
-    public String getPackageName() {
-		Entity packageEntity = this.getAncestorOfType(PackageEntity.class);
-		return packageEntity==null?"":packageEntity.getQualifiedName();
-	}
-    
+    /**
+     * Rule 1: if it contains '.' , then the name is equal to raw name
+     * Rule 2: if parent not exists, the name is equal to raw name
+     * Rule 3: if parent exists but no qualified name exists or empty, the name is equal to raw name
+     * Rule 4: otherwise, qualified name = parent_qualfied_name + "."+rawName
+     * Rule 5: make sure the qualified name do not start with '.'
+     * TODO: the Rule 1 should be further check. Maybe issue exists - (C++中的ClassName::MethodName()会不会有问题？
+     */
 	private void deduceQualifiedName() {
 		rawName = rawName.replace("::","." );
 		if (this.rawName.contains(".")) {
@@ -61,21 +68,12 @@ public abstract class Entity {
 		return rawName;
 	}
 
-
-    public int getId() {
+	public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public void addRelation(Relation relation) {
         relations.add(relation);
-    }
-
-    public void addRelations(ArrayList<Relation> relations) {
-        this.relations.addAll(relations);
     }
 
     public ArrayList<Relation> getRelations() {
@@ -85,22 +83,6 @@ public abstract class Entity {
     public void addChild(Entity child) {
         children.add(child);
     }
-
-	public Set<String> resolveBinding(EntityRepo registry) {
-		Set<String> unsolved = new HashSet<>();
-		for (Relation relation:this.relations) {
-			if (relation.getToId()<0) {
-				String fullName = relation.getToFullName();
-				Entity rhs = registry.getEntity(fullName);
-				if (rhs!=null) {
-					relation.refreshToId(rhs.getId());
-				}else {
-					unsolved.add(fullName);
-				}
-			}
-		}
-		return unsolved;
-	}
 
 	public Entity getParent() {
 		return parent;
@@ -126,19 +108,16 @@ public abstract class Entity {
 		return qualifiedName;
 	}
 
-	public void inferTypes(TypeInfer typeInferer) {
-		inferLocalLevelTypes(typeInferer);
-		for (Entity child:children) {
-			child.inferTypes(typeInferer);
-		}
-	}
-	public abstract void inferLocalLevelTypes(TypeInfer typeInferer);
-
 	@Override
 	public String toString() {
 		return "Entity [id=" + id + ", qualifiedName=" + qualifiedName + ", rawName=" + rawName + "]";
 	}
 
+	/**
+	 * Get ancestor of type.  
+	 * @param classType
+	 * @return null (if not exist) or the type
+	 */
 	public Entity getAncestorOfType(@SuppressWarnings("rawtypes") Class classType) {
 		Entity fromEntity = this;
 		while(fromEntity!=null) {
@@ -150,5 +129,19 @@ public abstract class Entity {
 		return null;
 	}
 
+	/**
+	 * Invoke inferer to resolve the entity type etc. 
+	 * */
+	public void inferEntities(Inferer inferer) {
+		inferLocalLevelEntities(inferer);
+		for (Entity child:children) {
+			child.inferEntities(inferer);
+		}
+	}
+	public abstract void inferLocalLevelEntities(Inferer inferer);
+	
+	public TypeEntity getType() {
+		return null;
+	}
 	
 }

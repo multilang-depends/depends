@@ -5,7 +5,7 @@ import java.util.Collection;
 
 import depends.entity.ContainerEntity;
 import depends.entity.Entity;
-import depends.entity.TypeInfer;
+import depends.entity.Inferer;
 
 public class TypeEntity extends ContainerEntity{
 	Collection<TypeEntity> inheritedTypes = new ArrayList<>();
@@ -20,12 +20,12 @@ public class TypeEntity extends ContainerEntity{
 		implementedIdentifiers = new ArrayList<>();
 	}
 	@Override
-	public void inferLocalLevelTypes(TypeInfer typeInferer) {
-		inheritedTypes= identiferToTypes(typeInferer,this.inhertedTypeIdentifiers);
-		implementedTypes= identiferToTypes(typeInferer,this.implementedIdentifiers);
+	public void inferLocalLevelEntities(Inferer inferer) {
+		inheritedTypes= identiferToTypes(inferer,this.inhertedTypeIdentifiers);
+		implementedTypes= identiferToTypes(inferer,this.implementedIdentifiers);
 		if (inheritedTypes.size()>0)
 			inheritedType = inheritedTypes.iterator().next();
-		super.inferLocalLevelTypes(typeInferer);
+		super.inferLocalLevelEntities(inferer);
 	}
 	public void addImplements(String typeName) {
 		if (typeName.equals(this.getRawName())) return;
@@ -47,5 +47,28 @@ public class TypeEntity extends ContainerEntity{
 	
  	public TypeEntity getInheritedType() {
 		return inheritedType;
+	}
+ 	
+ 	@Override
+ 	protected FunctionEntity lookupFunctionLocally(String functionName) {
+		FunctionEntity funcType = super.lookupFunctionLocally(functionName);
+		if (funcType!=null) return funcType;
+		for (TypeEntity inhertedType : getInheritedTypes()) {
+			funcType = inhertedType.lookupFunctionLocally(functionName);
+			if (funcType == null)
+				break;
+		}
+		if (funcType != null)
+			return funcType;
+		for (TypeEntity implType : getImplementedTypes()) {
+			funcType = implType.lookupFunctionLocally( functionName);
+			if (funcType == null)
+				break;
+		}
+		return funcType;
+ 	}
+ 	@Override
+ 	public TypeEntity getType() {
+		return this;
 	}
 }

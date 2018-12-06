@@ -9,10 +9,15 @@ import org.junit.Before;
 import org.junit.Test;
 
 import depends.deptypes.DependencyType;
+import depends.entity.Entity;
 import depends.entity.Relation;
+import depends.entity.Inferer;
 import depends.entity.repo.EntityRepo;
 import depends.entity.types.FileEntity;
+import depends.entity.types.PackageEntity;
 import depends.entity.types.TypeEntity;
+import depends.extractor.java.JavaBuiltInType;
+import depends.extractor.java.JavaImportLookupStrategy;
 
 public class FileDependencyGeneratorTest {
 
@@ -26,19 +31,19 @@ public class FileDependencyGeneratorTest {
 	@Before
 	public void setUp() throws Exception {
 		entityRepo = new EntityRepo();
-
+		Inferer inferer = new Inferer(entityRepo,new JavaImportLookupStrategy(),new JavaBuiltInType());
 		//create a file 
 		FileEntity f = new FileEntity(FILE1_NAME,file1Id);
 		TypeEntity p = new TypeEntity("test.packagenamea.ClassA",  f,typeId);
 	
 		FileEntity theEntity = new FileEntity(FILE2_NAME,file2Id);
-		Relation r = new Relation(DependencyType.IMPORT, "test.packagenamea.ClassA");
+		Relation r = new Relation(DependencyType.IMPORT, p);
 		theEntity.addRelation(r);
 		entityRepo.add(f);
 		entityRepo.add(p);
 		entityRepo.add(theEntity);
 		
-		entityRepo.resolveAllBindings();
+		inferer.resolveAllBindings();
 	}
 
 	@Test

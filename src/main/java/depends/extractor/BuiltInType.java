@@ -3,9 +3,9 @@ package depends.extractor;
 import java.util.HashSet;
 import java.util.Set;
 
-import depends.entity.TypeInfer;
+import depends.entity.Inferer;
 
-public abstract class BuiltInTypeIdenfier {
+public abstract class BuiltInType {
 
 	
 	public void createBuiltInTypes() {
@@ -24,7 +24,7 @@ public abstract class BuiltInTypeIdenfier {
 	private Set<String> builtInPrefix = new HashSet<>();
 
 	public boolean isBuiltInType(String type) {
-		if (TypeInfer.buildInType.getRawName().equals(type)) return true;
+		if (Inferer.buildInType.getRawName().equals(type)) return true;
 		return builtInType.contains(type); 
 	}
 

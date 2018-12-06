@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import depends.entity.Entity;
-import depends.entity.TypeInfer.InferData;
+import depends.entity.Inferer;
 import depends.entity.repo.EntityRepo;
 import depends.entity.types.FileEntity;
 import depends.entity.types.TypeEntity;
@@ -15,10 +15,10 @@ import depends.importtypes.Import;
 
 public class CppImportLookupStrategy implements ImportLookupStrategy {
 	@Override
-	public InferData lookupImportedType(String name, FileEntity fileEntity, EntityRepo repo) {
+	public Entity lookupImportedType(String name, FileEntity fileEntity, EntityRepo repo, Inferer inferer) {
 		String importedString = fileEntity.importedSuffixMatch(name);
 		if (importedString!=null) {
-			 InferData r = repo.getTypeEntityByFullName(importedString);
+			Entity r = repo.getEntity(importedString);
 			if (r!=null) return r;
 		}
 		
@@ -30,12 +30,12 @@ public class CppImportLookupStrategy implements ImportLookupStrategy {
 			if (importedItem instanceof FileEntity) {
 				FileEntity importedFile = (FileEntity) repo.getEntity(file);
 				if (importedFile==null) continue;
-				 InferData entity = repo.inferTypeWithoutImportSearch(importedFile,name);
+				 Entity entity = inferer.resolveName(importedFile,name, false);
 				if (entity!=null) return entity;
 				 List<Entity> namespaces = fileEntity.getImportedTypes();
 				for (Entity ns:namespaces) {
 					String nameWithPrefix = ns.getQualifiedName() + "." + name;
-					entity = repo.inferTypeWithoutImportSearch(importedFile,nameWithPrefix);
+					entity = inferer.resolveName(importedFile,nameWithPrefix, false);
 					if (entity!=null) return entity;				
 				}
 			}

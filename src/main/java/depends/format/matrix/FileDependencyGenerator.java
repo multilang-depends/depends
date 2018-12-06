@@ -4,7 +4,9 @@ import java.util.ArrayList;
 
 import depends.entity.Entity;
 import depends.entity.Relation;
+import depends.entity.repo.EntityNotExistsException;
 import depends.entity.repo.EntityRepo;
+import depends.entity.repo.NoRequestedTypeOfAncestorExistsException;
 import depends.entity.types.FileEntity;
 import depends.util.Tuple;
 
@@ -21,11 +23,11 @@ public class FileDependencyGenerator {
         	if (entity instanceof FileEntity){
         		files.add( entity.getRawName());
         	}
-        	int fileEntityFrom = getFileEntityIdNoException(entityRepo, entity.getId());
+        	int fileEntityFrom = getFileEntityIdNoException(entityRepo, entity);
         	if (fileEntityFrom==-1) continue;
         	for (Relation relation:entity.getRelations()) {
-        		if (relation.getToId()>=0) {
-        			int fileEntityTo = getFileEntityIdNoException(entityRepo,relation.getToId());
+        		if (relation.getEntity().getId()>=0) {
+        			int fileEntityTo = getFileEntityIdNoException(entityRepo,relation.getEntity());
         			if (fileEntityTo==-1) continue;
         			dependencyMatrix.addDependency(relation.getType(), new Tuple<Integer, Integer>(fileEntityFrom,fileEntityTo));
         		}
@@ -47,11 +49,10 @@ public class FileDependencyGenerator {
 		return r;
 	}
 
-	private int getFileEntityIdNoException(EntityRepo entityRepo, Integer entityId){
-		try {
-			return entityRepo.getAncestorOfType(entityId, FileEntity.class);
-		} catch (Exception e) {
+	private int getFileEntityIdNoException(EntityRepo entityRepo, Entity entity) {
+		Entity ancestor = entity.getAncestorOfType(FileEntity.class);
+		if (ancestor==null)
 			return -1;
-		} 
+		return ancestor.getId();
 	}
-	}
+}

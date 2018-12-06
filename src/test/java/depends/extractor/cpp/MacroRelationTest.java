@@ -15,20 +15,6 @@ public class MacroRelationTest extends CppParserTest{
     }
 	
 	@Test
-	public void macro_var_relation() throws IOException {
-	    String[] srcs = new String[] {
-	    		"./src/test/resources/cpp-code-examples/MacroRelationTest.cpp",
-	    	    };
-	    
-	    for (String src:srcs) {
-		    CppFileParser parser = new  CdtCppFileParser(src,repo, preprocessorHandler );
-		    parser.parse();
-	    }
-        repo.resolveAllBindings();
-        assertEquals(1,repo.getEntity("foo").getRelations().size());
-	}
-	
-	@Test
 	public void macro_var_relation_in_seperate_file() throws IOException {
 	    String[] srcs = new String[] {
 	    		"./src/test/resources/cpp-code-examples/MacroRelationTestInSeperateFile.h",
@@ -36,28 +22,12 @@ public class MacroRelationTest extends CppParserTest{
 	    	    };
 	    
 	    for (String src:srcs) {
-		    CppFileParser parser = new  CdtCppFileParser(src,repo, preprocessorHandler );
+		    CppFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-        repo.resolveAllBindings();
+	    inferer.resolveAllBindings();
         assertEquals(1,repo.getEntity("foo").getRelations().size());
 	}
-	
-	@Test
-	public void macro_func_relation() throws IOException {
-	    String[] srcs = new String[] {
-	    		"./src/test/resources/cpp-code-examples/MacroRelationTest.cpp",
-	    	    };
-	    
-	    for (String src:srcs) {
-		    CppFileParser parser = new  CdtCppFileParser(src,repo, preprocessorHandler );
-		    parser.parse();
-	    }
-        repo.resolveAllBindings();
-        assertEquals(1,repo.getEntity("bar").getRelations().size());
-	}
-	
-	
 	
 	
 }

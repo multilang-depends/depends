@@ -1,12 +1,11 @@
 package depends.extractor.cpp.cdt;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 
 import depends.entity.Entity;
+import depends.entity.Inferer;
 import depends.entity.repo.EntityRepo;
 import depends.entity.types.FileEntity;
 import depends.extractor.cpp.CppFileParser;
@@ -15,11 +14,13 @@ import depends.util.FileUtil;
 public class CdtCppFileParser extends CppFileParser {
 
 	private PreprocessorHandler preprocessorHandler ;
+	private Inferer inferer;
 
-	public CdtCppFileParser(String fileFullPath, EntityRepo entityRepo,PreprocessorHandler preprocessorHandler) {
-		super(fileFullPath, entityRepo);
+	public CdtCppFileParser(String fileFullPath, EntityRepo entityRepo,PreprocessorHandler preprocessorHandler, Inferer inferer) {
+		super(fileFullPath, entityRepo,inferer);
 		this.preprocessorHandler = preprocessorHandler;
 		this.fileFullPath = FileUtil.uniqFilePath(fileFullPath);
+		this.inferer = inferer;
 
 	}
 	@Override
@@ -41,7 +42,7 @@ public class CdtCppFileParser extends CppFileParser {
 			return;
 		}
 		
-		CdtCppEntitiesListener bridge = new CdtCppEntitiesListener(fileFullPath, entityRepo, preprocessorHandler );
+		CdtCppEntitiesListener bridge = new CdtCppEntitiesListener(fileFullPath, entityRepo, preprocessorHandler,inferer);
 		IASTTranslationUnit translationUnit = (new CDTParser(preprocessorHandler.getIncludePaths())).parse(fileFullPath);
 		translationUnit.accept(bridge);
 	}

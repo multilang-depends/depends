@@ -1,7 +1,6 @@
 package depends.entity;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import depends.entity.types.FunctionEntity;
@@ -15,9 +14,6 @@ public class Expression {
 	public Integer firstChildId; //by default, parent expression type determined by most left child
 	public Expression parent;
 	public String text; // for debug purpose
-
-
-	private TypeEntity type; // the type we care - for relation calculation
 	public String rawType; //the raw type name
 	public String identifier; // the varName, or method name, etc.
 	public boolean isSet = false; // is a set relation from right to leftHand
@@ -28,18 +24,21 @@ public class Expression {
 	public boolean isCast = false;
 	public boolean deriveTypeFromChild = true;
 	List<Tuple<String, String>> relations = new ArrayList<>();
+
+	private TypeEntity type; // the type we care - for relation calculation. 
+	                         //for leaf, it equals to referredEntity.getType. otherwise, depends on child's type strategy
 	private Entity referredEntity;
 	public TypeEntity getType() {
 		return type;
 	}
 
-	public void setType(TypeEntity type, Entity referredEntity, TypeInfer typeInferer) {
+	public void setType(TypeEntity type, Entity referredEntity, Inferer inferer) {
 		if (this.type!=null) return;
 		this.type = type;
 		this.referredEntity  = referredEntity;
 		if (this.referredEntity==null)
 			this.referredEntity = type;
-		deduceParentType(typeInferer);
+		deduceParentType(inferer);
 	}
 	
 	public Expression(Integer id, Integer parentId) {
@@ -65,43 +64,47 @@ public class Expression {
 	/**
 	 * deduce type of parent based on child's type
 	 * @param expressionList
-	 * @param typeInfer
+	 * @param inferer
 	 */
-	public void deduceParentType(TypeInfer typeInfer) {
+	public void deduceParentType(Inferer inferer) {
 		if (this.type==null) return;
 		if (this.parent==null) return;
 		Expression parent = this.parent;
 		if (parent.type != null)return;
+		
+		//parent's type depends on first child's type
 		if (parent.firstChildId!=this.id) return;
-		if (this.type.equals(TypeInfer.buildInType)) {
-			parent.setType(TypeInfer.buildInType,TypeInfer.buildInType,typeInfer);
+		
+		//if child is a built-in/external type, then parent must also a built-in/external type
+		if (this.type.equals(Inferer.buildInType)) {
+			parent.setType(Inferer.buildInType,Inferer.buildInType,inferer);
 			return;
-		}else if (this.type.equals(TypeInfer.externalType)){
-			parent.setType(TypeInfer.externalType,TypeInfer.externalType,typeInfer);
+		}else if (this.type.equals(Inferer.externalType)){
+			parent.setType(Inferer.externalType,Inferer.externalType,inferer);
 			return;
 		}
 		
 		/* if it is a logic expression, the return type/type is boolean. */
 		if (parent.isLogic) {
-			parent.setType(TypeInfer.buildInType,null,typeInfer);
+			parent.setType(Inferer.buildInType,null,inferer);
 		}
 		/* if it is a.b, and we already get a's type, b's type could be identified easily  */
 		else if (parent.isDot) {
 			if (parent.isCall) {
-				FunctionEntity func = typeInfer.resolveFunctionBindings(this.getType(), parent.identifier);
+				FunctionEntity func = this.getType().lookupFunctionInVisibleScope(parent.identifier);
 				if (func!=null)
-					parent.setType(func.getReturnType(), func,typeInfer);
+					parent.setType(func.getType(), func,inferer);
 			}else {
-				parent.setType(typeInfer.inferTypeType(this.getType(), parent.identifier),null,typeInfer);
+				parent.setType(inferer.inferTypeFromName(this.getType(), parent.identifier),null,inferer);
 				if (parent.type!=null) return;
-				VarEntity var = this.getType().resolveVarBindings(parent.identifier);
+				VarEntity var = this.getType().lookupVarsInVisibleScope(parent.identifier);
 				if (var!=null)
-					parent.setType(var.getType(),var, typeInfer);
+					parent.setType(var.getType(),var, inferer);
 			}
 		}
 		/* if other situation, simple make the parent and child type same */
 		else {
-			parent.setType(type, null, typeInfer);
+			parent.setType(type, null, inferer);
 		}
 	}
 

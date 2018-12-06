@@ -3,6 +3,7 @@ package depends.extractor.java;
 import java.util.ArrayList;
 import java.util.List;
 
+import depends.entity.Inferer;
 import depends.extractor.AbstractLangWorker;
 import depends.extractor.FileParser;
 import depends.util.Configure;
@@ -13,7 +14,7 @@ public class JavaWorker extends AbstractLangWorker {
     
     public JavaWorker(Configure configure) {
     	super(configure);
-    	entityRepo.setImportLookupStrategy(new JavaImportLookupStrategy());
+		inferer = new Inferer(entityRepo,new JavaImportLookupStrategy(),new JavaBuiltInType());
     }
 
 
@@ -30,7 +31,7 @@ public class JavaWorker extends AbstractLangWorker {
 
 	@Override
 	protected FileParser getFileParser(String fileFullPath) {
-		return new JavaFileParser(fileFullPath,entityRepo);
+		return new JavaFileParser(fileFullPath,entityRepo, inferer);
 	}
 
 

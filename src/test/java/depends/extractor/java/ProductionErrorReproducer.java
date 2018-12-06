@@ -2,21 +2,25 @@ package depends.extractor.java;
 
 import java.io.IOException;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import depends.entity.Entity;
-import depends.entity.repo.EntityRepo;
+import depends.entity.JavaParserTest;
 
-public class ProductionErrorReproducer {
+public class ProductionErrorReproducer extends JavaParserTest {
+	@Before
+	public void setUp() {
+		super.init();
+	}
+	
 	@Test
 	public void reproduce_error() throws IOException {
-		EntityRepo repo = new EntityRepo();
         String src = "./src/test/resources/java-code-examples/Maze.java";
-        JavaFileParser parser = new JavaFileParser(src,repo);
+        JavaFileParser parser = createParser(src);
         parser.parse();
-        repo.resolveAllBindings();
-        Entity t = repo.getEntity("maze.BlueMazeFactory.makeDoor");
+        inferer.resolveAllBindings();
+        Entity t = entityRepo.getEntity("maze.BlueMazeFactory.makeDoor");
         System.out.println(t);
 	}
-
 }
