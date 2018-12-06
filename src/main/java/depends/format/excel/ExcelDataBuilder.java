@@ -2,7 +2,7 @@ package depends.format.excel;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
+import java.util.Collection;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -10,9 +10,9 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import depends.format.matrix.DependencyMatrix;
-
+import depends.format.matrix.DependencyPair;
+import depends.format.matrix.DependencyValue;
 public class ExcelDataBuilder {
-	
 	private DependencyMatrix matrix;
 	private HSSFWorkbook workbook ;
 	private HSSFSheet sheet ;
@@ -27,7 +27,7 @@ public class ExcelDataBuilder {
 			return false;
 		}
 		startFile();
-		Map<Integer, Map<Integer, Map<String, Integer>>> relations = matrix.getRelations();
+        Collection<DependencyPair> dependencyPairs = matrix.getDependencyPairs();
 		HSSFRow[] row = new HSSFRow[matrix.getNodes().size()];
 		
 		//create header row
@@ -53,22 +53,19 @@ public class ExcelDataBuilder {
 			cell.setCellValue("("+i+")");
 		};
 
-		for (Integer from:relations.keySet()) {
-			Map<Integer, Map<String, Integer>> relation = relations.get(from);
-			for (Integer to:relation.keySet()) {
-				HSSFCell cell = row[from].createCell(to+2);
-				cell.setCellValue(buildDependencyValues(relation.get(to)));
-			}
+		for (DependencyPair dependencyPair:dependencyPairs) {
+			HSSFCell cell = row[dependencyPair.getFrom()].createCell(dependencyPair.getTo()+2);
+			cell.setCellValue(buildDependencyValues(dependencyPair.getDependencies()));
 		}
         closeFile(filename);
         return true;
 	}
 
-	private String buildDependencyValues(Map<String, Integer> dependencies) {
+	private String buildDependencyValues(Collection<DependencyValue> dependencies) {
 		StringBuilder sb = new StringBuilder();
-		for (String dependency:dependencies.keySet()) {
+		for (DependencyValue  dependency:dependencies) {
 			String comma = sb.length()>0?",":"";
-			sb.append(comma).append(dependency).append("(").append(dependencies.get(dependency)).append(")");
+			sb.append(comma).append(dependency.getType()).append("(").append(dependency.getWeight()).append(")");
 		}
 		return sb.toString();
 	}

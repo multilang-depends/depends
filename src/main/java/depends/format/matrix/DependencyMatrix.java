@@ -4,34 +4,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import depends.entity.repo.EntityRepo;
 
 public class DependencyMatrix {
-    private Map<Integer, Map<Integer, Map<String, Integer>>> relations = new HashMap<Integer, Map<Integer, Map<String, Integer>>>();
-    private Map<Integer, Map<Integer, Map<String, Integer>>> reMappedRelations = new HashMap<Integer, Map<Integer, Map<String, Integer>>>();
-    
     private HashMap<String, DependencyPair> dependencyPairs = new HashMap<>();
-
     private ArrayList<String> nodes;
     private ArrayList<String> reMappedNodes;
 	private Integer relationCount=0;
     public DependencyMatrix() {
     }
-
-    /**
-     * 优先返回重映射的Id
-     * @return
-     */
-	public Map<Integer, Map<Integer, Map<String, Integer>>> getRelations() {
-		if (reMappedRelations.size()>0) 
-			return reMappedRelations;
-        return relations;
-    }
-	
 	
 	public Collection<DependencyPair> getDependencyPairs() {
         return dependencyPairs.values();
@@ -46,25 +29,11 @@ public class DependencyMatrix {
 		}
 		DependencyPair dependencyPair = dependencyPairs.get(DependencyPair.key(from,to));
 		dependencyPair.addDependency(depType);
-		if(!relations.containsKey(from)) {
-		    relations.put(from, new HashMap<Integer, Map<String, Integer>>());
-		}
-		if(!relations.get(from).containsKey(to)) {
-		    relations.get(from).put(to, new HashMap<String, Integer>());
-		}
-		if(!relations.get(from).get(to).containsKey(depType)) {
-		    relations.get(from).get(to).put(depType, 0);
-		}
-
-		int weight = relations.get(from).get(to).get(depType) + 1;
-		relations.get(from).get(to).put(depType, weight);
 		relationCount++;
 	}
 
 	public ArrayList<String> getNodes() {
-		if (reMappedRelations.size()>0) 
-			return reMappedNodes;
-		return nodes;
+		return reMappedNodes;
 	}
 
 	public void setNodes(ArrayList<String> nodes) {
@@ -89,21 +58,14 @@ public class DependencyMatrix {
 		for (int i=0;i<reMappedNodes.size();i++) {
 			nodesMap.put(reMappedNodes.get(i), i);
 		}
-		
-		for (Integer key:relations.keySet()) {
-			Map<Integer, Map<String, Integer>> entry = relations.get(key);
-			HashMap<Integer, Map<String, Integer>> newEntry = new HashMap<>();
-			reMappedRelations.put(translateToNewId(repo, nodesMap, key), newEntry);
-			for (Integer idsTo:entry.keySet()) {
-				Map<String, Integer> value = entry.get(idsTo);
-				newEntry.put(translateToNewId(repo, nodesMap, idsTo), value);
-			}
-		}		
+		for (DependencyPair dependencyPair:dependencyPairs.values()) {
+			Integer from = dependencyPair.getFrom();
+			Integer to = dependencyPair.getTo();
+			dependencyPair.reMap(translateToNewId(repo, nodesMap, from),translateToNewId(repo, nodesMap, to));
+		}
 	}
 
 	public Integer relationCount() {
 		return relationCount;
 	}
-
-
 }

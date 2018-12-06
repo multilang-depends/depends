@@ -2,7 +2,6 @@ package depends.format.matrix;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map;
 
 public class DependencyPair {
 	private Integer from;
@@ -26,9 +25,13 @@ public class DependencyPair {
 		return from;
 	}
 	public Integer getTo() {
-		return from;
+		return to;
 	}
 	public Collection<DependencyValue> getDependencies() {
 		return dependencies.values();
+	}
+	public void reMap(Integer from, Integer to) {
+		this.from = from;
+		this.to = to;
 	}
 }

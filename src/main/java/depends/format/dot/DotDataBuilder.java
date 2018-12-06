@@ -3,9 +3,10 @@ package depends.format.dot;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Map;
+import java.util.Collection;
 
 import depends.format.matrix.DependencyMatrix;
+import depends.format.matrix.DependencyPair;
 
 public class DotDataBuilder {
 	private DependencyMatrix matrix;
@@ -26,7 +27,9 @@ public class DotDataBuilder {
 			}
 			writer.println("digraph");
 			writer.println("{");
-	        addRelations(writer,matrix.getRelations()); 
+	        Collection<DependencyPair> dependencyPairs = matrix.getDependencyPairs();
+
+	        addRelations(writer,dependencyPairs); 
 			writer.println("}");
 			writer.close();
 			return true;
@@ -36,14 +39,11 @@ public class DotDataBuilder {
 		}
 	}
 
-	private void addRelations(PrintWriter writer, Map<Integer, Map<Integer, Map<String, Integer>>> relations) {
-		for (Map.Entry<Integer, Map<Integer, Map<String, Integer>>> relation : relations.entrySet()) {
-            int src = relation.getKey();
-            Map<Integer, Map<String, Integer>> dependencyType = relation.getValue();
-            for (Map.Entry<Integer, Map<String, Integer>> to: dependencyType.entrySet()) {
-                int dst = to.getKey();
+	private void addRelations(PrintWriter writer, Collection<DependencyPair> dependencyPairs) {
+		for (DependencyPair dependencyPair:dependencyPairs) {
+            int src = dependencyPair.getFrom();
+            int dst = dependencyPair.getTo();
         		writer.println("\t"+src + " -> " + dst + ";");
-            }
-        }
+        }		
 	}
 }

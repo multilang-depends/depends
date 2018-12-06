@@ -1,74 +1,49 @@
 package depends.format.json;
 
-
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import depends.format.FileAttributes;
 import depends.format.matrix.DependencyMatrix;
+import depends.format.matrix.DependencyPair;
+import depends.format.matrix.DependencyValue;
 
 public class JDataBuilder {
+	public JDepObject build(DependencyMatrix dependencyMatrix, FileAttributes configure) {
+		ArrayList<String> files = dependencyMatrix.getNodes();
+		Collection<DependencyPair> dependencyPairs = dependencyMatrix.getDependencyPairs();
+		ArrayList<JCellObject> cellObjects = buildCellObjects(dependencyPairs); // transform finalRes into cellObjects
 
-    public JDepObject build(DependencyMatrix dependencyMatrix,FileAttributes configure) {
-        ArrayList<String> files = dependencyMatrix.getNodes();
-        Map<Integer, Map<Integer, Map<String, Integer>>> finalRes = dependencyMatrix.getRelations();
-        ArrayList<JCellObject> cellObjects = buildCellObjects(finalRes); //transform finalRes into cellObjects
+		JDepObject depObject = new JDepObject();
+		depObject.setVariables(files);
+		depObject.setName(configure.getAttributeName());
+		depObject.setSchemaVersion(configure.getSchemaVersion());
+		depObject.setCells(cellObjects);
 
-        JDepObject depObject = new JDepObject();
-        depObject.setVariables(files);
-        depObject.setName(configure.getAttributeName());
-        depObject.setSchemaVersion(configure.getSchemaVersion());
-        depObject.setCells(cellObjects);
+		return depObject;
+	}
 
-        return depObject;
-    }
+	private ArrayList<JCellObject> buildCellObjects(Collection<DependencyPair> dependencyPairs) {
+		ArrayList<JCellObject> cellObjects = new ArrayList<JCellObject>();
 
-    /**
-     *
-     * @return
-     */
-    private ArrayList<JCellObject> buildCellObjects(Map<Integer, Map<Integer, Map<String, Integer>>> finalRes) {
-        ArrayList<JCellObject> cellObjects = new ArrayList<JCellObject>();
+		for (DependencyPair dependencyPair : dependencyPairs) {
+			Map<String, Float> valueObject = buildValueObject(dependencyPair.getDependencies());
+			JCellObject cellObject = new JCellObject();
+			cellObject.setSrc(dependencyPair.getFrom());
+			cellObject.setDest(dependencyPair.getTo());
+			cellObject.setValues(valueObject);
+			cellObjects.add(cellObject);
+		}
+		return cellObjects;
+	}
 
-        for (Map.Entry<Integer, Map<Integer, Map<String, Integer>>> entry1 : finalRes.entrySet()) {
-            int src = entry1.getKey();
-
-            Map<Integer, Map<String, Integer>> values1 = entry1.getValue();
-            for (Map.Entry<Integer, Map<String, Integer>> entry2: values1.entrySet()) {
-                int dst = entry2.getKey();
-
-                Map<String, Integer> values2 = entry2.getValue();
-                Map<String, Float> valueObject = buildValueObject(values2);
-                JCellObject cellObject = new JCellObject();
-                cellObject.setSrc(src);
-                cellObject.setDest(dst);
-                cellObject.setValues(valueObject);
-                cellObjects.add(cellObject);
-            }
-        }
-        return cellObjects;
-    }
-
-
-    /**
-     *
-     * @param values2
-     * @return
-     */
-    private Map<String, Float> buildValueObject(Map<String, Integer> values2) {
-        Map<String, Float> valueObject = new HashMap<String, Float>();
-        for (Map.Entry<String, Integer> entry3 : values2.entrySet()) {
-            String depType = entry3.getKey();
-            float weight = (float) entry3.getValue();
-            valueObject.put(depType, weight);
-        } //end for
-        return valueObject;
-    }
-
-
-
-
-
-
+	private Map<String, Float> buildValueObject(Collection<DependencyValue> dependencies) {
+		Map<String, Float> valueObject = new HashMap<String, Float>();
+		for (DependencyValue dependency : dependencies) {
+			valueObject.put(dependency.getType(), (float) dependency.getWeight());
+		}
+		return valueObject;
+	}
 }
