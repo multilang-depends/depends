@@ -26,7 +26,7 @@ public class FileDependencyGenerator {
         		if (relation.getEntity().getId()>=0) {
         			int fileEntityTo = getFileEntityIdNoException(entityRepo,relation.getEntity());
         			if (fileEntityTo==-1) continue;
-        			dependencyMatrix.addDependency(relation.getType(), fileEntityFrom,fileEntityTo);
+        			dependencyMatrix.addDependency(relation.getType(), fileEntityFrom,fileEntityTo,entity,relation.getEntity());
         		}
         	}
         }

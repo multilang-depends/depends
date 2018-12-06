@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Map;
 
+import depends.entity.Entity;
 import depends.entity.repo.EntityRepo;
 
 public class DependencyMatrix {
@@ -20,7 +20,7 @@ public class DependencyMatrix {
         return dependencyPairs.values();
     }
 
-    public void addDependency(String depType, Integer from, Integer to) {
+    public void addDependency(String depType, Integer from, Integer to, Entity fromEntity, Entity toEntity) {
 		if(from.equals(to) || from == -1 || to == -1) {
 		    return;
 		}
@@ -28,7 +28,7 @@ public class DependencyMatrix {
 			dependencyPairs.put(DependencyPair.key(from,to),new DependencyPair(from,to));
 		}
 		DependencyPair dependencyPair = dependencyPairs.get(DependencyPair.key(from,to));
-		dependencyPair.addDependency(depType);
+		dependencyPair.addDependency(depType,fromEntity, toEntity);
 		relationCount++;
 	}
 

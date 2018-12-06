@@ -1,4 +1,4 @@
-package depends.format.dot;
+package depends.format.detail;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -9,29 +9,21 @@ import depends.matrix.DependencyMatrix;
 import depends.matrix.DependencyPair;
 import depends.matrix.DependencyValue;
 
-public class DotDataBuilder {
+public class DetailDataBuilder {
 	private DependencyMatrix matrix;
+	ArrayList<String> files;
 
-	public DotDataBuilder(DependencyMatrix matrix) {
+	public DetailDataBuilder(DependencyMatrix matrix) {
 		this.matrix = matrix;
 	}
 
 	public boolean output(String outputDotFile) {
 		PrintWriter writer;
 		try {
+			files = matrix.getNodes();
 			writer = new PrintWriter(outputDotFile);
-			ArrayList<String> files = matrix.getNodes();
-			
-			for (int i=0;i<files.size();i++) {
-				String file = files.get(i);
-				writer.println("// "+i + ":"+file);
-			}
-			writer.println("digraph");
-			writer.println("{");
 	        Collection<DependencyPair> dependencyPairs = matrix.getDependencyPairs();
-
 	        addRelations(writer,dependencyPairs); 
-			writer.println("}");
 			writer.close();
 			return true;
 		} catch (FileNotFoundException e) {
@@ -44,7 +36,10 @@ public class DotDataBuilder {
 		for (DependencyPair dependencyPair:dependencyPairs) {
             int src = dependencyPair.getFrom();
             int dst = dependencyPair.getTo();
-        	writer.println("\t"+src + " -> " + dst + ";");
+        	writer.println("======="+files.get(src) + " -> " + files.get(dst) + "=========");
+        	for (DependencyValue dependency:dependencyPair.getDependencies()) {
+        	writer.println(dependency.getDetails());
+        	}
         }		
 	}
 }

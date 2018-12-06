@@ -11,6 +11,7 @@ import org.codehaus.plexus.util.FileUtils;
 import depends.deptypes.DependencyType;
 import depends.entity.repo.EntityRepo;
 import depends.format.FileAttributes;
+import depends.format.detail.DetailDataBuilder;
 import depends.format.dot.DotDataBuilder;
 import depends.format.excel.ExcelDataBuilder;
 import depends.format.json.JDataBuilder;
@@ -104,7 +105,10 @@ abstract public class AbstractLangWorker {
     
 
 	private final void outputDeps(ArrayList<String> depTypes, String projectName) {
-        JDataBuilder jBuilder = new JDataBuilder();
+		DetailDataBuilder detailBuilder = new DetailDataBuilder(dependencyMatrix);
+		detailBuilder.output(projectName  + "_dep.txt");
+		
+		JDataBuilder jBuilder = new JDataBuilder();
         JDepObject jDepObject = jBuilder.build(dependencyMatrix,new FileAttributes(projectName));
         JsonFormatter jasonFormatter = new JsonFormatter();
         jasonFormatter.toJson(jDepObject,projectName  + "_dep.json");
@@ -125,6 +129,7 @@ abstract public class AbstractLangWorker {
 		if (dotBuilder.output(projectName  + "_dep.dot")) {
 			System.out.println("Export " + projectName + "_dep.dot" + " successfully...");
 		}
+
     }
 	public List<String> includePaths() {
 		String[] paths = this.includeDirs.split(";");
