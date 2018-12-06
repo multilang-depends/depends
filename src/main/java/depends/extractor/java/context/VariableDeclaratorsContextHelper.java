@@ -3,8 +3,6 @@ package depends.extractor.java.context;
 import java.util.ArrayList;
 import java.util.List;
 
-import depends.entity.ContainerEntity;
-import depends.entity.IdGenerator;
 import depends.javaextractor.JavaParser.ConstantDeclaratorContext;
 import depends.javaextractor.JavaParser.VariableDeclaratorContext;
 import depends.javaextractor.JavaParser.VariableDeclaratorIdContext;

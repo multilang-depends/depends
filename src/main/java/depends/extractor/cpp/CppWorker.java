@@ -8,14 +8,13 @@ import depends.extractor.AbstractLangWorker;
 import depends.extractor.FileParser;
 import depends.extractor.cpp.cdt.CdtCppFileParser;
 import depends.extractor.cpp.cdt.PreprocessorHandler;
-import depends.util.Configure;
 
 public class CppWorker extends AbstractLangWorker {
     private static final String LANG = "cpp";
     private static final String[] SUFFIX = new String[] {".cpp",".cc",".c",".h",".hpp",".hh"};
     PreprocessorHandler preprocessorHandler;
-    public CppWorker(Configure configure) {
-    	super(configure);
+    public CppWorker(String inputDir, String includeDir) {
+    	super(inputDir,includeDir);
     	preprocessorHandler = new PreprocessorHandler(super.includePaths());
 		inferer = new Inferer(entityRepo,new CppImportLookupStrategy(),new CppBuiltInType());
     }

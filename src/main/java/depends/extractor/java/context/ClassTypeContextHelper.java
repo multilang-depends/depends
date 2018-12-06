@@ -1,7 +1,6 @@
 package depends.extractor.java.context;
 
 import depends.javaextractor.JavaParser.ClassOrInterfaceTypeContext;
-import depends.javaextractor.JavaParser.PrimaryContext;
 import depends.javaextractor.JavaParser.TypeTypeContext;
 import depends.javaextractor.JavaParser.TypeTypeOrVoidContext;
 

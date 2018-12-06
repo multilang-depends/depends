@@ -1,7 +1,6 @@
 package depends.extractor.java.context;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.antlr.v4.runtime.tree.TerminalNode;

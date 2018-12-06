@@ -33,7 +33,6 @@ import depends.entity.types.VarEntity;
 import depends.importtypes.ExactMatchImport;
 import depends.importtypes.FileImport;
 import depends.importtypes.PackageWildCardImport;
-import depends.util.Tuple;
 
 public class CdtCppEntitiesListener  extends ASTVisitor {
 	private CppHandlerContext context;
@@ -203,10 +202,9 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 				if (declSpecifier.getStorageClass()==IASTDeclSpecifier.sc_typedef) {
 					context.foundNewTypeAlias(declarator.getName().toString(),ASTStringUtil.getName(declSpecifier));
 				}else if (!(declarator instanceof IASTFunctionDeclarator)) {
-					Tuple<String, String> var = new Tuple<String, String>();
-					var.x = ASTStringUtil.getName(declSpecifier);
-					var.y = declarator.getName().toString();
-					context.foundVarDefintion(var.y, var.x);
+					String varName = ASTStringUtil.getName(declSpecifier);
+					String varType = declarator.getName().toString();
+					context.foundVarDefintion(varName, varType);
 				}
 			}
 		}else if (declaration instanceof IASTFunctionDefinition){
@@ -241,11 +239,10 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 
 	@Override
 	public int visit(IASTParameterDeclaration parameterDeclaration) {
-		Tuple<String, String> parameter = new Tuple<String, String>();
-		parameter.x = ASTStringUtil.getName(parameterDeclaration.getDeclSpecifier());
-		parameter.y = parameterDeclaration.getDeclarator().getName().toString();
+		String parameterName = parameterDeclaration.getDeclarator().getName().toString();
+		String parameterType = ASTStringUtil.getName(parameterDeclaration.getDeclSpecifier());
 		if (context.currentFunction()!=null) {
-			VarEntity var = new VarEntity(parameter.y,parameter.x,context.currentFunction(),idGenerator.generateId());
+			VarEntity var = new VarEntity(parameterName,parameterType,context.currentFunction(),idGenerator.generateId());
 			context.currentFunction().addParameter(var );
 		}else {
 			//System.out.println("** parameterDeclaration = " + parameter);

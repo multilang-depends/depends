@@ -2,7 +2,6 @@ package depends.extractor.cpp;
 
 import depends.entity.Inferer;
 import depends.entity.repo.EntityRepo;
-import depends.extractor.BuiltInType;
 
 public abstract class CppFileParser implements depends.extractor.FileParser {
 	protected String fileFullPath;

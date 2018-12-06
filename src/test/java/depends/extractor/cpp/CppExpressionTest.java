@@ -1,4 +1,4 @@
-package depends.extractor.cpp.cdt;
+package depends.extractor.cpp;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
@@ -8,7 +8,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import depends.extractor.cpp.CppFileParser;
-import depends.extractor.cpp.CppParserTest;
 
 public class CppExpressionTest extends CppParserTest{
     @Before

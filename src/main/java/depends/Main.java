@@ -4,7 +4,6 @@ import depends.extractor.AbstractLangWorker;
 import depends.extractor.LangWorkers;
 import depends.extractor.cpp.CppWorker;
 import depends.extractor.java.JavaWorker;
-import depends.util.Configure;
 
 public class Main {
 
@@ -22,14 +21,9 @@ public class Main {
         String inputDir = args[1];
         String includeDir = args[2];
         String projectName = args[3];
-	    Configure configure = new Configure(lang,inputDir,includeDir,projectName);
-
-		new JavaWorker(configure).register();
-		new CppWorker(configure).register();
-
-
+		new JavaWorker(inputDir,includeDir).register();
+		new CppWorker(inputDir,includeDir).register();
 		AbstractLangWorker worker = LangWorkers.getRegistry().getWorkerOf(lang);
-		
 		if (worker == null){
 			System.out.println("Not support this language: " + args[0]);
 			return;
@@ -37,7 +31,7 @@ public class Main {
 
 		long startTime = System.currentTimeMillis();
 		worker.work();
-		worker.outputResult();
+		worker.outputResult(projectName);
 		long endTime = System.currentTimeMillis();
 		System.out.println("Consumed time: " + (float) ((endTime - startTime) / 1000.00) + " s,  or "
 				+ (float) ((endTime - startTime) / 60000.00) + " min.");

@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import depends.entity.repo.EntityRepo;
-import depends.util.Tuple;
 
 public class DependencyMatrix {
     private Map<Integer, Map<Integer, Map<String, Integer>>> relations = new HashMap<Integer, Map<Integer, Map<String, Integer>>>();
@@ -28,17 +27,7 @@ public class DependencyMatrix {
         return relations;
     }
 
-    public void addDependencies(ArrayList<Tuple<Integer, Integer>> pairs, String depType) {
-        for(Tuple<Integer, Integer> dep : pairs) {
-        	addDependency(depType, dep);
-        }
-    }
-
-
-    public void addDependency(String depType, Tuple<Integer, Integer> pair) {
-		Integer from = pair.x;
-		Integer to = pair.y;
-
+    public void addDependency(String depType, Integer from, Integer to) {
 		if(from.equals(to) || from == -1 || to == -1) {
 		    return;
 		}
@@ -100,4 +89,6 @@ public class DependencyMatrix {
 	public Integer relationCount() {
 		return relationCount;
 	}
+
+
 }

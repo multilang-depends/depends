@@ -1,12 +1,8 @@
 package depends.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import depends.entity.types.FunctionEntity;
 import depends.entity.types.TypeEntity;
 import depends.entity.types.VarEntity;
-import depends.util.Tuple;
 
 public class Expression {
 	public Integer id;
@@ -23,7 +19,6 @@ public class Expression {
 	public boolean isCreate = false;
 	public boolean isCast = false;
 	public boolean deriveTypeFromChild = true;
-	List<Tuple<String, String>> relations = new ArrayList<>();
 
 	private TypeEntity type; // the type we care - for relation calculation. 
 	                         //for leaf, it equals to referredEntity.getType. otherwise, depends on child's type strategy

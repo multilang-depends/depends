@@ -3,12 +3,12 @@ package depends.format.xml;
 import java.util.ArrayList;
 import java.util.Map;
 
+import depends.format.FileAttributes;
 import depends.format.matrix.DependencyMatrix;
-import depends.util.Configure;
 
 public class XDataBuilder {
 
-    public XDepObject build(DependencyMatrix matrix,Configure configure) {
+    public XDepObject build(DependencyMatrix matrix,FileAttributes configure) {
         ArrayList<String> files = matrix.getNodes();
         Map<Integer, Map<Integer, Map<String, Integer>>> finalRes = matrix.getRelations();
 

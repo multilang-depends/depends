@@ -1,4 +1,4 @@
-package depends.extractor.cpp.cdt;
+package depends.extractor.cpp;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
@@ -9,7 +9,6 @@ import org.junit.Test;
 
 import depends.entity.Entity;
 import depends.extractor.cpp.CppFileParser;
-import depends.extractor.cpp.CppParserTest;
 import depends.format.matrix.DependencyMatrix;
 import depends.format.matrix.FileDependencyGenerator;
 

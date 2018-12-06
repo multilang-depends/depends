@@ -1,17 +1,12 @@
 package depends.entity.types;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 
 import depends.entity.ContainerEntity;
 import depends.entity.Entity;
 import depends.entity.Inferer;
-import depends.importtypes.ExactMatchImport;
-import depends.importtypes.FileImport;
 import depends.importtypes.Import;
-import depends.importtypes.PackageWildCardImport;
 
 public class FileEntity extends ContainerEntity {
 	private List<Import> importedNames = new ArrayList<>();

@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import depends.format.FileAttributes;
 import depends.format.matrix.DependencyMatrix;
-import depends.util.Configure;
 
 public class JDataBuilder {
 
-    public JDepObject build(DependencyMatrix dependencyMatrix,Configure configure) {
+    public JDepObject build(DependencyMatrix dependencyMatrix,FileAttributes configure) {
         ArrayList<String> files = dependencyMatrix.getNodes();
         Map<Integer, Map<Integer, Map<String, Integer>>> finalRes = dependencyMatrix.getRelations();
         ArrayList<JCellObject> cellObjects = buildCellObjects(finalRes); //transform finalRes into cellObjects

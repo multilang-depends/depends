@@ -418,7 +418,6 @@ public class ASTStringUtil {
 			final IASTEnumerationSpecifier enumerationSpec= (IASTEnumerationSpecifier) declSpecifier;
 			appendBareNameString(buffer, enumerationSpec.getName());
 		} else if (declSpecifier instanceof IASTSimpleDeclSpecifier) {
-			final IASTSimpleDeclSpecifier simpleDeclSpec= (IASTSimpleDeclSpecifier) declSpecifier;
 			buffer.append(Inferer.buildInType.getRawName());
 		} else if (declSpecifier instanceof IASTNamedTypeSpecifier) {
 			final IASTNamedTypeSpecifier namedTypeSpec= (IASTNamedTypeSpecifier) declSpecifier;

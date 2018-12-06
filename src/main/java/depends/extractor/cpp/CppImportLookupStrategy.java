@@ -8,7 +8,6 @@ import depends.entity.Entity;
 import depends.entity.Inferer;
 import depends.entity.repo.EntityRepo;
 import depends.entity.types.FileEntity;
-import depends.entity.types.TypeEntity;
 import depends.extractor.ImportLookupStrategy;
 import depends.importtypes.FileImport;
 import depends.importtypes.Import;
@@ -38,7 +37,7 @@ public class CppImportLookupStrategy implements ImportLookupStrategy {
 					entity = inferer.resolveName(importedFile,nameWithPrefix, false);
 					if (entity!=null) return entity;				
 				}
-			}
+			}	
 		}		
 		return null;
 	}

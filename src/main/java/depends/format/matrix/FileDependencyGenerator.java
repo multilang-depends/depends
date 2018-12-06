@@ -4,11 +4,8 @@ import java.util.ArrayList;
 
 import depends.entity.Entity;
 import depends.entity.Relation;
-import depends.entity.repo.EntityNotExistsException;
 import depends.entity.repo.EntityRepo;
-import depends.entity.repo.NoRequestedTypeOfAncestorExistsException;
 import depends.entity.types.FileEntity;
-import depends.util.Tuple;
 
 public class FileDependencyGenerator {
 	/**
@@ -29,7 +26,7 @@ public class FileDependencyGenerator {
         		if (relation.getEntity().getId()>=0) {
         			int fileEntityTo = getFileEntityIdNoException(entityRepo,relation.getEntity());
         			if (fileEntityTo==-1) continue;
-        			dependencyMatrix.addDependency(relation.getType(), new Tuple<Integer, Integer>(fileEntityFrom,fileEntityTo));
+        			dependencyMatrix.addDependency(relation.getType(), fileEntityFrom,fileEntityTo);
         		}
         	}
         }

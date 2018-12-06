@@ -54,7 +54,6 @@ public class AnnotationProcessor {
 		Method m = getMethod(ctx,methodName);
 		if (m==null) return;
 		try {
-			@SuppressWarnings("unchecked")
 			List<?> modifiers = (List<?>) m.invoke(ctx);
 			for (Object modifier : modifiers) {
 				Method annotationMethod = modifier.getClass().getMethod("annotation");

@@ -6,17 +6,15 @@ import java.util.List;
 import depends.entity.Inferer;
 import depends.extractor.AbstractLangWorker;
 import depends.extractor.FileParser;
-import depends.util.Configure;
 
 public class JavaWorker extends AbstractLangWorker {
     public static final String JAVA_LANG = "java";
     public static final String JAVA_SUFFIX = ".java";
     
-    public JavaWorker(Configure configure) {
-    	super(configure);
+    public JavaWorker(String inputDir, String includeDir) {
+    	super(inputDir,includeDir);
 		inferer = new Inferer(entityRepo,new JavaImportLookupStrategy(),new JavaBuiltInType());
     }
-
 
 	@Override
 	public String supportedLanguage() {

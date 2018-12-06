@@ -9,9 +9,9 @@ import java.util.Set;
 import org.codehaus.plexus.util.FileUtils;
 
 import depends.deptypes.DependencyType;
-import depends.entity.RelationCounter;
 import depends.entity.Inferer;
 import depends.entity.repo.EntityRepo;
+import depends.format.FileAttributes;
 import depends.format.dot.DotDataBuilder;
 import depends.format.excel.ExcelDataBuilder;
 import depends.format.json.JDataBuilder;
@@ -22,20 +22,20 @@ import depends.format.matrix.FileDependencyGenerator;
 import depends.format.xml.XDataBuilder;
 import depends.format.xml.XDepObject;
 import depends.format.xml.XmlFormatter;
-import depends.util.Configure;
 import depends.util.FileTraversal;
 abstract public class AbstractLangWorker {
 	public abstract String supportedLanguage();
 	public abstract String[] fileSuffixes();
-
-	private Configure configure ;
 	protected Inferer inferer;
 	protected EntityRepo entityRepo;
 	DependencyMatrix dependencyMatrix;
+	private String inputSrcPath;
+	private String includeDirs;
 
-	public AbstractLangWorker(Configure configure) {
-		this.configure = configure;
+	public AbstractLangWorker(String inputDir, String includeDir) {
 		entityRepo = new EntityRepo();
+		this.inputSrcPath = inputDir;
+		this.includeDirs = includeDir;
 	}
 	public void register() {
 		LangWorkers.getRegistry().register(this);
@@ -95,7 +95,7 @@ abstract public class AbstractLangWorker {
     		
     	});
     	fileTransversal.extensionFilter(this.fileSuffixes());
-		fileTransversal.travers(configure.getInputSrcPath());
+		fileTransversal.travers(this.inputSrcPath);
         System.out.println("all files procceed successfully...");		
 
 	}
@@ -103,38 +103,38 @@ abstract public class AbstractLangWorker {
     protected abstract FileParser getFileParser(String fileFullPath);
     
 
-	private final void outputDeps(ArrayList<String> depTypes) {
+	private final void outputDeps(ArrayList<String> depTypes, String projectName) {
         JDataBuilder jBuilder = new JDataBuilder();
-        JDepObject jDepObject = jBuilder.build(dependencyMatrix,configure);
+        JDepObject jDepObject = jBuilder.build(dependencyMatrix,new FileAttributes(projectName));
         JsonFormatter jasonFormatter = new JsonFormatter();
-        jasonFormatter.toJson(jDepObject,configure.getOutputJsonFile());
-        System.out.println("Export " + configure.getOutputJsonFile() + " successfully...");
+        jasonFormatter.toJson(jDepObject,projectName  + "_dep.json");
+        System.out.println("Export " + projectName  + "_dep.json" + " successfully...");
 
         XDataBuilder xBuilder = new XDataBuilder();
-        XDepObject xDepObject = xBuilder.build(dependencyMatrix,configure);
+        XDepObject xDepObject = xBuilder.build(dependencyMatrix,new FileAttributes(projectName));
         XmlFormatter xmlFormatter = new XmlFormatter();
-        xmlFormatter.toXml(xDepObject,configure.getOutputXmlFile());
-        System.out.println("Export " + configure.getOutputXmlFile() + " successfully...");
+        xmlFormatter.toXml(xDepObject,projectName  + "_dep.xml");
+        System.out.println("Export " + projectName  + "_dep.xml" + " successfully...");
         
 		ExcelDataBuilder builder = new ExcelDataBuilder(dependencyMatrix);
-		if (builder.output(configure.getOutputExcelFile())) {
-			System.out.println("Export " + configure.getOutputExcelFile() + " successfully...");
+		if (builder.output(projectName  + "_dep.xls")) {
+			System.out.println("Export " + projectName  + "_dep.xls" + " successfully...");
 		}	
 		
 		DotDataBuilder dotBuilder = new DotDataBuilder(dependencyMatrix);
-		if (dotBuilder.output(configure.getOutputDotFile())) {
-			System.out.println("Export " + configure.getOutputDotFile() + " successfully...");
+		if (dotBuilder.output(projectName  + "_dep.dot")) {
+			System.out.println("Export " + projectName + "_dep.dot" + " successfully...");
 		}
     }
 	public List<String> includePaths() {
-		String[] paths = configure.getIncludePath().split(";");
+		String[] paths = this.includeDirs.split(";");
 		ArrayList<String> r = new ArrayList<String>();
 		for (String path:paths) {
 			if (FileUtils.fileExists(path)) {
 				if (!r.contains(path))
 					r.add(path);
 			}
-			path = configure.getInputSrcPath() +File.separator+path;
+			path = this.inputSrcPath +File.separator+path;
 			if (FileUtils.fileExists(path)) {
 				if (!r.contains(path))
 					r.add(path);
@@ -142,9 +142,9 @@ abstract public class AbstractLangWorker {
 		}
 		return r;
 	}
-	public void outputResult() {
+	public void outputResult(String projectName) {
         outputErrors();
-        outputDeps(DependencyType.allDependencies());
+        outputDeps(DependencyType.allDependencies(), projectName);
 	}
 	public DependencyMatrix getDependencies() {
 		return dependencyMatrix;
