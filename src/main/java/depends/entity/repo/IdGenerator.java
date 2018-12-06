@@ -1,4 +1,4 @@
-package depends.entity;
+package depends.entity.repo;
 
 public class IdGenerator {
 	private int nextAvaliableIndex;

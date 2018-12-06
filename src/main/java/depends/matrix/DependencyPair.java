@@ -1,4 +1,4 @@
-package depends.format.matrix;
+package depends.matrix;
 
 import java.util.Collection;
 import java.util.HashMap;

@@ -9,9 +9,9 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
-import depends.format.matrix.DependencyMatrix;
-import depends.format.matrix.DependencyPair;
-import depends.format.matrix.DependencyValue;
+import depends.matrix.DependencyMatrix;
+import depends.matrix.DependencyPair;
+import depends.matrix.DependencyValue;
 public class ExcelDataBuilder {
 	private DependencyMatrix matrix;
 	private HSSFWorkbook workbook ;

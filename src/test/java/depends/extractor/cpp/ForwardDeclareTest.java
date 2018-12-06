@@ -9,8 +9,8 @@ import org.junit.Test;
 
 import depends.entity.Entity;
 import depends.extractor.cpp.CppFileParser;
-import depends.format.matrix.DependencyMatrix;
-import depends.format.matrix.FileDependencyGenerator;
+import depends.matrix.DependencyMatrix;
+import depends.matrix.FileDependencyGenerator;
 
 public class ForwardDeclareTest extends CppParserTest{
     @Before

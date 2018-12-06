@@ -1,7 +1,5 @@
 package depends.entity.repo;
 
-import depends.extractor.BuiltInType;
-
 public class NullBuiltInType extends BuiltInType {
 
 	@Override

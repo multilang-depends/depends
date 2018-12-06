@@ -1,6 +1,6 @@
 package depends.extractor.java;
 
-import depends.extractor.BuiltInType;
+import depends.entity.repo.BuiltInType;
 
 public class JavaBuiltInType extends BuiltInType{
 	

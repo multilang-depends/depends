@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import depends.entity.types.TypeEntity;
+import depends.relations.Inferer;
 
 /**
  * MultiDeclareEntity is a special container, which is used as a wrapper

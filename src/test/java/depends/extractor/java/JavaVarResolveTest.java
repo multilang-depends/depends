@@ -9,8 +9,8 @@ import org.junit.Test;
 
 import depends.entity.ContainerEntity;
 import depends.entity.Entity;
-import depends.entity.types.FunctionEntity;
-import depends.entity.types.TypeEntity;
+import depends.entity.FunctionEntity;
+import depends.entity.TypeEntity;
 
 public class JavaVarResolveTest extends JavaParserTest{
 	@Before

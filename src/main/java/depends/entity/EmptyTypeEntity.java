@@ -1,4 +1,4 @@
-package depends.entity.types;
+package depends.entity;
 
 public class EmptyTypeEntity extends TypeEntity {
 

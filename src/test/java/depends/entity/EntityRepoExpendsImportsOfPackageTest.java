@@ -7,10 +7,10 @@ import org.junit.Test;
 
 import depends.extractor.java.JavaHandlerContext;
 import depends.extractor.java.JavaParserTest;
-import depends.format.matrix.DependencyMatrix;
-import depends.format.matrix.FileDependencyGenerator;
 import depends.importtypes.ExactMatchImport;
 import depends.importtypes.PackageWildCardImport;
+import depends.matrix.DependencyMatrix;
+import depends.matrix.FileDependencyGenerator;
 
 public class EntityRepoExpendsImportsOfPackageTest extends JavaParserTest  {
 

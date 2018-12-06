@@ -1,9 +1,6 @@
-package depends.entity.types;
+package depends.entity;
 
 import java.util.UUID;
-
-import depends.entity.ContainerEntity;
-import depends.entity.Entity;
 
 public class AnonymousBlock extends ContainerEntity{
     public AnonymousBlock(Entity parent, Integer id) {

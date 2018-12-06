@@ -3,11 +3,11 @@ package depends.extractor.cpp;
 import java.util.ArrayList;
 import java.util.List;
 
-import depends.entity.Inferer;
 import depends.extractor.AbstractLangWorker;
 import depends.extractor.FileParser;
 import depends.extractor.cpp.cdt.CdtCppFileParser;
 import depends.extractor.cpp.cdt.PreprocessorHandler;
+import depends.relations.Inferer;
 
 public class CppWorker extends AbstractLangWorker {
     private static final String LANG = "cpp";

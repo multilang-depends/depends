@@ -5,9 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
-import depends.entity.types.FunctionEntity;
-import depends.entity.types.TypeEntity;
-import depends.entity.types.VarEntity;
+import depends.relations.Inferer;
 
 /**
  * ContainerEntity for example file, class, method, etc.

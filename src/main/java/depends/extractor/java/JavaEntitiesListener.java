@@ -3,8 +3,8 @@ package depends.extractor.java;
 import java.util.ArrayList;
 import java.util.List;
 
+import depends.entity.FunctionEntity;
 import depends.entity.repo.EntityRepo;
-import depends.entity.types.FunctionEntity;
 import depends.extractor.java.context.AnnotationProcessor;
 import depends.extractor.java.context.ClassTypeContextHelper;
 import depends.extractor.java.context.ExpressionUsage;

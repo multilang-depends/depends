@@ -1,6 +1,6 @@
 package depends.extractor.cpp;
 
-import depends.extractor.BuiltInType;
+import depends.entity.repo.BuiltInType;
 
 public class CppBuiltInType extends BuiltInType {
 

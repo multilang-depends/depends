@@ -1,8 +1,8 @@
 package depends.extractor.java;
 
 import depends.entity.Entity;
+import depends.entity.PackageEntity;
 import depends.entity.repo.EntityRepo;
-import depends.entity.types.PackageEntity;
 import depends.extractor.HandlerContext;
 
 public class JavaHandlerContext extends HandlerContext {

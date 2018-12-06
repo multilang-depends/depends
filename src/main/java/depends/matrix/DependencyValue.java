@@ -1,4 +1,4 @@
-package depends.format.matrix;
+package depends.matrix;
 
 public class DependencyValue{
 	private int weight;

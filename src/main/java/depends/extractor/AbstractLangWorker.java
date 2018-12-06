@@ -9,7 +9,6 @@ import java.util.Set;
 import org.codehaus.plexus.util.FileUtils;
 
 import depends.deptypes.DependencyType;
-import depends.entity.Inferer;
 import depends.entity.repo.EntityRepo;
 import depends.format.FileAttributes;
 import depends.format.dot.DotDataBuilder;
@@ -17,11 +16,12 @@ import depends.format.excel.ExcelDataBuilder;
 import depends.format.json.JDataBuilder;
 import depends.format.json.JDepObject;
 import depends.format.json.JsonFormatter;
-import depends.format.matrix.DependencyMatrix;
-import depends.format.matrix.FileDependencyGenerator;
 import depends.format.xml.XDataBuilder;
 import depends.format.xml.XDepObject;
 import depends.format.xml.XmlFormatter;
+import depends.matrix.DependencyMatrix;
+import depends.matrix.FileDependencyGenerator;
+import depends.relations.Inferer;
 import depends.util.FileTraversal;
 abstract public class AbstractLangWorker {
 	public abstract String supportedLanguage();

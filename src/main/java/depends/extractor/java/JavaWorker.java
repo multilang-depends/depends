@@ -3,9 +3,9 @@ package depends.extractor.java;
 import java.util.ArrayList;
 import java.util.List;
 
-import depends.entity.Inferer;
 import depends.extractor.AbstractLangWorker;
 import depends.extractor.FileParser;
+import depends.relations.Inferer;
 
 public class JavaWorker extends AbstractLangWorker {
     public static final String JAVA_LANG = "java";

@@ -1,8 +1,6 @@
-package depends.entity.types;
+package depends.entity;
 
-import depends.entity.ContainerEntity;
-import depends.entity.Entity;
-import depends.entity.Inferer;
+import depends.relations.Inferer;
 
 public class VarEntity extends Entity {
 	private String rawType;

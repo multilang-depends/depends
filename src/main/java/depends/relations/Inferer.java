@@ -1,15 +1,17 @@
-package depends.entity;
+package depends.relations;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import depends.entity.ContainerEntity;
+import depends.entity.Entity;
+import depends.entity.FileEntity;
+import depends.entity.MultiDeclareEntities;
+import depends.entity.TypeEntity;
+import depends.entity.repo.BuiltInType;
 import depends.entity.repo.EntityRepo;
 import depends.entity.repo.NullBuiltInType;
-import depends.entity.types.FileEntity;
-import depends.entity.types.TypeEntity;
-import depends.extractor.BuiltInType;
-import depends.extractor.ImportLookupStrategy;
 import depends.importtypes.Import;
 
 public class Inferer {

@@ -1,11 +1,11 @@
-package depends.format.matrix;
+package depends.matrix;
 
 import java.util.ArrayList;
 
 import depends.entity.Entity;
-import depends.entity.Relation;
+import depends.entity.FileEntity;
 import depends.entity.repo.EntityRepo;
-import depends.entity.types.FileEntity;
+import depends.relations.Relation;
 
 public class FileDependencyGenerator {
 	/**

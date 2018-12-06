@@ -8,10 +8,10 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
-import depends.entity.Inferer;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.java.JavaLexer;
 import depends.extractor.java.JavaParser;
+import depends.relations.Inferer;
 
 
 public class JavaFileParser implements depends.extractor.FileParser{

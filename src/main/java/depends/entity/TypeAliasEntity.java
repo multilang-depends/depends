@@ -1,9 +1,8 @@
-package depends.entity.types;
+package depends.entity;
 
 import java.util.Collection;
 
-import depends.entity.Entity;
-import depends.entity.Inferer;
+import depends.relations.Inferer;
 
 public class TypeAliasEntity extends TypeEntity{
 	TypeEntity originType = new EmptyTypeEntity();

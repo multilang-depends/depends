@@ -1,11 +1,10 @@
-package depends.extractor;
+package depends.relations;
 
 import java.util.List;
 
 import depends.entity.Entity;
-import depends.entity.Inferer;
+import depends.entity.FileEntity;
 import depends.entity.repo.EntityRepo;
-import depends.entity.types.FileEntity;
 import depends.importtypes.Import;
 
 public interface ImportLookupStrategy {

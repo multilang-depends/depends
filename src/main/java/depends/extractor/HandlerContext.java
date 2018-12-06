@@ -5,13 +5,13 @@ import java.util.Stack;
 
 import depends.entity.ContainerEntity;
 import depends.entity.Entity;
-import depends.entity.IdGenerator;
+import depends.entity.FileEntity;
+import depends.entity.FunctionEntity;
+import depends.entity.TypeAliasEntity;
+import depends.entity.TypeEntity;
+import depends.entity.VarEntity;
 import depends.entity.repo.EntityRepo;
-import depends.entity.types.FileEntity;
-import depends.entity.types.FunctionEntity;
-import depends.entity.types.TypeAliasEntity;
-import depends.entity.types.TypeEntity;
-import depends.entity.types.VarEntity;
+import depends.entity.repo.IdGenerator;
 import depends.importtypes.Import;
 
 public abstract class HandlerContext {

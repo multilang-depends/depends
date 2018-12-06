@@ -1,4 +1,6 @@
-package depends.entity;
+package depends.relations;
+
+import depends.entity.Entity;
 
 /**
  * Dependency relation object

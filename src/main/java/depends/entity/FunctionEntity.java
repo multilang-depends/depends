@@ -1,12 +1,10 @@
-package depends.entity.types;
+package depends.entity;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import depends.entity.ContainerEntity;
-import depends.entity.Entity;
-import depends.entity.Inferer;
+import depends.relations.Inferer;
 
 public class FunctionEntity extends ContainerEntity{
 	private List<String> returnTypeIdentifiers = new ArrayList<>();

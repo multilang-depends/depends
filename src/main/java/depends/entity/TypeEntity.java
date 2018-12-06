@@ -1,11 +1,9 @@
-package depends.entity.types;
+package depends.entity;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-import depends.entity.ContainerEntity;
-import depends.entity.Entity;
-import depends.entity.Inferer;
+import depends.relations.Inferer;
 
 public class TypeEntity extends ContainerEntity{
 	Collection<TypeEntity> inheritedTypes = new ArrayList<>();

@@ -5,10 +5,10 @@ import java.io.IOException;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 
 import depends.entity.Entity;
-import depends.entity.Inferer;
+import depends.entity.FileEntity;
 import depends.entity.repo.EntityRepo;
-import depends.entity.types.FileEntity;
 import depends.extractor.cpp.CppFileParser;
+import depends.relations.Inferer;
 import depends.util.FileUtil;
 
 public class CdtCppFileParser extends CppFileParser {

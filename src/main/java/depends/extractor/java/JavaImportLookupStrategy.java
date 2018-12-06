@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import depends.entity.Entity;
-import depends.entity.Inferer;
+import depends.entity.FileEntity;
+import depends.entity.PackageEntity;
 import depends.entity.repo.EntityRepo;
-import depends.entity.types.FileEntity;
-import depends.entity.types.PackageEntity;
-import depends.extractor.ImportLookupStrategy;
 import depends.importtypes.Import;
+import depends.relations.ImportLookupStrategy;
+import depends.relations.Inferer;
 
 public class JavaImportLookupStrategy implements ImportLookupStrategy{
 	@Override

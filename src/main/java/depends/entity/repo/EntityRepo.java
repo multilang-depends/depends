@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.HashMap;
 
 import depends.entity.Entity;
-import depends.entity.IdGenerator;
 import depends.entity.MultiDeclareEntities;
 
 public class EntityRepo extends IdGenerator{

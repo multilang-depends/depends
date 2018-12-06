@@ -2,10 +2,10 @@ package depends.extractor.cpp;
 
 import java.util.ArrayList;
 
-import depends.entity.Inferer;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.cpp.cdt.CdtCppFileParser;
 import depends.extractor.cpp.cdt.PreprocessorHandler;
+import depends.relations.Inferer;
 
 public abstract class CppParserTest {
 	protected EntityRepo repo;

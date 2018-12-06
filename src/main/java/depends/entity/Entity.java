@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import depends.entity.types.TypeEntity;
+
+import depends.relations.Inferer;
+import depends.relations.Relation;
 
 /**
  * Entity is the root of all entities, including file, package, module, 

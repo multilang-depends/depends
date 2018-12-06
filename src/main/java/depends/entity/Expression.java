@@ -1,8 +1,6 @@
 package depends.entity;
 
-import depends.entity.types.FunctionEntity;
-import depends.entity.types.TypeEntity;
-import depends.entity.types.VarEntity;
+import depends.relations.Inferer;
 
 public class Expression {
 	public Integer id;

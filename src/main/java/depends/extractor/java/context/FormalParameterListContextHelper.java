@@ -5,9 +5,9 @@ import java.util.List;
 
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import depends.entity.IdGenerator;
-import depends.entity.types.FunctionEntity;
-import depends.entity.types.VarEntity;
+import depends.entity.FunctionEntity;
+import depends.entity.VarEntity;
+import depends.entity.repo.IdGenerator;
 import depends.extractor.java.JavaParser.FormalParameterContext;
 import depends.extractor.java.JavaParser.FormalParameterListContext;
 import depends.extractor.java.JavaParser.FormalParametersContext;

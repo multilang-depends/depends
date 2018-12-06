@@ -25,14 +25,14 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLinkageSpecification;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTProblemDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTVisibilityLabel;
 
-import depends.entity.IdGenerator;
-import depends.entity.Inferer;
+import depends.entity.FunctionEntity;
+import depends.entity.VarEntity;
 import depends.entity.repo.EntityRepo;
-import depends.entity.types.FunctionEntity;
-import depends.entity.types.VarEntity;
+import depends.entity.repo.IdGenerator;
 import depends.importtypes.ExactMatchImport;
 import depends.importtypes.FileImport;
 import depends.importtypes.PackageWildCardImport;
+import depends.relations.Inferer;
 
 public class CdtCppEntitiesListener  extends ASTVisitor {
 	private CppHandlerContext context;

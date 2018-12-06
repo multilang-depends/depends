@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import depends.format.FileAttributes;
-import depends.format.matrix.DependencyMatrix;
-import depends.format.matrix.DependencyPair;
-import depends.format.matrix.DependencyValue;
+import depends.matrix.DependencyMatrix;
+import depends.matrix.DependencyPair;
+import depends.matrix.DependencyValue;
 
 public class XDataBuilder {
-    public XDepObject build(DependencyMatrix matrix,FileAttributes configure) {
+    public XDepObject build(DependencyMatrix matrix,FileAttributes attribute) {
         ArrayList<String> files = matrix.getNodes();
         Collection<DependencyPair> dependencyPairs = matrix.getDependencyPairs();
 
@@ -22,8 +22,8 @@ public class XDataBuilder {
         xCells.setCells(xCellList);
 
         XDepObject xDepObject = new XDepObject();
-        xDepObject.setName(configure.getAttributeName());
-        xDepObject.setSchemaVersion(configure.getSchemaVersion());
+        xDepObject.setName(attribute.getAttributeName());
+        xDepObject.setSchemaVersion(attribute.getSchemaVersion());
         xDepObject.setVariables(xFiles);
         xDepObject.setCells(xCells);
 

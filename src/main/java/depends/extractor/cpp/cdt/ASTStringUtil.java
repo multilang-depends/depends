@@ -71,7 +71,7 @@ import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 
-import depends.entity.Inferer;
+import depends.relations.Inferer;
 
 /**
  * This is a utility class to help convert AST elements to strings.

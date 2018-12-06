@@ -1,9 +1,9 @@
-package depends.extractor;
+package depends.entity.repo;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import depends.entity.Inferer;
+import depends.relations.Inferer;
 
 public abstract class BuiltInType {
 

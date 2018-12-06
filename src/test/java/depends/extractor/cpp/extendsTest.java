@@ -10,7 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import depends.entity.Entity;
-import depends.entity.types.TypeAliasEntity;
+import depends.entity.TypeAliasEntity;
 import depends.extractor.cpp.CppFileParser;
 
 public class extendsTest extends CppParserTest{

@@ -6,20 +6,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 import depends.format.FileAttributes;
-import depends.format.matrix.DependencyMatrix;
-import depends.format.matrix.DependencyPair;
-import depends.format.matrix.DependencyValue;
+import depends.matrix.DependencyMatrix;
+import depends.matrix.DependencyPair;
+import depends.matrix.DependencyValue;
 
 public class JDataBuilder {
-	public JDepObject build(DependencyMatrix dependencyMatrix, FileAttributes configure) {
+	public JDepObject build(DependencyMatrix dependencyMatrix, FileAttributes attribute) {
 		ArrayList<String> files = dependencyMatrix.getNodes();
 		Collection<DependencyPair> dependencyPairs = dependencyMatrix.getDependencyPairs();
 		ArrayList<JCellObject> cellObjects = buildCellObjects(dependencyPairs); // transform finalRes into cellObjects
 
 		JDepObject depObject = new JDepObject();
 		depObject.setVariables(files);
-		depObject.setName(configure.getAttributeName());
-		depObject.setSchemaVersion(configure.getSchemaVersion());
+		depObject.setName(attribute.getAttributeName());
+		depObject.setSchemaVersion(attribute.getSchemaVersion());
 		depObject.setCells(cellObjects);
 
 		return depObject;

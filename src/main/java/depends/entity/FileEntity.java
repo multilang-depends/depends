@@ -1,12 +1,10 @@
-package depends.entity.types;
+package depends.entity;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import depends.entity.ContainerEntity;
-import depends.entity.Entity;
-import depends.entity.Inferer;
 import depends.importtypes.Import;
+import depends.relations.Inferer;
 
 public class FileEntity extends ContainerEntity {
 	private List<Import> importedNames = new ArrayList<>();

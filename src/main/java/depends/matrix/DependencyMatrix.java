@@ -1,4 +1,4 @@
-package depends.format.matrix;
+package depends.matrix;
 
 import java.util.ArrayList;
 import java.util.Collection;

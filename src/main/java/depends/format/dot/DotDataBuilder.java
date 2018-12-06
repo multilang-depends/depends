@@ -5,8 +5,8 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import depends.format.matrix.DependencyMatrix;
-import depends.format.matrix.DependencyPair;
+import depends.matrix.DependencyMatrix;
+import depends.matrix.DependencyPair;
 
 public class DotDataBuilder {
 	private DependencyMatrix matrix;

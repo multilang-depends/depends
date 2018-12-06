@@ -1,4 +1,4 @@
-package depends.entity.types;
+package depends.entity;
 
 public class PackageEntity extends TypeEntity {
 	public PackageEntity(String rawName, Integer id) {

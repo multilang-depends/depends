@@ -1,14 +1,17 @@
-package depends.entity;
+package depends.relations;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
 import depends.deptypes.DependencyType;
-import depends.entity.types.FileEntity;
-import depends.entity.types.FunctionEntity;
-import depends.entity.types.TypeEntity;
-import depends.entity.types.VarEntity;
+import depends.entity.ContainerEntity;
+import depends.entity.Entity;
+import depends.entity.Expression;
+import depends.entity.FileEntity;
+import depends.entity.FunctionEntity;
+import depends.entity.TypeEntity;
+import depends.entity.VarEntity;
 
 public class RelationCounter {
 
