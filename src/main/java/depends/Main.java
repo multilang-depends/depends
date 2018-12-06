@@ -4,6 +4,7 @@ import depends.extractor.AbstractLangWorker;
 import depends.extractor.LangWorkers;
 import depends.extractor.cpp.CppWorker;
 import depends.extractor.java.JavaWorker;
+import depends.util.FileUtil;
 
 public class Main {
 
@@ -21,8 +22,10 @@ public class Main {
         String inputDir = args[1];
         String includeDir = args[2];
         String projectName = args[3];
-		new JavaWorker(inputDir,includeDir).register();
-		new CppWorker(inputDir,includeDir).register();
+
+        inputDir = FileUtil.uniqFilePath(inputDir);
+		LangWorkers.getRegistry().register(new JavaWorker(inputDir,includeDir));
+		LangWorkers.getRegistry().register(new CppWorker(inputDir,includeDir));
 		AbstractLangWorker worker = LangWorkers.getRegistry().getWorkerOf(lang);
 		if (worker == null){
 			System.out.println("Not support this language: " + args[0]);

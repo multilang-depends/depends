@@ -68,4 +68,13 @@ public class DependencyMatrix {
 	public Integer relationCount() {
 		return relationCount;
 	}
+
+	public void stripFilenames(String leadingSrcPath) {
+		for (int i=0;i<reMappedNodes.size();i++) {
+			String shortPath = reMappedNodes.get(i);
+			if (shortPath.startsWith(leadingSrcPath))
+				shortPath = "."+shortPath.substring(leadingSrcPath.length());
+			reMappedNodes.set(i, shortPath);
+		}
+	}
 }

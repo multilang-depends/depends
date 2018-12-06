@@ -38,9 +38,6 @@ abstract public class AbstractLangWorker {
 		this.inputSrcPath = inputDir;
 		this.includeDirs = includeDir;
 	}
-	public void register() {
-		LangWorkers.getRegistry().register(this);
-	}
 	
     
 	public void work() {
@@ -75,7 +72,9 @@ abstract public class AbstractLangWorker {
     
     private void identifyDependencies(){
 		System.out.println("dependencie data generating...");	
-        dependencyMatrix  = (new FileDependencyGenerator()).buildWithRemap(entityRepo);
+        dependencyMatrix  = (new FileDependencyGenerator()).build(entityRepo);
+        dependencyMatrix.remapIds(entityRepo);
+        dependencyMatrix.stripFilenames(inputSrcPath);
         System.out.println("dependencie data generating done successfully...");	 	
     }
 

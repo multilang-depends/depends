@@ -34,18 +34,7 @@ public class FileDependencyGenerator {
 		return dependencyMatrix;
 	}
 
-	/**
-	 * Build the dependency matrix (re-mapped all dependencies with 0-based values 
-	 * to align with node indexes)
-	 * @param entityRepo which contains entities and relations
-	 * @return the generated dependency matrix
-	 */
-	public DependencyMatrix buildWithRemap(EntityRepo repo) {
-		DependencyMatrix r = build(repo);
-		r.remapIds(repo);
-		return r;
-	}
-
+	
 	private int getFileEntityIdNoException(EntityRepo entityRepo, Entity entity) {
 		Entity ancestor = entity.getAncestorOfType(FileEntity.class);
 		if (ancestor==null)
