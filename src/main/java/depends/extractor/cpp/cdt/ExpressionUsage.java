@@ -100,7 +100,6 @@ public class ExpressionUsage {
 		}else if (ctx instanceof IASTTypeIdExpression) {
 		//3. if given type directly
 			expression.rawType = ASTStringUtil.getTypeIdString(((IASTTypeIdExpression)ctx).getTypeId());
-			System.out.println(expression.rawType);
 			//TODO: check
 		}
 	}

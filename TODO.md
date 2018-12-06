@@ -25,7 +25,8 @@
 - add check - should resolve all macros, variants, functions, class types, etc in header file; 
 - find parameter related conditional statements
 - use STL to check whether the template is handled completely
-
+Macro should be unexpanded until last minutes, but some macros may neither vars nor functions, they could be certain informal format. **Which is difficult to handle **
+ # Conditional Compliant Directives **Open** should we only handle the *visible* part, or everything of source code?
 # Other
 http://www.dependency-analyzer.org/
 

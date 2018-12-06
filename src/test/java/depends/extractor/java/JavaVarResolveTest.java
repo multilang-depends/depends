@@ -45,7 +45,6 @@ public class JavaVarResolveTest extends JavaParserTest{
         parser.parse();
         inferer.resolveAllBindings();
         ContainerEntity e = (ContainerEntity) entityRepo.getEntity("LocalVarInferExample.setExample");
-        System.out.println(e.dumpExpressions());
         assertEquals(16,entityRepo.getEntity("LocalVarInferExample.setExample").getRelations().size());
 	}
 	
@@ -64,7 +63,6 @@ public class JavaVarResolveTest extends JavaParserTest{
         JavaFileParser parser = createParser(src);
         parser.parse();
         inferer.resolveAllBindings();
-        System.out.println(((ContainerEntity)(entityRepo.getEntity("x.LongExpressionWithAbsolutePath.setExample"))).dumpExpressions());
         assertEquals(6,entityRepo.getEntity("x.LongExpressionWithAbsolutePath.setExample").getRelations().size());
 	}
 	

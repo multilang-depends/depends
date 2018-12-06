@@ -1,15 +1,20 @@
 package depends.format.matrix;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import depends.entity.repo.EntityRepo;
 
 public class DependencyMatrix {
     private Map<Integer, Map<Integer, Map<String, Integer>>> relations = new HashMap<Integer, Map<Integer, Map<String, Integer>>>();
     private Map<Integer, Map<Integer, Map<String, Integer>>> reMappedRelations = new HashMap<Integer, Map<Integer, Map<String, Integer>>>();
+    
+    private HashMap<String, DependencyPair> dependencyPairs = new HashMap<>();
 
     private ArrayList<String> nodes;
     private ArrayList<String> reMappedNodes;
@@ -26,11 +31,21 @@ public class DependencyMatrix {
 			return reMappedRelations;
         return relations;
     }
+	
+	
+	public Collection<DependencyPair> getDependencyPairs() {
+        return dependencyPairs.values();
+    }
 
     public void addDependency(String depType, Integer from, Integer to) {
 		if(from.equals(to) || from == -1 || to == -1) {
 		    return;
 		}
+		if (dependencyPairs.get(DependencyPair.key(from,to))==null) {
+			dependencyPairs.put(DependencyPair.key(from,to),new DependencyPair(from,to));
+		}
+		DependencyPair dependencyPair = dependencyPairs.get(DependencyPair.key(from,to));
+		dependencyPair.addDependency(depType);
 		if(!relations.containsKey(from)) {
 		    relations.put(from, new HashMap<Integer, Map<String, Integer>>());
 		}
