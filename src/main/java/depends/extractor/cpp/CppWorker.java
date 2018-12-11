@@ -13,7 +13,7 @@ public class CppWorker extends AbstractLangWorker {
     private static final String LANG = "cpp";
     private static final String[] SUFFIX = new String[] {".cpp",".cc",".c",".h",".hpp",".hh"};
     PreprocessorHandler preprocessorHandler;
-    public CppWorker(String inputDir, String includeDir) {
+    public CppWorker(String inputDir, String[] includeDir) {
     	super(inputDir,includeDir);
     	preprocessorHandler = new PreprocessorHandler(super.includePaths());
 		inferer = new Inferer(entityRepo,new CppImportLookupStrategy(),new CppBuiltInType());

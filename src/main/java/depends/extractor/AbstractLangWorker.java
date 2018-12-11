@@ -3,6 +3,7 @@ package depends.extractor;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -10,20 +11,22 @@ import org.codehaus.plexus.util.FileUtils;
 
 import depends.deptypes.DependencyType;
 import depends.entity.repo.EntityRepo;
+import depends.format.AbstractFormatDependencyDumper;
 import depends.format.FileAttributes;
-import depends.format.detail.DetailDataBuilder;
-import depends.format.dot.DotDataBuilder;
-import depends.format.excel.ExcelDataBuilder;
+import depends.format.detail.DetailTextFormatDependencyDumper;
+import depends.format.dot.DotFormatDependencyDumper;
+import depends.format.excel.ExcelFormatDependencyDumper;
 import depends.format.json.JDataBuilder;
 import depends.format.json.JDepObject;
-import depends.format.json.JsonFormatter;
+import depends.format.json.JsonFormatDependencyDumper;
 import depends.format.xml.XDataBuilder;
 import depends.format.xml.XDepObject;
-import depends.format.xml.XmlFormatter;
+import depends.format.xml.XmlFormatDependencyDumper;
 import depends.matrix.DependencyMatrix;
 import depends.matrix.FileDependencyGenerator;
 import depends.relations.Inferer;
 import depends.util.FileTraversal;
+import edu.emory.mathcs.backport.java.util.Arrays;
 abstract public class AbstractLangWorker {
 	public abstract String supportedLanguage();
 	public abstract String[] fileSuffixes();
@@ -31,9 +34,9 @@ abstract public class AbstractLangWorker {
 	protected EntityRepo entityRepo;
 	DependencyMatrix dependencyMatrix;
 	private String inputSrcPath;
-	private String includeDirs;
+	private String[] includeDirs;
 
-	public AbstractLangWorker(String inputDir, String includeDir) {
+	public AbstractLangWorker(String inputDir, String[] includeDir) {
 		entityRepo = new EntityRepo();
 		this.inputSrcPath = inputDir;
 		this.includeDirs = includeDir;
@@ -46,13 +49,6 @@ abstract public class AbstractLangWorker {
         identifyDependencies();
 	}
 
-	private void outputErrors() {
-		List<String> errors = getErrors();
-		for (String e:errors) {
-			System.err.println(e);
-		}
-	}
-	
 	/**
 	 * Errors during all execution steps. could be extend as several methods in future
 	 * @return
@@ -101,39 +97,10 @@ abstract public class AbstractLangWorker {
 	}
     
     protected abstract FileParser getFileParser(String fileFullPath);
-    
 
-	private final void outputDeps(ArrayList<String> depTypes, String projectName) {
-		DetailDataBuilder detailBuilder = new DetailDataBuilder(dependencyMatrix);
-		detailBuilder.output(projectName  + "_dep.txt");
-		
-		JDataBuilder jBuilder = new JDataBuilder();
-        JDepObject jDepObject = jBuilder.build(dependencyMatrix,new FileAttributes(projectName));
-        JsonFormatter jasonFormatter = new JsonFormatter();
-        jasonFormatter.toJson(jDepObject,projectName  + "_dep.json");
-        System.out.println("Export " + projectName  + "_dep.json" + " successfully...");
-
-        XDataBuilder xBuilder = new XDataBuilder();
-        XDepObject xDepObject = xBuilder.build(dependencyMatrix,new FileAttributes(projectName));
-        XmlFormatter xmlFormatter = new XmlFormatter();
-        xmlFormatter.toXml(xDepObject,projectName  + "_dep.xml");
-        System.out.println("Export " + projectName  + "_dep.xml" + " successfully...");
-        
-		ExcelDataBuilder builder = new ExcelDataBuilder(dependencyMatrix);
-		if (builder.output(projectName  + "_dep.xls")) {
-			System.out.println("Export " + projectName  + "_dep.xls" + " successfully...");
-		}	
-		
-		DotDataBuilder dotBuilder = new DotDataBuilder(dependencyMatrix);
-		if (dotBuilder.output(projectName  + "_dep.dot")) {
-			System.out.println("Export " + projectName + "_dep.dot" + " successfully...");
-		}
-
-    }
 	public List<String> includePaths() {
-		String[] paths = this.includeDirs.split(";");
 		ArrayList<String> r = new ArrayList<String>();
-		for (String path:paths) {
+		for (String path:includeDirs) {
 			if (FileUtils.fileExists(path)) {
 				if (!r.contains(path))
 					r.add(path);
@@ -146,10 +113,7 @@ abstract public class AbstractLangWorker {
 		}
 		return r;
 	}
-	public void outputResult(String projectName) {
-        outputErrors();
-        outputDeps(DependencyType.allDependencies(), projectName);
-	}
+	
 	public DependencyMatrix getDependencies() {
 		return dependencyMatrix;
 	}

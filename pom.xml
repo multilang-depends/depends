@@ -50,19 +50,10 @@
 					</descriptorRefs>
 				</configuration>
 			</plugin>
-			<!-- <plugin>
-				<configuration>
-				 <targetTests>
-				  <param>depends.*</param>
-				  </targetTests>
-				 <targetClasses>
-				  <param>depends.*</param>
-				 </targetClasses>
-				</configuration>			
-			    <groupId>org.pitest</groupId>
-			    <artifactId>pitest-maven</artifactId>
-			    <version>1.4.3</version>
-			 </plugin> -->
+			<!-- <plugin> <configuration> <targetTests> <param>depends.*</param> </targetTests> 
+				<targetClasses> <param>depends.*</param> </targetClasses> </configuration> 
+				<groupId>org.pitest</groupId> <artifactId>pitest-maven</artifactId> <version>1.4.3</version> 
+				</plugin> -->
 		</plugins>
 	</build>
 
@@ -102,11 +93,11 @@
 			<artifactId>poi-ooxml</artifactId>
 			<version>3.16</version>
 		</dependency>
- 	 	<dependency>
+		<dependency>
 			<groupId>org.eclipse.cdt</groupId>
 			<artifactId>org.eclipse.cdt.core</artifactId>
 			<version>6.5.0.201806170908</version>
-		</dependency> 
+		</dependency>
 		<dependency>
 			<groupId>eclipse-photon</groupId>
 			<artifactId>org.eclipse.equinox.registry</artifactId>
@@ -136,6 +127,11 @@
 			<groupId>eclipse-photon</groupId>
 			<artifactId>org.eclipse.core.jobs</artifactId>
 			<version>3.10.0.v20180427-1454</version>
-		</dependency> 
+		</dependency>
+		<dependency>
+			<groupId>info.picocli</groupId>
+			<artifactId>picocli</artifactId>
+			<version>3.8.2</version>
+		</dependency>
 	</dependencies>
 </project>

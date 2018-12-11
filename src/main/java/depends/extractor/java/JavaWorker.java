@@ -11,7 +11,7 @@ public class JavaWorker extends AbstractLangWorker {
     public static final String JAVA_LANG = "java";
     public static final String JAVA_SUFFIX = ".java";
     
-    public JavaWorker(String inputDir, String includeDir) {
+    public JavaWorker(String inputDir, String[] includeDir) {
     	super(inputDir,includeDir);
 		inferer = new Inferer(entityRepo,new JavaImportLookupStrategy(),new JavaBuiltInType());
     }

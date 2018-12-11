@@ -1,37 +1,32 @@
-package depends.format.dot;
+package depends.format.detail;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import depends.format.AbstractFormatDependencyDumper;
 import depends.matrix.DependencyMatrix;
 import depends.matrix.DependencyPair;
 import depends.matrix.DependencyValue;
 
-public class DotDataBuilder {
-	private DependencyMatrix matrix;
-
-	public DotDataBuilder(DependencyMatrix matrix) {
-		this.matrix = matrix;
+public class DetailTextFormatDependencyDumper extends AbstractFormatDependencyDumper{
+	ArrayList<String> files;
+	@Override
+	public String getFormatName() {
+		return "detail";
 	}
-
-	public boolean output(String outputDotFile) {
+	public DetailTextFormatDependencyDumper(DependencyMatrix matrix, String name, String outputDir) {
+		super(matrix,name,outputDir);
+	}
+	@Override
+	public boolean output() {
 		PrintWriter writer;
 		try {
-			writer = new PrintWriter(outputDotFile);
-			ArrayList<String> files = matrix.getNodes();
-			
-			for (int i=0;i<files.size();i++) {
-				String file = files.get(i);
-				writer.println("// "+i + ":"+file);
-			}
-			writer.println("digraph");
-			writer.println("{");
+			files = matrix.getNodes();
+			writer = new PrintWriter(composeFilename() +".txt");
 	        Collection<DependencyPair> dependencyPairs = matrix.getDependencyPairs();
-
 	        addRelations(writer,dependencyPairs); 
-			writer.println("}");
 			writer.close();
 			return true;
 		} catch (FileNotFoundException e) {
@@ -44,7 +39,10 @@ public class DotDataBuilder {
 		for (DependencyPair dependencyPair:dependencyPairs) {
             int src = dependencyPair.getFrom();
             int dst = dependencyPair.getTo();
-        	writer.println("\t"+src + " -> " + dst + ";");
+        	writer.println("======="+files.get(src) + " -> " + files.get(dst) + "=========");
+        	for (DependencyValue dependency:dependencyPair.getDependencies()) {
+        	writer.println(dependency.getDetails());
+        	}
         }		
 	}
 }
