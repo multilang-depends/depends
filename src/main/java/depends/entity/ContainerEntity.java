@@ -1,5 +1,6 @@
 package depends.entity;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -135,6 +136,7 @@ public abstract class ContainerEntity extends Entity {
 						expression.setType(func.getType(),func,inferer);
 					}
 				}else {
+					
 					VarEntity varEntity = this.lookupVarsInVisibleScope(expression.identifier);
 					if (varEntity!=null) {
 						expression.setType( varEntity.getType(),varEntity,inferer);
@@ -202,6 +204,7 @@ public abstract class ContainerEntity extends Entity {
 	 * @return
 	 */
 	public VarEntity lookupVarsInVisibleScope(String varName) {
+		
 		ContainerEntity fromEntity = this;
 		while (fromEntity != null) {
 			if (fromEntity instanceof ContainerEntity) {

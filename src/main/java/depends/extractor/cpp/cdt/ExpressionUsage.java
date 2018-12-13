@@ -5,6 +5,7 @@ import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
@@ -19,6 +20,13 @@ public class ExpressionUsage {
 		this.context = context;
 	}
 
+	public void foundCallExpressionOfFunctionStyle(String functionName, IASTDeclaration ctx) {
+		/* create expression and link it with parent*/
+		Expression expression = new Expression(ctx.hashCode(),null);
+		context.lastContainer().addExpression(expression);
+		expression.isCall = true;
+		expression.identifier = functionName;
+	}
 	public void foundExpression(IASTExpression ctx) {
 		IASTNode parent = findParentInStack(ctx);
 		/* create expression and link it with parent*/
@@ -170,4 +178,6 @@ public class ExpressionUsage {
 		if (context.lastContainer().expressions().containsKey(ctx.getParent().hashCode())) return ctx.getParent();
 		return findParentInStack(ctx.getParent());
 	}
+
+
 }

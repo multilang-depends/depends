@@ -2,6 +2,7 @@ package depends.extractor.cpp.cdt;
 
 import java.util.ArrayList;
 
+import org.codehaus.plexus.util.StringUtils;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -25,6 +26,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLinkageSpecification;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTProblemDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTVisibilityLabel;
 
+import depends.entity.Expression;
 import depends.entity.FunctionEntity;
 import depends.entity.VarEntity;
 import depends.entity.repo.EntityRepo;
@@ -143,6 +145,7 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 				if (namedEntity!=null) {
 					rawName = namedEntity.getQualifiedName();
 				}
+				returnType = reMapIfConstructDeconstruct(rawName,returnType);
 				context.foundMethodDeclarator(rawName, returnType, new ArrayList<>());
 			}
 			else if ( declarator.getParent() instanceof IASTFunctionDefinition) {
@@ -153,12 +156,28 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 				if (namedEntity!=null) {
 					rawName = namedEntity.getQualifiedName();
 				}
+				returnType = reMapIfConstructDeconstruct(rawName,returnType);
 				context.foundMethodDeclarator(rawName, returnType, new ArrayList<>());
 			}
 		}
 		return super.visit(declarator);
 	}
 	
+	/**
+	 * In case of return type is empty, it maybe a construct/deconstruct function
+	 * @param functionname
+	 * @param returnType
+	 * @return
+	 */
+	private String reMapIfConstructDeconstruct(String functionname, String returnType) {
+		if (returnType.length()>0) return returnType;
+		if (functionname.contains("::")) {
+			return functionname.substring(0, functionname.indexOf("::"));
+		}else {
+			return functionname;
+		}
+	}
+
 	@Override
 	public int leave(IASTDeclarator declarator) {
 		if (declarator instanceof IASTFunctionDeclarator){
@@ -202,9 +221,14 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 				if (declSpecifier.getStorageClass()==IASTDeclSpecifier.sc_typedef) {
 					context.foundNewTypeAlias(declarator.getName().toString(),ASTStringUtil.getName(declSpecifier));
 				}else if (!(declarator instanceof IASTFunctionDeclarator)) {
-					String varName = ASTStringUtil.getName(declSpecifier);
-					String varType = declarator.getName().toString();
-					context.foundVarDefintion(varName, varType);
+					String varType = ASTStringUtil.getName(declSpecifier);
+					String varName = declarator.getName().toString();
+					if (!StringUtils.isEmpty(varType)) {
+						context.foundVarDefintion(varName, varType);
+					}else {
+						expressionUsage.foundCallExpressionOfFunctionStyle(varName,declaration);
+					}
+					
 				}
 			}
 		}else if (declaration instanceof IASTFunctionDefinition){

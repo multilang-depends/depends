@@ -4,7 +4,7 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
-@Command(name = "Multi-Lanaguage Dependency Analyzer")
+@Command(name = "depends")
 public class DependsCommand {
 	@Parameters(index = "0", description = "The lanauge of project files: [java, cpp]")
     private String lang;

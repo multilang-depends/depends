@@ -6,12 +6,17 @@ class ANSICParserExtensionConfigurationExtension extends ANSICParserExtensionCon
 
 	@Override
 	public boolean supportDeclspecSpecifiers() {
-		return true;
+		return false;
 	}
 
 	@Override
 	public boolean supportKnRC() {
-		return true;
+		return false;
+	}
+	
+	@Override
+	public boolean supportStatementsInExpressions() {
+		return false;
 	}
 
 }

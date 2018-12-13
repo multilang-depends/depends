@@ -6,12 +6,17 @@ class GPPParserExtensionConfigurationExtension extends GPPParserExtensionConfigu
 
 	@Override
 	public boolean supportKnRC() {
-		return true;
+		return false;
 	}
 
 	@Override
 	public boolean supportParameterInfoBlock() {
-		return true;
+		return false;
+	}
+	
+	@Override
+	public boolean supportStatementsInExpressions() {
+		return false;
 	}
 
 }
