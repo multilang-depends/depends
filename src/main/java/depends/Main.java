@@ -8,6 +8,7 @@ import depends.extractor.AbstractLangWorker;
 import depends.extractor.LangWorkers;
 import depends.extractor.cpp.CppWorker;
 import depends.extractor.java.JavaWorker;
+import depends.extractor.ruby.RubyWorker;
 import depends.format.DependencyDumper;
 import depends.util.FileUtil;
 import picocli.CommandLine;
@@ -44,6 +45,8 @@ public class Main {
 		inputDir = FileUtil.uniqFilePath(inputDir);
 		LangWorkers.getRegistry().register(new JavaWorker(inputDir, includeDir));
 		LangWorkers.getRegistry().register(new CppWorker(inputDir, includeDir));
+		LangWorkers.getRegistry().register(new RubyWorker(inputDir, includeDir));
+		
 		AbstractLangWorker worker = LangWorkers.getRegistry().getWorkerOf(lang);
 		if (worker == null) {
 			System.out.println("Not support this language: " + lang);
