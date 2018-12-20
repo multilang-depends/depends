@@ -12,6 +12,7 @@ import depends.extractor.ruby.RubyWorker;
 import depends.format.DependencyDumper;
 import depends.matrix.DependencyGenerator;
 import depends.matrix.FileDependencyGenerator;
+import depends.matrix.FunctionDependencyGenerator;
 import depends.util.FileUtil;
 import picocli.CommandLine;
 
@@ -57,7 +58,7 @@ public class Main {
 
 		long startTime = System.currentTimeMillis();
 		DependencyGenerator dependencyGenerator = app.getGranularity().equals("file")?
-				(new FileDependencyGenerator()):(new FileDependencyGenerator());
+				(new FileDependencyGenerator()):(new FunctionDependencyGenerator());
 		worker.setDependencyGenerator(dependencyGenerator);
 		worker.work();
 		DependencyDumper output = new DependencyDumper(worker.getDependencies(),worker.getErrors());
