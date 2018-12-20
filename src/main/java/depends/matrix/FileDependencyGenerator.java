@@ -7,12 +7,13 @@ import depends.entity.FileEntity;
 import depends.entity.repo.EntityRepo;
 import depends.relations.Relation;
 
-public class FileDependencyGenerator {
+public class FileDependencyGenerator implements DependencyGenerator{
 	/**
 	 * Build the dependency matrix (without re-mapping file id)
 	 * @param entityRepo which contains entities and relations
 	 * @return the generated dependency matrix
 	 */
+	@Override
 	public DependencyMatrix build(EntityRepo entityRepo) {
 		DependencyMatrix dependencyMatrix = new DependencyMatrix();
         ArrayList<String> files = new ArrayList<String>();

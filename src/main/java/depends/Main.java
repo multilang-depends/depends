@@ -10,6 +10,8 @@ import depends.extractor.cpp.CppWorker;
 import depends.extractor.java.JavaWorker;
 import depends.extractor.ruby.RubyWorker;
 import depends.format.DependencyDumper;
+import depends.matrix.DependencyGenerator;
+import depends.matrix.FileDependencyGenerator;
 import depends.util.FileUtil;
 import picocli.CommandLine;
 
@@ -54,6 +56,9 @@ public class Main {
 		}
 
 		long startTime = System.currentTimeMillis();
+		DependencyGenerator dependencyGenerator = app.getGranularity().equals("file")?
+				(new FileDependencyGenerator()):(new FileDependencyGenerator());
+		worker.setDependencyGenerator(dependencyGenerator);
 		worker.work();
 		DependencyDumper output = new DependencyDumper(worker.getDependencies(),worker.getErrors());
 		output.outputResult(outputName,outputDir,outputFormat);

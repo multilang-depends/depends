@@ -18,7 +18,9 @@ public class DependsCommand {
 	private String dir;
 	@Option(names = {"-m", "--map"},  description = "Output DV8 dependency map file.")
     private boolean dv8map = true;
-    @Option(names = {"-i","--includes"},split=",", description = "The files of searching path")
+	@Option(names = {"-g", "--granularity"},  description = "Granularity of dependency.[file(default),method]")
+    private String granularity="file";
+	@Option(names = {"-i","--includes"},split=",", description = "The files of searching path")
     private String[] includes = new String[] {};
     @Option(names = {"-h","--help"}, usageHelp = true, description = "display this help and exit")
     boolean help;
@@ -57,6 +59,9 @@ public class DependsCommand {
 	}
 	public boolean isHelp() {
 		return help;
+	}
+    public String getGranularity() {
+		return granularity;
 	}
 
 }

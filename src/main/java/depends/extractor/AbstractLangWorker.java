@@ -3,30 +3,16 @@ package depends.extractor;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.codehaus.plexus.util.FileUtils;
 
-import depends.deptypes.DependencyType;
 import depends.entity.repo.EntityRepo;
-import depends.format.AbstractFormatDependencyDumper;
-import depends.format.FileAttributes;
-import depends.format.detail.DetailTextFormatDependencyDumper;
-import depends.format.dot.DotFormatDependencyDumper;
-import depends.format.excel.ExcelFormatDependencyDumper;
-import depends.format.json.JDataBuilder;
-import depends.format.json.JDepObject;
-import depends.format.json.JsonFormatDependencyDumper;
-import depends.format.xml.XDataBuilder;
-import depends.format.xml.XDepObject;
-import depends.format.xml.XmlFormatDependencyDumper;
+import depends.matrix.DependencyGenerator;
 import depends.matrix.DependencyMatrix;
-import depends.matrix.FileDependencyGenerator;
 import depends.relations.Inferer;
 import depends.util.FileTraversal;
-import edu.emory.mathcs.backport.java.util.Arrays;
 abstract public class AbstractLangWorker {
 	public abstract String supportedLanguage();
 	public abstract String[] fileSuffixes();
@@ -35,6 +21,7 @@ abstract public class AbstractLangWorker {
 	DependencyMatrix dependencyMatrix;
 	private String inputSrcPath;
 	private String[] includeDirs;
+	private DependencyGenerator dependencyGenerator;
 
 	public AbstractLangWorker(String inputDir, String[] includeDir) {
 		entityRepo = new EntityRepo();
@@ -68,7 +55,7 @@ abstract public class AbstractLangWorker {
     
     private void identifyDependencies(){
 		System.out.println("dependencie data generating...");	
-        dependencyMatrix  = (new FileDependencyGenerator()).build(entityRepo);
+        dependencyMatrix  = dependencyGenerator.build(entityRepo);
         dependencyMatrix.remapIds(entityRepo);
         dependencyMatrix.stripFilenames(inputSrcPath);
         System.out.println("dependencie data generating done successfully...");	 	
@@ -120,4 +107,9 @@ abstract public class AbstractLangWorker {
 	public EntityRepo getEntityRepo() {
 		return this.entityRepo;
 	}
+
+	public void setDependencyGenerator(DependencyGenerator dependencyGenerator) {
+		this.dependencyGenerator = dependencyGenerator;
+	}
+
 }
