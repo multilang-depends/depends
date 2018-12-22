@@ -21,7 +21,7 @@ public class CppExpressionTest extends CppParserTest{
 	    CppFileParser parser = createParser(src);
         parser.parse();
         inferer.resolveAllBindings();
-        assertEquals(19,repo.getEntity("foo").getRelations().size());
+        assertEquals(21,repo.getEntity("foo").getRelations().size());
 	}
 
 }

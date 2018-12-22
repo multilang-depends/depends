@@ -27,6 +27,7 @@ public class Main {
 			}
 			executeCommand(app);
 		} catch (Exception e) {
+			System.err.println("Exception encountered");
 			CommandLine.usage(new DependsCommand(), System.out);
 			System.exit(0);
 		}
