@@ -12,29 +12,32 @@ import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 
 import depends.entity.Expression;
+import depends.entity.repo.IdGenerator;
 import depends.extractor.HandlerContext;
 
 public class ExpressionUsage {
 	HandlerContext context;
-	public ExpressionUsage(HandlerContext context) {
+	IdGenerator idGenerator;
+	public ExpressionUsage(HandlerContext context,IdGenerator idGenerator) {
 		this.context = context;
+		this.idGenerator = idGenerator;
 	}
 
-	public void foundCallExpressionOfFunctionStyle(String functionName, IASTDeclaration ctx) {
+	public void foundCallExpressionOfFunctionStyle(String functionName) {
 		/* create expression and link it with parent*/
-		Expression expression = new Expression(ctx.hashCode(),null);
+		Expression expression = new Expression(idGenerator.generateId(),null);
 		context.lastContainer().addExpression(expression);
 		expression.isCall = true;
 		expression.identifier = functionName;
 	}
+	
 	public void foundExpression(IASTExpression ctx) {
-		IASTNode parent = findParentInStack(ctx);
+		Expression parent = findParentInStack(ctx);
 		/* create expression and link it with parent*/
-		Expression expression = new Expression(ctx.hashCode(),parent==null?null:parent.hashCode());
+		Expression expression = new Expression(idGenerator.generateId(),parent==null?null:parent.id);
 		if (parent!=null) {
-			Expression parentExpression = context.lastContainer().expressions().get(parent.hashCode());
-			if (parentExpression.firstChildId==null) parentExpression.firstChildId = expression.id;
-			expression.parent = parentExpression;
+			if (parent.firstChildId==null) parent.firstChildId = expression.id;
+			expression.parent = parent;
 		}
 		
 		context.lastContainer().addExpression(expression);
@@ -169,13 +172,13 @@ public class ExpressionUsage {
 	}
 	
 
-	private IASTNode findParentInStack(IASTNode ctx) {
+	private Expression findParentInStack(IASTNode ctx) {
 		if (ctx==null) return null;
 		if (ctx.getParent()==null) return null;
 		if (context.lastContainer()==null) {
 			return null;
 		}
-		if (context.lastContainer().expressions().containsKey(ctx.getParent().hashCode())) return ctx.getParent();
+		if (context.lastContainer().expressions().containsKey(ctx.getParent())) return context.lastContainer().expressions().get(ctx.getParent());
 		return findParentInStack(ctx.getParent());
 	}
 

@@ -19,7 +19,7 @@ public abstract class ContainerEntity extends Entity {
 
 	private ArrayList<VarEntity> vars;
 	private ArrayList<FunctionEntity> functions;
-	private HashMap<Integer, Expression> expressions;
+	private HashMap<Object, Expression> expressions;
 	private Collection<String> typeParameters; // Generic type parameters like <T>, <String>, <? extends Object>
 	private Collection<String> annotations = new ArrayList<>();
 	private Collection<TypeEntity> resolvedTypeParameters = new ArrayList<>();
@@ -64,7 +64,7 @@ public abstract class ContainerEntity extends Entity {
 		return this.functions;
 	}
 
-	public HashMap<Integer, Expression> expressions() {
+	public HashMap<Object, Expression> expressions() {
 		return expressions;
 	}
 

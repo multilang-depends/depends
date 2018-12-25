@@ -3,6 +3,7 @@ package depends.extractor.java.context;
 import org.antlr.v4.runtime.RuleContext;
 
 import depends.entity.Expression;
+import depends.entity.repo.IdGenerator;
 import depends.extractor.HandlerContext;
 import depends.extractor.java.JavaParser.ExpressionContext;
 import depends.extractor.java.JavaParser.MethodCallContext;
@@ -10,19 +11,20 @@ import depends.extractor.java.JavaParser.PrimaryContext;
 
 public class ExpressionUsage {
 	HandlerContext context;
-	public ExpressionUsage(HandlerContext context) {
+	IdGenerator idGenerator;
+	public ExpressionUsage(HandlerContext context,IdGenerator idGenerator) {
 		this.context = context;
+		this.idGenerator = idGenerator;
 	}
 
 	public void foundExpression(ExpressionContext ctx) {
-		RuleContext parent = findParentInStack(ctx);
+		Expression parent = findParentInStack(ctx);
 
 		/* create expression and link it with parent*/
-		Expression expression = new Expression(ctx.hashCode(),parent==null?null:parent.hashCode());
+		Expression expression = new Expression(idGenerator.generateId(),parent==null?null:parent.id);
 		if (parent!=null) {
-			Expression parentExpression = context.lastContainer().expressions().get(parent.hashCode());
-			if (parentExpression.firstChildId==null) parentExpression.firstChildId = expression.id;
-			expression.parent = parentExpression;
+			if (parent.firstChildId==null) parent.firstChildId = expression.id;
+			expression.parent = parent;
 		}
 		
 		context.lastContainer().addExpression(expression);
@@ -157,13 +159,13 @@ public class ExpressionUsage {
 		}
 	}
 
-	private RuleContext findParentInStack(RuleContext ctx) {
+	private Expression findParentInStack(RuleContext ctx) {
 		if (ctx==null) return null;
 		if (ctx.parent==null) return null;
 		if (context.lastContainer()==null) {
 			return null;
 		}
-		if (context.lastContainer().expressions().containsKey(ctx.parent.hashCode())) return ctx.parent;
+		if (context.lastContainer().expressions().containsKey(ctx.parent)) return context.lastContainer().expressions().get(ctx.parent);
 		return findParentInStack(ctx.parent);
 	}
 }

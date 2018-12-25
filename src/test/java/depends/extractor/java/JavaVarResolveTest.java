@@ -67,4 +67,15 @@ public class JavaVarResolveTest extends JavaParserTest{
 	}
 	
 	
+	
+	@Test
+	public void test_call_should_be_referred() throws IOException {
+        String src = "./src/test/resources/java-code-examples/ExpressionCallTest.java";
+        JavaFileParser parser = createParser(src);
+        parser.parse();
+        inferer.resolveAllBindings();
+        assertEquals(16,entityRepo.getEntity("ValidateAll.validate").getRelations().size());
+	}
+	
+	
 }

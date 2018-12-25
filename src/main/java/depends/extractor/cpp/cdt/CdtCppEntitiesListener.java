@@ -51,7 +51,7 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 		this.inferer = inferer;
 		context.startFile(fileFullPath);
 		this.preprocessorHandler = preprocessorHandler;
-		expressionUsage = new ExpressionUsage(context);
+		expressionUsage = new ExpressionUsage(context,entityRepo);
 	}
 
 	@Override
@@ -226,7 +226,7 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 					if (!StringUtils.isEmpty(varType)) {
 						context.foundVarDefintion(varName, varType);
 					}else {
-						expressionUsage.foundCallExpressionOfFunctionStyle(varName,declaration);
+						expressionUsage.foundCallExpressionOfFunctionStyle(varName);
 					}
 					
 				}

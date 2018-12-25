@@ -47,7 +47,7 @@ public class JavaEntitiesListener extends JavaParserBaseListener {
 		this.context = new JavaHandlerContext(entityRepo);
 		this.entityRepo = entityRepo;
 		annotationProcessor = new AnnotationProcessor(context);
-		expressionUsage = new ExpressionUsage(context);
+		expressionUsage = new ExpressionUsage(context,entityRepo);
 		context.startFile(fileFullPath);
 	}
 
