@@ -1,5 +1,6 @@
 package depends.relations;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -218,10 +219,30 @@ public class Inferer {
 			Entity entity = tryToFindEntityWithName(fromEntity, name);
 			if (entity != null)
 				return entity;
+			entity = findEntityInChild(fromEntity,name);
+			if (entity!=null) return entity;
+			
+			if (fromEntity instanceof TypeEntity) {
+				TypeEntity type = (TypeEntity)fromEntity;
+				while(true) {
+					if (type.getInheritedTypes().size()==0) break;
+					for (TypeEntity child:type.getInheritedTypes()) {
+						entity = findEntityInChild(child,name);
+						if (entity!=null) return entity;
+						type = child;
+					}
+				}
+				while(true) {
+					if (type.getImplementedTypes().size()==0) break;
+					for (TypeEntity child:type.getImplementedTypes()) {
+						entity = findEntityInChild(child,name);
+						if (entity!=null) return entity;
+						type = child;
+					}
+				}
+			}
+			
 			for (Entity child : fromEntity.getChildren()) {
-				entity = tryToFindEntityWithName(child, name);
-				if (entity != null)
-					return entity;
 				if (child instanceof FileEntity) {
 					for (Entity classUnderFile : child.getChildren()) {
 						entity = tryToFindEntityWithName(classUnderFile, name);
@@ -235,6 +256,17 @@ public class Inferer {
 				break;
 		}
 		return null;
+	}
+	
+	
+	private Entity findEntityInChild(Entity fromEntity,String name) {
+		Entity entity =null;
+		for (Entity child : fromEntity.getChildren()) {
+			entity = tryToFindEntityWithName(child, name);
+			if (entity != null)
+				return entity;
+		}
+		return entity;
 	}
 	
 	/**
