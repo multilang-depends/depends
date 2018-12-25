@@ -55,6 +55,7 @@ public class ExpressionUsage {
 		//method call
 		if (ctx.methodCall()!=null) {
 			expression.identifier = getMethodCallIdentifier(ctx.methodCall());
+			expression.isCall = true;
 		}
 		//new 
 		if (ctx.NEW()!=null && ctx.creator()!=null) {

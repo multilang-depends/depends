@@ -9,19 +9,13 @@ import depends.entity.repo.EntityRepo;
 import depends.relations.Relation;
 
 public class FunctionDependencyGenerator implements DependencyGenerator {
-	/**
-	 * Build the dependency matrix (without re-mapping file id)
-	 * 
-	 * @param entityRepo which contains entities and relations
-	 * @return the generated dependency matrix
-	 */
 	@Override
 	public DependencyMatrix build(EntityRepo entityRepo) {
 		DependencyMatrix dependencyMatrix = new DependencyMatrix();
 		ArrayList<String> elements = new ArrayList<String>();
 		for (Entity entity : entityRepo.getEntities()) {
 			if (entity instanceof FunctionEntity) {
-				elements.add(entity.getRawName());
+				elements.add(entity.getDisplayName());
 			}
 			int fileEntityFrom = getFunctionEntityIdNoException(entity);
 			if (fileEntityFrom == -1)

@@ -145,5 +145,8 @@ public abstract class Entity {
 	public TypeEntity getType() {
 		return null;
 	}
-	
+
+	public String getDisplayName() {
+		return getRawName();
+	}
 }

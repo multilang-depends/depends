@@ -70,5 +70,9 @@ public class FunctionEntity extends ContainerEntity{
 	public void setReturnType(TypeEntity returnType) {
 		this.returnType = returnType;
 	}
-
+	@Override
+	public String getDisplayName() {
+		FileEntity f = (FileEntity) this.getAncestorOfType(FileEntity.class);
+		return f.getRawName()+"("+getRawName()+")";
+	}
 }
