@@ -10,8 +10,11 @@ import depends.extractor.cpp.CppWorker;
 import depends.extractor.java.JavaWorker;
 import depends.extractor.ruby.RubyWorker;
 import depends.format.DependencyDumper;
+import depends.format.path.DotPathFilenameWritter;
+import depends.format.path.EmptyFilenameWritter;
 import depends.matrix.DependencyGenerator;
 import depends.matrix.FileDependencyGenerator;
+import depends.matrix.FilenameWritter;
 import depends.matrix.FunctionDependencyGenerator;
 import depends.util.FileUtil;
 import picocli.CommandLine;
@@ -62,6 +65,15 @@ public class Main {
 				(new FileDependencyGenerator()):(new FunctionDependencyGenerator());
 		worker.setDependencyGenerator(dependencyGenerator);
 		worker.work();
+		if (app.isStripLeadingPath()) {
+			worker.getDependencies().stripFilenames(inputDir);
+		}
+		
+		FilenameWritter filenameWritter = new EmptyFilenameWritter();
+		if (app.getNamePathPattern().equals("dot")) {
+			filenameWritter = new DotPathFilenameWritter();
+		}
+		worker.getDependencies().reWriteFilenamePattern(filenameWritter );
 		DependencyDumper output = new DependencyDumper(worker.getDependencies(),worker.getErrors());
 		output.outputResult(outputName,outputDir,outputFormat);
 		long endTime = System.currentTimeMillis();

@@ -57,7 +57,6 @@ abstract public class AbstractLangWorker {
 		System.out.println("dependencie data generating...");	
         dependencyMatrix  = dependencyGenerator.build(entityRepo);
         dependencyMatrix.remapIds(entityRepo);
-        dependencyMatrix.stripFilenames(inputSrcPath);
         System.out.println("dependencie data generating done successfully...");	 	
     }
 

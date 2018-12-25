@@ -77,4 +77,10 @@ public class DependencyMatrix {
 			reMappedNodes.set(i, shortPath);
 		}
 	}
+
+	public void reWriteFilenamePattern(FilenameWritter filenameRewritter) {
+		for (int i=0;i<reMappedNodes.size();i++) {
+			reMappedNodes.set(i, filenameRewritter.reWrite(reMappedNodes.get(i)));
+		}		
+	}
 }
