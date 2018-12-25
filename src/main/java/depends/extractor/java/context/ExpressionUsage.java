@@ -19,16 +19,17 @@ public class ExpressionUsage {
 
 	public void foundExpression(ExpressionContext ctx) {
 		Expression parent = findParentInStack(ctx);
-
 		/* create expression and link it with parent*/
 		Expression expression = new Expression(idGenerator.generateId(),parent==null?null:parent.id);
-		if (parent!=null) {
-			if (parent.firstChildId==null) parent.firstChildId = expression.id;
-			expression.parent = parent;
+		context.lastContainer().addExpression(ctx,expression);
+
+		expression.text = ctx.getText(); //for debug purpose. no actual effect
+		expression.parent = parent;
+		if (expression.parent!=null) {
+			if (expression.parent.deduceTypeBasedId==null) 
+				expression.parent.deduceTypeBasedId = expression.id;
 		}
 		
-		context.lastContainer().addExpression(expression);
-		expression.text = ctx.getText(); //for debug purpose. no actual effect
 		if (ctx.primary()!=null) {
 			tryFillExpressionTypeAndIdentifier(ctx.primary(),expression);
 			return;
@@ -37,6 +38,7 @@ public class ExpressionUsage {
 		expression.isSet = isSet(ctx);
 		expression.isCall = ctx.methodCall()==null?false:true;
 		expression.isLogic = isLogic(ctx);
+		expression.isDot = isDot(ctx);
 		if (ctx.creator()!=null ||ctx.innerCreator()!=null){
 			expression.isCreate = true;
 		}		
@@ -50,7 +52,33 @@ public class ExpressionUsage {
       | explicitGenericInvocation
       )
  */
-		expression.isDot = isDot(ctx);
+		//method call
+		if (ctx.methodCall()!=null) {
+			expression.identifier = getMethodCallIdentifier(ctx.methodCall());
+		}
+		//new 
+		if (ctx.NEW()!=null && ctx.creator()!=null) {
+			expression.rawType = CreatorContextHelper.getCreatorType(ctx.creator());
+			expression.isCall = true;
+			expression.deriveTypeFromChild = false;
+		}
+		
+		if (ctx.typeCast()!=null) {
+			expression.isCast=true;
+			expression.rawType = ctx.typeCast().typeType().getText();
+			expression.deriveTypeFromChild = false;
+		}
+		
+		if (ctx.bop!=null && ctx.bop.getText().equals("instanceof")) {
+			expression.isCast=true;
+			expression.rawType = ctx.typeType().getText();
+			expression.deriveTypeFromChild = false;
+		}
+		
+		if (ctx.creator()!=null) {
+			expression.deriveTypeFromChild = false;
+		}
+		
 		if (expression.isDot) {
 			if (ctx.IDENTIFIER()!=null)
 				expression.identifier = ctx.IDENTIFIER().getText();
@@ -63,24 +91,6 @@ public class ExpressionUsage {
 			else if (ctx.SUPER()!=null)
 				expression.identifier = "super";
 			return;
-		}
-		//method call
-		if (ctx.methodCall()!=null) {
-			expression.identifier = getMethodCallIdentifier(ctx.methodCall());
-			expression.isCall = true;
-		}
-		//new 
-		if (ctx.NEW()!=null & ctx.creator()!=null) {
-			expression.rawType = CreatorContextHelper.getCreatorType(ctx.creator());
-			expression.isCall = true;
-		}
-
-		if (ctx.typeCast()!=null) {
-			expression.isCast=true;
-			expression.rawType = ctx.typeCast().typeType().getText();
-		}
-		if (ctx.creator()!=null ||ctx.methodCall()!=null) {
-			expression.deriveTypeFromChild = false;
 		}
 	}
 
@@ -145,7 +155,7 @@ public class ExpressionUsage {
 		if (ctx.literal()!=null) {
 		//2. if it is a build-in type like "hello"(string), 10(integer), etc.
 			expression.rawType = "<Built-in>";
-			expression.identifier = ctx.literal().getText();
+			expression.identifier = "<Literal>";
 		}else if (ctx.IDENTIFIER()!=null) {
 		//2. if it is a var name, dertermine the type based on context.
 			expression.identifier = ctx.IDENTIFIER().getText();

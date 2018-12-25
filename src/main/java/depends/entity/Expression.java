@@ -5,7 +5,7 @@ import depends.relations.Inferer;
 public class Expression {
 	public Integer id;
 	public Integer parentId;
-	public Integer firstChildId; //by default, parent expression type determined by most left child
+	public Integer deduceTypeBasedId; //by default, parent expression type determined by most left child
 	public Expression parent;
 	public String text; // for debug purpose
 	public String rawType; //the raw type name
@@ -64,9 +64,9 @@ public class Expression {
 		if (this.parent==null) return;
 		Expression parent = this.parent;
 		if (parent.type != null)return;
-		
+		if (!parent.deriveTypeFromChild) return;
 		//parent's type depends on first child's type
-		if (parent.firstChildId!=this.id) return;
+		if (parent.deduceTypeBasedId!=this.id) return;
 		
 		//if child is a built-in/external type, then parent must also a built-in/external type
 		if (this.type.equals(Inferer.buildInType)) {

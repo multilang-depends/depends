@@ -8,6 +8,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import depends.extractor.java.JavaParser.ExpressionContext;
 import depends.relations.Inferer;
 
 /**
@@ -68,8 +69,8 @@ public abstract class ContainerEntity extends Entity {
 		return expressions;
 	}
 
-	public void addExpression(Expression expression) {
-		expressions.put(expression.id, expression);
+	public void addExpression(Object key, Expression expression) {
+		expressions.put(key, expression);
 	}
 
 	/**

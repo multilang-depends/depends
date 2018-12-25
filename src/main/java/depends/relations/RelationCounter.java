@@ -64,12 +64,13 @@ public class RelationCounter {
 			if (expression.isCreate) {
 				entity.addRelation(new Relation(DependencyType.CREATE,referredEntity));
 			}
-			else if (expression.isSet) { //SET is merged with USE
+			if (expression.isSet) { //SET is merged with USE
 				entity.addRelation(new Relation(DependencyType.USE,referredEntity));
 			}
-			else if (expression.isCast) { 
+			if (expression.isCast) { 
 				entity.addRelation(new Relation(DependencyType.CAST,referredEntity));
-			}else {
+			}
+			if (!expression.isCall && !expression.isCreate && !expression.isCast) {
 				usedEntities.add(expression.getReferredEntity());
 			}
 		}

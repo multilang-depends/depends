@@ -27,6 +27,10 @@ public class FileDependencyGenerator implements DependencyGenerator{
         		if (relation.getEntity().getId()>=0) {
         			int fileEntityTo = getFileEntityIdNoException(entityRepo,relation.getEntity());
         			if (fileEntityTo==-1) continue;
+        			if (relation.getEntity().getRawName().contains("GenericRequestor") && 
+        					entity.getRawName().contains("sendRpcs")) {
+        				System.out.println("helo");
+        			}
         			dependencyMatrix.addDependency(relation.getType(), fileEntityFrom,fileEntityTo,entity,relation.getEntity());
         		}
         	}

@@ -6,6 +6,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
@@ -23,10 +24,10 @@ public class ExpressionUsage {
 		this.idGenerator = idGenerator;
 	}
 
-	public void foundCallExpressionOfFunctionStyle(String functionName) {
+	public void foundCallExpressionOfFunctionStyle(String functionName, IASTDeclarator declarator) {
 		/* create expression and link it with parent*/
 		Expression expression = new Expression(idGenerator.generateId(),null);
-		context.lastContainer().addExpression(expression);
+		context.lastContainer().addExpression(declarator,expression);
 		expression.isCall = true;
 		expression.identifier = functionName;
 	}
@@ -36,11 +37,11 @@ public class ExpressionUsage {
 		/* create expression and link it with parent*/
 		Expression expression = new Expression(idGenerator.generateId(),parent==null?null:parent.id);
 		if (parent!=null) {
-			if (parent.firstChildId==null) parent.firstChildId = expression.id;
+			if (parent.deduceTypeBasedId==null) parent.deduceTypeBasedId = expression.id;
 			expression.parent = parent;
 		}
 		
-		context.lastContainer().addExpression(expression);
+		context.lastContainer().addExpression(ctx,expression);
 		expression.text = ctx.getRawSignature(); //for debug purpose. no actual effect
 		
 		if (isTerminalExpression(ctx)) {

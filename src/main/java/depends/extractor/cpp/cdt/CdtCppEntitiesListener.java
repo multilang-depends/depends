@@ -226,7 +226,7 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 					if (!StringUtils.isEmpty(varType)) {
 						context.foundVarDefintion(varName, varType);
 					}else {
-						expressionUsage.foundCallExpressionOfFunctionStyle(varName);
+						expressionUsage.foundCallExpressionOfFunctionStyle(varName,declarator);
 					}
 					
 				}
