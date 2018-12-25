@@ -4,6 +4,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import depends.entity.ContainerEntity;
 import depends.entity.Entity;
 import depends.entity.FileEntity;
@@ -15,6 +18,8 @@ import depends.entity.repo.NullBuiltInType;
 import depends.importtypes.Import;
 
 public class Inferer {
+	private static final Logger logger = LoggerFactory.getLogger(Inferer.class);
+
 	static final public TypeEntity buildInType = new TypeEntity("built-in", null, -1);
 	static final public TypeEntity externalType = new TypeEntity("external", null, -1);
 	static final public TypeEntity genericParameterType = new TypeEntity("T", null, -1);
@@ -110,6 +115,15 @@ public class Inferer {
 	 * @return
 	 */
 	public Entity resolveName(Entity fromEntity, String rawName, boolean searchImport) {
+		Entity entity = resolveNameInternal(fromEntity,rawName,searchImport);
+		if (logger.isDebugEnabled()) {
+			logger.debug("resolve name " + rawName + " from " + fromEntity.getQualifiedName() +" ==> "
+						+ (entity==null?"null":entity.getQualifiedName()));
+		}
+		return entity;
+	}
+
+	private Entity resolveNameInternal(Entity fromEntity, String rawName, boolean searchImport) {
 		if (rawName == null)
 			return null;
 		if (buildInTypeManager.isBuiltInType(rawName)) {
@@ -138,7 +152,7 @@ public class Inferer {
 		// then find the subsequent symbols
 		return findEntitySince(type, names, 1);
 	}
-
+	
 	private Entity lookupEntity(Entity fromEntity, String name, boolean searcImport) {
 		if (name.equals("this") || name.equals("class")) {
 			TypeEntity entityType = (TypeEntity) (fromEntity.getAncestorOfType(TypeEntity.class));

@@ -1,10 +1,12 @@
 package depends.entity;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import depends.relations.Inferer;
 
@@ -13,6 +15,8 @@ import depends.relations.Inferer;
  * they could contain vars, functions, ecpressions, type parameters, etc.
  */
 public abstract class ContainerEntity extends Entity {
+	private static final Logger logger = LoggerFactory.getLogger(ContainerEntity.class);
+
 	private ArrayList<VarEntity> vars;
 	private ArrayList<FunctionEntity> functions;
 	private HashMap<Integer, Expression> expressions;
@@ -42,6 +46,9 @@ public abstract class ContainerEntity extends Entity {
 	}
 
 	public void addVar(VarEntity var) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("var found: "+var.getRawName() +  ":" + var.getRawType());
+		}
 		this.vars.add(var);
 	}
 
