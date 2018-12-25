@@ -36,13 +36,14 @@ public class ExpressionUsage {
 		Expression parent = findParentInStack(ctx);
 		/* create expression and link it with parent*/
 		Expression expression = new Expression(idGenerator.generateId(),parent==null?null:parent.id);
+		expression.text = ctx.getRawSignature(); //for debug purpose. no actual effect
+		context.lastContainer().addExpression(ctx,expression);
+
 		if (parent!=null) {
 			if (parent.deduceTypeBasedId==null) parent.deduceTypeBasedId = expression.id;
 			expression.parent = parent;
 		}
 		
-		context.lastContainer().addExpression(ctx,expression);
-		expression.text = ctx.getRawSignature(); //for debug purpose. no actual effect
 		
 		if (isTerminalExpression(ctx)) {
 			tryFillExpressionTypeAndIdentifier(ctx,expression);
@@ -55,13 +56,32 @@ public class ExpressionUsage {
 		if (ctx instanceof ICPPASTNewExpression){
 			expression.isCreate = true;
 		}		
-/**
+		expression.isDot = isDot(ctx);
+
+		/**
  *    | expression bop='.'
       ( IDENTIFIER
       | methodCall
       )
  */
-		expression.isDot = isDot(ctx);
+
+		//method call
+		if (ctx instanceof IASTFunctionCallExpression) {
+			expression.identifier = getMethodCallIdentifier((IASTFunctionCallExpression)ctx);
+			expression.isCall = true;
+		}
+		if (ctx instanceof ICPPASTNewExpression) {
+			expression.rawType = ASTStringUtil.getTypeIdString(((ICPPASTNewExpression)ctx).getTypeId());
+			expression.isCall = true;
+			expression.deriveTypeFromChild = false;
+		}
+
+		if (ctx instanceof IASTCastExpression) {
+			expression.isCast=true;
+			expression.rawType = ASTStringUtil.getTypeIdString(((IASTCastExpression)ctx).getTypeId());
+			expression.deriveTypeFromChild = false;
+
+		}
 		if (expression.isDot) {
 			IASTExpression op2 = ((IASTBinaryExpression)ctx).getOperand2();
 			if (op2 instanceof IASTIdExpression)
@@ -71,24 +91,7 @@ public class ExpressionUsage {
 			else if (op2 instanceof IASTFunctionCallExpression)
 				expression.identifier = getMethodCallIdentifier((IASTFunctionCallExpression)op2);
 			return;
-		}
-		//method call
-		if (ctx instanceof IASTFunctionCallExpression) {
-			expression.identifier = getMethodCallIdentifier((IASTFunctionCallExpression)ctx);
-			expression.isCall = true;
-		}
-		if (ctx instanceof ICPPASTNewExpression) {
-			expression.rawType = ASTStringUtil.getTypeIdString(((ICPPASTNewExpression)ctx).getTypeId());
-			expression.isCall = true;
-		}
-
-		if (ctx instanceof IASTCastExpression) {
-			expression.isCast=true;
-			expression.rawType = ASTStringUtil.getTypeIdString(((IASTCastExpression)ctx).getTypeId());
-		}
-		if ((ctx instanceof ICPPASTNewExpression) ||(ctx instanceof IASTFunctionCallExpression)) {
-			expression.deriveTypeFromChild = false;
-		}
+		}		
 	}
 
 	private boolean isTerminalExpression(IASTExpression ctx) {
@@ -107,7 +110,7 @@ public class ExpressionUsage {
 			expression.identifier = ((IASTIdExpression) ctx).getName().toString();
 		}else if (ctx instanceof IASTLiteralExpression) {
 		//2. if it is a var name, dertermine the type based on context.
-			expression.identifier = new String(((IASTLiteralExpression)ctx).getValue());
+			expression.identifier = "<Literal>";
 			expression.rawType =  "<Built-in>";
 		}else if (ctx instanceof IASTTypeIdExpression) {
 		//3. if given type directly
