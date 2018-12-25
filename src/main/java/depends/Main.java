@@ -1,6 +1,7 @@
 package depends;
 
 import java.io.File;
+import java.io.PrintStream;
 import java.nio.file.Files;
 
 import depends.addons.DV8MappingFileBuilder;
@@ -30,7 +31,8 @@ public class Main {
 			}
 			executeCommand(app);
 		} catch (Exception e) {
-			System.err.println("Exception encountered");
+			System.err.println("Exception encountered:" );
+			e.printStackTrace();
 			CommandLine.usage(new DependsCommand(), System.out);
 			System.exit(0);
 		}

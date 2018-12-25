@@ -1,5 +1,6 @@
 package depends.extractor;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
@@ -147,21 +148,22 @@ public abstract class HandlerContext {
 	}
 
 
-	public void foundVarDefinition(List<String> varNames, String type) {
+	public void foundVarDefinition(List<String> varNames, String type, List<String> typeArguments) {
 		for (String varName : varNames) {
-			foundVarDefintion(varName,type);
+			foundVarDefintion(varName,type,typeArguments);
 		}
 	}
 
 
-	public void foundVarDefintion(String varName, String type) {
+	public void foundVarDefintion(String varName, String type, List<String> typeArguments) {
 		VarEntity var = new VarEntity(varName, type, lastContainer(), idGenerator.generateId());
+		var.addTypeParameter(typeArguments);
 		lastContainer().addVar(var);		
 	}
 
 	public void foundEnumConstDefinition(String varName) {
 		String type = lastContainer().getRawName();
-		foundVarDefintion(varName,type);
+		foundVarDefintion(varName,type,new ArrayList<>());
 	}
 	
 	protected Stack<Entity> entityStack = new Stack<Entity>();

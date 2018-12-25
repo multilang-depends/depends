@@ -1,10 +1,15 @@
 package depends.entity;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import depends.relations.Inferer;
 
-public class VarEntity extends Entity {
+public class VarEntity extends DecoratedEntity {
 	private String rawType;
 	private TypeEntity type;
+
 	public VarEntity(String simpleName,  String rawType, Entity parent, int id) {
 		super(simpleName,  parent,id);
 		this.rawType = rawType;
@@ -25,6 +30,7 @@ public class VarEntity extends Entity {
 
 	@Override
 	public void inferLocalLevelEntities(Inferer inferer) {
+		super.inferLocalLevelEntities(inferer);
 		Entity entity = inferer.resolveName(this, rawType, true);
 		if (entity==null) return;
 		type = entity.getType();
@@ -34,4 +40,6 @@ public class VarEntity extends Entity {
 			}
 		}
 	}
+
+	
 }

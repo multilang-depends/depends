@@ -77,5 +77,13 @@ public class JavaVarResolveTest extends JavaParserTest{
         assertEquals(17,entityRepo.getEntity("ValidateAll.validate").getRelations().size());
 	}
 	
+	@Test
+	public void test_could_detect_type_argument_in_field() throws IOException {
+        String src = "./src/test/resources/java-code-examples/TypeArgument.java";
+        JavaFileParser parser = createParser(src);
+        parser.parse();
+        inferer.resolveAllBindings();
+        assertEquals(17,entityRepo.getEntity("JDepObject").getRelations().size());
+	}
 	
 }

@@ -63,7 +63,7 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 		}
 		MacroExtractor macroExtractor = new MacroExtractor(tu.getAllPreprocessorStatements());
 		for (String var:macroExtractor.getMacroVars()) {
-			context.foundVarDefintion(var,Inferer.buildInType.getRawName());
+			context.foundVarDefintion(var,Inferer.buildInType.getRawName(),new ArrayList<>());
 		}
 		
 		for (String var:macroExtractor.getMacroFuncs()) {
@@ -224,7 +224,7 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 					String varType = ASTStringUtil.getName(declSpecifier);
 					String varName = declarator.getName().toString();
 					if (!StringUtils.isEmpty(varType)) {
-						context.foundVarDefintion(varName, varType);
+						context.foundVarDefintion(varName, varType,new ArrayList<>());
 					}else {
 						expressionUsage.foundCallExpressionOfFunctionStyle(varName,declarator);
 					}
@@ -251,7 +251,7 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 	
 	@Override
 	public int visit(IASTEnumerator enumerator) {
-		context.foundVarDefintion(enumerator.getName().toString(), context.currentType().getRawName());
+		context.foundVarDefintion(enumerator.getName().toString(), context.currentType().getRawName(),new ArrayList<>());
 		return super.visit(enumerator);
 	}
 	
