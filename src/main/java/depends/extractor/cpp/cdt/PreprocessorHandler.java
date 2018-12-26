@@ -27,13 +27,16 @@ public class PreprocessorHandler {
 			{
 				IASTPreprocessorIncludeStatement incl = (IASTPreprocessorIncludeStatement)(statements[statementIndex]);
 				String path = FileUtil.uniqFilePath(incl.getPath());
-				includedFullPathNames.add(path);
 				if (!FileUtil.existFile(path)) {
 					if (!notExistedIncludedFiles.containsKey(path)) {
 						notExistedIncludedFiles.put(path,"Error: " + path + " does not exist in include path!");
 					}
 					continue;
 				}
+				if (FileUtil.isDirectory(path)) {
+					continue;
+				}
+				includedFullPathNames.add(path);
 			}
 		}
 		return includedFullPathNames;
