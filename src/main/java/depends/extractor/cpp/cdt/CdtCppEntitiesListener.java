@@ -56,6 +56,9 @@ public class CdtCppEntitiesListener  extends ASTVisitor {
 
 	@Override
 	public int visit(IASTTranslationUnit tu) {
+		if (context.currentFile().getRawName().contains("ItfmEqptRegistration.cpp")) {
+			System.out.println("hh");
+		}
 		for (String incl:preprocessorHandler.getDirectIncludedFiles(tu.getAllPreprocessorStatements())) {
 			context.foundNewImport(new FileImport(incl));
 			CdtCppFileParser importedParser = new CdtCppFileParser(incl, entityRepo, preprocessorHandler,inferer);

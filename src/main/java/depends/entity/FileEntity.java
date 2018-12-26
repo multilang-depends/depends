@@ -16,6 +16,7 @@ public class FileEntity extends ContainerEntity {
 	public FileEntity(String fullName, int fileId, boolean isInProjectScope) {
 		super(fullName, null, fileId);
 		setQualifiedName(fullName);
+		this.isInProjectScope = isInProjectScope;
 	}
 
 	public FileEntity(String fullName, int fileId) {

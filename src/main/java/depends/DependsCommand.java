@@ -26,6 +26,8 @@ public class DependsCommand {
     private String namePathPattern="default";
 	@Option(names = {"-i","--includes"},split=",", description = "The files of searching path")
     private String[] includes = new String[] {};
+	@Option(names = {"--auto-include"},split=",", description = "auto include all paths under the source path (please notice the potential side effect)")
+	private boolean autoInclude = false;
     @Option(names = {"-h","--help"}, usageHelp = true, description = "display this help and exit")
     boolean help;
 	public String getLang() {
@@ -72,5 +74,9 @@ public class DependsCommand {
 	}
 	public boolean isStripLeadingPath() {
 		return stripLeadingPath;
+	}
+	
+	public boolean isAutoInclude () {
+		return autoInclude;
 	}
 }

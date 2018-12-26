@@ -3,6 +3,7 @@ package depends;
 import java.io.File;
 import java.io.PrintStream;
 import java.nio.file.Files;
+import java.util.List;
 
 import depends.addons.DV8MappingFileBuilder;
 import depends.extractor.AbstractLangWorker;
@@ -18,6 +19,8 @@ import depends.matrix.FileDependencyGenerator;
 import depends.matrix.FilenameWritter;
 import depends.matrix.FunctionDependencyGenerator;
 import depends.util.FileUtil;
+import depends.util.FolderCollector;
+import edu.emory.mathcs.backport.java.util.Arrays;
 import picocli.CommandLine;
 
 public class Main {
@@ -50,8 +53,15 @@ public class Main {
 			DV8MappingFileBuilder dv8MapfileBuilder = new DV8MappingFileBuilder();
 			dv8MapfileBuilder.create(outputDir+File.separator+"depends-dv8map.json");
 		}
-
 		inputDir = FileUtil.uniqFilePath(inputDir);
+
+		if (app.isAutoInclude()) {
+			FolderCollector includePathCollector = new FolderCollector();
+			List<String> additionalIncludePaths = includePathCollector.getFolders(inputDir);
+			additionalIncludePaths.addAll(Arrays.asList(includeDir));
+			includeDir = additionalIncludePaths.toArray(new String[] {});
+		}
+		
 		LangWorkers.getRegistry().register(new JavaWorker(inputDir, includeDir));
 		LangWorkers.getRegistry().register(new CppWorker(inputDir, includeDir));
 		LangWorkers.getRegistry().register(new RubyWorker(inputDir, includeDir));

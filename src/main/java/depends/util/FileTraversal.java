@@ -19,10 +19,18 @@ public class FileTraversal {
 	
 	IFileVisitor visitor;
 	private ArrayList<String> extensionFilters = new ArrayList<>();
+	boolean shouldVisitDirectory = false;
+	boolean shouldVisitFile = true;
 	public FileTraversal(IFileVisitor visitor){
 		this.visitor = visitor;
 	}
 
+	public FileTraversal(IFileVisitor visitor,boolean shouldVisitDirectory,boolean shouldVisitFile){
+		this.visitor = visitor;
+		this.shouldVisitDirectory = shouldVisitDirectory;
+		this.shouldVisitFile = shouldVisitFile;
+	}
+	
 	public void travers(String path) {
 		File dir = new File(path);
 		travers(dir);
@@ -36,9 +44,13 @@ public class FileTraversal {
 		for (int i = 0; i < files.length; i++) {
 			if (files[i].isDirectory()) {
 				travers(files[i]);
+				if (shouldVisitDirectory) {
+					invokeVisitor(files[i]);
+				}
 			} else {
-				File f = files[i];
-				invokeVisitor(f);
+				if (shouldVisitFile) {
+					invokeVisitor( files[i]);
+				}
 			}
 		}		
 	}
