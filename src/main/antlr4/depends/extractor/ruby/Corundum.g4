@@ -31,7 +31,25 @@
  *  A grammar for Ruby-like language written in ANTLR v4.
  *  You can find compiler into Parrot VM intermediate representation language
  *  (PIR) here: https://github.com/AlexBelov/corundum
+ * 
+ * 
+ * History:
+ *  2018.12.24 derived from antlr/grammarv4 project
+ *  2018.12.27 add additional grammar support by gangz (gangz@emergentdesign.cn)
+ *             - BEGIN/END block
+ *             - support of ".ord"
+ *             - supoort of ?a (ascii)
+ *             - support of hex/oct/bin literals
+ *             - support of ExponentPart in digit literals
+ *             - support underscore of number literals
+ *             - support \' in string literals
+ *             - support %q %Q string literals
+ *             - support ASSOC (=>) hash value
+ *             - support arrays [,,,]
+ *  To be added
+ *             - HERE document 
  */
+
 
 grammar Corundum;
 
@@ -52,19 +70,26 @@ expression : function_definition
            | while_statement
            | for_statement
            | pir_inline
+           | begin_block
+           | end_block
            ;
 
-global_get : var_name=lvalue op=ASSIGN global_name=id_global;
+begin_block: BEGIN_BLOCK '{' expression_list '}';
 
-global_set : global_name=id_global op=ASSIGN result=all_result;
+end_block: END_BLOCK '{' expression_list '}';
 
-global_result : id_global;
+
+global_get : var_name=lvalue op=ASSIGN global_name=ID_GLOBAL;
+
+global_set : global_name=ID_GLOBAL op=ASSIGN result=all_result;
+
+global_result : ID_GLOBAL;
 
 function_inline_call : function_call;
 
-require_block : REQUIRE literal_t;
+require_block : REQUIRE LITERAL;
 
-pir_inline : PIR crlf pir_expression_list END;
+pir_inline : PIR CRLF pir_expression_list END;
 
 pir_expression_list : expression_list;
 
@@ -72,12 +97,12 @@ function_definition : function_definition_header function_definition_body END;
 
 function_definition_body : expression_list;
 
-function_definition_header : DEF function_name crlf
-                           | DEF function_name function_definition_params crlf
+function_definition_header : DEF function_name CRLF
+                           | DEF function_name function_definition_params CRLF
                            ;
 
-function_name : id_function
-              | id
+function_name : ID_FUNCTION
+              | Identifier
               ;
 
 function_definition_params : LEFT_RBRACKET RIGHT_RBRACKET
@@ -89,7 +114,7 @@ function_definition_params_list : function_definition_param_id
                                 | function_definition_params_list COMMA function_definition_param_id
                                 ;
 
-function_definition_param_id : id;
+function_definition_param_id : Identifier;
 
 return_statement : RETURN all_result;
 
@@ -108,7 +133,7 @@ function_param : ( function_unnamed_param | function_named_param );
 
 function_unnamed_param : ( int_result | float_result | string_result | dynamic_result );
 
-function_named_param : id op=ASSIGN ( int_result | float_result | string_result | dynamic_result );
+function_named_param : Identifier op=ASSIGN ( int_result | float_result | string_result | dynamic_result );
 
 function_call_assignment : function_call;
 
@@ -116,25 +141,25 @@ all_result : ( int_result | float_result | string_result | dynamic_result | glob
 
 elsif_statement : if_elsif_statement;
 
-if_elsif_statement : ELSIF cond_expression crlf statement_body
-                   | ELSIF cond_expression crlf statement_body else_token crlf statement_body
-                   | ELSIF cond_expression crlf statement_body if_elsif_statement
+if_elsif_statement : ELSIF cond_expression CRLF statement_body
+                   | ELSIF cond_expression CRLF statement_body ELSE CRLF statement_body
+                   | ELSIF cond_expression CRLF statement_body if_elsif_statement
                    ;
 
-if_statement : IF cond_expression crlf statement_body END
-             | IF cond_expression crlf statement_body else_token crlf statement_body END
-             | IF cond_expression crlf statement_body elsif_statement END
+if_statement : IF cond_expression CRLF statement_body END
+             | IF cond_expression CRLF statement_body ELSE CRLF statement_body END
+             | IF cond_expression CRLF statement_body elsif_statement END
              ;
 
-unless_statement : UNLESS cond_expression crlf statement_body END
-                 | UNLESS cond_expression crlf statement_body else_token crlf statement_body END
-                 | UNLESS cond_expression crlf statement_body elsif_statement END
+unless_statement : UNLESS cond_expression CRLF statement_body END
+                 | UNLESS cond_expression CRLF statement_body ELSE CRLF statement_body END
+                 | UNLESS cond_expression CRLF statement_body elsif_statement END
                  ;
 
-while_statement : WHILE cond_expression crlf statement_body END;
+while_statement : WHILE cond_expression CRLF statement_body END;
 
-for_statement : FOR LEFT_RBRACKET init_expression SEMICOLON cond_expression SEMICOLON loop_expression RIGHT_RBRACKET crlf statement_body END
-              | FOR init_expression SEMICOLON cond_expression SEMICOLON loop_expression crlf statement_body END
+for_statement : FOR LEFT_RBRACKET init_expression SEMICOLON cond_expression SEMICOLON loop_expression RIGHT_RBRACKET CRLF statement_body END
+              | FOR init_expression SEMICOLON cond_expression SEMICOLON loop_expression CRLF statement_body END
               ;
 
 init_expression : for_init_list;
@@ -157,10 +182,10 @@ statement_body : statement_expression_list;
 
 statement_expression_list : expression terminator
                           | RETRY terminator
-                          | break_expression terminator
+                          | BREAK terminator
                           | statement_expression_list expression terminator
                           | statement_expression_list RETRY terminator
-                          | statement_expression_list break_expression terminator
+                          | statement_expression_list BREAK terminator
                           ;
 
 assignment : var_id=lvalue op=ASSIGN rvalue
@@ -193,8 +218,8 @@ array_definition_elements : ( int_result | dynamic_result )
                           | array_definition_elements COMMA ( int_result | dynamic_result )
                           ;
 
-array_selector : id LEFT_SBRACKET ( int_result | dynamic_result ) RIGHT_SBRACKET
-               | id_global LEFT_SBRACKET ( int_result | dynamic_result ) RIGHT_SBRACKET
+array_selector : Identifier LEFT_SBRACKET ( int_result | dynamic_result ) RIGHT_SBRACKET
+               | ID_GLOBAL LEFT_SBRACKET ( int_result | dynamic_result ) RIGHT_SBRACKET
                ;
 
 dynamic_result : dynamic_result op=( MUL | DIV | MOD ) int_result
@@ -213,7 +238,7 @@ dynamic_result : dynamic_result op=( MUL | DIV | MOD ) int_result
                | dynamic
                ;
 
-dynamic : id
+dynamic : Identifier
         | function_call_assignment
         | array_selector
         ;
@@ -221,7 +246,7 @@ dynamic : id
 int_result : int_result op=( MUL | DIV | MOD ) int_result
            | int_result op=( PLUS | MINUS ) int_result
            | LEFT_RBRACKET int_result RIGHT_RBRACKET
-           | int_t
+           | INT
            ;
 
 float_result : float_result op=( MUL | DIV | MOD ) float_result
@@ -231,13 +256,13 @@ float_result : float_result op=( MUL | DIV | MOD ) float_result
              | int_result op=( PLUS | MINUS )  float_result
              | float_result op=( PLUS | MINUS )  int_result
              | LEFT_RBRACKET float_result RIGHT_RBRACKET
-             | float_t
+             | FLOAT
              ;
 
 string_result : string_result op=MUL int_result
               | int_result op=MUL string_result
               | string_result op=PLUS string_result
-              | literal_t
+              | LITERAL
               ;
 
 comparison_list : left=comparison op=BIT_AND right=comparison_list
@@ -254,22 +279,27 @@ comparison : left=comp_var op=( LESS | GREATER | LESS_EQUAL | GREATER_EQUAL ) ri
 
 comp_var : all_result
          | array_selector
-         | id
+         | Identifier
          ;
 
-lvalue : id
-       //| id_global
+lvalue : Identifier
+       //| ID_GLOBAL
        ;
 
-rvalue : lvalue
-
+rvalue : Identifier
+       | LITERAL
+       | (TRUE|FALSE)
+       | FLOAT
+       | INT
+       | NIL
+       | LEFT_RBRACKET rvalue RIGHT_RBRACKET
+       | '{' assoc terminator? (',' terminator?  assoc)* ','? terminator? '}'
+       | '[' rvalue terminator? (',' terminator?  rvalue)* ','? terminator? ']'
        | initial_array_assignment
        | array_assignment
-
        | int_result
        | float_result
        | string_result
-
        | global_set
        | global_get
        | dynamic_assignment
@@ -277,74 +307,32 @@ rvalue : lvalue
        | float_assignment
        | int_assignment
        | assignment
-
        | function_call
-       | literal_t
-       | bool_t
-       | float_t
-       | int_t
-       | nil_t
-
        | rvalue EXP rvalue
-
        | ( NOT | BIT_NOT )rvalue
-
        | rvalue ( MUL | DIV | MOD ) rvalue
        | rvalue ( PLUS | MINUS ) rvalue
-
        | rvalue ( BIT_SHL | BIT_SHR ) rvalue
-
        | rvalue BIT_AND rvalue
-
        | rvalue ( BIT_OR | BIT_XOR )rvalue
-
        | rvalue ( LESS | GREATER | LESS_EQUAL | GREATER_EQUAL ) rvalue
-
        | rvalue ( EQUAL | NOT_EQUAL ) rvalue
-
        | rvalue ( OR | AND ) rvalue
-
-       | LEFT_RBRACKET rvalue RIGHT_RBRACKET
        ;
-
-break_expression : BREAK;
-
-literal_t : LITERAL;
-
-float_t : FLOAT;
-
-int_t : INT;
-
-bool_t : TRUE
-       | FALSE
-       ;
-
-nil_t : NIL;
-
-id : ID;
-
-id_global : ID_GLOBAL;
-
-id_function : ID_FUNCTION;
+       
+assoc: rvalue ASSOC rvalue;
 
 terminator : terminator SEMICOLON
-           | terminator crlf
+           | terminator CRLF
            | SEMICOLON
-           | crlf
+           | CRLF
            ;
-
-else_token : ELSE;
-
-crlf : CRLF;
-
-fragment ESCAPED_QUOTE : '\\"';
-LITERAL : '"' ( ESCAPED_QUOTE | ~('\n'|'\r') )*? '"'
-        | '\'' ( ESCAPED_QUOTE | ~('\n'|'\r') )*? '\'';
 
 COMMA : ',';
 SEMICOLON : ';';
 CRLF : '\r'? '\n';
-
+BEGIN_BLOCK: 'BEGIN';
+END_BLOCK: 'END';
 REQUIRE : 'require';
 END : 'end';
 DEF : 'def';
@@ -378,6 +366,7 @@ LESS_EQUAL : '<=';
 GREATER_EQUAL : '>=';
 
 ASSIGN : '=';
+ASSOC: '=>';
 PLUS_ASSIGN : '+=';
 MINUS_ASSIGN : '-=';
 MUL_ASSIGN : '*=';
@@ -407,8 +396,23 @@ SL_COMMENT : ('#' ~('\r' | '\n')* '\r'? '\n') -> skip;
 ML_COMMENT : ('=begin' .*? '=end' '\r'? '\n') -> skip;
 WS : (' '|'\t')+ -> skip;
 
-INT : [0-9]+;
-FLOAT : [0-9]*'.'[0-9]+;
-ID : [a-zA-Z_][a-zA-Z0-9_]*;
-ID_GLOBAL : '$'ID;
-ID_FUNCTION : ID[?];
+INT : Digits ExponentPart? | HEX_LITERAL ExponentPart? | OCT_LITERAL ExponentPart? |BINARY_LITERAL ExponentPart?| (LITERAL'.ord') | '?'('\\'? [a-zA-Z_]);
+FLOAT : [0-9]*'.'[0-9]*ExponentPart?;
+Identifier : [a-zA-Z_][a-zA-Z0-9_]*;
+ID_GLOBAL : '$'Identifier;
+ID_FUNCTION : Identifier[?];
+
+LITERAL : '"' ( ESCAPED_QUOTE | ~('\n'|'\r') )*? '"'
+        | '\'' ( ESCAPED_QUOTE | ~('\n'|'\r') )*? '\''
+        | '%' [Qq] [\{\|\[\(] ~('\n'|'\r')* [\}\|\)\]];
+
+
+fragment HEX_FLOAT_LITERAL:  '0' [xX] (HexDigits '.'? | HexDigits? '.' HexDigits) [pP] [+-]? Digits [fFdD]?;
+fragment HEX_LITERAL:        '0' [xX] [0-9a-fA-F] ([0-9a-fA-F_]* [0-9a-fA-F])? [lL]?;
+fragment OCT_LITERAL:        '0' '_'* [0-7] ([0-7_]* [0-7])? [lL]?;
+fragment BINARY_LITERAL:     '0' [bB] [01] ([01_]* [01])? [lL]?;
+fragment HexDigits : HexDigit ((HexDigit | '_')* HexDigit)?;
+fragment HexDigit : [0-9a-fA-F] ;
+fragment ESCAPED_QUOTE : '\\"'|'\\\'';
+fragment Digits    : [0-9] ([0-9_]* [0-9])?;
+fragment ExponentPart: [eE] [+-]? Digits;    

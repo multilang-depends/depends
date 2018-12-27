@@ -4,15 +4,10 @@
 # Java
 - block varaibles with same name should be resovled.  
 - override functions (same type but different parameters)
-
 - support new definition of relations (only annotation left)
 - support Annotation const
 - support lamba expression
 - support java 8 method reference
-- support type bound
-- g4: line533 expression identifier/rawType under explicitGenericInvocation  nonWildcardTypeArguments (explicitGenericInvocationSuffix | THIS arguments)
-- SUPER superSuffix do not supported yet.
-- support import x.*;
 
 
 # C/C++
