@@ -47,3 +47,5 @@ colors = { "red" => 0xf00, "green" => 0x0f0, "blue" => 0x00f }
 # array
 array=["fred", 10, 3.14, "This is a string", "last element",]
 
+#range
+puts (a..b)
