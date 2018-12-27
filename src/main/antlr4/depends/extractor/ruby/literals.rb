@@ -30,7 +30,7 @@ puts 4e+20; #指数前的符号
 #浮点型 
 puts 0.0 
 puts 2.1 
-puts 1000000.
+#puts 1000000.
 
 #string literals
 puts 'escape using "\\"';

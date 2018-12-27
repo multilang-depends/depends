@@ -298,7 +298,7 @@ arg
 	Identifier
 	|ID_GLOBAL
 	| String
-	| Float
+	| Float (.)?
 	| Integer
 	|
 	(
@@ -790,7 +790,6 @@ Integer
 Float
 :
 	[0-9]* '.' [0-9]+ ExponentPart?
-	| [0-9]+ '.' [0-9]* ExponentPart?
 ;
 
 Identifier
