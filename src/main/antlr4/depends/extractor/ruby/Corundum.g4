@@ -379,14 +379,24 @@ arg
 	| ELSE terminator statement_expression_list
 	| ELSIF arg terminator statement_expression_list
 	| WHEN arg terminator statement_expression_list
-	| WHILE arg DO terminator statement_expression_list terminator END
-	| UNTIL arg DO terminator statement_expression_list terminator END
-	| WHILE arg DO terminator END
+	| WHILE arg do_keyword statement_expression_list terminator END
+	| UNTIL arg do_keyword statement_expression_list terminator END
+	| WHILE arg do_keyword END
+	| BEGIN terminator statement_expression_list terminator END terminator? WHILE arg
+	| arg terminator? WHILE arg terminator
+	| arg terminator? UNTIL arg terminator
+	| FOR args IN expression terminator? statement_expression_list terminator END 
+	| arg DOTEACH DO terminator? '|' args '|' terminator? statement_expression_list terminator? END 
 	| BREAK
 	| NEXT
 	| REDO
 	| RETRY
 ;
+
+
+
+do_keyword: (DO|':') terminator | terminator ;
+
 
 
 assoc
@@ -401,6 +411,8 @@ terminator
 	| SEMICOLON
 	| CRLF
 ;
+
+DOTEACH: '.each';
 
 THEN
 :
@@ -477,10 +489,16 @@ FOR
 	'for'
 ;
 
+IN:
+'in';
+
 WHILE
 :
 	'while'
 ;
+
+BEGIN:
+'begin';
 
 END
 :
