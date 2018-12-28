@@ -69,18 +69,23 @@ expression
 	function_definition
 	| require_block
 	| arg
-	| return_statement
 	| pir_inline
 	| begin_block
 	| end_block
+	| RETURN args? 
+	| RAISE function_call_params
 	| WHEN arg THEN statement_expression_list END
-	| arg IF arg terminator
-	| arg UNLESS arg terminator
+	| expression IF arg 
+	| expression UNLESS arg 
+	| class_definition
 ;
+
+
+
 
 begin_block
 :
-	BEGIN_BLOCK '{' expression_list '}'
+	BEGIN_BLOCK '{' expression_list '}' 
 ;
 
 end_block
@@ -120,18 +125,27 @@ pir_expression_list
 
 function_definition
 :
-	function_definition_header function_definition_body END
+	function_definition_header expression_list? END
 ;
 
-function_definition_body
-:
-	expression_list
+class_definition: 
+   	class_header expression_list? END
 ;
+
+class_header: 
+	CLASS cpath superclass?
+;
+
+superclass: '<' arg terminator;
+
+cpath: Identifier;
+
+CLASS: 'class';
+
 
 function_definition_header
 :
-	DEF function_name CRLF
-	| DEF function_name function_definition_params CRLF
+	DEF function_name function_definition_params? CRLF
 ;
 
 function_name
@@ -142,25 +156,8 @@ function_name
 
 function_definition_params
 :
-	LEFT_RBRACKET RIGHT_RBRACKET
-	| LEFT_RBRACKET function_definition_params_list RIGHT_RBRACKET
-	| function_definition_params_list
-;
-
-function_definition_params_list
-:
-	function_definition_param_id
-	| function_definition_params_list COMMA function_definition_param_id
-;
-
-function_definition_param_id
-:
-	Identifier
-;
-
-return_statement
-:
-	RETURN arg
+	LEFT_RBRACKET ( arg (COMMA arg)*)? RIGHT_RBRACKET
+	| arg (COMMA arg)*
 ;
 
 function_call
@@ -297,6 +294,9 @@ arg
 :
 	Identifier
 	|ID_GLOBAL
+	|IdClass
+	|IdMember
+	|IdColon
 	| String
 	| Float (.)?
 	| Integer
@@ -308,6 +308,7 @@ arg
 	| NIL
 	| LEFT_RBRACKET arg RIGHT_RBRACKET
 	| arg DOT2 arg
+	| arg DOT3 arg
 	| arg (ASSIGN | PLUS_ASSIGN | MINUS_ASSIGN |MUL_ASSIGN|DIV_ASSIGN|MOD_ASSIGN | EXP_ASSIGN) arg
 	|
 	(
@@ -372,6 +373,7 @@ arg
 	| global_set
 	| global_get
 	| function_call
+	| arg '.' function_call
 	| IF arg terminator statement_expression_list terminator END
 	| CASE arg terminator statement_expression_list terminator END
 	| CASE terminator (WHEN arg THEN statement_expression_list terminator)* END
@@ -382,7 +384,7 @@ arg
 	| WHILE arg do_keyword statement_expression_list terminator END
 	| UNTIL arg do_keyword statement_expression_list terminator END
 	| WHILE arg do_keyword END
-	| BEGIN terminator statement_expression_list terminator END terminator? WHILE arg
+	| BEGIN terminator statement_expression_list terminator END (terminator? WHILE arg)?
 	| arg terminator? WHILE arg terminator
 	| arg terminator? UNTIL arg terminator
 	| FOR args IN expression terminator? statement_expression_list terminator END 
@@ -391,9 +393,19 @@ arg
 	| NEXT
 	| REDO
 	| RETRY
+	| ENSURE
+	| THROW arg (IF arg )? 
+	| CATCH args DO expression? terminator? statement_expression_list terminator END 
+
 ;
+CATCH: 'catch';
 
+IdColon: ':' Identifier;
 
+THROW: 'throw';
+
+IdClass: '@' '@' Identifier;
+IdMember: '@' Identifier;
 
 do_keyword: (DO|':') terminator | terminator ;
 
@@ -411,6 +423,9 @@ terminator
 	| SEMICOLON
 	| CRLF
 ;
+ENSURE: 'ensure';
+
+RAISE: 'raise';
 
 DOTEACH: '.each';
 
@@ -432,6 +447,11 @@ DEFINED
 DOT2
 :
 	'..'
+;
+
+DOT3
+:
+	'...'
 ;
 
 COLON2
