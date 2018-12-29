@@ -10,7 +10,6 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import depends.entity.repo.EntityRepo;
 import depends.extractor.FileParser;
-import depends.extractor.java.JavaLexer;
 
 public class RubyFileParser implements FileParser {
 	private String fileFullPath;
@@ -24,7 +23,7 @@ public class RubyFileParser implements FileParser {
 	@Override
 	public void parse() throws IOException {
         CharStream input = CharStreams.fromFileName(fileFullPath);
-        Lexer lexer = new JavaLexer(input);
+        Lexer lexer = new CorundumLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         CorundumParser parser = new CorundumParser(tokens);
         RubyListener bridge = new RubyListener(fileFullPath, entityRepo);

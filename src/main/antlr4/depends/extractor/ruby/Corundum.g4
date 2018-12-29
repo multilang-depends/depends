@@ -78,8 +78,11 @@ expression
 	| expression IF arg 
 	| expression UNLESS arg 
 	| class_definition
+	| module_definition
 ;
 
+
+module_definition: MODULE Identifier expression_list END;
 
 
 
@@ -93,20 +96,6 @@ end_block
 	END_BLOCK '{' expression_list '}'
 ;
 
-global_get
-:
-	var_name = lvalue op = ASSIGN global_name = ID_GLOBAL
-;
-
-global_set
-:
-	global_name = ID_GLOBAL op = ASSIGN result = arg
-;
-
-global_result
-:
-	ID_GLOBAL
-;
 
 require_block
 :
@@ -149,9 +138,7 @@ function_definition_header
 ;
 
 function_name
-:
-	ID_FUNCTION
-	| Identifier
+:   Identifier ('.' Identifier)* ('?')?
 ;
 
 function_definition_params
@@ -162,7 +149,7 @@ function_definition_params
 
 function_call
 :
-	name = function_name LEFT_RBRACKET params = function_call_params
+	name = function_name LEFT_RBRACKET params = function_call_params 
 	RIGHT_RBRACKET
 	| name = function_name params = function_call_params
 	| name = function_name LEFT_RBRACKET RIGHT_RBRACKET
@@ -181,6 +168,7 @@ function_param
 		| function_named_param
 	)
 ;
+
 
 function_named_param
 :
@@ -223,15 +211,6 @@ statement_expression_list
 	| statement_expression_list terminator expression
 ;
 
-initial_array_assignment
-:
-	var_id = lvalue op = ASSIGN LEFT_SBRACKET RIGHT_SBRACKET
-;
-
-array_assignment
-:
-	arr_def = array_selector op = ASSIGN arr_val = arg
-;
 
 array_definition
 :
@@ -247,39 +226,6 @@ array_definition_elements
 	(
 		arg
 	)
-;
-
-array_selector
-:
-	Identifier LEFT_SBRACKET
-	(
-		arg
-	) RIGHT_SBRACKET
-	| ID_GLOBAL LEFT_SBRACKET
-	(
-		arg
-	) RIGHT_SBRACKET
-;
-
-dynamic
-:
-	Identifier
-	| function_call_assignment
-	| array_selector
-;
-
-comp_var
-:
-	arg
-	| array_selector
-	| Identifier
-;
-
-lvalue
-:
-	Identifier
-	//| ID_GLOBAL
-
 ;
 
 args
@@ -300,80 +246,31 @@ arg
 	| String
 	| Float (.)?
 	| Integer
-	|
-	(
-		TRUE
-		| FALSE
-	)
+	| Regex
+	|(TRUE| FALSE)
 	| NIL
 	| LEFT_RBRACKET arg RIGHT_RBRACKET
+	| arg('.'| ANDDOT| COLON2) arg ('?')?
+	| MUL arg
 	| arg DOT2 arg
 	| arg DOT3 arg
-	| arg (ASSIGN | PLUS_ASSIGN | MINUS_ASSIGN |MUL_ASSIGN|DIV_ASSIGN|MOD_ASSIGN | EXP_ASSIGN) arg
-	|
-	(
-		NOT
-		| BIT_NOT
-	) arg
-	|
-	(
-		PLUS
-		| MINUS
-	) arg
-	| MUL arg
-	| arg
-	(
-		LESS
-		| GREATER
-		| LESS_EQUAL
-		| GREATER_EQUAL
-	) arg
-	| arg
-	(
-		MUL
-		| DIV
-		| MOD
-		| PLUS
-		| MINUS
-		| BIT_SHL
-		| BIT_SHR
-		| BIT_AND
-		| BIT_OR
-		| BIT_XOR
-		| EXP
-	) arg
-	| arg
-	(
-		EQUAL
-		| NOT_EQUAL
-	) arg
-	| arg
-	(
-		OR
-		| AND
-	) arg
+	| arg (ASSIGN | PLUS_ASSIGN | MINUS_ASSIGN |MUL_ASSIGN|DIV_ASSIGN|MOD_ASSIGN | EXP_ASSIGN) terminator? arg
+	|(NOT| BIT_NOT) arg
+	|(PLUS| MINUS) arg
+	| arg(LESS|GREATER|LESS_EQUAL| GREATER_EQUAL) terminator? arg
+	| arg(MUL|DIV|MOD|PLUS|MINUS|BIT_SHL|BIT_SHR|BIT_AND|BIT_OR|BIT_XOR|EXP) terminator? arg
+	| arg(BIT_OR_ASSIGN|BIT_AND_ASSIGN|OR_ASSIGN|AND_ASSIGN) terminator? arg
+	| arg(EQUAL| NOT_EQUAL | NOT_EQUAL2) terminator? arg
+	| arg(OR| AND) terminator? arg
 	| DEFINED arg
 	| arg '?' arg ':' arg
-	| arg
-	(
-		'.'
-		| ANDDOT
-		| COLON2
-	) arg
-	| '{' assoc terminator?
-	(
-		',' terminator? assoc
-	)* ','? terminator? '}'
-	| '[' arg terminator?
-	(
-		',' terminator? arg
-	)* ','? terminator? ']'
-	| initial_array_assignment
-	| array_assignment
-	| global_set
-	| global_get
-	| function_call
-	| arg '.' function_call
+	| '{' assoc terminator?(',' terminator? assoc)* ','? terminator? '}'
+	| '[' arg terminator? (',' terminator? arg)* ','? terminator? ']'
+	| Identifier ASSIGN LEFT_SBRACKET RIGHT_SBRACKET
+	| Identifier LEFT_SBRACKET arg RIGHT_SBRACKET
+	| ID_GLOBAL LEFT_SBRACKET arg RIGHT_SBRACKET
+	| function_call block?
+	| arg block
 	| IF arg terminator statement_expression_list terminator END
 	| CASE arg terminator statement_expression_list terminator END
 	| CASE terminator (WHEN arg THEN statement_expression_list terminator)* END
@@ -388,7 +285,8 @@ arg
 	| arg terminator? WHILE arg terminator
 	| arg terminator? UNTIL arg terminator
 	| FOR args IN expression terminator? statement_expression_list terminator END 
-	| arg DOTEACH DO terminator? '|' args '|' terminator? statement_expression_list terminator? END 
+	| arg DO terminator? block_params terminator? statement_expression_list? terminator? END 
+	| arg DO terminator statement_expression_list terminator END 
 	| BREAK
 	| NEXT
 	| REDO
@@ -398,6 +296,11 @@ arg
 	| CATCH args DO expression? terminator? statement_expression_list terminator END 
 
 ;
+
+block: '{' block_params? statement_expression_list '}';
+
+block_params: '|' args '|';
+
 CATCH: 'catch';
 
 IdColon: ':' Identifier;
@@ -420,14 +323,17 @@ terminator
 :
 	terminator SEMICOLON
 	| terminator CRLF
+	| terminator SL_COMMENT
 	| SEMICOLON
 	| CRLF
+	| SL_COMMENT
 ;
+
+MODULE: 'module';
+
 ENSURE: 'ensure';
 
 RAISE: 'raise';
-
-DOTEACH: '.each';
 
 THEN
 :
@@ -492,11 +398,6 @@ END_BLOCK
 REQUIRE
 :
 	'require'
-;
-
-EACH
-:
-	'each'
 ;
 
 DO
@@ -635,6 +536,10 @@ EQUAL
 	'=='
 ;
 
+NOT_EQUAL2:
+    '=~'
+;
+
 NOT_EQUAL
 :
 	'!='
@@ -688,6 +593,26 @@ MUL_ASSIGN
 DIV_ASSIGN
 :
 	'/='
+;
+
+BIT_OR_ASSIGN
+:
+	'|='
+;
+
+BIT_AND_ASSIGN
+:
+	'&='
+;
+
+OR_ASSIGN
+:
+	'||='
+;
+
+AND_ASSIGN
+:
+	'&&='
 ;
 
 MOD_ASSIGN
@@ -777,7 +702,7 @@ SL_COMMENT
 :
 	(
 		'#' ~( '\r' | '\n' )* '\r'? '\n'
-	) -> skip
+	) 
 ;
 
 ML_COMMENT
@@ -822,11 +747,9 @@ ID_GLOBAL
 	'$' Identifier
 ;
 
-ID_FUNCTION
-:
-	Identifier [?]
+Regex:
+    '/'  ~( '\n' | '\r' | '/' )+ '/'
 ;
-
 String
 :
 	'"'
@@ -839,8 +762,10 @@ String
 		ESCAPED_QUOTE
 		| ~( '\n' | '\r' )
 	)*? '\''
-	| '%' [Qq] [\{\|\[\(] ~( '\n' | '\r' )* [\}\|\)\]]
+	| '%' [QqWwxrsi]  ('{'|'['|'('|'<'|'|') ~( '\n' | '\r' )* (|'}'|']'|')'|'>'|'|') 
 ;
+
+//| '%' [QqWwxrsi] [\{\|\[\(] ~( '\n' | '\r' )* [\}\|\)\]]
 
 fragment
 HEX_FLOAT_LITERAL
