@@ -1,55 +1,4 @@
-/*
- * [The "BSD license"]
- *  Copyright (c) 2014 Alexander Belov
- *  All rights reserved.
- *
- *  Redistribution and use in source and binary forms, with or without
- *  modification, are permitted provided that the following conditions
- *  are met:
- *
- *  1. Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
- *  2. Redistributions in binary form must reproduce the above copyright
- *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution.
- *  3. The name of the author may not be used to endorse or promote products
- *     derived from this software without specific prior written permission.
- *
- *  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- *  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- *  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
 
-/*
- *  A grammar for Ruby-like language written in ANTLR v4.
- *  You can find compiler into Parrot VM intermediate representation language
- *  (PIR) here: https://github.com/AlexBelov/corundum
- * 
- * 
- * History:
- *  2018.12.24 derived from antlr/grammarv4 project
- *  2018.12.27 add additional grammar support by gangz (gangz@emergentdesign.cn)
- *             - BEGIN/END block
- *             - support of ".ord"
- *             - supoort of ?a (ascii)
- *             - support of hex/oct/bin literals
- *             - support of ExponentPart in digit literals
- *             - support underscore of number literals
- *             - support \' in string literals
- *             - support %q %Q string literals
- *             - support ASSOC (=>) hash value
- *             - support arrays [,,,]
- *  To be added
- *             - HERE document 
- *             - RANGE (..)
- */
 grammar Corundum;
 
 prog
@@ -64,27 +13,70 @@ expression_list
 	| terminator
 ;
 
+statement_expression_list
+:
+	expression
+	| statement_expression_list terminator expression
+;
+
 expression
 :
 	function_definition
-	| require_block
-	| arg
-	| pir_inline
+	| class_definition
+	| module_definition
 	| begin_block
 	| end_block
-	| RETURN args? 
-	| RAISE function_call_params
+	| require_statement
+	| return_statement 
+	| raise_statement
+	| yield_statement
+	| arg
 	| WHEN arg THEN statement_expression_list END
 	| expression IF arg 
 	| expression UNLESS arg 
-	| class_definition
-	| module_definition
+	| arg terminator? WHILE arg 
+	| arg terminator? UNTIL arg 
+	| ELSE terminator statement_expression_list
+	| ELSIF arg terminator statement_expression_list
+	| WHEN arg terminator statement_expression_list
+	| IF arg terminator expression_list END
+	| CASE arg terminator expression_list END
+	| CASE terminator (WHEN arg THEN statement_expression_list terminator)* END
+	| UNLESS arg terminator expression_list END
+	| WHILE arg do_keyword expression_list END
+	| UNTIL arg do_keyword expression_list END
+	| WHILE arg do_keyword END
+	| BEGIN terminator expression_list END (terminator? WHILE arg)?
+	| FOR args IN expression terminator? expression_list END 
+	| arg DO terminator? block_params terminator? statement_expression_list? terminator? END 
+	| arg DO terminator expression_list END 
+	| BREAK
+	| NEXT
+	| REDO
+	| RETRY
+	| ENSURE
+	| THROW arg (IF arg )? 
+	| CATCH args DO expression_list END 
 ;
 
+require_statement
+:
+	REQUIRE String
+;
+return_statement: 
+	RETURN args?
+;
+
+yield_statement: 
+	YIELD args?
+;
+YIELD: 'yield';
+
+raise_statement:
+	RAISE args
+;
 
 module_definition: MODULE Identifier expression_list END;
-
-
 
 begin_block
 :
@@ -97,21 +89,6 @@ end_block
 ;
 
 
-require_block
-:
-	REQUIRE String
-;
-
-pir_inline
-:
-	PIR CRLF pir_expression_list END
-;
-
-pir_expression_list
-:
-	expression_list
-;
-
 function_definition
 :
 	function_definition_header expression_list? END
@@ -122,15 +99,12 @@ class_definition:
 ;
 
 class_header: 
-	CLASS cpath superclass?
+	CLASS variable_path superclass?
 ;
 
-superclass: '<' arg terminator;
-
-cpath: Identifier;
+superclass: '<' variable_path terminator;
 
 CLASS: 'class';
-
 
 function_definition_header
 :
@@ -138,7 +112,7 @@ function_definition_header
 ;
 
 function_name
-:   Identifier ('.' Identifier)* ('?')?
+:   variable_path ('.' Identifier)* ('?')?
 ;
 
 function_definition_params
@@ -149,10 +123,10 @@ function_definition_params
 
 function_call
 :
-	name = function_name LEFT_RBRACKET params = function_call_params 
-	RIGHT_RBRACKET
-	| name = function_name params = function_call_params
-	| name = function_name LEFT_RBRACKET RIGHT_RBRACKET
+	function_name LEFT_RBRACKET function_call_params RIGHT_RBRACKET
+	| function_name function_call_params
+	| function_name LEFT_RBRACKET RIGHT_RBRACKET
+	| function_name 
 ;
 
 function_call_params
@@ -165,68 +139,10 @@ function_param
 :
 	(
 		arg
-		| function_named_param
+		| Identifier ASSIGN arg
 	)
 ;
 
-
-function_named_param
-:
-	Identifier op = ASSIGN
-	(
-		arg
-	)
-;
-
-function_call_assignment
-:
-	function_call
-;
-
-init_expression
-:
-	for_init_list
-;
-
-for_init_list
-:
-	for_init_list COMMA arg
-	| arg
-;
-
-loop_expression
-:
-	for_loop_list
-;
-
-for_loop_list
-:
-	for_loop_list COMMA arg
-	| arg
-;
-
-statement_expression_list
-:
-	expression
-	| statement_expression_list terminator expression
-;
-
-
-array_definition
-:
-	LEFT_SBRACKET array_definition_elements RIGHT_SBRACKET
-;
-
-array_definition_elements
-:
-	(
-		arg
-	)
-	| array_definition_elements COMMA
-	(
-		arg
-	)
-;
 
 args
 :
@@ -238,64 +154,43 @@ args
 
 arg
 :
-	Identifier
-	|ID_GLOBAL
-	|IdClass
-	|IdMember
-	|IdColon
-	| String
-	| Float (.)?
-	| Integer
-	| Regex
-	|(TRUE| FALSE)
-	| NIL
+	variable_path
+	| DEFINED variable_path
 	| LEFT_RBRACKET arg RIGHT_RBRACKET
-	| arg('.'| ANDDOT| COLON2) arg ('?')?
-	| MUL arg
-	| arg DOT2 arg
-	| arg DOT3 arg
+	| (PLUS| MINUS|MUL) arg
+	| (NOT| BIT_NOT) arg
 	| arg (ASSIGN | PLUS_ASSIGN | MINUS_ASSIGN |MUL_ASSIGN|DIV_ASSIGN|MOD_ASSIGN | EXP_ASSIGN) terminator? arg
-	|(NOT| BIT_NOT) arg
-	|(PLUS| MINUS) arg
 	| arg(LESS|GREATER|LESS_EQUAL| GREATER_EQUAL) terminator? arg
 	| arg(MUL|DIV|MOD|PLUS|MINUS|BIT_SHL|BIT_SHR|BIT_AND|BIT_OR|BIT_XOR|EXP) terminator? arg
 	| arg(BIT_OR_ASSIGN|BIT_AND_ASSIGN|OR_ASSIGN|AND_ASSIGN) terminator? arg
 	| arg(EQUAL| NOT_EQUAL | NOT_EQUAL2) terminator? arg
 	| arg(OR| AND) terminator? arg
-	| DEFINED arg
 	| arg '?' arg ':' arg
 	| '{' assoc terminator?(',' terminator? assoc)* ','? terminator? '}'
 	| '[' arg terminator? (',' terminator? arg)* ','? terminator? ']'
-	| Identifier ASSIGN LEFT_SBRACKET RIGHT_SBRACKET
-	| Identifier LEFT_SBRACKET arg RIGHT_SBRACKET
-	| ID_GLOBAL LEFT_SBRACKET arg RIGHT_SBRACKET
+	| variable_path ASSIGN LEFT_SBRACKET RIGHT_SBRACKET
+	| variable_path LEFT_SBRACKET arg RIGHT_SBRACKET
 	| function_call block?
+	| arg '.' function_call
 	| arg block
-	| IF arg terminator statement_expression_list terminator END
-	| CASE arg terminator statement_expression_list terminator END
-	| CASE terminator (WHEN arg THEN statement_expression_list terminator)* END
-	| UNLESS arg terminator statement_expression_list terminator END
-	| ELSE terminator statement_expression_list
-	| ELSIF arg terminator statement_expression_list
-	| WHEN arg terminator statement_expression_list
-	| WHILE arg do_keyword statement_expression_list terminator END
-	| UNTIL arg do_keyword statement_expression_list terminator END
-	| WHILE arg do_keyword END
-	| BEGIN terminator statement_expression_list terminator END (terminator? WHILE arg)?
-	| arg terminator? WHILE arg terminator
-	| arg terminator? UNTIL arg terminator
-	| FOR args IN expression terminator? statement_expression_list terminator END 
-	| arg DO terminator? block_params terminator? statement_expression_list? terminator? END 
-	| arg DO terminator statement_expression_list terminator END 
-	| BREAK
-	| NEXT
-	| REDO
-	| RETRY
-	| ENSURE
-	| THROW arg (IF arg )? 
-	| CATCH args DO expression? terminator? statement_expression_list terminator END 
-
 ;
+
+variable_path:
+	Identifier
+	|IdGlobal
+	|IdClass
+	|IdMember
+	|IdColon
+	| Float
+	| variable_path (ANDDOT| COLON2) variable_path ('?')?
+	| variable_path (DOT2|DOT3) variable_path
+	| String
+	| Integer
+	| Regex
+	|(TRUE| FALSE)
+	| NIL 
+	| Float '.'
+	;
 
 block: '{' block_params? statement_expression_list '}';
 
@@ -742,7 +637,7 @@ Identifier
 	[a-zA-Z_] [a-zA-Z0-9_]*
 ;
 
-ID_GLOBAL
+IdGlobal
 :
 	'$' Identifier
 ;
