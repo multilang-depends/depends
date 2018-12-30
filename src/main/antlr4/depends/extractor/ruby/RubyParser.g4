@@ -167,7 +167,7 @@ arg
 	| LEFT_PAREN RIGHT_PAREN
 	| '[' ']'
 	| '[' terminator? arg terminator? (',' terminator? arg)* ','? terminator? ']'
-	| (PLUS| MINUS|MUL) arg
+	| (PLUS| MINUS|MUL|MOD) arg
 	| (NOT| BIT_NOT) arg
 	| arg (',' arg)* ASSIGN terminator? args
 	| arg (PLUS_ASSIGN | MINUS_ASSIGN |MUL_ASSIGN|DIV_ASSIGN|MOD_ASSIGN | EXP_ASSIGN) terminator? arg

@@ -1,9 +1,19 @@
 lexer grammar RubyLexer;
+@lexer::header{
+import java.util.List;	
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
+}
 
 @lexer::members{
+	
 	String hereDocSymbol = "";
     String quotedStringStartSymbol = "";
 	StringBuilder stringBuffer;
+    Queue<Token> tokenList = new LinkedList<>();
+	boolean shouldReleaseBufferedToken = false;
+	Token next;
 	boolean isHereDocSymbol(String text){
 		String theSym =  text.replace("\r","").replace("\n","").replace("\"","");
 		hereDocSymbol =  hereDocSymbol.replace("\r","").replace("\n","").replace("<<-","").replace("<<","").replace("\"","");
@@ -20,6 +30,28 @@ lexer grammar RubyLexer;
 		return false;
 	}
 	
+	@Override
+    public Token getToken() { 
+    	if (!shouldReleaseBufferedToken) 
+    		return super.getToken();
+    	if (!tokenList.isEmpty()){
+    		return tokenList.peek();
+   		}
+    	return super.getToken();
+    }
+    
+	
+	@Override
+	public Token nextToken() {
+		if (!shouldReleaseBufferedToken) 
+			return super.nextToken();
+		if (!tokenList.isEmpty()){
+    		Token t = tokenList.remove();
+    		return t;
+   		}
+    	return super.nextToken();
+	}
+	
 }
 
 //HereDoc
@@ -27,6 +59,16 @@ HereDoc1: '<<' '-'? Identifier
 		{
 			hereDocSymbol = getText(); 
 			stringBuffer = new StringBuilder();
+			tokenList = new LinkedList<>();
+			shouldReleaseBufferedToken = false;
+			while(true) {
+				next = nextToken();
+				if (next==null) break;
+				if (next.getType()==CRLF) {
+					break;
+				}
+				tokenList.add(next);
+			}
 			mode(HERE_DOC_MODE);
 			skip();
 		} 
@@ -36,6 +78,16 @@ HereDoc2: '<<' '-'?  StringFragment
 		{
 			hereDocSymbol = getText(); 
 			stringBuffer = new StringBuilder();
+			tokenList = new LinkedList<>();
+			shouldReleaseBufferedToken = false;
+			while(true) {
+				next = nextToken();
+				if (next==null) break;
+				if (next.getType()==CRLF) {
+					break;
+				}
+				tokenList.add(next);
+			}
 			mode(HERE_DOC_MODE);
 			skip();
 		} 
@@ -111,7 +163,6 @@ Regex:
 String
 :
 	StringFragment
-	| '%' [QqWwxrsi]  ('{'|'['|'('|'<'|'|') ~( '\n' | '\r' )* (|'}'|']'|')'|'>'|'|') 
 ;
 
 
@@ -282,6 +333,8 @@ HereDocEnd1:	IdentifierFrag
 							mode(DEFAULT_MODE);
 							setType(String); 
 							setText(stringBuffer.toString());
+							shouldReleaseBufferedToken = true;
+							
 					  	}else{
 					  		stringBuffer.append(getText());
 							skip();
@@ -295,6 +348,7 @@ HereDocEnd2:	StringFragment
 							mode(DEFAULT_MODE);
 							setType(String); 
 							setText(stringBuffer.toString());
+							shouldReleaseBufferedToken = true;
 						}else{
 					  		stringBuffer.append(getText());
 							skip();
@@ -320,7 +374,7 @@ QuotedStringEnd1:	[\r\n]
 					}
 					;
 
-AnyInQuotedString1:   [A-Za-z0-9]  |' '
+AnyInQuotedString1:   ([A-Za-z0-9] |' ')+
 					{
 						stringBuffer.append(getText());
 						skip();	
@@ -330,10 +384,9 @@ AnyInQuotedString1:   [A-Za-z0-9]  |' '
 AnyInQuotedString2:    ~([A-Za-z0-9]|' ')
 					{
 						if (isQuotedPair(getText())){
-							mode(DEFAULT_MODE);
 							setType(String); 
 							setText(stringBuffer.toString());
-							
+							mode(DEFAULT_MODE);
 						}else{
 							stringBuffer.append(getText());
 							skip();	

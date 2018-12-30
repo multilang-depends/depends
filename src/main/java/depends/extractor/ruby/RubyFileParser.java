@@ -2,6 +2,7 @@ package depends.extractor.ruby;
 
 import java.io.IOException;
 
+
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -10,7 +11,6 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import depends.entity.repo.EntityRepo;
 import depends.extractor.FileParser;
-
 public class RubyFileParser implements FileParser {
 	private String fileFullPath;
 	private EntityRepo entityRepo;

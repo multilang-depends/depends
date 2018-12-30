@@ -14,7 +14,7 @@ a=~a;
 a=a<b;
 a=a<=b;
 a=a>=b;
-a=(a>=b)&&(a<=b)&&(a>b)||(a<b)&&(a<<b)&&(a>>b);
+a=(a>=b)&&(a<=b)&&(a>b)||(a<b)&&(a << b)&&(a>>b);
 a=(a==b)&&(a!=b);
 a=defined? a;
 a=a.m;
