@@ -42,7 +42,7 @@ expression
 	| arg terminator? UNTIL arg 
 	| ELSE terminator statement_expression_list
 	| ELSIF arg terminator statement_expression_list
-	| WHEN arg terminator statement_expression_list
+	| WHEN arg (',' arg)* terminator statement_expression_list
 	| IF arg terminator expression_list END
 	| CASE arg terminator expression_list END
 	| CASE terminator (WHEN arg THEN statement_expression_list terminator)* END
@@ -117,38 +117,29 @@ function_definition_header
 ;
 
 function_name
-:   variable_path (DOT Identifier)* (QUESTION)?
+:   variable_path (DOT Identifier)* (QUESTION|SIGH)?
 	| BIT_SHL
 ;
 
 function_definition_params
 :
-	LEFT_RBRACKET ( arg (COMMA arg)*)? RIGHT_RBRACKET
-	| arg (COMMA arg)*
+	LEFT_RBRACKET ( function_param (COMMA terminator? function_param)*)? RIGHT_RBRACKET
+	| function_param (COMMA terminator?  function_param)*
+;
+
+function_param:
+	arg 
+	|hash_asso
+	|arg ASSIGN arg
 ;
 
 function_call
 :
-	function_name LEFT_RBRACKET function_call_params RIGHT_RBRACKET
-	| function_name function_call_params
+	function_name LEFT_RBRACKET function_param  (COMMA terminator? function_param)* RIGHT_RBRACKET
+	| function_name function_param  (COMMA terminator? function_param)* 
 	| function_name LEFT_RBRACKET RIGHT_RBRACKET
 	| function_name 
 ;
-
-function_call_params
-:
-	function_param
-	| function_call_params COMMA function_param
-;
-
-function_param
-:
-	(
-		arg
-		| Identifier ASSIGN arg
-	)
-;
-
 
 args
 :
@@ -160,7 +151,7 @@ args
 
 arg
 :
-	variable_path
+	variable_path QUESTION?
 	| DEFINED variable_path
 	| LEFT_RBRACKET arg RIGHT_RBRACKET
 	| LEFT_PAREN terminator? hash_asso terminator?(',' terminator? hash_asso)* ','? terminator? RIGHT_PAREN
@@ -168,7 +159,7 @@ arg
 	| '[' ']'
 	| '[' terminator? arg terminator? (',' terminator? arg)* ','? terminator? ']'
 	| (PLUS| MINUS|MUL|MOD) arg
-	| (NOT| BIT_NOT) arg
+	| (not| BIT_NOT) arg
 	| arg (',' arg)* ASSIGN terminator? args
 	| arg (PLUS_ASSIGN | MINUS_ASSIGN |MUL_ASSIGN|DIV_ASSIGN|MOD_ASSIGN | EXP_ASSIGN) terminator? arg
 	| arg(LESS|GREATER|LESS_EQUAL| GREATER_EQUAL) terminator? arg
@@ -181,13 +172,15 @@ arg
 	| arg DOT function_call
 	| arg '['arg']'
 	| arg block
+	| arg (DOT2|DOT3) arg
 ;
+not: NOT | SIGH;
+
 
 variable_path:
 	identifier
 	| Float
 	| variable_path (ANDDOT| COLON2) variable_path (QUESTION)?
-	| variable_path (DOT2|DOT3) variable_path
 	| COLON variable_path
 	| String
 	| Integer
@@ -198,7 +191,7 @@ variable_path:
 	;
 
 
-block: LEFT_PAREN block_params? statement_expression_list RIGHT_PAREN;
+block: LEFT_PAREN terminator? block_params? statement_expression_list RIGHT_PAREN;
 
 block_params: BIT_OR args BIT_OR;
 
