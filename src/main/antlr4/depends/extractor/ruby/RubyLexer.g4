@@ -1,23 +1,52 @@
 lexer grammar RubyLexer;
 
 @lexer::members{
-	boolean inHereDoc = false; 
 	String hereDocSymbol = "";
-	StringBuilder hereDoc;
+    String quotedStringStartSymbol = "";
+	StringBuilder stringBuffer;
 	boolean isHereDocSymbol(String text){
-		String theSym =  text.replace("\r","").replace("\n","");
-		String hereDocSymbol =  text.replace("\r","").replace("\n","").replace("<<-","").replace("<<","");
+		String theSym =  text.replace("\r","").replace("\n","").replace("\"","");
+		hereDocSymbol =  hereDocSymbol.replace("\r","").replace("\n","").replace("<<-","").replace("<<","").replace("\"","");
 		return theSym.equals(hereDocSymbol);
 	}
+	
+	boolean isQuotedPair(String text){
+		if (quotedStringStartSymbol.equals("(") && text.equals(")")) return true;
+		if (quotedStringStartSymbol.equals("[") && text.equals("]")) return true;
+		if (quotedStringStartSymbol.equals("{") && text.equals("}")) return true;
+		if (quotedStringStartSymbol.equals("<") && text.equals(">")) return true;
+		if (quotedStringStartSymbol.equals("|") && text.equals("|")) return true;
+		if (quotedStringStartSymbol.equals(text)) return true;
+		return false;
+	}
+	
 }
 
 //HereDoc
-HereDoc: '<<-' Identifier '\r'? '\n' 
+HereDoc1: '<<' '-'? Identifier  
 		{
 			hereDocSymbol = getText(); 
-			hereDoc = new StringBuilder();
+			stringBuffer = new StringBuilder();
 			mode(HERE_DOC_MODE);
 			skip();
+		} 
+		;
+		
+HereDoc2: '<<' '-'?  StringFragment 
+		{
+			hereDocSymbol = getText(); 
+			stringBuffer = new StringBuilder();
+			mode(HERE_DOC_MODE);
+			skip();
+		} 
+		;
+
+QuotedStringStart: '%' [QqWwxrsi] ~[A-Za-z0-9]
+		{
+			quotedStringStartSymbol = getText().substring(2); 
+			stringBuffer = new StringBuilder();
+			skip();
+			mode(QUOTED_STR_MODE);
 		} 
 		;
 // Keywords
@@ -251,16 +280,69 @@ StringFragment:
 IdentifierFrag:[a-zA-Z_] [a-zA-Z0-9_]* ;
 	
 mode HERE_DOC_MODE;
-IdentifierInHere:	IdentifierFrag '\r'? '\n' 
-					{ if ( isHereDocSymbol(getText())) 
-						mode(DEFAULT_MODE);
-						setType(String); 
-						setText(hereDoc.toString());
+HereDocEnd1:	IdentifierFrag 
+					{ 
+						if ( isHereDocSymbol(getText())){ 
+							mode(DEFAULT_MODE);
+							setType(String); 
+							setText(stringBuffer.toString());
+					  	}else{
+					  		stringBuffer.append(getText());
+							skip();
+					  	}
 					}
 					;
+
+HereDocEnd2:	StringFragment 
+					{ 
+						if ( isHereDocSymbol(getText())){ 
+							mode(DEFAULT_MODE);
+							setType(String); 
+							setText(stringBuffer.toString());
+						}else{
+					  		stringBuffer.append(getText());
+							skip();
+						}
+					}
+					;					
 AnyInHere:         (.)+? 
 					{
-						hereDoc.append(getText());
+						stringBuffer.append(getText());
 						skip();
 					}
 					;
+SL_COMMENT_IN_HEREDOC:	('#' ~( '\r' | '\n' )* '\r'? '\n') -> skip;
+
+ML_COMMENT_IN_HEREDOC:	('=begin' .*? '=end' '\r'? '\n') -> skip;
+					
+mode QUOTED_STR_MODE;
+QuotedStringEnd1:	[\r\n] 
+					{ 
+						mode(DEFAULT_MODE);
+						setType(String); 
+						setText(stringBuffer.toString());
+					}
+					;
+
+AnyInQuotedString1:   [A-Za-z0-9]  |' '
+					{
+						stringBuffer.append(getText());
+						skip();	
+					}
+					;						
+							
+AnyInQuotedString2:    ~([A-Za-z0-9]|' ')
+					{
+						if (isQuotedPair(getText())){
+							mode(DEFAULT_MODE);
+							setType(String); 
+							setText(stringBuffer.toString());
+							
+						}else{
+							stringBuffer.append(getText());
+							skip();	
+						}
+					}
+;	
+					
+
