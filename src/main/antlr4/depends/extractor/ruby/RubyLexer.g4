@@ -2,8 +2,24 @@ lexer grammar RubyLexer;
 
 @lexer::members{
 	boolean inHereDoc = false; 
+	String hereDocSymbol = "";
+	StringBuilder hereDoc;
+	boolean isHereDocSymbol(String text){
+		String theSym =  text.replace("\r","").replace("\n","");
+		String hereDocSymbol =  text.replace("\r","").replace("\n","").replace("<<-","").replace("<<","");
+		return theSym.equals(hereDocSymbol);
+	}
 }
 
+//HereDoc
+HereDoc: '<<-' Identifier '\r'? '\n' 
+		{
+			hereDocSymbol = getText(); 
+			hereDoc = new StringBuilder();
+			mode(HERE_DOC_MODE);
+			skip();
+		} 
+		;
 // Keywords
 
 BEGIN:			'begin';
@@ -65,16 +81,7 @@ Regex:
 ;
 String
 :
-	'"'
-	(
-		ESCAPED_QUOTE
-		| ~( '\n' | '\r' )
-	)*? '"'
-	| '\''
-	(
-		ESCAPED_QUOTE
-		| ~( '\n' | '\r' )
-	)*? '\''
+	StringFragment
 	| '%' [QqWwxrsi]  ('{'|'['|'('|'<'|'|') ~( '\n' | '\r' )* (|'}'|']'|')'|'>'|'|') 
 ;
 
@@ -141,11 +148,14 @@ ML_COMMENT:	('=begin' .*? '=end' '\r'? '\n') -> skip;
 WS:			(' '| '\t')+ -> skip;
 
 //Identifiers
-Identifier:	[a-zA-Z_] [a-zA-Z0-9_]*;
-IdGlobal:	'$' Identifier;
-IdColon: ':' Identifier;
-IdClass: '@' '@' Identifier;
-IdMember: '@' Identifier;
+Identifier:	IdentifierFrag;
+IdGlobal:	'$' IdentifierFrag;
+IdColon: ':' IdentifierFrag;
+IdClass: '@' '@' IdentifierFrag;
+IdMember: '@' IdentifierFrag;
+
+
+
 
 // Fragment rules
 fragment
@@ -224,3 +234,33 @@ ExponentPart
 :
 	[eE] [+-]? Digits
 ;    
+
+fragment
+StringFragment:
+'"'
+	(
+		ESCAPED_QUOTE
+		| ~( '\n' | '\r' )
+	)*? '"'
+	| '\''
+	(
+		ESCAPED_QUOTE
+		| ~( '\n' | '\r' )
+	)*? '\''
+	;
+IdentifierFrag:[a-zA-Z_] [a-zA-Z0-9_]* ;
+	
+mode HERE_DOC_MODE;
+IdentifierInHere:	IdentifierFrag '\r'? '\n' 
+					{ if ( isHereDocSymbol(getText())) 
+						mode(DEFAULT_MODE);
+						setType(String); 
+						setText(hereDoc.toString());
+					}
+					;
+AnyInHere:         (.)+? 
+					{
+						hereDoc.append(getText());
+						skip();
+					}
+					;
