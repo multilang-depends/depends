@@ -1,5 +1,6 @@
+parser grammar RubyParser;
 
-grammar Corundum;
+options { tokenVocab= RubyLexer; }
 
 
 prog
@@ -63,7 +64,6 @@ expression
 ;
 rescure_param: variable_path | assoc ;
 
-RESCURE: 'rescue';
 
 
 require_statement
@@ -77,7 +77,6 @@ return_statement:
 yield_statement: 
 	YIELD args?
 ;
-YIELD: 'yield';
 
 raise_statement:
 	RAISE args
@@ -87,12 +86,12 @@ module_definition: MODULE variable_path expression_list END;
 
 begin_block
 :
-	BEGIN_BLOCK '{' expression_list '}' 
+	BEGIN_BLOCK LEFT_PAREN expression_list RIGHT_PAREN 
 ;
 
 end_block
 :
-	END_BLOCK '{' expression_list '}'
+	END_BLOCK LEFT_PAREN expression_list RIGHT_PAREN
 ;
 
 
@@ -111,7 +110,6 @@ class_header:
 
 superclass: '<' variable_path terminator;
 
-CLASS: 'class';
 
 function_definition_header
 :
@@ -119,7 +117,7 @@ function_definition_header
 ;
 
 function_name
-:   variable_path ('.' Identifier)* ('?')?
+:   variable_path (DOT Identifier)* (QUESTION)?
 	| BIT_SHL
 ;
 
@@ -165,8 +163,8 @@ arg
 	variable_path
 	| DEFINED variable_path
 	| LEFT_RBRACKET arg RIGHT_RBRACKET
-	| '{' terminator? assoc terminator?(',' terminator? assoc)* ','? terminator? '}'
-	| '{' '}'
+	| LEFT_PAREN terminator? assoc terminator?(',' terminator? assoc)* ','? terminator? RIGHT_PAREN
+	| LEFT_PAREN RIGHT_PAREN
 	| '[' ']'
 	| '[' terminator? arg terminator? (',' terminator? arg)* ','? terminator? ']'
 	| (PLUS| MINUS|MUL) arg
@@ -178,9 +176,9 @@ arg
 	| arg(BIT_OR_ASSIGN|BIT_AND_ASSIGN|OR_ASSIGN|AND_ASSIGN) terminator? arg
 	| arg(EQUAL| NOT_EQUAL | NOT_EQUAL2) terminator? arg
 	| arg(OR| AND) terminator? arg
-	| arg '?' arg ':' arg
+	| arg QUESTION arg COLON arg
 	| function_call block?
-	| arg '.' function_call
+	| arg DOT function_call
 	| arg '['arg']'
 	| arg block
 ;
@@ -192,32 +190,23 @@ variable_path:
 	|IdMember
 	|IdColon
 	| Float
-	| variable_path (ANDDOT| COLON2) variable_path ('?')?
+	| variable_path (ANDDOT| COLON2) variable_path (QUESTION)?
 	| variable_path (DOT2|DOT3) variable_path
-	| ':' variable_path
+	| COLON variable_path
 	| String
 	| Integer
 	| Regex
 	|(TRUE| FALSE)
 	| NIL 
-	| Float '.'
+	| Float DOT
 	;
 
-block: '{' block_params? statement_expression_list '}';
+block: LEFT_PAREN block_params? statement_expression_list RIGHT_PAREN;
 
-block_params: '|' args '|';
+block_params: BIT_OR args BIT_OR;
 
-CATCH: 'catch';
 
-IdColon: ':' Identifier;
-
-THROW: 'throw';
-
-IdClass: '@' '@' Identifier;
-IdMember: '@' Identifier;
-
-do_keyword: (DO|':') terminator | terminator ;
-
+do_keyword: (DO|COLON) terminator | terminator ;
 
 
 assoc
@@ -236,520 +225,3 @@ terminator
 ;
 
 
-MODULE: 'module';
-
-ENSURE: 'ensure';
-
-RAISE: 'raise';
-
-THEN
-:
-	'then'
-;
-
-WHEN
-:
-	'when'
-;
-
-DEFINED
-:
-	'defined?'
-;
-
-DOT2
-:
-	'..'
-;
-
-DOT3
-:
-	'...'
-;
-
-COLON2
-:
-	'::'
-;
-
-ANDDOT
-:
-	'&.'
-;
-
-COMMA
-:
-	','
-;
-
-SEMICOLON
-:
-	';'
-;
-
-CRLF
-:
-	'\r'? '\n'
-;
-
-BEGIN_BLOCK
-:
-	'BEGIN'
-;
-
-END_BLOCK
-:
-	'END'
-;
-
-REQUIRE
-:
-	'require'
-;
-
-DO
-:
-	'do'
-;
-
-FOR
-:
-	'for'
-;
-
-IN:
-'in';
-
-WHILE
-:
-	'while'
-;
-
-BEGIN:
-'begin';
-
-END
-:
-	'end'
-;
-
-DEF
-:
-	'def'
-;
-
-RETURN
-:
-	'return'
-;
-
-PIR
-:
-	'pir'
-;
-
-IF
-:
-	'if'
-;
-
-ELSE
-:
-	'else'
-;
-
-ELSIF
-:
-	'elsif'
-;
-
-UNLESS
-:
-	'unless'
-;
-
-RETRY
-:
-	'retry'
-;
-
-BREAK
-:
-	'break'
-;
-
-TRUE
-:
-	'true'
-;
-
-FALSE
-:
-	'false'
-;
-
-REDO
-:
-	'redo'
-;
-
-NEXT
-:
-	'next'
-;
-
-CASE
-:
-	'case'
-;
-
-UNTIL
-:
-	'until'
-;
-
-PLUS
-:
-	'+'
-;
-
-MINUS
-:
-	'-'
-;
-
-MUL
-:
-	'*'
-;
-
-DIV
-:
-	'/'
-;
-
-MOD
-:
-	'%'
-;
-
-EXP
-:
-	'**'
-;
-
-EQUAL
-:
-	'=='
-;
-
-NOT_EQUAL2:
-    '=~'
-;
-
-NOT_EQUAL
-:
-	'!='
-;
-
-GREATER
-:
-	'>'
-;
-
-LESS
-:
-	'<'
-;
-
-LESS_EQUAL
-:
-	'<='
-;
-
-GREATER_EQUAL
-:
-	'>='
-;
-
-ASSIGN
-:
-	'='
-;
-
-ASSOC
-:
-	'=>'
-;
-
-PLUS_ASSIGN
-:
-	'+='
-;
-
-MINUS_ASSIGN
-:
-	'-='
-;
-
-MUL_ASSIGN
-:
-	'*='
-;
-
-DIV_ASSIGN
-:
-	'/='
-;
-
-BIT_OR_ASSIGN
-:
-	'|='
-;
-
-BIT_AND_ASSIGN
-:
-	'&='
-;
-
-OR_ASSIGN
-:
-	'||='
-;
-
-AND_ASSIGN
-:
-	'&&='
-;
-
-MOD_ASSIGN
-:
-	'%='
-;
-
-EXP_ASSIGN
-:
-	'**='
-;
-
-BIT_AND
-:
-	'&'
-;
-
-BIT_OR
-:
-	'|'
-;
-
-BIT_XOR
-:
-	'^'
-;
-
-BIT_NOT
-:
-	'~'
-;
-
-BIT_SHL
-:
-	'<<'
-;
-
-BIT_SHR
-:
-	'>>'
-;
-
-AND
-:
-	'and'
-	| '&&'
-;
-
-OR
-:
-	'or'
-	| '||'
-;
-
-NOT
-:
-	'not'
-	| '!'
-;
-
-LEFT_RBRACKET
-:
-	'('
-;
-
-RIGHT_RBRACKET
-:
-	')'
-;
-
-LEFT_SBRACKET
-:
-	'['
-;
-
-RIGHT_SBRACKET
-:
-	']'
-;
-
-NIL
-:
-	'nil'
-;
-
-SL_COMMENT
-:
-	(
-		'#' ~( '\r' | '\n' )* '\r'? '\n'
-	) 
-;
-
-ML_COMMENT
-:
-	(
-		'=begin' .*? '=end' '\r'? '\n'
-	) -> skip
-;
-
-
-WS
-:
-	(
-		' '
-		| '\t'
-	)+ -> skip
-;
-
-Integer
-:
-	Sign? Digits ExponentPart?
-	| HEX_LITERAL ExponentPart?
-	| OCT_LITERAL ExponentPart?
-	| BINARY_LITERAL ExponentPart?
-	| '?'
-	(
-		'\\'? [a-zA-Z_]
-	)
-;
-Sign: '+'|'-';
-
-
-Float
-:
-	Sign? [0-9]* '.' [0-9]+ ExponentPart?
-;
-
-Identifier
-:
-	[a-zA-Z_] [a-zA-Z0-9_]*
-;
-
-IdGlobal
-:
-	'$' Identifier
-;
-
-Regex:
-    '/'  ~( '\n' | '\r' | '/' )+ '/'
-;
-String
-:
-	'"'
-	(
-		ESCAPED_QUOTE
-		| ~( '\n' | '\r' )
-	)*? '"'
-	| '\''
-	(
-		ESCAPED_QUOTE
-		| ~( '\n' | '\r' )
-	)*? '\''
-	| '%' [QqWwxrsi]  ('{'|'['|'('|'<'|'|') ~( '\n' | '\r' )* (|'}'|']'|')'|'>'|'|') 
-;
-
-//| '%' [QqWwxrsi] [\{\|\[\(] ~( '\n' | '\r' )* [\}\|\)\]]
-
-fragment
-HEX_FLOAT_LITERAL
-:
-	'0' [xX]
-	(
-		HexDigits '.'?
-		| HexDigits? '.' HexDigits
-	) [pP] [+-]? Digits [fFdD]?
-;
-
-fragment
-HEX_LITERAL
-:
-	'0' [xX] [0-9a-fA-F]
-	(
-		[0-9a-fA-F_]* [0-9a-fA-F]
-	)? [lL]?
-;
-
-fragment
-OCT_LITERAL
-:
-	'0' '_'* [0-7]
-	(
-		[0-7_]* [0-7]
-	)? [lL]?
-;
-
-fragment
-BINARY_LITERAL
-:
-	'0' [bB] [01]
-	(
-		[01_]* [01]
-	)? [lL]?
-;
-
-fragment
-HexDigits
-:
-	HexDigit
-	(
-		(
-			HexDigit
-			| '_'
-		)* HexDigit
-	)?
-;
-
-fragment
-HexDigit
-:
-	[0-9a-fA-F]
-;
-
-fragment
-ESCAPED_QUOTE
-:
-	'\\"'
-	| '\\\''
-;
-
-fragment
-Digits
-:
-	[0-9]
-	(
-		[0-9_]* [0-9]
-	)?
-;
-
-fragment
-ExponentPart
-:
-	[eE] [+-]? Digits
-;    

@@ -1,4 +1,4 @@
 for FILE in `ls *.rb`
 do
-echo $FILE; ./quicktest.sh $FILE
+echo $FILE; ./test.sh $FILE
 done

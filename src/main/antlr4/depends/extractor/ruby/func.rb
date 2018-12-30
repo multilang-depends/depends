@@ -1,5 +1,7 @@
 #!/usr/bin/ruby
 # -*- coding: UTF-8 -*-
+
+    def to_s; writer.string; end
  
 def test(a1="Ruby", a2="Perl")
    puts "编程语言为 #{a1}"
@@ -28,3 +30,14 @@ def sample (*test)
 end
 sample "Zara", "6", "F"
 sample "Mac", "36", "M", "MCA"
+
+    def remote_protocol=(new_remote_protocol)
+      @remote_protocol = new_remote_protocol
+      REMOTE_PROTOCOLS[transport.remote_name] = remote_protocol
+    end
+
+    def remote_hash=(new_remote_hash)
+      @remote_hash = new_remote_hash
+      REMOTE_HASHES[transport.remote_name] = remote_hash
+    end
+

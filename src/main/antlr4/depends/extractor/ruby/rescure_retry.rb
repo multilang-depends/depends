@@ -25,3 +25,11 @@ end
  
 puts 'I am after the begin block.'
 
+begin
+       response = call(local_message, request)
+       rescue AvroRemoteError => e
+         error = e
+       rescue Exception => e
+         error = AvroRemoteError.new(e.to_s)
+end
+
