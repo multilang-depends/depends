@@ -23,9 +23,9 @@ public class RubyFileParser implements FileParser {
 	@Override
 	public void parse() throws IOException {
         CharStream input = CharStreams.fromFileName(fileFullPath);
-        Lexer lexer = new CorundumLexer(input);
+        Lexer lexer = new RubyLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
-        CorundumParser parser = new CorundumParser(tokens);
+        RubyParser parser = new RubyParser(tokens);
         RubyListener bridge = new RubyListener(fileFullPath, entityRepo);
 	    ParseTreeWalker walker = new ParseTreeWalker();
 	    walker.walk(bridge, parser.prog());
