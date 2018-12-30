@@ -62,7 +62,7 @@ expression
 	| THROW arg (IF arg )? 
 	| CATCH args DO expression_list END 
 ;
-rescure_param: variable_path | assoc ;
+rescure_param: variable_path | hash_asso ;
 
 
 
@@ -163,13 +163,13 @@ arg
 	variable_path
 	| DEFINED variable_path
 	| LEFT_RBRACKET arg RIGHT_RBRACKET
-	| LEFT_PAREN terminator? assoc terminator?(',' terminator? assoc)* ','? terminator? RIGHT_PAREN
+	| LEFT_PAREN terminator? hash_asso terminator?(',' terminator? hash_asso)* ','? terminator? RIGHT_PAREN
 	| LEFT_PAREN RIGHT_PAREN
 	| '[' ']'
 	| '[' terminator? arg terminator? (',' terminator? arg)* ','? terminator? ']'
 	| (PLUS| MINUS|MUL) arg
 	| (NOT| BIT_NOT) arg
-	| arg (',' arg)* ASSIGN args
+	| arg (',' arg)* ASSIGN terminator? args
 	| arg (PLUS_ASSIGN | MINUS_ASSIGN |MUL_ASSIGN|DIV_ASSIGN|MOD_ASSIGN | EXP_ASSIGN) terminator? arg
 	| arg(LESS|GREATER|LESS_EQUAL| GREATER_EQUAL) terminator? arg
 	| arg(MUL|DIV|MOD|PLUS|MINUS|BIT_SHL|BIT_SHR|BIT_AND|BIT_OR|BIT_XOR|EXP) terminator? arg
@@ -184,11 +184,7 @@ arg
 ;
 
 variable_path:
-	Identifier
-	|IdGlobal
-	|IdClass
-	|IdMember
-	|IdColon
+	identifier
 	| Float
 	| variable_path (ANDDOT| COLON2) variable_path (QUESTION)?
 	| variable_path (DOT2|DOT3) variable_path
@@ -201,6 +197,7 @@ variable_path:
 	| Float DOT
 	;
 
+
 block: LEFT_PAREN block_params? statement_expression_list RIGHT_PAREN;
 
 block_params: BIT_OR args BIT_OR;
@@ -209,7 +206,7 @@ block_params: BIT_OR args BIT_OR;
 do_keyword: (DO|COLON) terminator | terminator ;
 
 
-assoc
+hash_asso
 :
 	arg ASSOC arg
 ;
@@ -224,4 +221,10 @@ terminator
 	| SL_COMMENT
 ;
 
+identifier: Identifier | idGlobal |idColon | idClass |idMember |idArg;
 
+idGlobal:	DOLLAR Identifier;
+idColon: COLON Identifier;
+idClass: AT AT Identifier;
+idMember: AT Identifier;
+idArg: DOLLAR Integer | DOLLAR AT | DOLLAR SHARP;

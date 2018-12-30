@@ -168,6 +168,9 @@ AND:	'and'	| '&&';
 OR:	'or'	| '||';
 NOT:	'not'	| '!';
 Sign: '+'|'-';
+DOLLAR: '$';
+AT: '@';
+SHARP: '#';
 
 //Comments
 SL_COMMENT:	('#' ~( '\r' | '\n' )* '\r'? '\n') ;
@@ -178,13 +181,6 @@ WS:			(' '| '\t')+ -> skip;
 
 //Identifiers
 Identifier:	IdentifierFrag;
-IdGlobal:	'$' IdentifierFrag;
-IdColon: ':' IdentifierFrag;
-IdClass: '@' '@' IdentifierFrag;
-IdMember: '@' IdentifierFrag;
-
-
-
 
 // Fragment rules
 fragment
