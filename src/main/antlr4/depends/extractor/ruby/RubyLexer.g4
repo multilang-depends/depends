@@ -105,12 +105,12 @@ QuotedStringStart: '%' [QqWwxrsi] ~[A-Za-z0-9]
 
 BEGIN:			'begin';
 BEGIN_BLOCK:	'BEGIN';
-BREAK:			'break';
-CASE:			'case';
-CATCH:			'catch';
 CLASS:			'class';
 DEF:			'def';
 DEFINED:		'defined?';
+BREAK:			'break';
+CASE:			'case';
+CATCH:			'catch';
 DO:				'do';
 ELSE:			'else';
 ELSIF:			'elsif';
@@ -122,8 +122,8 @@ FOR:			'for';
 IF:				'if';
 IN:				'in';
 MODULE:			'module';
-NEXT:			'next';
 NIL:			'nil';
+NEXT:			'next';
 RAISE:			'raise';
 REDO:			'redo';
 REQUIRE:		'require';
@@ -138,6 +138,7 @@ UNTIL:			'until';
 WHEN:			'when';
 WHILE:			'while';
 YIELD:			'yield';
+SELF:           'self';
 // Literals
 
 Integer

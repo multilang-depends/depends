@@ -43,7 +43,6 @@ expression
 	| ELSE terminator statement_expression_list
 	| ELSIF arg terminator statement_expression_list
 	| WHEN arg (',' arg)* terminator statement_expression_list
-	| IF arg terminator expression_list END
 	| CASE arg terminator expression_list END
 	| CASE terminator (WHEN arg THEN statement_expression_list terminator)* END
 	| UNLESS arg terminator expression_list END
@@ -62,7 +61,7 @@ expression
 	| THROW arg (IF arg )? 
 	| CATCH args DO expression_list END 
 ;
-rescure_param: variable_path | hash_asso ;
+rescure_param: colon_variable_path | hash_asso |ASSOC identifier;
 
 
 
@@ -108,7 +107,7 @@ class_header:
 	CLASS variable_path superclass?
 ;
 
-superclass: '<' variable_path terminator;
+superclass: '<' colon_variable_path terminator;
 
 
 function_definition_header
@@ -118,8 +117,15 @@ function_definition_header
 
 function_name
 :   variable_path (DOT Identifier)* (QUESTION|SIGH)?
-	| BIT_SHL
+	| assignOperator
+	| mathOperator
+	| bitOperator
+	| compareOperator
+	| logicalAssignOperator
+	| equalsOperator
+	| logicalOperator
 ;
+
 
 function_definition_params
 :
@@ -128,72 +134,100 @@ function_definition_params
 ;
 
 function_param:
-	arg 
+	identifier
+	|identifier COLON arg
 	|hash_asso
 	|arg ASSIGN arg
+	|arg 
 ;
 
 function_call
 :
-	function_name LEFT_RBRACKET function_param  (COMMA terminator? function_param)* RIGHT_RBRACKET
-	| function_name function_param  (COMMA terminator? function_param)* 
-	| function_name LEFT_RBRACKET RIGHT_RBRACKET
+	function_name LEFT_RBRACKET terminator? function_param  (COMMA terminator? function_param)* terminator? RIGHT_RBRACKET
+	| function_name LEFT_RBRACKET terminator? RIGHT_RBRACKET
 	| function_name 
 ;
 
+function_call_no_bracket:
+    function_name function_param  (COMMA terminator? function_param)* 
+    ;
+    
 args
 :
-	arg
-	(
-		',' arg
-	)*
+	arg (',' arg)*
+	| LEFT_RBRACKET args RIGHT_RBRACKET
 ;
 
 arg
 :
 	variable_path QUESTION?
+	| function_call terminator? block?
+	| variable_path COLON arg
+	| arg DOT function_call
+	| arg DOT CLASS
 	| DEFINED variable_path
 	| LEFT_RBRACKET arg RIGHT_RBRACKET
 	| LEFT_PAREN terminator? hash_asso terminator?(',' terminator? hash_asso)* ','? terminator? RIGHT_PAREN
 	| LEFT_PAREN RIGHT_PAREN
-	| '[' ']'
-	| '[' terminator? arg terminator? (',' terminator? arg)* ','? terminator? ']'
-	| (PLUS| MINUS|MUL|MOD) arg
+	| LEFT_PAREN terminator? arg terminator? (',' terminator? arg)* ','? terminator? RIGHT_PAREN
+	| LEFT_SBRACKET   RIGHT_SBRACKET 
+	| LEFT_SBRACKET  terminator? arg terminator? (',' terminator? arg)* ','? terminator?  RIGHT_SBRACKET 
+	| (argPrefix) arg
 	| (not| BIT_NOT) arg
 	| arg (',' arg)* ASSIGN terminator? args
-	| arg (PLUS_ASSIGN | MINUS_ASSIGN |MUL_ASSIGN|DIV_ASSIGN|MOD_ASSIGN | EXP_ASSIGN) terminator? arg
-	| arg(LESS|GREATER|LESS_EQUAL| GREATER_EQUAL) terminator? arg
-	| arg(MUL|DIV|MOD|PLUS|MINUS|BIT_SHL|BIT_SHR|BIT_AND|BIT_OR|BIT_XOR|EXP) terminator? arg
-	| arg(BIT_OR_ASSIGN|BIT_AND_ASSIGN|OR_ASSIGN|AND_ASSIGN) terminator? arg
-	| arg(EQUAL| NOT_EQUAL | NOT_EQUAL2) terminator? arg
-	| arg(OR| AND) terminator? arg
+	| arg (assignOperator) terminator? arg
+	| arg (compareOperator) terminator? arg
+	| arg(mathOperator|bitOperator) terminator? arg
+	| arg(logicalAssignOperator) terminator? arg
+	| arg(equalsOperator) terminator? arg
+	| arg(logicalOperator) terminator? arg
 	| arg QUESTION arg COLON arg
-	| function_call block?
-	| arg DOT function_call
-	| arg '['arg']'
+	| arg LEFT_SBRACKET arg RIGHT_SBRACKET 
 	| arg block
 	| arg (DOT2|DOT3) arg
+	| function_call_no_bracket
+	| COLON arg
+	| IF arg terminator expression_list END
 ;
+argPrefix: PLUS| MINUS|MUL|MOD|BIT_AND;
+
+logicalOperator: OR| AND;
+
+equalsOperator: EQUAL| NOT_EQUAL | NOT_EQUAL2;
+
+logicalAssignOperator: BIT_OR_ASSIGN|BIT_AND_ASSIGN|OR_ASSIGN|AND_ASSIGN;
+
+compareOperator: LESS|GREATER|LESS_EQUAL| GREATER_EQUAL;
+
+bitOperator: BIT_SHL|BIT_SHR|BIT_AND|BIT_OR|BIT_XOR;
+
+mathOperator: MUL|DIV|MOD|PLUS|MINUS|EXP;
+
+assignOperator:
+	PLUS_ASSIGN | MINUS_ASSIGN |MUL_ASSIGN|DIV_ASSIGN|MOD_ASSIGN | EXP_ASSIGN ;
+
 not: NOT | SIGH;
 
-
+colon_variable_path:
+    COLON? variable_path
+   ;
+   
 variable_path:
 	identifier
 	| Float
-	| variable_path (ANDDOT| COLON2) variable_path (QUESTION)?
-	| COLON variable_path
 	| String
 	| Integer
 	| Regex
 	|(TRUE| FALSE)
 	| NIL 
+	| variable_path (ANDDOT| COLON2) variable_path (QUESTION)?
 	| Float DOT
 	;
 
 
-block: LEFT_PAREN terminator? block_params? statement_expression_list RIGHT_PAREN;
+block: LEFT_PAREN terminator? block_params? statement_expression_list terminator? (COMMA statement_expression_list terminator?)* RIGHT_PAREN;
 
-block_params: BIT_OR args BIT_OR;
+block_params: BIT_OR args (COMMA args)*  BIT_OR;
 
 
 do_keyword: (DO|COLON) terminator | terminator ;
@@ -214,10 +248,9 @@ terminator
 	| SL_COMMENT
 ;
 
-identifier: Identifier | idGlobal |idColon | idClass |idMember |idArg;
+identifier: Identifier | idGlobal | idClass |idMember |idArg | NEXT | BREAK |SELF  ;
 
 idGlobal:	DOLLAR Identifier;
-idColon: COLON Identifier;
 idClass: AT AT Identifier;
 idMember: AT Identifier;
 idArg: DOLLAR Integer | DOLLAR AT | DOLLAR SHARP;
