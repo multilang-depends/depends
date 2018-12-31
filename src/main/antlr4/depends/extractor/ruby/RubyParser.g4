@@ -104,7 +104,7 @@ class_definition:
 ;
 
 class_header: 
-	CLASS variable_path superclass?
+	CLASS variable_path superclass? (BIT_SHL SELF)?
 ;
 
 superclass: '<' colon_variable_path terminator;
@@ -116,7 +116,7 @@ function_definition_header
 ;
 
 function_name
-:   variable_path (DOT Identifier)* (QUESTION|SIGH)?
+:   variable_path (DOT terminator? Identifier)? (QUESTION|SIGH)?
 	| assignOperator
 	| mathOperator
 	| bitOperator
@@ -163,8 +163,8 @@ arg
 	variable_path QUESTION?
 	| function_call terminator? block?
 	| variable_path COLON arg
-	| arg DOT function_call
-	| arg DOT CLASS
+	| arg DOT terminator? function_call
+	| arg DOT terminator? CLASS
 	| DEFINED variable_path
 	| LEFT_RBRACKET arg RIGHT_RBRACKET
 	| LEFT_PAREN terminator? hash_asso terminator?(',' terminator? hash_asso)* ','? terminator? RIGHT_PAREN
