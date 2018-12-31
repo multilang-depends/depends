@@ -5,65 +5,86 @@ options { tokenVocab= RubyLexer; }
 
 prog
 :
-	expression_list
+	top_compstmt
 ;
 
-expression_list
+top_compstmt
 :
-	expression terminator
-	| expression_list expression terminator
-	| terminator
+	stmt terms
+	| top_compstmt stmt terms
+	| terms
 ;
 
 statement_expression_list
 :
-	expression
-	| statement_expression_list terminator expression
+	(stmt terms)* stmt
 ;
 
-expression
+stmt
 :
 	function_definition
-	| class_definition
-	| module_definition
 	| begin_block
 	| end_block
+	| alias_statement
+	| undef_statement
+	| stmt IF arg 
+	| stmt UNLESS arg 
+	| arg terms? WHILE arg 
+	| arg terms? UNTIL arg 
+	| arg terms? RESCUE arg 
+	| class_definition
+	| module_definition
 	| require_statement
 	| return_statement 
 	| raise_statement
 	| yield_statement
 	| arg
 	| WHEN arg THEN statement_expression_list END
-	| RESCURE rescure_param?
+	| RESCUE rescure_param?
 	| ENSURE
-	| expression IF arg 
-	| expression UNLESS arg 
-	| arg terminator? WHILE arg 
-	| arg terminator? UNTIL arg 
-	| ELSE terminator statement_expression_list
-	| ELSIF arg terminator statement_expression_list
-	| WHEN arg (',' arg)* terminator statement_expression_list
-	| CASE arg terminator expression_list END
-	| CASE terminator (WHEN arg THEN statement_expression_list terminator)* END
-	| UNLESS arg terminator expression_list END
-	| WHILE arg do_keyword expression_list END
-	| UNTIL arg do_keyword expression_list END
+	| ELSE terms statement_expression_list
+	| ELSIF arg terms statement_expression_list
+	| WHEN arg (',' arg)* terms statement_expression_list
+	| CASE arg terms top_compstmt END
+	| CASE terms (WHEN arg THEN statement_expression_list terms)* END
+	| UNLESS arg terms top_compstmt END
+	| WHILE arg do_keyword top_compstmt END
+	| UNTIL arg do_keyword top_compstmt END
 	| WHILE arg do_keyword END
-	| BEGIN terminator expression_list END (terminator? WHILE arg)?
-	| FOR args IN expression terminator? expression_list END 
-	| arg DO terminator? block_params terminator? statement_expression_list? terminator? END 
-	| arg DO terminator expression_list END 
+	| BEGIN terms top_compstmt END (terms? WHILE arg)?
+	| FOR args IN stmt terms? top_compstmt END 
+	| arg DO terms? block_params terms? statement_expression_list? terms? END 
+	| arg DO terms top_compstmt END 
 	| BREAK
 	| NEXT
 	| REDO
 	| RETRY
 	| ENSURE
 	| THROW arg (IF arg )? 
-	| CATCH args DO expression_list END 
+	| CATCH args DO top_compstmt END 
 ;
+
+undef_statement: UNDEF function_name_or_symbol (COMMA function_name_or_symbol)*;
+
+def_item: function_name;
+
+alias_statement
+: 
+	ALIAS idGlobal idGlobal
+	| ALIAS function_name_or_symbol function_name_or_symbol
+;
+
+function_name_or_symbol: 
+	function_name
+	|symbol
+;
+	
+symbol: 
+	COLON identifier 
+	|  COLON function_name
+;
+
 rescure_param: colon_variable_path | hash_asso |ASSOC identifier;
-
-
 
 require_statement
 :
@@ -81,42 +102,42 @@ raise_statement:
 	RAISE args
 ;
 
-module_definition: MODULE variable_path expression_list END;
+module_definition: MODULE variable_path top_compstmt END;
 
 begin_block
 :
-	BEGIN_BLOCK LEFT_PAREN expression_list RIGHT_PAREN 
+	BEGIN_BLOCK LEFT_PAREN top_compstmt RIGHT_PAREN 
 ;
 
 end_block
 :
-	END_BLOCK LEFT_PAREN expression_list RIGHT_PAREN
+	END_BLOCK LEFT_PAREN top_compstmt RIGHT_PAREN
 ;
 
 
 function_definition
 :
-	function_definition_header expression_list? END
+	function_definition_header top_compstmt? END
 ;
 
 class_definition: 
-   	class_header expression_list? END
+   	class_header top_compstmt? END
 ;
 
 class_header: 
 	CLASS variable_path superclass? (BIT_SHL SELF)?
 ;
 
-superclass: '<' colon_variable_path terminator;
+superclass: '<' colon_variable_path terms;
 
 
 function_definition_header
 :
-	DEF function_name function_definition_params? ('=' arg)? terminator
+	DEF function_name function_definition_params? ('=' arg)? terms
 ;
 
 function_name
-:   variable_path (DOT terminator? Identifier)? (QUESTION|SIGH)?
+:   variable_path (DOT terms? Identifier)? (QUESTION|SIGH)?
 	| assignOperator
 	| mathOperator
 	| bitOperator
@@ -129,8 +150,8 @@ function_name
 
 function_definition_params
 :
-	LEFT_RBRACKET ( function_param (COMMA terminator? function_param)*)? RIGHT_RBRACKET
-	| function_param (COMMA terminator?  function_param)*
+	LEFT_RBRACKET ( function_param (COMMA terms? function_param)*)? RIGHT_RBRACKET
+	| function_param (COMMA terms?  function_param)*
 ;
 
 function_param:
@@ -143,13 +164,13 @@ function_param:
 
 function_call
 :
-	function_name LEFT_RBRACKET terminator? function_param  (COMMA terminator? function_param)* terminator? RIGHT_RBRACKET
-	| function_name LEFT_RBRACKET terminator? RIGHT_RBRACKET
+	function_name LEFT_RBRACKET terms? function_param  (COMMA terms? function_param)* terms? RIGHT_RBRACKET
+	| function_name LEFT_RBRACKET terms? RIGHT_RBRACKET
 	| function_name 
 ;
 
 function_call_no_bracket:
-    function_name function_param  (COMMA terminator? function_param)* 
+    function_name function_param  (COMMA terms? function_param)* 
     ;
     
 args
@@ -161,33 +182,33 @@ args
 arg
 :
 	variable_path QUESTION?
-	| function_call terminator? block?
+	| function_call terms? block?
 	| variable_path COLON arg
-	| arg DOT terminator? function_call
-	| arg DOT terminator? CLASS
+	| arg DOT terms? function_call
+	| arg DOT terms? CLASS
 	| DEFINED variable_path
 	| LEFT_RBRACKET arg RIGHT_RBRACKET
-	| LEFT_PAREN terminator? hash_asso terminator?(',' terminator? hash_asso)* ','? terminator? RIGHT_PAREN
+	| LEFT_PAREN terms? hash_asso terms?(',' terms? hash_asso)* ','? terms? RIGHT_PAREN
 	| LEFT_PAREN RIGHT_PAREN
-	| LEFT_PAREN terminator? arg terminator? (',' terminator? arg)* ','? terminator? RIGHT_PAREN
+	| LEFT_PAREN terms? arg terms? (',' terms? arg)* ','? terms? RIGHT_PAREN
 	| LEFT_SBRACKET   RIGHT_SBRACKET 
-	| LEFT_SBRACKET  terminator? arg terminator? (',' terminator? arg)* ','? terminator?  RIGHT_SBRACKET 
+	| LEFT_SBRACKET  terms? arg terms? (',' terms? arg)* ','? terms?  RIGHT_SBRACKET 
 	| (argPrefix) arg
 	| (not| BIT_NOT) arg
-	| arg (',' arg)* ASSIGN terminator? args
-	| arg (assignOperator) terminator? arg
-	| arg (compareOperator) terminator? arg
-	| arg(mathOperator|bitOperator) terminator? arg
-	| arg(logicalAssignOperator) terminator? arg
-	| arg(equalsOperator) terminator? arg
-	| arg(logicalOperator) terminator? arg
+	| arg (',' arg)* ASSIGN terms? args
+	| arg (assignOperator) terms? arg
+	| arg (compareOperator) terms? arg
+	| arg(mathOperator|bitOperator) terms? arg
+	| arg(logicalAssignOperator) terms? arg
+	| arg(equalsOperator) terms? arg
+	| arg(logicalOperator) terms? arg
 	| arg QUESTION arg COLON arg
 	| arg LEFT_SBRACKET arg RIGHT_SBRACKET 
 	| arg block
 	| arg (DOT2|DOT3) arg
 	| function_call_no_bracket
 	| COLON arg
-	| IF arg terminator expression_list END
+	| IF arg terms top_compstmt END
 ;
 argPrefix: PLUS| MINUS|MUL|MOD|BIT_AND;
 
@@ -225,12 +246,12 @@ variable_path:
 	;
 
 
-block: LEFT_PAREN terminator? block_params? statement_expression_list terminator? (COMMA statement_expression_list terminator?)* RIGHT_PAREN;
+block: LEFT_PAREN terms? block_params? statement_expression_list terms? (COMMA statement_expression_list terms?)* RIGHT_PAREN;
 
 block_params: BIT_OR args (COMMA args)*  BIT_OR;
 
 
-do_keyword: (DO|COLON) terminator | terminator ;
+do_keyword: (DO|COLON) terms | terms ;
 
 
 hash_asso
@@ -238,11 +259,11 @@ hash_asso
 	arg ASSOC arg
 ;
 
-terminator
+terms
 :
-	terminator SEMICOLON
-	| terminator CRLF
-	| terminator SL_COMMENT
+	terms SEMICOLON
+	| terms CRLF
+	| terms SL_COMMENT
 	| SEMICOLON
 	| CRLF
 	| SL_COMMENT

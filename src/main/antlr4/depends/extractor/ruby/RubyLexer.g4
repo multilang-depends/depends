@@ -102,7 +102,7 @@ QuotedStringStart: '%' [QqWwxrsi] ~[A-Za-z0-9]
 		} 
 		;
 // Keywords
-
+ALIAS:			'alias';
 BEGIN:			'begin';
 BEGIN_BLOCK:	'BEGIN';
 CLASS:			'class';
@@ -127,13 +127,14 @@ NEXT:			'next';
 RAISE:			'raise';
 REDO:			'redo';
 REQUIRE:		'require';
-RESCURE:		'rescue';
+RESCUE:			'rescue';
 RETRY:			'retry';
 RETURN:			'return';
 THEN:			'then';
 THROW:			'throw';
 TRUE:			'true';
 UNLESS:			'unless';
+UNDEF:          'undef';
 UNTIL:			'until';
 WHEN:			'when';
 WHILE:			'while';
