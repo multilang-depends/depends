@@ -59,3 +59,18 @@ when bar then puts 'bar is true'
 when quu then puts 'quu is true'
 end
 # 显示 "bar is true"
+
+
+      if options[:verbose] then
+        io.flush
+      end
+    
+def summary # :nodoc:
+      extra = "x" if
+        results.any?(&:skipped?) unless options[:verbose] or ENV["MT_NO_SKIP_MSG"]
+
+      "%d runs, %d assertions, %d failures, %d errors, %d skips%s" %
+        [count, assertions, failures, errors, skips, extra]
+    end
+
+

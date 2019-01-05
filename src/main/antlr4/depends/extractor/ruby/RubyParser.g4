@@ -2,75 +2,40 @@ parser grammar RubyParser;
 
 options { tokenVocab= RubyLexer; }
 
-
 prog
 :
-	top_compstmt
+	statement_list_terms
 ;
 
-top_compstmt
+statement_list_terms
 :
-	stmt terms
-	| top_compstmt stmt terms
+	statement terms
+	| statement_list_terms statement terms
 	| terms
 ;
 
-statement_expression_list
+statement_list_noterms
 :
-	(stmt terms)* stmt
+	(statement terms)* statement
 ;
 
-stmt
+statement
 :
-	function_definition
-	| begin_block
+	 begin_block
 	| end_block
 	| alias_statement
 	| undef_statement
-	| stmt IF arg 
-	| stmt UNLESS arg 
-	| arg terms? WHILE arg 
-	| arg terms? UNTIL arg 
-	| arg terms? RESCUE arg 
-	| class_definition
-	| module_definition
 	| require_statement
-	| return_statement 
-	| raise_statement
-	| yield_statement
-	| arg
-	| WHEN arg THEN statement_expression_list END
-	| RESCUE rescure_param?
 	| ENSURE
-	| ELSE terms statement_expression_list
-	| ELSIF arg terms statement_expression_list
-	| WHEN arg (',' arg)* terms statement_expression_list
-	| CASE arg terms top_compstmt END
-	| CASE terms (WHEN arg THEN statement_expression_list terms)* END
-	| UNLESS arg terms top_compstmt END
-	| WHILE arg do_keyword top_compstmt END
-	| UNTIL arg do_keyword top_compstmt END
-	| WHILE arg do_keyword END
-	| BEGIN terms top_compstmt END (terms? WHILE arg)?
-	| FOR args IN stmt terms? top_compstmt END 
-	| arg DO terms? block_params terms? statement_expression_list? terms? END 
-	| arg DO terms top_compstmt END 
-	| BREAK
-	| NEXT
-	| REDO
-	| RETRY
-	| ENSURE
-	| THROW arg (IF arg )? 
-	| CATCH args DO top_compstmt END 
+	| expr
 ;
+require_statement: REQUIRE String ;
 
-undef_statement: UNDEF function_name_or_symbol (COMMA function_name_or_symbol)*;
-
-def_item: function_name;
+undef_statement: UNDEF function_name_or_symbol (',' function_name_or_symbol)*;
 
 alias_statement
 : 
-	ALIAS idGlobal idGlobal
+	ALIAS globalVar globalVar
 	| ALIAS function_name_or_symbol function_name_or_symbol
 ;
 
@@ -78,145 +43,175 @@ function_name_or_symbol:
 	function_name
 	|symbol
 ;
-	
-symbol: 
-	COLON identifier 
-	|  COLON function_name
-;
 
-rescure_param: colon_variable_path | hash_asso |ASSOC identifier;
-
-require_statement
-:
-	REQUIRE String
-;
 return_statement: 
-	RETURN args?
+	RETURN expr?
 ;
 
-yield_statement: 
-	YIELD args?
-;
 
 raise_statement:
-	RAISE args
+	RAISE expr
 ;
-
-module_definition: MODULE variable_path top_compstmt END;
 
 begin_block
 :
-	BEGIN_BLOCK LEFT_PAREN top_compstmt RIGHT_PAREN 
+	BEGIN_BLOCK LEFT_PAREN statement_list_terms RIGHT_PAREN 
 ;
 
 end_block
 :
-	END_BLOCK LEFT_PAREN top_compstmt RIGHT_PAREN
+	END_BLOCK LEFT_PAREN statement_list_terms RIGHT_PAREN
 ;
 
+module_definition: 
+	MODULE cpath statement_list_terms? END;
+
+class_definition: 
+   	class_header statement_list_terms? END
+;
+superclass: '<' id_symbol terms;
+
+class_header: 
+	CLASS cpath superclass? 
+	| CLASS BIT_SHL identifier
+;
 
 function_definition
 :
-	function_definition_header top_compstmt? END
+	function_definition_header statement_list_terms? END
 ;
-
-class_definition: 
-   	class_header top_compstmt? END
-;
-
-class_header: 
-	CLASS variable_path superclass? (BIT_SHL SELF)?
-;
-
-superclass: '<' colon_variable_path terms;
-
 
 function_definition_header
 :
-	DEF function_name function_definition_params? ('=' arg)? terms
+	DEF function_name function_definition_params? expr? terms
 ;
 
 function_name
-:   variable_path (DOT terms? Identifier)? (QUESTION|SIGH)?
+:   cpath (QUESTION|SIGH|ASSIGN)?
+    | literal
 	| assignOperator
-	| mathOperator
+	| mathOperator AT
 	| bitOperator
 	| compareOperator
-	| logicalAssignOperator
 	| equalsOperator
 	| logicalOperator
 ;
 
-
 function_definition_params
 :
-	LEFT_RBRACKET ( function_param (COMMA terms? function_param)*)? RIGHT_RBRACKET
-	| function_param (COMMA terms?  function_param)*
+	LEFT_RBRACKET ( function_definition_param (',' crlfs? function_definition_param)*)? RIGHT_RBRACKET
+	| function_definition_param (',' crlfs?  function_definition_param)*
 ;
 
-function_param:
+function_definition_param: 
+	identifier 
+	| MUL identifier
+	| MUL MUL identifier
+	| BIT_AND identifier
+	| hash_asso
+	| identifier ASSIGN expr
+;
+
+function_call_param:
 	identifier
-	|identifier COLON arg
 	|hash_asso
-	|arg ASSIGN arg
-	|arg 
+	|expr 
+	| identifier ASSIGN expr
 ;
 
-function_call
+
+expr
 :
-	function_name LEFT_RBRACKET terms? function_param  (COMMA terms? function_param)* terms? RIGHT_RBRACKET
-	| function_name LEFT_RBRACKET terms? RIGHT_RBRACKET
-	| function_name 
+	variable_path
+	| expr ',' crlfs? expr
+	| expr dot_ref terms? expr 
+	| expr postfix=QUESTION
+	| prefix=(PLUS| MINUS|MUL|MOD|BIT_AND) expr
+	| Regex
+	| symbol
+	| LEFT_RBRACKET expr RIGHT_RBRACKET                                                   	/* (a) */
+	| expr LEFT_SBRACKET expr RIGHT_SBRACKET 												/* array access */
+	| prefix=DEFINED expr                                                                	        /* identifier definition test */
+	| LEFT_PAREN crlfs? hash_asso crlfs?(',' crlfs? hash_asso)* ','? crlfs? RIGHT_PAREN   	/* hash */
+	| LEFT_SBRACKET  crlfs? expr crlfs? (',' crlfs? expr)* ','? crlfs?  RIGHT_SBRACKET   	/* array */
+	| LEFT_RBRACKET expr (DOT2|DOT3) expr? RIGHT_RBRACKET                               	/* range */
+	| expr bop=(DOT2|DOT3) expr? 								                               	/* range */
+	| expr ','? MUL? ASSIGN crlfs? expr                                         		/* batch assign */
+	| expr assignOperator crlfs? expr														/* assign */
+	| expr bop=PATTERN_MATCH expr                                                               /* pattern match */
+	| expr bop=BIT_NOT expr                                                                     /* pattern match */
+	| expr SIGH BIT_NOT expr                                                                /* pattern match */
+	| (not| BIT_NOT) expr                                                               	/* logical not */
+	| expr (compareOperator) crlfs? expr                                                	/* compare logical  */
+	| expr(logicalOperator) crlfs? expr                                                 	/* logical join */
+	| expr(equalsOperator) crlfs? expr                                                  	/* equal test */
+	| expr(mathOperator|bitOperator) crlfs? expr                                        	/* calcuation */
+	| expr QUESTION expr COLON expr                                                	/* cond?true_part:false_part */
+	| expr dot_ref CLASS
+	| function_name func_call_parameters
+	| expr block
+	| block
+	| RESCUE rescure_param?
+	| YIELD expr?
+	| BEGIN terms statement_list_terms? END
+	| IF crlfs? expr then_keyword statement_list_terms? if_tail* END
+	| WHEN expr then_keyword statement_list_noterms END
+	| UNLESS crlfs? expr then_keyword  statement_list_terms? unless_tail? END
+	| CASE statement_list_terms? case_body*  END
+	| CASE terms case_body*  END
+	| WHILE crlfs? expr do_keyword  statement_list_terms? END
+	| UNTIL crlfs? expr do_keyword  statement_list_terms?  END
+	| FOR crlfs? expr IN when_cond terms?  statement_list_terms? END
+	| expr DO block_params? terms? statement_list_terms? END
+	| function_name func_call_parameters_no_bracket?
+	| class_definition
+	| function_definition
+	| module_definition
+	| BREAK expr?
+	| return_statement 
+	| raise_statement
+	| expr IF crlfs? expr 
+	| expr UNLESS crlfs? expr 
+	| expr WHILE crlfs? expr 
+	| expr UNTIL crlfs? expr 	
+	| expr RESCUE statement 
 ;
 
-function_call_no_bracket:
-    function_name function_param  (COMMA terms? function_param)* 
-    ;
-    
-args
+func_call_parameters
 :
-	arg (',' arg)*
-	| LEFT_RBRACKET args RIGHT_RBRACKET
+	LEFT_RBRACKET crlfs? function_call_param  (',' crlfs? function_call_param)* crlfs? RIGHT_RBRACKET
+	| LEFT_RBRACKET crlfs? RIGHT_RBRACKET
 ;
+func_call_parameters_no_bracket:
+	function_call_param  (',' crlfs? function_call_param)* 
+;
+rescure_param: id_symbol | hash_asso |ASSOC identifier;
 
-arg
-:
-	variable_path QUESTION?
-	| function_call terms? block?
-	| variable_path COLON arg
-	| arg DOT terms? function_call
-	| arg DOT terms? CLASS
-	| DEFINED variable_path
-	| LEFT_RBRACKET arg RIGHT_RBRACKET
-	| LEFT_PAREN terms? hash_asso terms?(',' terms? hash_asso)* ','? terms? RIGHT_PAREN
-	| LEFT_PAREN RIGHT_PAREN
-	| LEFT_PAREN terms? arg terms? (',' terms? arg)* ','? terms? RIGHT_PAREN
-	| LEFT_SBRACKET   RIGHT_SBRACKET 
-	| LEFT_SBRACKET  terms? arg terms? (',' terms? arg)* ','? terms?  RIGHT_SBRACKET 
-	| (argPrefix) arg
-	| (not| BIT_NOT) arg
-	| arg (',' arg)* ASSIGN terms? args
-	| arg (assignOperator) terms? arg
-	| arg (compareOperator) terms? arg
-	| arg(mathOperator|bitOperator) terms? arg
-	| arg(logicalAssignOperator) terms? arg
-	| arg(equalsOperator) terms? arg
-	| arg(logicalOperator) terms? arg
-	| arg QUESTION arg COLON arg
-	| arg LEFT_SBRACKET arg RIGHT_SBRACKET 
-	| arg block
-	| arg (DOT2|DOT3) arg
-	| function_call_no_bracket
-	| COLON arg
-	| IF arg terms top_compstmt END
+case_body: 
+	WHEN when_cond (',' when_cond)* then_keyword statement_list_terms
+	|else_tail;
+	
+when_cond: 
+	expr 
+	;
+unless_tail: 
+	else_tail
+	;
+	
+if_tail: 
+	ELSIF crlfs? expr terms statement_list_terms
+	| else_tail
 ;
-argPrefix: PLUS| MINUS|MUL|MOD|BIT_AND;
+else_tail: 
+	ELSE crlfs? statement_list_terms;
+
+
+dot_ref: DOT | ANDDOT ;
+
 
 logicalOperator: OR| AND;
 
-equalsOperator: EQUAL| NOT_EQUAL | NOT_EQUAL2;
-
-logicalAssignOperator: BIT_OR_ASSIGN|BIT_AND_ASSIGN|OR_ASSIGN|AND_ASSIGN;
+equalsOperator: EQUAL| NOT_EQUAL | EQUAL3;
 
 compareOperator: LESS|GREATER|LESS_EQUAL| GREATER_EQUAL;
 
@@ -225,53 +220,74 @@ bitOperator: BIT_SHL|BIT_SHR|BIT_AND|BIT_OR|BIT_XOR;
 mathOperator: MUL|DIV|MOD|PLUS|MINUS|EXP;
 
 assignOperator:
-	PLUS_ASSIGN | MINUS_ASSIGN |MUL_ASSIGN|DIV_ASSIGN|MOD_ASSIGN | EXP_ASSIGN ;
+	PLUS_ASSIGN | MINUS_ASSIGN |MUL_ASSIGN|DIV_ASSIGN|MOD_ASSIGN | EXP_ASSIGN  |BIT_OR_ASSIGN|BIT_AND_ASSIGN|OR_ASSIGN|AND_ASSIGN;
 
 not: NOT | SIGH;
 
-colon_variable_path:
-    COLON? variable_path
-   ;
-   
-variable_path:
-	identifier
-	| Float
-	| String
-	| Integer
-	| Regex
-	|(TRUE| FALSE)
-	| NIL 
-	| variable_path (ANDDOT| COLON2) variable_path (QUESTION)?
-	| Float DOT
+block: LEFT_PAREN crlfs? block_params? statement_list_noterms crlfs? (',' statement_list_noterms crlfs?)* RIGHT_PAREN;
+
+block_params: BIT_OR expr (',' expr)*  BIT_OR;
+
+id_symbol: 
+	cpath
+	| 	COLON cpath
 	;
 
+symbol: 
+	COLON identifier
+	COLON string 
+	|  COLON function_name
+;
 
-block: LEFT_PAREN terms? block_params? statement_expression_list terms? (COMMA statement_expression_list terms?)* RIGHT_PAREN;
+hash_asso:
+	expr ASSOC expr 
+	| expr COLON expr  
+;
 
-block_params: BIT_OR args (COMMA args)*  BIT_OR;
+variable_path:
+	identifier
+    |literal
+	| variable_path COLON2 variable_path
+	| COLON2 variable_path
+	;
+cpath:
+    identifier ((COLON2|DOT) identifier)*
+    ;	
+literal: 
+	Float
+	| string
+	| Integer
+	|(TRUE| FALSE)
+	| NIL 
+	| Float DOT
+;
 
+	
+identifier: Identifier | globalVar | classVar |instanceVar | idArg | NEXT  |REDO |RETRY | BREAK |SELF | SUPER  |NIL |REQUIRE | empty;
+
+empty: 
+	LEFT_PAREN RIGHT_PAREN																/* empty block  */
+	| LEFT_SBRACKET  RIGHT_SBRACKET                                                    	/* empty array */
+	|LEFT_RBRACKET RIGHT_RBRACKET
+	;
+
+globalVar:	DOLLAR Identifier;
+classVar: AT AT Identifier;
+instanceVar: AT Identifier;
+idArg: DOLLAR Integer | DollarSpecial;
 
 do_keyword: (DO|COLON) terms | terms ;
+then_keyword: (THEN|COLON) terms? | terms;
+string: String+;  /* many string can be concatenated  */
 
+crlfs: (SL_COMMENT|CRLF)+;
 
-hash_asso
-:
-	arg ASSOC arg
+terms:
+	(term)+
 ;
 
-terms
-:
-	terms SEMICOLON
-	| terms CRLF
-	| terms SL_COMMENT
-	| SEMICOLON
-	| CRLF
-	| SL_COMMENT
-;
+term: SEMICOLON | CRLF | SL_COMMENT;
 
-identifier: Identifier | idGlobal | idClass |idMember |idArg | NEXT | BREAK |SELF  ;
 
-idGlobal:	DOLLAR Identifier;
-idClass: AT AT Identifier;
-idMember: AT Identifier;
-idArg: DOLLAR Integer | DOLLAR AT | DOLLAR SHARP;
+
+	

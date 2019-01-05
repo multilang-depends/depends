@@ -15,11 +15,39 @@ import java.util.Queue;
 	boolean shouldReleaseBufferedToken = false;
 	Token next;
 	boolean isHereDocSymbol(String text){
-		String theSym =  text.replace("\r","").replace("\n","").replace("\"","");
-		hereDocSymbol =  hereDocSymbol.replace("\r","").replace("\n","").replace("<<-","").replace("<<","").replace("\"","");
+		String theSym =  text.replace("\r","").replace("\n","").replace("\"","").replace("`","");
+		hereDocSymbol =  hereDocSymbol.replace("\r","").replace("\n","").replace("<<-","").replace("<<","").replace("\"","").replace("`","");
 		return theSym.equals(hereDocSymbol);
 	}
 	
+	void startHereDoc(){
+		hereDocSymbol = getText(); 
+		stringBuffer = new StringBuilder();
+		tokenList = new LinkedList<>();
+		shouldReleaseBufferedToken = false;
+		while(true) {
+			next = nextToken();
+			if (next==null) break;
+			if (next.getType()==CRLF ||
+				next.getType()==SL_COMMENT) {
+				break;
+			}
+			tokenList.add(next);
+		}
+		mode(HERE_DOC_MODE);
+		skip();
+	}
+	void tryEndHereDoc(){
+		if ( isHereDocSymbol(getText())){ 
+			mode(DEFAULT_MODE);
+			setType(String); 
+			setText(stringBuffer.toString());
+			shouldReleaseBufferedToken = true;
+		}else{
+	  		stringBuffer.append(getText());
+			skip();
+		}
+	}
 	boolean isQuotedPair(String text){
 		if (quotedStringStartSymbol.equals("(") && text.equals(")")) return true;
 		if (quotedStringStartSymbol.equals("[") && text.equals("]")) return true;
@@ -57,43 +85,23 @@ import java.util.Queue;
 //HereDoc
 HereDoc1: '<<' '-'? Identifier  
 		{
-			hereDocSymbol = getText(); 
-			stringBuffer = new StringBuilder();
-			tokenList = new LinkedList<>();
-			shouldReleaseBufferedToken = false;
-			while(true) {
-				next = nextToken();
-				if (next==null) break;
-				if (next.getType()==CRLF) {
-					break;
-				}
-				tokenList.add(next);
-			}
-			mode(HERE_DOC_MODE);
-			skip();
+			startHereDoc();
 		} 
 		;
 		
 HereDoc2: '<<' '-'?  StringFragment 
 		{
-			hereDocSymbol = getText(); 
-			stringBuffer = new StringBuilder();
-			tokenList = new LinkedList<>();
-			shouldReleaseBufferedToken = false;
-			while(true) {
-				next = nextToken();
-				if (next==null) break;
-				if (next.getType()==CRLF) {
-					break;
-				}
-				tokenList.add(next);
-			}
-			mode(HERE_DOC_MODE);
-			skip();
+			startHereDoc();
 		} 
 		;
 
-QuotedStringStart: '%' [QqWwxrsi] ~[A-Za-z0-9]
+HereDoc3:	ShellCommandFrag 
+		{
+			startHereDoc();
+		} 
+		;
+		
+PercentString: '%' [IQRSWXiqrswx] ~[A-Za-z0-9]
 		{
 			quotedStringStartSymbol = getText().substring(2); 
 			stringBuffer = new StringBuilder();
@@ -101,16 +109,16 @@ QuotedStringStart: '%' [QqWwxrsi] ~[A-Za-z0-9]
 			mode(QUOTED_STR_MODE);
 		} 
 		;
+		
 // Keywords
 ALIAS:			'alias';
 BEGIN:			'begin';
 BEGIN_BLOCK:	'BEGIN';
+BREAK:			'break';
+CASE:			'case';
 CLASS:			'class';
 DEF:			'def';
 DEFINED:		'defined?';
-BREAK:			'break';
-CASE:			'case';
-CATCH:			'catch';
 DO:				'do';
 ELSE:			'else';
 ELSIF:			'elsif';
@@ -122,51 +130,61 @@ FOR:			'for';
 IF:				'if';
 IN:				'in';
 MODULE:			'module';
-NIL:			'nil';
 NEXT:			'next';
+NIL:			'nil';
+NOT:			'not';
 RAISE:			'raise';
 REDO:			'redo';
-REQUIRE:		'require';
 RESCUE:			'rescue';
 RETRY:			'retry';
 RETURN:			'return';
+SELF:           'self';
+SUPER:          'super';
 THEN:			'then';
-THROW:			'throw';
 TRUE:			'true';
-UNLESS:			'unless';
 UNDEF:          'undef';
+UNLESS:			'unless';
 UNTIL:			'until';
 WHEN:			'when';
 WHILE:			'while';
 YIELD:			'yield';
-SELF:           'self';
+
+//non-keyword but important
+REQUIRE:       'require';
 // Literals
 
 Integer
 	:
-	Sign? Digits ExponentPart?
-	| HEX_LITERAL ExponentPart?
-	| OCT_LITERAL ExponentPart?
-	| BINARY_LITERAL ExponentPart?
-	| '?'('\\'? [a-zA-Z_])
+	Sign? Digits ExponentPart? NumberTypeSuffix?
+	| HEX_LITERAL ExponentPart? NumberTypeSuffix?
+	| OCT_LITERAL ExponentPart? NumberTypeSuffix?
+	| DEC_LITERAL ExponentPart? NumberTypeSuffix?
+	| BINARY_LITERAL ExponentPart? NumberTypeSuffix?
 ;
+
+
 
 
 Float
 :
-	Sign? [0-9]* '.' [0-9]+ ExponentPart?
+	Sign? [0-9]* '.' [0-9]+ ExponentPart? NumberTypeSuffix?
 ;
 
 
 
 Regex:
-    '/'  ~( '\n' | '\r' | '/' )+ '/'
+    '/'  ~( '\n' | '\r' | '/' |' ')+ '/' 'i'?
 ;
 String
 :
 	StringFragment
+	| SingleCharacterString
 ;
 
+
+DollarSpecial:
+    '$' [!?$@;/\\_~&'>*] |
+    '$' '.' | '\'';
 
 // Separators
 COMMA:	',';
@@ -193,7 +211,8 @@ DIV:	'/';
 MOD:	'%';
 EXP:	'**';
 EQUAL:	'==';
-NOT_EQUAL2:    '=~';
+EQUAL3:	'===';
+PATTERN_MATCH:    '=~';
 NOT_EQUAL:	'!=';
 GREATER:	'>';
 LESS:	'<';
@@ -219,7 +238,6 @@ BIT_SHL:	'<<';
 BIT_SHR:	'>>';
 AND:	'and'	| '&&';
 OR:	'or'	| '||';
-NOT:	'not';
 SIGH:   '!';
 Sign: '+'|'-';
 DOLLAR: '$';
@@ -235,6 +253,7 @@ WS:			(' '| '\t')+ -> skip;
 
 //Identifiers
 Identifier:	IdentifierFrag;
+ShellCommand: ShellCommandFrag;
 
 // Fragment rules
 fragment
@@ -257,9 +276,18 @@ HEX_LITERAL
 ;
 
 fragment
+DEC_LITERAL
+:
+	'0' [Dd]? [0-7]
+	(
+		[0-7_]* [0-7]
+	)? [lL]?
+;
+
+fragment
 OCT_LITERAL
 :
-	'0' '_'* [0-7]
+	'0' [Oo]? '_'* [0-7]
 	(
 		[0-7_]* [0-7]
 	)? [lL]?
@@ -308,6 +336,10 @@ Digits
 	)?
 ;
 
+/* i means imaginary(complex) number, r means a rational number */
+fragment
+NumberTypeSuffix: [ir] | 'ri';
+
 fragment
 ExponentPart
 :
@@ -327,37 +359,68 @@ StringFragment:
 		| ~( '\n' | '\r' )
 	)*? '\''
 	;
+
+fragment
+ShellCommandFrag:
+'`'
+	(
+		ESCAPED_QUOTE
+		| ~( '\n' | '\r' )
+	)*? '`'
+;
+
+fragment
 IdentifierFrag:[a-zA-Z_] [a-zA-Z0-9_]* ;
+	
+fragment
+SingleCharacterString: 
+	'?' ([a-zA-Z0-9_] | EscapedSequenceChar);
+	
+/*
+\nnn           octal bit pattern, where nnn is 1-3 octal digits ([0-7])
+\xnn           hexadecimal bit pattern, where nn is 1-2 hexadecimal digits ([0-9a-fA-F])
+\unnnn         Unicode character, where nnnn is exactly 4 hexadecimal digits ([0-9a-fA-F])
+\u{nnnn ...}   Unicode character(s), where each nnnn is 1-6 hexadecimal digits ([0-9a-fA-F])
+\cx or \C-x    control character, where x is an ASCII printable character
+\M-x           meta character, where x is an ASCII printable character
+\M-\C-x        meta control character, where x is an ASCII printable character
+\M-\cx         same as above
+\c\M-x         same as above
+\c? or \C-?    delete, ASCII 7Fh (DEL)
+ */
+fragment
+EscapedSequenceChar: 
+	'\\' [abtnvfres] 
+	| '\\' '\\'
+	| '\\' (HexDigit) (HexDigit) (HexDigit)
+	| '\\' [Xx] (HexDigit) (HexDigit)
+	| '\\' [uU] (HexDigit) (HexDigit) (HexDigit) (HexDigit)
+	| '\\'  [uU] '{'((HexDigit) (HexDigit) (HexDigit) (HexDigit))+ '}'
+	| '\\' [Cc] '-'? PrintableCharacter
+	| '\\' [Mm] '-' PrintableCharacter
+	| '\\' [Mm] '-' '\\' [Cc] '-'? PrintableCharacter
+	| '\\' [Cc] '\\' [Mm] '-'? PrintableCharacter
+	| '\\' [Cc] '-'? '?'
+;
+
+fragment
+PrintableCharacter: [0-9A-Za-z]
+                    |[!"#$%&'()*+,-./:;<=>?@[\]^_`~];
+
 	
 mode HERE_DOC_MODE;
 HereDocEnd1:	IdentifierFrag 
 					{ 
-						if ( isHereDocSymbol(getText())){ 
-							mode(DEFAULT_MODE);
-							setType(String); 
-							setText(stringBuffer.toString());
-							shouldReleaseBufferedToken = true;
-							
-					  	}else{
-					  		stringBuffer.append(getText());
-							skip();
-					  	}
+						tryEndHereDoc();
 					}
 					;
 
 HereDocEnd2:	StringFragment 
 					{ 
-						if ( isHereDocSymbol(getText())){ 
-							mode(DEFAULT_MODE);
-							setType(String); 
-							setText(stringBuffer.toString());
-							shouldReleaseBufferedToken = true;
-						}else{
-					  		stringBuffer.append(getText());
-							skip();
-						}
+						tryEndHereDoc();
 					}
 					;					
+
 AnyInHere:         (.)+? 
 					{
 						stringBuffer.append(getText());
@@ -369,7 +432,9 @@ SL_COMMENT_IN_HEREDOC:	('#' ~( '\r' | '\n' )* '\r'? '\n') -> skip;
 ML_COMMENT_IN_HEREDOC:	('=begin' .*? '=end' '\r'? '\n') -> skip;
 					
 mode QUOTED_STR_MODE;
-QuotedStringEnd1:	[\r\n] 
+
+/* Make sure the percent string terminated at end of line */
+PercentStringLineEnd:	[\r\n] 
 					{ 
 						mode(DEFAULT_MODE);
 						setType(String); 
@@ -377,13 +442,16 @@ QuotedStringEnd1:	[\r\n]
 					}
 					;
 
+/* For any character which is alphabetic, add it into string */
 AnyInQuotedString1:   ([A-Za-z0-9] |' ')+
 					{
 						stringBuffer.append(getText());
 						skip();	
 					}
 					;						
-							
+/* For string which forms a pair with start symbol, terminated the string
+ * Otherwise, add it into string
+ */							
 AnyInQuotedString2:    ~([A-Za-z0-9]|' ')
 					{
 						if (isQuotedPair(getText())){

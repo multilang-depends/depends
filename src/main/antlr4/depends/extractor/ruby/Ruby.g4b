@@ -84,7 +84,6 @@ command_rhs
 	| command_call modifier_rescue stmt
 	| command_asgn
 ;
-
 expr
 :
 	command_call
