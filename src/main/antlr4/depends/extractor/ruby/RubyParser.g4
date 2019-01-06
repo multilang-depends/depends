@@ -29,6 +29,7 @@ statement
 	| ENSURE
 	| expr
 ;
+
 require_statement: REQUIRE String ;
 
 undef_statement: UNDEF function_name_or_symbol (',' function_name_or_symbol)*;
@@ -44,14 +45,8 @@ function_name_or_symbol:
 	|symbol
 ;
 
-return_statement: 
-	RETURN expr?
-;
 
 
-raise_statement:
-	RAISE expr
-;
 
 begin_block
 :
@@ -122,19 +117,13 @@ function_call_param:
 
 expr
 :
-	variable_path
+	primary
 	| expr ',' crlfs? expr
-	| expr dot_ref terms? expr 
+	| expr dot_ref crlfs? expr 
 	| expr postfix=QUESTION
 	| prefix=(PLUS| MINUS|MUL|MOD|BIT_AND) expr
-	| Regex
-	| symbol
-	| LEFT_RBRACKET expr RIGHT_RBRACKET                                                   	/* (a) */
 	| expr LEFT_SBRACKET expr RIGHT_SBRACKET 												/* array access */
 	| prefix=DEFINED expr                                                                	        /* identifier definition test */
-	| LEFT_PAREN crlfs? hash_asso crlfs?(',' crlfs? hash_asso)* ','? crlfs? RIGHT_PAREN   	/* hash */
-	| LEFT_SBRACKET  crlfs? expr crlfs? (',' crlfs? expr)* ','? crlfs?  RIGHT_SBRACKET   	/* array */
-	| LEFT_RBRACKET expr (DOT2|DOT3) expr? RIGHT_RBRACKET                               	/* range */
 	| expr bop=(DOT2|DOT3) expr? 								                               	/* range */
 	| expr ','? MUL? ASSIGN crlfs? expr                                         		/* batch assign */
 	| expr assignOperator crlfs? expr														/* assign */
@@ -147,10 +136,32 @@ expr
 	| expr(equalsOperator) crlfs? expr                                                  	/* equal test */
 	| expr(mathOperator|bitOperator) crlfs? expr                                        	/* calcuation */
 	| expr QUESTION expr COLON expr                                                	/* cond?true_part:false_part */
-	| expr dot_ref CLASS
-	| function_name func_call_parameters
 	| expr block
+	| expr expr_statement_suffix 
+	| expr dot_ref CLASS
+	| function_name func_call_parameters_no_bracket expr_statement_suffix?
+	| expr dot_ref function_name func_call_parameters_no_bracket expr_statement_suffix?
+	| cpath (QUESTION|SIGH)
+	;
+
+expr_statement_suffix:
+	IF crlfs? expr
+	| UNLESS crlfs? expr 
+	| WHILE crlfs? expr 
+	| UNTIL crlfs? expr 	
+	| RESCUE statement 
+    | DO block_params? terms? statement_list_terms? END
+;
+
+primary:
+	variable_path
+	| Regex
+	| symbol
+	| LEFT_RBRACKET expr RIGHT_RBRACKET                                                   	/* (a) */
 	| block
+	| BREAK expr?
+	| RETURN expr? 
+	| RAISE expr
 	| RESCUE rescure_param?
 	| YIELD expr?
 	| BEGIN terms statement_list_terms? END
@@ -161,21 +172,16 @@ expr
 	| CASE terms case_body*  END
 	| WHILE crlfs? expr do_keyword  statement_list_terms? END
 	| UNTIL crlfs? expr do_keyword  statement_list_terms?  END
-	| FOR crlfs? expr IN when_cond terms?  statement_list_terms? END
-	| expr DO block_params? terms? statement_list_terms? END
-	| function_name func_call_parameters_no_bracket?
+	| FOR crlfs? expr IN when_cond terms?  statement_list_terms? END 
 	| class_definition
 	| function_definition
 	| module_definition
-	| BREAK expr?
-	| return_statement 
-	| raise_statement
-	| expr IF crlfs? expr 
-	| expr UNLESS crlfs? expr 
-	| expr WHILE crlfs? expr 
-	| expr UNTIL crlfs? expr 	
-	| expr RESCUE statement 
-;
+	| function_name func_call_parameters
+	| LEFT_PAREN crlfs? hash_asso crlfs?(',' crlfs? hash_asso)* ','? crlfs? RIGHT_PAREN   	/* hash */
+	| LEFT_SBRACKET  crlfs? expr crlfs? (',' crlfs? expr)* ','? crlfs?  RIGHT_SBRACKET   	/* array */
+	| LEFT_RBRACKET expr (DOT2|DOT3) expr? RIGHT_RBRACKET                               	/* range */
+	;
+
 
 func_call_parameters
 :
@@ -220,7 +226,9 @@ bitOperator: BIT_SHL|BIT_SHR|BIT_AND|BIT_OR|BIT_XOR;
 mathOperator: MUL|DIV|MOD|PLUS|MINUS|EXP;
 
 assignOperator:
-	PLUS_ASSIGN | MINUS_ASSIGN |MUL_ASSIGN|DIV_ASSIGN|MOD_ASSIGN | EXP_ASSIGN  |BIT_OR_ASSIGN|BIT_AND_ASSIGN|OR_ASSIGN|AND_ASSIGN;
+	PLUS_ASSIGN | MINUS_ASSIGN |MUL_ASSIGN|DIV_ASSIGN|MOD_ASSIGN 
+	| EXP_ASSIGN  |BIT_OR_ASSIGN|BIT_AND_ASSIGN|OR_ASSIGN|AND_ASSIGN
+	| BIT_XOR_ASSIGN | BIT_NOT_ASSIGN |BIT_SHL_ASSIGN | BIT_SHR_ASSIGN;
 
 not: NOT | SIGH;
 
@@ -268,7 +276,6 @@ identifier: Identifier | globalVar | classVar |instanceVar | idArg | NEXT  |REDO
 empty: 
 	LEFT_PAREN RIGHT_PAREN																/* empty block  */
 	| LEFT_SBRACKET  RIGHT_SBRACKET                                                    	/* empty array */
-	|LEFT_RBRACKET RIGHT_RBRACKET
 	;
 
 globalVar:	DOLLAR Identifier;
