@@ -123,19 +123,19 @@ expr
 	| expr postfix=QUESTION
 	| prefix=(PLUS| MINUS|MUL|MOD|BIT_AND) expr
 	| expr LEFT_SBRACKET expr RIGHT_SBRACKET 												/* array access */
-	| prefix=DEFINED expr                                                                	        /* identifier definition test */
-	| expr bop=(DOT2|DOT3) expr? 								                               	/* range */
-	| expr ','? MUL? ASSIGN crlfs? expr                                         		/* batch assign */
+	| prefix=DEFINED expr                                                        	        /* identifier definition test */
+	| expr bop=(DOT2|DOT3) expr? 								                          	/* range */
+	| expr ','? MUL? ASSIGN crlfs? expr                                         			/* batch assign */
 	| expr assignOperator crlfs? expr														/* assign */
-	| expr bop=PATTERN_MATCH expr                                                               /* pattern match */
-	| expr bop=BIT_NOT expr                                                                     /* pattern match */
+	| expr bop=PATTERN_MATCH expr                                                           /* pattern match */
+	| expr bop=BIT_NOT expr                                                                 /* pattern match */
 	| expr SIGH BIT_NOT expr                                                                /* pattern match */
 	| (not| BIT_NOT) expr                                                               	/* logical not */
 	| expr (compareOperator) crlfs? expr                                                	/* compare logical  */
 	| expr(logicalOperator) crlfs? expr                                                 	/* logical join */
 	| expr(equalsOperator) crlfs? expr                                                  	/* equal test */
 	| expr(mathOperator|bitOperator) crlfs? expr                                        	/* calcuation */
-	| expr QUESTION expr COLON expr                                                	/* cond?true_part:false_part */
+	| expr QUESTION expr COLON expr                                                			/* cond?true_part:false_part */
 	| expr block
 	| expr expr_statement_suffix 
 	| expr dot_ref CLASS

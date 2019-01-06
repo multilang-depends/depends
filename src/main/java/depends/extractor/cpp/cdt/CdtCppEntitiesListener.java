@@ -26,7 +26,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLinkageSpecification;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTProblemDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTVisibilityLabel;
 
-import depends.entity.Expression;
 import depends.entity.FunctionEntity;
 import depends.entity.VarEntity;
 import depends.entity.repo.EntityRepo;
