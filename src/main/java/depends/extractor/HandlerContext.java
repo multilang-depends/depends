@@ -138,10 +138,15 @@ public abstract class HandlerContext {
 	public void foundExtends(String typeName) {
 		if (currentType()==null) {
 			System.out.println("error: type do not exist");
+			return ;
 		}
 		currentType().addExtends(typeName);
 	}
 
+	public void foundMixin(String moduleName) {
+		lastContainer().addMixin(moduleName);
+		
+	}
 
 	public void foundTypeParametes(String typeName) {
 		lastContainer().addTypeParameter(typeName);

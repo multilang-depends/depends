@@ -7,17 +7,16 @@ import java.util.concurrent.Executors;
 
 import depends.extractor.AbstractLangWorker;
 import depends.extractor.FileParser;
-import depends.extractor.cpp.cdt.PreprocessorHandler;
 import depends.relations.Inferer;
 
 public class RubyWorker extends AbstractLangWorker {
     private static final String LANG = "ruby";
-    private static final String[] SUFFIX = new String[] {".rb",".ruby"};
-    PreprocessorHandler preprocessorHandler;
+    private static final String[] SUFFIX = new String[] {".rb"};
+    IncludedFileLocator preprocessorHandler;
 	private ExecutorService executor;
     public RubyWorker(String inputDir, String[] includeDir) {
     	super(inputDir,includeDir);
-    	preprocessorHandler = new PreprocessorHandler(super.includePaths());
+    	preprocessorHandler = new IncludedFileLocator(super.includePaths());
 		inferer = new Inferer(entityRepo,new RubyImportLookupStrategy(),new RubyBuiltInType());
 		executor = Executors.newSingleThreadExecutor();
     }
@@ -36,11 +35,11 @@ public class RubyWorker extends AbstractLangWorker {
 
 	@Override
 	protected FileParser getFileParser(String fileFullPath) {
-		return new RubyFileParser(fileFullPath,entityRepo,executor);
+		return new RubyFileParser(fileFullPath,entityRepo,executor,preprocessorHandler);
 	}
 
 	public List<String> getErrors(){
-		return new ArrayList<String>(preprocessorHandler.getNotExistedIncludedFiles());
+		return new ArrayList<String>();
 	}
 
 

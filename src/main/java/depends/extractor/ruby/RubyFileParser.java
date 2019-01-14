@@ -21,16 +21,19 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import depends.entity.repo.EntityRepo;
 import depends.extractor.FileParser;
+import depends.util.FileUtil;
 public class RubyFileParser implements FileParser {
-	private static final long MAX_PARSE_TIME_PER_FILE = 30000L;
+	private static final long MAX_PARSE_TIME_PER_FILE = 180000L;
 	private String fileFullPath;
 	private EntityRepo entityRepo;
 	private ExecutorService executor;
+	private IncludedFileLocator includesFileLocator;
 
-	public RubyFileParser(String fileFullPath, EntityRepo entityRepo, ExecutorService executorService) {
-        this.fileFullPath = fileFullPath;
+	public RubyFileParser(String fileFullPath, EntityRepo entityRepo, ExecutorService executorService, IncludedFileLocator includesFileLocator) {
+        this.fileFullPath  = FileUtil.uniqFilePath(fileFullPath);
         this.entityRepo = entityRepo;
         this.executor = executorService;
+        this.includesFileLocator = includesFileLocator;
     }
 
 	@Override
@@ -42,7 +45,7 @@ public class RubyFileParser implements FileParser {
 			@Override
 			public RuleContext call() throws Exception {
 					RubyParser parser = new RubyParser(tokens);
-					return parser.prog();
+					return parser.compilation_unit();
 			}				
 			
 			/* The following function is try to optimize performance with SLL mode, but
@@ -54,7 +57,7 @@ public class RubyFileParser implements FileParser {
 			    parser.setErrorHandler(new BailErrorStrategy());
 				parser.getInterpreter().setPredictionMode(PredictionMode.SLL);
 				try {
-					return parser.prog();
+					return parser.compilation_unit();
 				} catch (final ParseCancellationException e) {
 
 					// fall-back to LL mode parsing if SLL fails
@@ -63,7 +66,7 @@ public class RubyFileParser implements FileParser {
 					parser.removeErrorListeners();
 				    parser.setErrorHandler(new DefaultErrorStrategy());
 					parser.getInterpreter().setPredictionMode(PredictionMode.LL);
-					return parser.prog();
+					return parser.compilation_unit();
 				}				
 			}
         });
@@ -80,7 +83,7 @@ public class RubyFileParser implements FileParser {
         	System.err.println("parse error in " + fileFullPath); 
         	return;
         }
-        RubyListener bridge = new RubyListener(fileFullPath, entityRepo);
+        RubyListener bridge = new RubyListener(fileFullPath, entityRepo, includesFileLocator);
 	    ParseTreeWalker walker = new ParseTreeWalker();
 	    walker.walk(bridge, rootContext);
 	}

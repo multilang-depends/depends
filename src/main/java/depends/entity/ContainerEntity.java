@@ -21,12 +21,15 @@ public abstract class ContainerEntity extends DecoratedEntity {
 	private ArrayList<VarEntity> vars;
 	private ArrayList<FunctionEntity> functions;
 	private HashMap<Object, Expression> expressions;
-
+	private Collection<String> mixins;
+	private Collection<ContainerEntity> resolvedMixins;
 
 	public ContainerEntity(String rawName, Entity parent, Integer id) {
 		super(rawName, parent, id);
 		vars = new ArrayList<>();
 		functions = new ArrayList<>();
+		mixins = new ArrayList<>();
+		resolvedMixins = new ArrayList<>();
 		expressions = new HashMap<>();
 	}
 	
@@ -73,6 +76,20 @@ public abstract class ContainerEntity extends DecoratedEntity {
 		for (FunctionEntity func:this.functions) {
 			func.inferLocalLevelEntities(inferer);
 		}
+		resolvedMixins = identiferToContainerEntity(inferer, mixins);
+	}
+
+	private Collection<ContainerEntity> identiferToContainerEntity(Inferer inferer, Collection<String> identifiers) {
+		ArrayList<ContainerEntity> r = new ArrayList<>();
+		for (String identifier : identifiers) {
+			Entity entity = inferer.resolveName(this, identifier, true);
+			if (entity==null) {
+				continue;
+			}
+			if (entity instanceof ContainerEntity)
+				r.add((ContainerEntity)entity);
+		}
+		return r;
 	}
 
 	/**
@@ -181,5 +198,11 @@ public abstract class ContainerEntity extends DecoratedEntity {
 				return var;
 		}
 		return null;
+	}
+
+
+
+	public void addMixin(String moduleName) {
+		mixins.add(moduleName);
 	}
 }

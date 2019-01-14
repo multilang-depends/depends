@@ -1,12 +1,8 @@
 package depends.entity;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import depends.relations.Inferer;
 
-public class VarEntity extends DecoratedEntity {
+public class VarEntity extends ContainerEntity {
 	private String rawType;
 	private TypeEntity type;
 
