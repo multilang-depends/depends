@@ -18,6 +18,6 @@ public class JavaGenericTypeTest extends JavaParserTest{
         JavaFileParser parser = createParser(src);
         parser.parse();
         inferer.resolveAllBindings();
-        assertEquals(1,entityRepo.getEntity("x.GenericTypeTest").getRelations().size());
+        assertEquals(2,entityRepo.getEntity("x.GenericTypeTest").getRelations().size());
 	}
 }

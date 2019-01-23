@@ -118,6 +118,6 @@ public class RubyInheritTest extends RubyParserTest {
         assertEquals(1,entityRepo.getEntity("Cat").getRelations().size());
         Relation r = entityRepo.getEntity("Cat").getRelations().get(0);
         assertEquals(DependencyType.INHERIT,r.getType());
-        assertEquals("Zoo_Animal",r.getEntity().getQualifiedName());
+        assertEquals("Zoo.Animal",r.getEntity().getQualifiedName());
 	}
 }

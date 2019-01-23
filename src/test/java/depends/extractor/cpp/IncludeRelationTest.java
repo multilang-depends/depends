@@ -9,7 +9,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import depends.entity.TypeAliasEntity;
+import depends.entity.AliasEntity;
 import depends.extractor.cpp.CppFileParser;
 
 public class IncludeRelationTest extends CppParserTest{
@@ -37,22 +37,7 @@ public class IncludeRelationTest extends CppParserTest{
         assertEquals(3,repo.getEntity(f.getCanonicalPath()).getRelations().size());
 	}
 	
-	@Test
-	public void test_includefiles_outside_project_will_not_count() throws IOException {
-	    String[] srcs = new String[] {
-	    		"./src/test/resources/cpp-code-examples/includesTest/EntryFile.cpp",
-	    		"./src/test/resources/cpp-code-examples/includesTest/LocalHeader.h",
-	    	    };
-	    
-	    for (String src:srcs) {
-		    CppFileParser parser = createParser(src);
-		    parser.parse();
-	    }
-	    inferer.resolveAllBindings();
-        File f = new File(srcs[0]);
-        assertEquals(1,repo.getEntity(f.getCanonicalPath()).getRelations().size());
-	}
-
+	
 	@Test
 	public void test_could_found_files_in_include_path() throws IOException {
 	    String[] srcs = new String[] {
@@ -84,7 +69,7 @@ public class IncludeRelationTest extends CppParserTest{
 	    }
 	    inferer.resolveAllBindings();
         File f = new File(srcs[0]);
-        assertEquals("abc",((TypeAliasEntity)repo.getEntity("abc_t")).getOriginType().getRawName());
+        assertEquals("abc",((AliasEntity)repo.getEntity("abc_t")).getOriginType().getRawName());
         
 	}
 }

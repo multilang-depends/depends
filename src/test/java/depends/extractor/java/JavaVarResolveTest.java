@@ -45,7 +45,7 @@ public class JavaVarResolveTest extends JavaParserTest{
         parser.parse();
         inferer.resolveAllBindings();
         ContainerEntity e = (ContainerEntity) entityRepo.getEntity("LocalVarInferExample.setExample");
-        assertEquals(16,entityRepo.getEntity("LocalVarInferExample.setExample").getRelations().size());
+        assertEquals(17,entityRepo.getEntity("LocalVarInferExample.setExample").getRelations().size());
 	}
 	
 	@Test
@@ -54,7 +54,7 @@ public class JavaVarResolveTest extends JavaParserTest{
         JavaFileParser parser = createParser(src);
         parser.parse();
         inferer.resolveAllBindings();
-        assertEquals(23,entityRepo.getEntity("test.ComplexExpressionExample.setExample").getRelations().size());
+        assertEquals(22,entityRepo.getEntity("test.ComplexExpressionExample.setExample").getRelations().size());
 	}
 	
 	@Test
@@ -63,7 +63,7 @@ public class JavaVarResolveTest extends JavaParserTest{
         JavaFileParser parser = createParser(src);
         parser.parse();
         inferer.resolveAllBindings();
-        assertEquals(6,entityRepo.getEntity("x.LongExpressionWithAbsolutePath.setExample").getRelations().size());
+        assertEquals(5,entityRepo.getEntity("x.LongExpressionWithAbsolutePath.setExample").getRelations().size());
 	}
 	
 	
@@ -74,7 +74,7 @@ public class JavaVarResolveTest extends JavaParserTest{
         JavaFileParser parser = createParser(src);
         parser.parse();
         inferer.resolveAllBindings();
-        assertEquals(17,entityRepo.getEntity("ValidateAll.validate").getRelations().size());
+        assertEquals(16,entityRepo.getEntity("ValidateAll.validate").getRelations().size());
 	}
 	
 	@Test
@@ -83,7 +83,7 @@ public class JavaVarResolveTest extends JavaParserTest{
         JavaFileParser parser = createParser(src);
         parser.parse();
         inferer.resolveAllBindings();
-        assertEquals(17,entityRepo.getEntity("JDepObject").getRelations().size());
+        assertEquals(2,entityRepo.getEntity("JDepObject").getRelations().size());
 	}
 	
 }

@@ -8,7 +8,7 @@ import depends.entity.ContainerEntity;
 import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.FunctionEntity;
-import depends.entity.TypeAliasEntity;
+import depends.entity.AliasEntity;
 import depends.entity.TypeEntity;
 import depends.entity.VarEntity;
 import depends.entity.repo.EntityRepo;
@@ -48,7 +48,7 @@ public abstract class HandlerContext {
 	public void foundNewTypeAlias(String aliasName, String originalName) {
 		if (aliasName.equals(originalName)) return; //it is a tricky, we treat same name no different. 
 		//indeed it is not perfect -> the right match should depends on no-bare format like "struct a" instead of "a"
-		TypeAliasEntity currentTypeEntity = new TypeAliasEntity(aliasName, this.latestValidContainer(),
+		AliasEntity currentTypeEntity = new AliasEntity(aliasName, this.latestValidContainer(),
 				idGenerator.generateId(),originalName );
 	 	entityRepo.add(currentTypeEntity);
 		return ;		
