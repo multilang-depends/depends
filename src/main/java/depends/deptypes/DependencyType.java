@@ -17,6 +17,7 @@ public class DependencyType {
 	public static final String CAST = "Cast";
 	public static final String THROW = "Throw";
 	public static final String ANNOTATION = "Annotation";
+	public static final String MIXIN = "MixIn";
 
 	public static ArrayList<String> allDependencies() {
 		ArrayList<String> depedencyTypes = new ArrayList<String>();
@@ -34,6 +35,7 @@ public class DependencyType {
 		depedencyTypes.add(CAST);
 		depedencyTypes.add(THROW);
 		depedencyTypes.add(ANNOTATION);
+		depedencyTypes.add(MIXIN);
 		return depedencyTypes;
 	}
 }

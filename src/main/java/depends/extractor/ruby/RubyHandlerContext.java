@@ -1,22 +1,31 @@
 package depends.extractor.ruby;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 import depends.entity.Entity;
 import depends.entity.PackageEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.HandlerContext;
-import depends.extractor.ruby.RubyParser.Function_call_paramContext;
-import depends.extractor.ruby.RubyParser.PrimaryFunctionCall0Context;
 import depends.importtypes.FileImport;
-import depends.importtypes.Import;
+import depends.relations.Inferer;
 
 public class RubyHandlerContext extends HandlerContext {
 
-	public RubyHandlerContext(EntityRepo entityRepo) {
+	private IncludedFileLocator includedFileLocator;
+	private ExecutorService executorService;
+	private Inferer inferer;
+
+	public RubyHandlerContext(EntityRepo entityRepo, 
+			IncludedFileLocator includedFileLocator,
+			ExecutorService executorService,
+			Inferer inferer) {
 		super(entityRepo);
+		this.includedFileLocator = includedFileLocator;
+		this.executorService = executorService;
+		this.inferer = inferer;
 	}
 	
 	public Entity foundNamespace(String nampespaceName) {
@@ -26,15 +35,22 @@ public class RubyHandlerContext extends HandlerContext {
 		return pkgEntity;
 	}
 
-	public void processSpecialFuncCall(String methodName, Collection<String> params, IncludedFileLocator includedFileLocator) {
+	public void processSpecialFuncCall(String methodName, Collection<String> params) {
 		// Handle Import relation
 		if(methodName.equals("require") || methodName.equals("require_relative")) { 
 			for (String importedFilename:params) {
 				if (!importedFilename.endsWith(".rb")) importedFilename = importedFilename + ".rb";
 				String inclFileName = includedFileLocator.uniqFileName(currentFile().getRawName(),importedFilename);
 				if (inclFileName==null) {
-					System.err.println("cannot found included file" + inclFileName);
+					System.err.println("Warning: cannot found included file " + importedFilename + "\n(maybe it is just a sys/lib file we do not care)");
 					continue;
+				}
+				RubyFileParser importedParser = new RubyFileParser(inclFileName,entityRepo,executorService,includedFileLocator,inferer);
+				try {
+					System.out.println("parsing "+inclFileName);
+					importedParser.parse();
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
 				foundNewImport(new FileImport(inclFileName));
 			}

@@ -26,6 +26,6 @@ public class RubyRequireTest extends RubyParserTest {
 	    }
 	    inferer.resolveAllBindings();
         File f = new File(srcs[0]);
-        assertEquals(1,entityRepo.getEntity(f.getCanonicalPath()).getRelations().size());
+        assertEquals(2,entityRepo.getEntity(f.getCanonicalPath()).getRelations().size());
 	}
 }

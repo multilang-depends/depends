@@ -19,8 +19,11 @@ import org.antlr.v4.runtime.atn.PredictionMode;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
+import depends.entity.Entity;
+import depends.entity.FileEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.FileParser;
+import depends.relations.Inferer;
 import depends.util.FileUtil;
 public class RubyFileParser implements FileParser {
 	private static final long MAX_PARSE_TIME_PER_FILE = 180000L;
@@ -28,16 +31,27 @@ public class RubyFileParser implements FileParser {
 	private EntityRepo entityRepo;
 	private ExecutorService executor;
 	private IncludedFileLocator includesFileLocator;
+	private Inferer inferer;
 
-	public RubyFileParser(String fileFullPath, EntityRepo entityRepo, ExecutorService executorService, IncludedFileLocator includesFileLocator) {
+	public RubyFileParser(String fileFullPath, EntityRepo entityRepo, 
+			ExecutorService executorService, 
+			IncludedFileLocator includesFileLocator, 
+			Inferer inferer) {
         this.fileFullPath  = FileUtil.uniqFilePath(fileFullPath);
         this.entityRepo = entityRepo;
         this.executor = executorService;
         this.includesFileLocator = includesFileLocator;
+        this.inferer = inferer;
     }
 
 	@Override
 	public void parse() throws IOException {
+		/** If file already exist, skip it */
+		Entity fileEntity = entityRepo.getEntity(fileFullPath);
+		if (fileEntity!=null && fileEntity instanceof FileEntity) {
+			return;
+		}
+		
         CharStream input = CharStreams.fromFileName(fileFullPath);
         Lexer lexer = new RubyLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -83,9 +97,13 @@ public class RubyFileParser implements FileParser {
         	System.err.println("parse error in " + fileFullPath); 
         	return;
         }
-        RubyListener bridge = new RubyListener(fileFullPath, entityRepo, includesFileLocator);
+        RubyListener bridge = new RubyListener(fileFullPath, entityRepo, includesFileLocator,executor,inferer);
 	    ParseTreeWalker walker = new ParseTreeWalker();
 	    walker.walk(bridge, rootContext);
+		fileEntity = entityRepo.getEntity(fileFullPath);
+		if (fileEntity!=null) {
+			fileEntity.inferEntities(inferer);
+		}
 	}
 
 }

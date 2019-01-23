@@ -19,7 +19,7 @@ public abstract class RubyParserTest {
 	
 	public RubyFileParser createParser(String src) {
 		ExecutorService executor = Executors.newSingleThreadExecutor();
-		return new RubyFileParser(src,entityRepo, executor,new IncludedFileLocator(includePaths()));
+		return new RubyFileParser(src,entityRepo, executor,new IncludedFileLocator(includePaths()), inferer);
 	}
 
 	private List<String> includePaths() {

@@ -53,6 +53,9 @@ public class RelationCounter {
 		for (TypeEntity type:entity.getResolvedTypeParameters()) {
 			entity.addRelation(new Relation(DependencyType.USE,type));
 		}
+		for (ContainerEntity mixin:entity.getResolvedMixins()) {
+			entity.addRelation(new Relation(DependencyType.MIXIN,mixin));
+		}
 		
 		HashSet<Entity> usedEntities = new HashSet<>();
 		for (Expression expression:entity.expressions().values()){

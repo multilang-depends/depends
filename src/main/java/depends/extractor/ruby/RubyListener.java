@@ -3,8 +3,8 @@ package depends.extractor.ruby;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
-import depends.entity.Expression;
 import depends.entity.VarEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.ruby.RubyParser.Alias_statementContext;
@@ -23,20 +23,17 @@ import depends.extractor.ruby.RubyParser.PrimaryStatementRaiseContext;
 import depends.extractor.ruby.RubyParser.PrimaryStatementReturnContext;
 import depends.extractor.ruby.RubyParser.PrimaryStatementYieldContext;
 import depends.extractor.ruby.RubyParser.Undef_statementContext;
-import depends.importtypes.FileImport;
-import depends.util.FileUtil;
+import depends.relations.Inferer;
 
 public class RubyListener extends RubyParserBaseListener{
 
 	private RubyHandlerContext context;
 	private EntityRepo entityRepo;
-	private IncludedFileLocator includedFileLocator;
 	RubyParserHelper helper = new RubyParserHelper();
 	
-	public RubyListener(String fileFullPath, EntityRepo entityRepo,IncludedFileLocator includedFileLocator) {
-		this.context = new RubyHandlerContext(entityRepo);
+	public RubyListener(String fileFullPath, EntityRepo entityRepo,IncludedFileLocator includedFileLocator,ExecutorService executorService, Inferer inferer) {
+		this.context = new RubyHandlerContext(entityRepo,includedFileLocator,executorService,inferer);
 		this.entityRepo = entityRepo;
-		this.includedFileLocator = includedFileLocator;
 		context.startFile(fileFullPath);		
 	}
 
@@ -128,7 +125,7 @@ public class RubyListener extends RubyParserBaseListener{
 		String fname = this.helper.getName(ctx.function_name());
 		List<Function_call_paramContext> parameters = ctx.func_call_parameters().function_call_param();
 		Collection<String> params = helper.getAllArgName(ctx.func_call_parameters().function_call_param());
-		context.processSpecialFuncCall(fname,params,includedFileLocator);
+		context.processSpecialFuncCall(fname,params);
 		super.enterPrimaryFunctionCall0(ctx);
 	}
 
@@ -137,7 +134,7 @@ public class RubyListener extends RubyParserBaseListener{
 		String fname = this.helper.getName(ctx.function_name());
 		
 		Collection<String> params = helper.getAllArgName(ctx.func_call_parameters_no_bracket().function_call_param());
-		context.processSpecialFuncCall(fname,params,includedFileLocator);
+		context.processSpecialFuncCall(fname,params);
 		super.enterExprFunctionCall1(ctx);
 	}
 	@Override

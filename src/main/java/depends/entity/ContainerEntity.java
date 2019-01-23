@@ -205,4 +205,11 @@ public abstract class ContainerEntity extends DecoratedEntity {
 	public void addMixin(String moduleName) {
 		mixins.add(moduleName);
 	}
+
+
+
+	public Collection<ContainerEntity> getResolvedMixins() {
+		return resolvedMixins;
+	}
+
 }

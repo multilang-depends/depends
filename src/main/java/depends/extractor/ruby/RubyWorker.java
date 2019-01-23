@@ -35,7 +35,7 @@ public class RubyWorker extends AbstractLangWorker {
 
 	@Override
 	protected FileParser getFileParser(String fileFullPath) {
-		return new RubyFileParser(fileFullPath,entityRepo,executor,preprocessorHandler);
+		return new RubyFileParser(fileFullPath,entityRepo,executor,preprocessorHandler,inferer);
 	}
 
 	public List<String> getErrors(){
