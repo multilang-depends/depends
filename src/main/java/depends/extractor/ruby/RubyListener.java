@@ -73,6 +73,11 @@ public class RubyListener extends RubyParserBaseListener{
 			String varName = helper.getName(ctx);
 		}else {
 			context.foundNewType(helper.getName(ctx));
+			System.out.println(helper.getName(ctx));
+			String parentType = helper.getParentType(ctx.class_header());
+			if (parentType!=null) {
+				context.foundExtends(parentType);
+			}
 		}
 		super.enterClass_definition(ctx);
 	}

@@ -57,8 +57,8 @@ public class RubyHandlerContext extends HandlerContext {
 		}
 		// Handle Extend relation
 		else if (methodName.equals("extend")) {
-			for (String parentName:params) {
-				foundExtends(parentName);
+			for (String moduleName:params) {
+				foundMixin(moduleName);
 			}
 		}
 		// Handle mixin relation

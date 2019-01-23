@@ -133,13 +133,12 @@ public class Inferer {
 		if (buildInTypeManager.isBuiltInTypePrefix(rawName)) {
 			return buildInType;
 		}
-
 		// qualified name will first try global name directly
 		if (rawName.contains(".")) {
+			if (rawName.startsWith(".")) rawName = rawName.substring(1);
 			if (repo.getEntity(rawName) != null)
 				return repo.getEntity(rawName);
 		}
-
 		// first we lookup the first symbol
 		String[] names = rawName.split("\\.");
 		if (names.length == 0)

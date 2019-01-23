@@ -1,27 +1,26 @@
 package depends.extractor.ruby;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
-import depends.entity.VarEntity;
 import depends.extractor.ruby.RubyParser.Class_definitionContext;
+import depends.extractor.ruby.RubyParser.Class_headerContext;
 import depends.extractor.ruby.RubyParser.CpathContext;
 import depends.extractor.ruby.RubyParser.ExprContext;
 import depends.extractor.ruby.RubyParser.ExprPrimaryContext;
-import depends.extractor.ruby.RubyParser.Func_call_parametersContext;
-import depends.extractor.ruby.RubyParser.Func_call_parameters_no_bracketContext;
 import depends.extractor.ruby.RubyParser.Function_call_paramContext;
 import depends.extractor.ruby.RubyParser.Function_definitionContext;
 import depends.extractor.ruby.RubyParser.Function_definition_paramContext;
 import depends.extractor.ruby.RubyParser.Function_nameContext;
 import depends.extractor.ruby.RubyParser.Function_name_or_symbolContext;
+import depends.extractor.ruby.RubyParser.Id_symbolContext;
 import depends.extractor.ruby.RubyParser.IdentifierContext;
 import depends.extractor.ruby.RubyParser.Module_definitionContext;
 import depends.extractor.ruby.RubyParser.PrimaryContext;
 import depends.extractor.ruby.RubyParser.PrimarySymbolContext;
 import depends.extractor.ruby.RubyParser.PrimaryVarPathContext;
+import depends.extractor.ruby.RubyParser.SuperclassContext;
 import depends.extractor.ruby.RubyParser.SymbolContext;
 import depends.extractor.ruby.RubyParser.Variable_pathContext;
 
@@ -41,12 +40,13 @@ public class RubyParserHelper {
 
 	public String getName(Function_nameContext function_name) {
 		if (function_name.cpath()!=null) return getName(function_name.cpath());
-		return function_name.getText(); //+=.. operators
+		return unifyingCPath(function_name.getText()); //+=.. operators
 	}
 
 	public String getName(CpathContext cpath) {
 		StringBuilder sb = new StringBuilder();
 		for (IdentifierContext id:cpath.identifier()) {
+			if (sb.length()>0) sb.append(".");
 			sb.append(getName(id));
 		}
 		return sb.toString();
@@ -59,7 +59,7 @@ public class RubyParserHelper {
 	 * @return
 	 */
 	public String getName(IdentifierContext id) {
-		return id.getText();
+		return unifyingCPath(id.getText());
 	}
 
 	public String getName(Module_definitionContext ctx) {
@@ -104,7 +104,7 @@ public class RubyParserHelper {
 	}
 
 	private String getName(Variable_pathContext variable_path) {
-		return variable_path.getText();
+		return unifyingCPath(variable_path.getText());
 	}
 
 
@@ -131,15 +131,28 @@ public class RubyParserHelper {
 	private String extractNameOfPrimary(PrimaryContext primary) {
 		if (primary instanceof PrimaryVarPathContext) {
 			PrimaryVarPathContext varPath = (PrimaryVarPathContext)primary;
-			return varPath.getText().replace("'", "").replace("\"", "");
+			return unifyingCPath(varPath.getText().replace("'", "").replace("\"", ""));
 		}
 		if (primary instanceof PrimarySymbolContext) {
 			PrimarySymbolContext symbol = (PrimarySymbolContext)primary;
-			return symbol.getText().replace(":","").replace("'", "").replace("\"", "");
+			return unifyingCPath(symbol.getText().replace(":","").replace("'", "").replace("\"", ""));
 		}
 		System.err.println(primary.getClass().getSimpleName());
 		return null;
 	}
 
+	public String getParentType(Class_headerContext class_header) {
+		if (class_header==null) return null;
+		if (class_header.superclass()==null) return null;
+		SuperclassContext superClass = class_header.superclass();
+		return unifyingCPath(this.getName(superClass.id_symbol()));
+	}
 
+	private String getName(Id_symbolContext id_symbol) {
+		return unifyingCPath(id_symbol.getText());
+	}
+
+	private String unifyingCPath(String path) {
+		return path.replace("::", ".").replace(":",".");
+	}
 }
