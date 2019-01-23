@@ -93,7 +93,7 @@ public class RubyParserHelper {
 		return "";
 	}
 
-	private String getName(PrimaryContext primary) {
+	public String getName(PrimaryContext primary) {
 		if (primary instanceof PrimaryVarPathContext) {
 			return getName (((PrimaryVarPathContext)primary).variable_path());
 		}
@@ -103,7 +103,7 @@ public class RubyParserHelper {
 		return "";
 	}
 
-	private String getName(Variable_pathContext variable_path) {
+	public String getName(Variable_pathContext variable_path) {
 		return unifyingCPath(variable_path.getText());
 	}
 

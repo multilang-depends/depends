@@ -1,5 +1,8 @@
 package depends.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import depends.relations.Inferer;
 
 public class Expression {
@@ -7,6 +10,7 @@ public class Expression {
 	public Integer parentId;
 	public Integer deduceTypeBasedId; //by default, parent expression type determined by most left child
 	public Expression parent;
+	private List<Expression> deduceTypeChildren = new ArrayList<>();
 	public String text; // for debug purpose
 	public String rawType; //the raw type name
 	public String identifier; // the varName, or method name, etc.
@@ -16,8 +20,8 @@ public class Expression {
 	public boolean isLogic = false;
 	public boolean isCreate = false;
 	public boolean isCast = false;
+	public boolean autoVar = false;
 	public boolean deriveTypeFromChild = true;
-
 	private TypeEntity type; // the type we care - for relation calculation. 
 	                         //for leaf, it equals to referredEntity.getType. otherwise, depends on child's type strategy
 	private Entity referredEntity;
@@ -49,7 +53,7 @@ public class Expression {
 		                      .append(isSet?"[set]":"")
 		                      .append(isLogic?"[bool]":"")
 		                      .append(isCall?"[call]":"").append("|")
-		    .append("parent:").append(parent==null?"none":parent.text)
+		    .append("parent:").append(parent==null?"nil":parent.text).append("|")
 			.append("type:").append(type).append("|");
 		return s.toString();
 	}
@@ -61,6 +65,17 @@ public class Expression {
 	 */
 	public void deduceParentType(Inferer inferer) {
 		if (this.type==null) return;
+		deduceChildrenType(inferer);
+		deduceTheParentType(inferer);
+	}
+
+	private void deduceChildrenType(Inferer inferer) {
+		for (Expression child:this.deduceTypeChildren) {
+			child.setType(type, type, inferer);
+		}
+	}
+
+	private void deduceTheParentType(Inferer inferer) {
 		if (this.parent==null) return;
 		Expression parent = this.parent;
 		if (parent.type != null)return;
@@ -103,5 +118,9 @@ public class Expression {
 
 	public Entity getReferredEntity() {
 		return referredEntity;
+	}
+
+	public void addDeduceTypeChild(Expression expression) {
+		deduceTypeChildren.add(expression);
 	}
 }
