@@ -24,7 +24,7 @@ public class RubyObjectCreationTest extends RubyParserTest {
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
-	    super.assertContainsRelation(entityRepo.getEntity("T.foo"), DependencyType.INHERIT, "Animal");
+	    super.assertContainsRelation(entityRepo.getEntity("T.foo"), DependencyType.CREATE, "M");
 	}
 	
 
