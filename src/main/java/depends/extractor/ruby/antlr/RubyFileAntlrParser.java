@@ -1,4 +1,4 @@
-package depends.extractor.ruby;
+package depends.extractor.ruby.antlr;
 
 import java.io.IOException;
 import java.util.concurrent.Callable;
@@ -23,25 +23,32 @@ import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.FileParser;
+import depends.extractor.ParserCreator;
+import depends.extractor.ruby.IncludedFileLocator;
+import depends.extractor.ruby.RubyLexer;
+import depends.extractor.ruby.RubyParser;
 import depends.relations.Inferer;
 import depends.util.FileUtil;
-public class RubyFileParser implements FileParser {
+public class RubyFileAntlrParser implements FileParser {
 	private static final long MAX_PARSE_TIME_PER_FILE = 180000L;
 	private String fileFullPath;
 	private EntityRepo entityRepo;
 	private ExecutorService executor;
 	private IncludedFileLocator includesFileLocator;
 	private Inferer inferer;
+	private ParserCreator rubyWorker;
 
-	public RubyFileParser(String fileFullPath, EntityRepo entityRepo, 
+	public RubyFileAntlrParser(String fileFullPath, EntityRepo entityRepo, 
 			ExecutorService executorService, 
 			IncludedFileLocator includesFileLocator, 
-			Inferer inferer) {
+			Inferer inferer,
+			ParserCreator rubyWorker) {
         this.fileFullPath  = FileUtil.uniqFilePath(fileFullPath);
         this.entityRepo = entityRepo;
         this.executor = executorService;
         this.includesFileLocator = includesFileLocator;
         this.inferer = inferer;
+        this.rubyWorker = rubyWorker;
     }
 
 	@Override
@@ -97,7 +104,7 @@ public class RubyFileParser implements FileParser {
         	System.err.println("parse error in " + fileFullPath); 
         	return;
         }
-        RubyListener bridge = new RubyListener(fileFullPath, entityRepo, includesFileLocator,executor,inferer);
+        RubyListener bridge = new RubyListener(fileFullPath, entityRepo, includesFileLocator,executor,inferer,rubyWorker);
 	    ParseTreeWalker walker = new ParseTreeWalker();
 	    walker.walk(bridge, rootContext);
 		fileEntity = entityRepo.getEntity(fileFullPath);
@@ -105,5 +112,6 @@ public class RubyFileParser implements FileParser {
 			fileEntity.inferEntities(inferer);
 		}
 	}
+
 
 }

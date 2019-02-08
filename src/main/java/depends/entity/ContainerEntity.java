@@ -3,12 +3,10 @@ package depends.entity;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import depends.extractor.java.JavaParser.ExpressionContext;
 import depends.relations.Inferer;
 
 /**
@@ -101,14 +99,15 @@ public abstract class ContainerEntity extends DecoratedEntity {
 			//1. if expression's type existed, break;
 			if (expression.getType() != null)
 				continue;
+			if (expression.isDot){ //wait for previous
+				continue;
+			}
+			if (expression.rawType==null && expression.identifier ==null)
+				continue;
 			
 			//2. if expression's rawType existed, directly infer type by rawType
 			//   if expression's rawType does not existed, infer type based on identifiers
 			if (expression.rawType != null) {
-				expression.setType(inferer.inferTypeFromName(this, expression.rawType),null,inferer);
-			}else if (expression.isDot){ //wait for previous
-				continue;
-			} else if (expression.rawType!=null) {
 				expression.setType(inferer.inferTypeFromName(this, expression.rawType),null,inferer);
 				if (expression.getType() !=null) {
 					 continue;

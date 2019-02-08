@@ -7,9 +7,12 @@ import java.util.concurrent.Executors;
 
 import depends.extractor.AbstractLangWorker;
 import depends.extractor.FileParser;
+import depends.extractor.ParserCreator;
+import depends.extractor.ruby.antlr.RubyFileAntlrParser;
+import depends.extractor.ruby.jruby.JRubyFileParser;
 import depends.relations.Inferer;
 
-public class RubyWorker extends AbstractLangWorker {
+public class RubyWorker extends AbstractLangWorker implements ParserCreator{
     private static final String LANG = "ruby";
     private static final String[] SUFFIX = new String[] {".rb"};
     IncludedFileLocator preprocessorHandler;
@@ -34,8 +37,9 @@ public class RubyWorker extends AbstractLangWorker {
 
 
 	@Override
-	protected FileParser getFileParser(String fileFullPath) {
-		return new RubyFileParser(fileFullPath,entityRepo,executor,preprocessorHandler,inferer);
+	public FileParser createFileParser(String fileFullPath) {
+//		return new RubyFileAntlrParser(fileFullPath,entityRepo,executor,preprocessorHandler,inferer,this);
+		return new JRubyFileParser(fileFullPath,entityRepo,executor,preprocessorHandler,inferer,this);
 	}
 
 	public List<String> getErrors(){

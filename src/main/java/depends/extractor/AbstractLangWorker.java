@@ -65,7 +65,7 @@ abstract public class AbstractLangWorker {
     	FileTraversal fileTransversal = new FileTraversal(new FileTraversal.IFileVisitor(){
 			@Override
 			public void visit(File file) {
-	            FileParser fileParser = getFileParser(file.getAbsolutePath());
+	            FileParser fileParser = createFileParser(file.getAbsolutePath());
 	            try {
 	                System.out.println("parsing " + file.getAbsolutePath() 
 	                		+ "...");		
@@ -82,7 +82,7 @@ abstract public class AbstractLangWorker {
 
 	}
     
-    protected abstract FileParser getFileParser(String fileFullPath);
+    protected abstract FileParser createFileParser(String fileFullPath);
 
 	public List<String> includePaths() {
 		ArrayList<String> r = new ArrayList<String>();

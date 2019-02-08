@@ -1,9 +1,10 @@
-package depends.extractor.ruby;
+package depends.extractor.ruby.antlr;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
+import depends.extractor.ruby.RubyParser;
 import depends.extractor.ruby.RubyParser.Class_definitionContext;
 import depends.extractor.ruby.RubyParser.Class_headerContext;
 import depends.extractor.ruby.RubyParser.CpathContext;

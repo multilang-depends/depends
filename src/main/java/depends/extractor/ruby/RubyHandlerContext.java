@@ -8,7 +8,9 @@ import java.util.concurrent.ExecutorService;
 import depends.entity.Entity;
 import depends.entity.PackageEntity;
 import depends.entity.repo.EntityRepo;
+import depends.extractor.FileParser;
 import depends.extractor.HandlerContext;
+import depends.extractor.ParserCreator;
 import depends.importtypes.FileImport;
 import depends.relations.Inferer;
 
@@ -17,15 +19,16 @@ public class RubyHandlerContext extends HandlerContext {
 	private IncludedFileLocator includedFileLocator;
 	private ExecutorService executorService;
 	private Inferer inferer;
-
+	private ParserCreator parserCreator;
 	public RubyHandlerContext(EntityRepo entityRepo, 
 			IncludedFileLocator includedFileLocator,
 			ExecutorService executorService,
-			Inferer inferer) {
+			Inferer inferer, ParserCreator parserCreator) {
 		super(entityRepo);
 		this.includedFileLocator = includedFileLocator;
 		this.executorService = executorService;
 		this.inferer = inferer;
+		this.parserCreator = parserCreator;
 	}
 	
 	public Entity foundNamespace(String nampespaceName) {
@@ -45,7 +48,7 @@ public class RubyHandlerContext extends HandlerContext {
 					System.err.println("Warning: cannot found included file " + importedFilename + "\n(maybe it is just a sys/lib file we do not care)");
 					continue;
 				}
-				RubyFileParser importedParser = new RubyFileParser(inclFileName,entityRepo,executorService,includedFileLocator,inferer);
+				FileParser importedParser = parserCreator.createFileParser(inclFileName);
 				try {
 					System.out.println("parsing "+inclFileName);
 					importedParser.parse();
@@ -73,7 +76,7 @@ public class RubyHandlerContext extends HandlerContext {
 				name = name.replace(":", ""); //remove symbol
 				foundMethodDeclarator(name, null, new ArrayList<>());
 			}
-		}		
+		} 
 	}
 
 

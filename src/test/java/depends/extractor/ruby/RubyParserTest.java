@@ -6,9 +6,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import depends.entity.repo.EntityRepo;
+import depends.extractor.FileParser;
+import depends.extractor.ParserCreator;
+import depends.extractor.ruby.jruby.JRubyFileParser;
 import depends.relations.Inferer;
-
-public abstract class RubyParserTest {
+public abstract class RubyParserTest implements ParserCreator{
 	protected  EntityRepo entityRepo ;
 	protected Inferer inferer ;
 
@@ -17,9 +19,9 @@ public abstract class RubyParserTest {
 		inferer = new Inferer(entityRepo,new RubyImportLookupStrategy(),new RubyBuiltInType());
 	}
 	
-	public RubyFileParser createParser(String src) {
+	public FileParser createFileParser(String src) {
 		ExecutorService executor = Executors.newSingleThreadExecutor();
-		return new RubyFileParser(src,entityRepo, executor,new IncludedFileLocator(includePaths()), inferer);
+		return new JRubyFileParser(src,entityRepo, executor,new IncludedFileLocator(includePaths()), inferer, this);
 	}
 
 	private List<String> includePaths() {

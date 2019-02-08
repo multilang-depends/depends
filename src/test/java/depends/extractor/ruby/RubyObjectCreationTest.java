@@ -11,15 +11,15 @@ import depends.deptypes.DependencyType;
 import depends.extractor.FileParser;
 import depends.relations.Relation;
 
-public class RubyMixinTest extends RubyParserTest {
+public class RubyObjectCreationTest extends RubyParserTest {
 	@Before
 	public void setUp() {
 		super.init();
 	}
 	@Test
-	public void test_mixin_relation() throws IOException {
+	public void test_relation() throws IOException {
 		String[] srcs = new String[] {
-	    		"./src/test/resources/ruby-code-examples/mix_in.rb",
+	    		"./src/test/resources/ruby-code-examples/object_creation.rb",
 	    	    };
 	    
 	    for (String src:srcs) {
@@ -27,9 +27,11 @@ public class RubyMixinTest extends RubyParserTest {
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
-        assertEquals(1,entityRepo.getEntity("MixedIn").getRelations().size());
-        Relation r = entityRepo.getEntity("MixedIn").getRelations().get(0);
-        assertEquals(DependencyType.MIXIN,r.getType());
-        assertEquals("ToBeMixin",r.getEntity().getRawName());
+        assertEquals(1,entityRepo.getEntity("T.foo").getRelations().size());
+        Relation r = entityRepo.getEntity("T.foo").getRelations().get(0);
+        assertEquals(DependencyType.INHERIT,r.getType());
+        assertEquals("Animal",r.getEntity().getRawName());
 	}
+	
+
 }

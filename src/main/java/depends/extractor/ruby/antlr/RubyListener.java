@@ -1,4 +1,4 @@
-package depends.extractor.ruby;
+package depends.extractor.ruby.antlr;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -7,6 +7,11 @@ import java.util.concurrent.ExecutorService;
 
 import depends.entity.VarEntity;
 import depends.entity.repo.EntityRepo;
+import depends.extractor.ParserCreator;
+import depends.extractor.ruby.IncludedFileLocator;
+import depends.extractor.ruby.RubyHandlerContext;
+import depends.extractor.ruby.RubyParser;
+import depends.extractor.ruby.RubyParserBaseListener;
 import depends.extractor.ruby.RubyParser.Alias_statementContext;
 import depends.extractor.ruby.RubyParser.Class_definitionContext;
 import depends.extractor.ruby.RubyParser.ExprArrayAccessContext;
@@ -82,8 +87,8 @@ public class RubyListener extends RubyParserBaseListener {
 	private ExpressionUsage expressionUsage;
 
 	public RubyListener(String fileFullPath, EntityRepo entityRepo, IncludedFileLocator includedFileLocator,
-			ExecutorService executorService, Inferer inferer) {
-		this.context = new RubyHandlerContext(entityRepo, includedFileLocator, executorService, inferer);
+			ExecutorService executorService, Inferer inferer, ParserCreator rubyWorker) {
+		this.context = new RubyHandlerContext(entityRepo, includedFileLocator, executorService, inferer, rubyWorker);
 		this.entityRepo = entityRepo;
 		expressionUsage = new ExpressionUsage(context, entityRepo, helper,inferer);
 		context.startFile(fileFullPath);

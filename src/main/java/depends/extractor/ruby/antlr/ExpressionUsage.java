@@ -1,11 +1,9 @@
-package depends.extractor.ruby;
+package depends.extractor.ruby.antlr;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.RuleContext;
 
-import depends.entity.Entity;
 import depends.entity.Expression;
-import depends.entity.VarEntity;
 import depends.entity.repo.IdGenerator;
 import depends.extractor.HandlerContext;
 import depends.extractor.ruby.RubyParser.ExprAssignContext;
@@ -67,16 +65,6 @@ public class ExpressionUsage {
 				expression.identifier = helper.getName(((ExprPrimaryContext)left).primary());
 				expression.rawType = null;//need deduce from right type
 				expression.autoVar = true;
-				Entity var = inferer.resolveName(context.lastContainer(), left.getText(), true);
-				if (var==null) {
-					VarEntity varEntity = new VarEntity(left.getText(),null,context.lastContainer(),idGenerator.generateId());
-					context.lastContainer().addVar(varEntity );
-				}else  {
-					if (var.equals(Inferer.externalType)){
-						VarEntity varEntity = new VarEntity(left.getText(),null,context.lastContainer(),idGenerator.generateId());
-						context.lastContainer().addVar(varEntity );						
-					}
-				}
 			}
 		}
 		if (ctx instanceof ExprAssignContext) {

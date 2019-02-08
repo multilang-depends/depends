@@ -14,17 +14,16 @@
 - resolve macros
 - parse extends relations
 - should resolve operator overriding
-- should parse all includes and remove cycling include path
-- extract all names and perform a list for final check
 - function type of KnR
-- add check - should resolve all macros, variants, functions, class types, etc in header file; 
 - find parameter related conditional statements
 - use STL to check whether the template is handled completely
 Macro should be unexpanded until last minutes, but some macros may neither vars nor functions, they could be certain informal format. **Which is difficult to handle **
  # Conditional Compliant Directives **Open** should we only handle the *visible* part, or everything of source code?
+
+#Ruby
+ 
 # Other
 http://www.dependency-analyzer.org/
-
 
 
 

@@ -28,7 +28,7 @@ public class JavaWorker extends AbstractLangWorker {
 
 
 	@Override
-	protected FileParser getFileParser(String fileFullPath) {
+	protected FileParser createFileParser(String fileFullPath) {
 		return new JavaFileParser(fileFullPath,entityRepo, inferer);
 	}
 

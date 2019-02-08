@@ -8,6 +8,8 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
+import depends.extractor.FileParser;
+
 public class RubyRequireTest extends RubyParserTest {
 	@Before
 	public void setUp() {
@@ -21,7 +23,7 @@ public class RubyRequireTest extends RubyParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    RubyFileParser parser = createParser(src);
+		    FileParser parser = createFileParser(src);
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();

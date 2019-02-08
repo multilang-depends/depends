@@ -65,7 +65,7 @@ public class Expression {
 	 */
 	public void deduceParentType(Inferer inferer) {
 		if (this.type==null) return;
-		deduceChildrenType(inferer);
+		//deduceChildrenType(inferer);
 		deduceTheParentType(inferer);
 	}
 

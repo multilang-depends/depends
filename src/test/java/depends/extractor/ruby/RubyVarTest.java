@@ -1,7 +1,6 @@
 package depends.extractor.ruby;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 
@@ -9,6 +8,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import depends.entity.FileEntity;
+import depends.entity.VarEntity;
+import depends.extractor.FileParser;
+import depends.relations.Inferer;
 import depends.util.FileUtil;
 
 public class RubyVarTest extends RubyParserTest {
@@ -23,13 +25,15 @@ public class RubyVarTest extends RubyParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    RubyFileParser parser = createParser(src);
+		    FileParser parser = createFileParser(src);
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
         FileEntity f = (FileEntity) (entityRepo.getEntity(FileUtil.uniqFilePath(srcs[0])));
         assertEquals(1,f.getVars().size());
-        assertEquals("var_1",f.getVars().get(0).getRawName());
+        VarEntity var = f.getVars().get(0);
+		assertEquals("var_1",var.getRawName());
+		assertEquals(Inferer.buildInType,var.getType());
 	}
 	
 }
