@@ -39,17 +39,21 @@ public class FileEntity extends ContainerEntity {
 		if (!lastName.startsWith("."))
 			lastName = "." + lastName;
 		for (Entity imported : this.importedTypes) {
-			String name = imported.getQualifiedName();
+			String name = imported.getQualifiedName(true);
 			if (!name.startsWith("."))
 				name = "." + name;
-			if (imported.getQualifiedName().endsWith(lastName))
-				return imported.getQualifiedName();
+			if (imported.getQualifiedName(true).endsWith(lastName))
+				return imported.getQualifiedName(true);
 		}
 		return null;
 	}
 	
+
 	@Override
-	public String getQualifiedName() {
+	public String getQualifiedName(boolean overrideFileWithPackage) {
+		if (!overrideFileWithPackage) {
+			return super.getQualifiedName();
+		}
 		if (this.getParent() == null) {
 			return "";
 		}

@@ -1,7 +1,5 @@
 package depends.extractor.ruby;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.IOException;
 
 import org.junit.Before;
@@ -9,7 +7,6 @@ import org.junit.Test;
 
 import depends.deptypes.DependencyType;
 import depends.extractor.FileParser;
-import depends.relations.Relation;
 
 public class RubyObjectCreationTest extends RubyParserTest {
 	@Before
@@ -27,10 +24,7 @@ public class RubyObjectCreationTest extends RubyParserTest {
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
-        assertEquals(1,entityRepo.getEntity("T.foo").getRelations().size());
-        Relation r = entityRepo.getEntity("T.foo").getRelations().get(0);
-        assertEquals(DependencyType.INHERIT,r.getType());
-        assertEquals("Animal",r.getEntity().getRawName());
+	    super.assertContainsRelation(entityRepo.getEntity("T.foo"), DependencyType.INHERIT, "Animal");
 	}
 	
 

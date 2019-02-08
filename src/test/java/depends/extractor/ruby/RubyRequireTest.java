@@ -8,6 +8,7 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
+import depends.deptypes.DependencyType;
 import depends.extractor.FileParser;
 
 public class RubyRequireTest extends RubyParserTest {
@@ -28,6 +29,8 @@ public class RubyRequireTest extends RubyParserTest {
 	    }
 	    inferer.resolveAllBindings();
         File f = new File(srcs[0]);
-        assertEquals(2,entityRepo.getEntity(f.getCanonicalPath()).getRelations().size());
+        File f2 = new File(srcs[1]);
+        
+        super.assertContainsRelation(entityRepo.getEntity(f.getCanonicalPath()), DependencyType.IMPORT, f2.getCanonicalPath());
 	}
 }

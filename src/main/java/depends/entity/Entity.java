@@ -51,15 +51,15 @@ public abstract class Entity {
 			this.qualifiedName = this.rawName;
 			return;
 		}
-		if (parent.getQualifiedName()==null) {
+		if (parent.getQualifiedName(true)==null) {
 			this.qualifiedName = this.rawName;
 			return;
 		}
-		if (parent.getQualifiedName().isEmpty()) {
+		if (parent.getQualifiedName(true).isEmpty()) {
 			this.qualifiedName = rawName;
 			return;
 		}
-		this.qualifiedName= parent.getQualifiedName()+"." + rawName;
+		this.qualifiedName= parent.getQualifiedName(true)+"." + rawName;
 		if (rawName.startsWith(".")) {
 			rawName = rawName.substring(2);
 		}
@@ -106,7 +106,11 @@ public abstract class Entity {
 		this.rawName = rawName;
 	}
 	
-	public String getQualifiedName() {
+	public final String getQualifiedName() {
+		return qualifiedName;
+	}
+
+	public String getQualifiedName(boolean overrideFileWithPackage) {
 		return qualifiedName;
 	}
 

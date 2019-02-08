@@ -65,10 +65,7 @@ public class RubyInheritTest extends RubyParserTest {
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
-        assertEquals(1,entityRepo.getEntity("Cat").getRelations().size());
-        Relation r = entityRepo.getEntity("Cat").getRelations().get(0);
-        assertEquals(DependencyType.INHERIT,r.getType());
-        assertEquals("Animal",r.getEntity().getQualifiedName());
+	    super.assertContainsRelation(entityRepo.getEntity("Cat"), DependencyType.INHERIT, "Animal");
 	}
 	
 	@Test
@@ -82,10 +79,7 @@ public class RubyInheritTest extends RubyParserTest {
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
-        assertEquals(1,entityRepo.getEntity("ZooCat").getRelations().size());
-        Relation r = entityRepo.getEntity("ZooCat").getRelations().get(0);
-        assertEquals(DependencyType.INHERIT,r.getType());
-        assertEquals("Zoo.Animal",r.getEntity().getQualifiedName());
+	    super.assertContainsRelation(entityRepo.getEntity("ZooCat"), DependencyType.INHERIT, "Zoo.Animal");
 	}
 	
 	@Test
