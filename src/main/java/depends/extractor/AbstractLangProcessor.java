@@ -13,7 +13,7 @@ import depends.matrix.DependencyGenerator;
 import depends.matrix.DependencyMatrix;
 import depends.relations.Inferer;
 import depends.util.FileTraversal;
-abstract public class AbstractLangWorker {
+abstract public class AbstractLangProcessor {
 	public abstract String supportedLanguage();
 	public abstract String[] fileSuffixes();
 	protected Inferer inferer;
@@ -23,7 +23,7 @@ abstract public class AbstractLangWorker {
 	private String[] includeDirs;
 	private DependencyGenerator dependencyGenerator;
 
-	public AbstractLangWorker(String inputDir, String[] includeDir) {
+	public AbstractLangProcessor(String inputDir, String[] includeDir) {
 		entityRepo = new EntityRepo();
 		this.inputSrcPath = inputDir;
 		this.includeDirs = includeDir;

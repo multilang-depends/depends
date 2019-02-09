@@ -3,15 +3,15 @@ package depends.extractor.java;
 import java.util.ArrayList;
 import java.util.List;
 
-import depends.extractor.AbstractLangWorker;
+import depends.extractor.AbstractLangProcessor;
 import depends.extractor.FileParser;
 import depends.relations.Inferer;
 
-public class JavaWorker extends AbstractLangWorker {
-    public static final String JAVA_LANG = "java";
-    public static final String JAVA_SUFFIX = ".java";
+public class JavaProcessor extends AbstractLangProcessor {
+    private static final String JAVA_LANG = "java";
+    private static final String JAVA_SUFFIX = ".java";
     
-    public JavaWorker(String inputDir, String[] includeDir) {
+    public JavaProcessor(String inputDir, String[] includeDir) {
     	super(inputDir,includeDir);
 		inferer = new Inferer(entityRepo,new JavaImportLookupStrategy(),new JavaBuiltInType());
     }

@@ -6,11 +6,11 @@ import java.nio.file.Files;
 import java.util.List;
 
 import depends.addons.DV8MappingFileBuilder;
-import depends.extractor.AbstractLangWorker;
-import depends.extractor.LangWorkers;
-import depends.extractor.cpp.CppWorker;
-import depends.extractor.java.JavaWorker;
-import depends.extractor.ruby.RubyWorker;
+import depends.extractor.AbstractLangProcessor;
+import depends.extractor.LangProcessorRegistration;
+import depends.extractor.cpp.CppProcessor;
+import depends.extractor.java.JavaProcessor;
+import depends.extractor.ruby.RubyProcessor;
 import depends.format.DependencyDumper;
 import depends.format.path.DotPathFilenameWritter;
 import depends.format.path.EmptyFilenameWritter;
@@ -62,11 +62,10 @@ public class Main {
 			includeDir = additionalIncludePaths.toArray(new String[] {});
 		}
 		
-		LangWorkers.getRegistry().register(new JavaWorker(inputDir, includeDir));
-		LangWorkers.getRegistry().register(new CppWorker(inputDir, includeDir));
-		LangWorkers.getRegistry().register(new RubyWorker(inputDir, includeDir));
-		
-		AbstractLangWorker worker = LangWorkers.getRegistry().getWorkerOf(lang);
+		LangRegister langRegister = new LangRegister(inputDir, includeDir);
+		langRegister.register();
+			
+		AbstractLangProcessor worker = LangProcessorRegistration.getRegistry().getProcessorOf(lang);
 		if (worker == null) {
 			System.out.println("Not support this language: " + lang);
 			return;

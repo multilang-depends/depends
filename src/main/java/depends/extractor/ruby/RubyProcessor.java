@@ -5,19 +5,19 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import depends.extractor.AbstractLangWorker;
+import depends.extractor.AbstractLangProcessor;
 import depends.extractor.FileParser;
 import depends.extractor.ParserCreator;
 import depends.extractor.ruby.antlr.RubyFileAntlrParser;
 import depends.extractor.ruby.jruby.JRubyFileParser;
 import depends.relations.Inferer;
 
-public class RubyWorker extends AbstractLangWorker implements ParserCreator{
+public class RubyProcessor extends AbstractLangProcessor implements ParserCreator{
     private static final String LANG = "ruby";
     private static final String[] SUFFIX = new String[] {".rb"};
     IncludedFileLocator preprocessorHandler;
 	private ExecutorService executor;
-    public RubyWorker(String inputDir, String[] includeDir) {
+    public RubyProcessor(String inputDir, String[] includeDir) {
     	super(inputDir,includeDir);
     	preprocessorHandler = new IncludedFileLocator(super.includePaths());
 		inferer = new Inferer(entityRepo,new RubyImportLookupStrategy(),new RubyBuiltInType());
