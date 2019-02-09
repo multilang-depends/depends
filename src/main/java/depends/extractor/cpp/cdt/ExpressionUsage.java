@@ -25,7 +25,7 @@ public class ExpressionUsage {
 
 	public void foundCallExpressionOfFunctionStyle(String functionName, IASTDeclarator declarator) {
 		/* create expression and link it with parent*/
-		Expression expression = new Expression(idGenerator.generateId(),null);
+		Expression expression = new Expression(idGenerator.generateId());
 		context.lastContainer().addExpression(declarator,expression);
 		expression.isCall = true;
 		expression.identifier = functionName;
@@ -34,7 +34,7 @@ public class ExpressionUsage {
 	public void foundExpression(IASTExpression ctx) {
 		Expression parent = findParentInStack(ctx);
 		/* create expression and link it with parent*/
-		Expression expression = new Expression(idGenerator.generateId(),parent==null?null:parent.id);
+		Expression expression = new Expression(idGenerator.generateId());
 		expression.text = ctx.getRawSignature(); //for debug purpose. no actual effect
 		context.lastContainer().addExpression(ctx,expression);
 

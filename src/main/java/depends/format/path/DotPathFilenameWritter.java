@@ -4,8 +4,6 @@ import java.io.File;
 
 import org.apache.commons.io.FilenameUtils;
 
-import depends.matrix.FilenameWritter;
-
 public class DotPathFilenameWritter implements FilenameWritter {
 	@Override
 	public String reWrite(String originalPath) {

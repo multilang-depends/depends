@@ -1,22 +1,18 @@
 package depends.extractor.cpp;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import depends.extractor.AbstractLangWorker;
+import depends.entity.repo.BuiltInType;
+import depends.extractor.AbstractLangProcessor;
 import depends.extractor.FileParser;
 import depends.extractor.cpp.cdt.CdtCppFileParser;
 import depends.extractor.cpp.cdt.PreprocessorHandler;
-import depends.relations.Inferer;
+import depends.relations.ImportLookupStrategy;
 
-public class CppWorker extends AbstractLangWorker {
+public class CppProcessor extends AbstractLangProcessor {
     private static final String LANG = "cpp";
     private static final String[] SUFFIX = new String[] {".cpp",".cc",".c",".h",".hpp",".hh"};
     PreprocessorHandler preprocessorHandler;
-    public CppWorker(String inputDir, String[] includeDir) {
+    public CppProcessor(String inputDir, String[] includeDir) {
     	super(inputDir,includeDir);
-    	preprocessorHandler = new PreprocessorHandler(super.includePaths());
-		inferer = new Inferer(entityRepo,new CppImportLookupStrategy(),new CppBuiltInType());
     }
 
 
@@ -33,11 +29,18 @@ public class CppWorker extends AbstractLangWorker {
 
 	@Override
 	protected FileParser createFileParser(String fileFullPath) {
+    	preprocessorHandler = new PreprocessorHandler(super.includePaths());
 		return new CdtCppFileParser(fileFullPath,entityRepo,preprocessorHandler,inferer);
-		//return new Antlr4CppFileParser(fileFullPath,entityRepo,super.includePaths());
 	}
 
-	public List<String> getErrors(){
-		return new ArrayList<String>(preprocessorHandler.getNotExistedIncludedFiles());
+	@Override
+	public ImportLookupStrategy getImportLookupStrategy() {
+		return new CppImportLookupStrategy();
+	}
+
+
+	@Override
+	public BuiltInType getBuiltInType() {
+		return new CppBuiltInType();
 	}
 }

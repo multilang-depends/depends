@@ -7,7 +7,6 @@ import depends.relations.Inferer;
 
 public class Expression {
 	public Integer id;
-	public Integer parentId;
 	public Integer deduceTypeBasedId; //by default, parent expression type determined by most left child
 	public Expression parent;
 	private List<Expression> deduceTypeChildren = new ArrayList<>();
@@ -38,9 +37,8 @@ public class Expression {
 		deduceParentType(inferer);
 	}
 	
-	public Expression(Integer id, Integer parentId) {
+	public Expression(Integer id) {
 		this.id = id;
-		this.parentId = parentId;
 	}
 
 	@Override

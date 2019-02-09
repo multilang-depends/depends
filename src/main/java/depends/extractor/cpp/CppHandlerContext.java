@@ -1,4 +1,4 @@
-package depends.extractor.cpp.cdt;
+package depends.extractor.cpp;
 
 import depends.entity.Entity;
 import depends.entity.PackageEntity;

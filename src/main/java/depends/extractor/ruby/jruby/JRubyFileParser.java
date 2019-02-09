@@ -17,7 +17,6 @@ import depends.entity.repo.EntityRepo;
 import depends.extractor.FileParser;
 import depends.extractor.ParserCreator;
 import depends.extractor.ruby.IncludedFileLocator;
-import depends.extractor.ruby.antlr.RubyFileAntlrParser;
 import depends.relations.Inferer;
 import depends.util.FileUtil;
 public class JRubyFileParser implements FileParser {
