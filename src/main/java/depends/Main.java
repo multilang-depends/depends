@@ -1,22 +1,17 @@
 package depends;
 
 import java.io.File;
-import java.io.PrintStream;
-import java.nio.file.Files;
 import java.util.List;
 
 import depends.addons.DV8MappingFileBuilder;
 import depends.extractor.AbstractLangProcessor;
 import depends.extractor.LangProcessorRegistration;
-import depends.extractor.cpp.CppProcessor;
-import depends.extractor.java.JavaProcessor;
-import depends.extractor.ruby.RubyProcessor;
 import depends.format.DependencyDumper;
 import depends.format.path.DotPathFilenameWritter;
 import depends.format.path.EmptyFilenameWritter;
+import depends.format.path.FilenameWritter;
 import depends.matrix.DependencyGenerator;
 import depends.matrix.FileDependencyGenerator;
-import depends.matrix.FilenameWritter;
 import depends.matrix.FunctionDependencyGenerator;
 import depends.util.FileUtil;
 import depends.util.FolderCollector;
@@ -65,27 +60,27 @@ public class Main {
 		LangRegister langRegister = new LangRegister(inputDir, includeDir);
 		langRegister.register();
 			
-		AbstractLangProcessor worker = LangProcessorRegistration.getRegistry().getProcessorOf(lang);
-		if (worker == null) {
-			System.out.println("Not support this language: " + lang);
+		AbstractLangProcessor langProcessor = LangProcessorRegistration.getRegistry().getProcessorOf(lang);
+		if (langProcessor == null) {
+			System.err.println("Not support this language: " + lang);
 			return;
 		}
 
 		long startTime = System.currentTimeMillis();
 		DependencyGenerator dependencyGenerator = app.getGranularity().equals("file")?
 				(new FileDependencyGenerator()):(new FunctionDependencyGenerator());
-		worker.setDependencyGenerator(dependencyGenerator);
-		worker.work();
+		langProcessor.setDependencyGenerator(dependencyGenerator);
+		langProcessor.buildDependencies();
 		if (app.isStripLeadingPath()) {
-			worker.getDependencies().stripFilenames(inputDir);
+			langProcessor.getDependencies().stripFilenames(inputDir);
 		}
 		
 		FilenameWritter filenameWritter = new EmptyFilenameWritter();
 		if (app.getNamePathPattern().equals("dot")) {
 			filenameWritter = new DotPathFilenameWritter();
 		}
-		worker.getDependencies().reWriteFilenamePattern(filenameWritter );
-		DependencyDumper output = new DependencyDumper(worker.getDependencies(),worker.getErrors());
+		langProcessor.getDependencies().reWriteFilenamePattern(filenameWritter );
+		DependencyDumper output = new DependencyDumper(langProcessor.getDependencies());
 		output.outputResult(outputName,outputDir,outputFormat);
 		long endTime = System.currentTimeMillis();
 		System.out.println("Consumed time: " + (float) ((endTime - startTime) / 1000.00) + " s,  or "

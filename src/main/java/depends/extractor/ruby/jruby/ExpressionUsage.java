@@ -42,7 +42,7 @@ public class ExpressionUsage {
 		Expression parent = findParentInStack(ctx);
 		System.out.println("expr " + ctx.toString());
 		/* create expression and link it with parent*/
-		expression = new Expression(idGenerator.generateId(),parent==null?null:parent.id);
+		expression = new Expression(idGenerator.generateId());
 		expression.parent = parent;
 		if (expression.parent!=null) {
 			if (expression.parent.deduceTypeBasedId==null) 

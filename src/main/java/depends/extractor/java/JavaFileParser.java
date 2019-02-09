@@ -22,13 +22,13 @@ public class JavaFileParser implements depends.extractor.FileParser{
         this.entityRepo = entityRepo;
 	}
 
-
+	@Override
 	public void parse() throws IOException {
         CharStream input = CharStreams.fromFileName(fileFullPath);
         Lexer lexer = new JavaLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         JavaParser parser = new JavaParser(tokens);
-        JavaEntitiesListener bridge = new JavaEntitiesListener(fileFullPath, entityRepo);
+        JavaListener bridge = new JavaListener(fileFullPath, entityRepo);
 	    ParseTreeWalker walker = new ParseTreeWalker();
 	    walker.walk(bridge, parser.compilationUnit());
     }

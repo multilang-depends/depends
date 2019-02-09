@@ -13,15 +13,12 @@ import edu.emory.mathcs.backport.java.util.Arrays;
 public class DependencyDumper {
 
 	private DependencyMatrix dependencyMatrix;
-	private List<String> errors;
 
-	public DependencyDumper(DependencyMatrix dependencies, List<String> errors) {
+	public DependencyDumper(DependencyMatrix dependencies) {
 		this.dependencyMatrix = dependencies;
-		this.errors = errors;
 	}
 	
 	public void outputResult(String projectName, String outputDir, String[] outputFormat) {
-        outputErrors();
         outputDeps(projectName,outputDir,outputFormat);
 	}
 	
@@ -41,9 +38,4 @@ public class DependencyDumper {
 		}
     }
 	
-	private void outputErrors() {
-		for (String e:errors) {
-			System.err.println(e);
-		}
-	}
 }

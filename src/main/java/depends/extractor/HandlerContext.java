@@ -153,14 +153,14 @@ public abstract class HandlerContext {
 	}
 
 
-	public void foundVarDefinition(List<String> varNames, String type, List<String> typeArguments) {
+	public void foundVarDefinitions(List<String> varNames, String type, List<String> typeArguments) {
 		for (String varName : varNames) {
-			foundVarDefintion(varName,type,typeArguments);
+			foundVarDefinition(varName,type,typeArguments);
 		}
 	}
 
 
-	public void foundVarDefintion(String varName, String type, List<String> typeArguments) {
+	public void foundVarDefinition(String varName, String type, List<String> typeArguments) {
 		VarEntity var = new VarEntity(varName, type, lastContainer(), idGenerator.generateId());
 		var.addTypeParameter(typeArguments);
 		lastContainer().addVar(var);		
@@ -168,7 +168,7 @@ public abstract class HandlerContext {
 
 	public void foundEnumConstDefinition(String varName) {
 		String type = lastContainer().getRawName();
-		foundVarDefintion(varName,type,new ArrayList<>());
+		foundVarDefinition(varName,type,new ArrayList<>());
 	}
 	
 	protected Stack<Entity> entityStack = new Stack<Entity>();

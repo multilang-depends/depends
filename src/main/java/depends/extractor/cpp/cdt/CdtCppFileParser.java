@@ -42,7 +42,7 @@ public class CdtCppFileParser extends CppFileParser {
 			return;
 		}
 		
-		CdtCppEntitiesListener bridge = new CdtCppEntitiesListener(fileFullPath, entityRepo, preprocessorHandler,inferer);
+		CppVisitor bridge = new CppVisitor(fileFullPath, entityRepo, preprocessorHandler,inferer);
 		IASTTranslationUnit translationUnit = (new CDTParser(preprocessorHandler.getIncludePaths())).parse(fileFullPath);
 		translationUnit.accept(bridge);
 	}

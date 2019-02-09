@@ -20,7 +20,7 @@ public class ExpressionUsage {
 	public void foundExpression(ExpressionContext ctx) {
 		Expression parent = findParentInStack(ctx);
 		/* create expression and link it with parent*/
-		Expression expression = new Expression(idGenerator.generateId(),parent==null?null:parent.id);
+		Expression expression = new Expression(idGenerator.generateId());
 		context.lastContainer().addExpression(ctx,expression);
 
 		expression.text = ctx.getText(); //for debug purpose. no actual effect

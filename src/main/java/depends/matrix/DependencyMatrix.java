@@ -7,6 +7,7 @@ import java.util.HashMap;
 
 import depends.entity.Entity;
 import depends.entity.repo.EntityRepo;
+import depends.format.path.FilenameWritter;
 
 public class DependencyMatrix {
     private HashMap<String, DependencyPair> dependencyPairs = new HashMap<>();

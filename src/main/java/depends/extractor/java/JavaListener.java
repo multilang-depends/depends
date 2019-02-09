@@ -37,13 +37,13 @@ import depends.extractor.java.JavaParser.TypeParameterContext;
 import depends.extractor.java.JavaParser.TypeParametersContext;
 import depends.extractor.java.JavaParserBaseListener;
 
-public class JavaEntitiesListener extends JavaParserBaseListener {
+public class JavaListener extends JavaParserBaseListener {
 	private JavaHandlerContext context;
 	private AnnotationProcessor annotationProcessor;
 	private ExpressionUsage expressionUsage;
 	private EntityRepo entityRepo;
 
-	public JavaEntitiesListener(String fileFullPath, EntityRepo entityRepo) {
+	public JavaListener(String fileFullPath, EntityRepo entityRepo) {
 		this.context = new JavaHandlerContext(entityRepo);
 		this.entityRepo = entityRepo;
 		annotationProcessor = new AnnotationProcessor(context);
@@ -225,7 +225,7 @@ public class JavaEntitiesListener extends JavaParserBaseListener {
 		List<String> varNames = VariableDeclaratorsContextHelper.getVariables(ctx.variableDeclarators());
 		String type = ClassTypeContextHelper.getClassName(ctx.typeType());
 		List<String> typeArguments = ClassTypeContextHelper.getTypeArguments(ctx.typeType());
-		context.foundVarDefinition(varNames, type,typeArguments);
+		context.foundVarDefinitions(varNames, type,typeArguments);
 		annotationProcessor.processAnnotationModifier(ctx, "classBodyDeclaration");
 		super.enterFieldDeclaration(ctx);
 	}
@@ -233,7 +233,7 @@ public class JavaEntitiesListener extends JavaParserBaseListener {
 	@Override
 	public void enterConstDeclaration(ConstDeclarationContext ctx) {
 		List<String> typeArguments = ClassTypeContextHelper.getTypeArguments(ctx.typeType());
-		context.foundVarDefinition(VariableDeclaratorsContextHelper.getVariables(ctx.constantDeclarator()),
+		context.foundVarDefinitions(VariableDeclaratorsContextHelper.getVariables(ctx.constantDeclarator()),
 				ClassTypeContextHelper.getClassName(ctx.typeType()),typeArguments);
 		annotationProcessor.processAnnotationModifier(ctx, "interfaceBodyDeclaration");
 		super.enterConstDeclaration(ctx);
@@ -262,7 +262,7 @@ public class JavaEntitiesListener extends JavaParserBaseListener {
 	@Override
 	public void enterAnnotationConstantRest(AnnotationConstantRestContext ctx) {
 		// TODO: no variable type defined in annotation const？
-		context.foundVarDefinition(VariableDeclaratorsContextHelper.getVariables(ctx.variableDeclarators()), "",new ArrayList<>());
+		context.foundVarDefinitions(VariableDeclaratorsContextHelper.getVariables(ctx.variableDeclarators()), "",new ArrayList<>());
 		super.enterAnnotationConstantRest(ctx);
 	}
 
@@ -272,14 +272,14 @@ public class JavaEntitiesListener extends JavaParserBaseListener {
 	@Override
 	public void enterLocalVariableDeclaration(LocalVariableDeclarationContext ctx) {
 		List<String> typeArguments = ClassTypeContextHelper.getTypeArguments(ctx.typeType());
-		context.foundVarDefinition(VariableDeclaratorsContextHelper.getVariables((ctx.variableDeclarators())),
+		context.foundVarDefinitions(VariableDeclaratorsContextHelper.getVariables((ctx.variableDeclarators())),
 				ClassTypeContextHelper.getClassName(ctx.typeType()),typeArguments);
 		super.enterLocalVariableDeclaration(ctx);
 	}
 
 	public void enterEnhancedForControl(EnhancedForControlContext ctx) {
 		List<String> typeArguments = ClassTypeContextHelper.getTypeArguments(ctx.typeType());
-		context.foundVarDefinition(VariableDeclaratorsContextHelper.getVariable((ctx.variableDeclaratorId())),
+		context.foundVarDefinitions(VariableDeclaratorsContextHelper.getVariable((ctx.variableDeclaratorId())),
 				ClassTypeContextHelper.getClassName(ctx.typeType()),typeArguments);
 		super.enterEnhancedForControl(ctx);
 	}
@@ -290,7 +290,7 @@ public class JavaEntitiesListener extends JavaParserBaseListener {
 	@Override
 	public void enterResource(ResourceContext ctx) {
 		List<String> typeArguments = ClassTypeContextHelper.getTypeArguments(ctx.classOrInterfaceType());
-		context.foundVarDefintion(ctx.variableDeclaratorId().IDENTIFIER().getText(),
+		context.foundVarDefinition(ctx.variableDeclaratorId().IDENTIFIER().getText(),
 				IdentifierContextHelper.getName(ctx.classOrInterfaceType().IDENTIFIER()),typeArguments);
 		super.enterResource(ctx);
 	}
