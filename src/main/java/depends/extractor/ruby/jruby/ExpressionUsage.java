@@ -70,7 +70,12 @@ public class ExpressionUsage {
 			String name = helper.getName(ctx);
 			if (name.equals("new")) {
 				expression.isCreate = true;
-				expression.identifier = helper.getName(ctx.childNodes().get(0));
+				List<Node> childNodes = ctx.childNodes();
+				if (childNodes.size()>0) {
+					expression.identifier = helper.getName(ctx.childNodes().get(0));
+				}else {
+					expression.identifier = context.currentType().getRawName();
+				}
 				expression.rawType = expression.identifier ;
 				expression.deriveTypeFromChild  = false;
 			}
