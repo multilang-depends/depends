@@ -9,7 +9,7 @@ import depends.relations.ImportLookupStrategy;
 
 public class CppProcessor extends AbstractLangProcessor {
     private static final String LANG = "cpp";
-    private static final String[] SUFFIX = new String[] {".cpp",".cc",".c",".h",".hpp",".hh"};
+    private static final String[] SUFFIX = new String[] {".cpp",".cc",".c",".h",".hpp",".hh", ".cxx",".hxx"};
     PreprocessorHandler preprocessorHandler;
     public CppProcessor(String inputDir, String[] includeDir) {
     	super(inputDir,includeDir);
