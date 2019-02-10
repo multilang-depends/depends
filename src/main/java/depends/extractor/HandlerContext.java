@@ -8,6 +8,7 @@ import depends.entity.ContainerEntity;
 import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.FunctionEntity;
+import depends.entity.PackageEntity;
 import depends.entity.AliasEntity;
 import depends.entity.TypeEntity;
 import depends.entity.VarEntity;
@@ -103,6 +104,15 @@ public abstract class HandlerContext {
 
 	public FileEntity currentFile() {
 		return currentFileEntity;
+	}
+	
+	public ContainerEntity globalScope() {
+		Entity global = entityRepo.getEntity(EntityRepo.GLOBAL_SCOPE_NAME);
+		if (global==null) {
+			global = new PackageEntity(EntityRepo.GLOBAL_SCOPE_NAME,idGenerator.generateId());
+			entityRepo.add(global);
+		}
+		return (ContainerEntity)global;
 	}
 
 	public Entity latestValidContainer() {

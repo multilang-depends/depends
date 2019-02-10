@@ -45,6 +45,7 @@ module M
 end
 
 module Block
-block { a =1; }
+    block { a =1; }
 end
+
 

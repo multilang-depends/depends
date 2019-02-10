@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ExecutorService;
 
+import depends.entity.ContainerEntity;
 import depends.entity.Entity;
 import depends.entity.PackageEntity;
 import depends.entity.repo.EntityRepo;
@@ -85,5 +86,6 @@ public class RubyHandlerContext extends HandlerContext {
 		if (entity.getId()!=-1) return true;
 		return false;
 	}
+
 
 }

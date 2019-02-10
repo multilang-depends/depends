@@ -10,6 +10,7 @@ import org.junit.Test;
 import depends.entity.ContainerEntity;
 import depends.entity.FunctionEntity;
 import depends.entity.TypeEntity;
+import depends.entity.repo.EntityRepo;
 import depends.extractor.FileParser;
 
 public class RubyVarTest extends RubyParserTest {
@@ -151,6 +152,21 @@ public class RubyVarTest extends RubyParserTest {
 	    ContainerEntity c = (ContainerEntity)(entityRepo.getEntity("Block"));
 	    assertEquals(1,c.getVars().size());
 	    assertContainsVarWithRawName(c,"a");
+	}
+	
+	@Test
+	public void test_global_var()throws IOException {
+		String[] srcs = new String[] {
+	    		"./src/test/resources/ruby-code-examples/auto_var.rb",
+	    	    };
+	    
+	    for (String src:srcs) {
+		    FileParser parser = createFileParser(src);
+		    parser.parse();
+	    }
+	    ContainerEntity c = (ContainerEntity)(entityRepo.getEntity(EntityRepo.GLOBAL_SCOPE_NAME));
+	    assertEquals(1,c.getVars().size());
+	    assertContainsVarWithRawName(c,"global_var");
 	}
 }
 

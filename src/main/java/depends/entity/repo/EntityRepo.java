@@ -9,6 +9,7 @@ import depends.entity.MultiDeclareEntities;
 public class EntityRepo extends IdGenerator{
 	public HashMap<String, Entity> allEntieisByName = new HashMap<>();
 	public HashMap<Integer, Entity> allEntitiesById = new HashMap<>();
+	public static final String GLOBAL_SCOPE_NAME = "::GLOBAL::";
 
 	public EntityRepo() {
 	}

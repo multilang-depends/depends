@@ -177,14 +177,14 @@ public class JRubyVisitor extends NoopVisitor {
 
 	@Override
 	public Object visitGlobalVarNode(GlobalVarNode node) {
-		// TODO Auto-generated method stub
+		foundVar(context.globalScope(),node.getName());
 		return super.visitGlobalVarNode(node);
 	}
 
 
 	@Override
 	public Object visitInstVarNode(InstVarNode node) {
-		// TODO Auto-generated method stub
+		foundVar(context.currentType(),node.getName());
 		return super.visitInstVarNode(node);
 	}
 
@@ -231,7 +231,7 @@ public class JRubyVisitor extends NoopVisitor {
 
 	@Override
 	public Object visitGlobalAsgnNode(GlobalAsgnNode node) {
-		// TODO Auto-generated method stub
+		foundVar(context.globalScope(),node.getName());
 		return super.visitGlobalAsgnNode(node);
 	}
 
