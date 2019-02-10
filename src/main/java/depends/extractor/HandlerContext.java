@@ -158,12 +158,26 @@ public abstract class HandlerContext {
 			foundVarDefinition(varName,type,typeArguments);
 		}
 	}
-
+	
+	public void foundVarDefinition(ContainerEntity container,String varName) {
+		if (container==null) {
+			System.err.println("potentail error:" + varName + " has no container");
+			return;
+		}
+		VarEntity var = new VarEntity(varName, null, container, idGenerator.generateId());
+		container.addVar(var);
+	}
 
 	public void foundVarDefinition(String varName, String type, List<String> typeArguments) {
 		VarEntity var = new VarEntity(varName, type, lastContainer(), idGenerator.generateId());
 		var.addTypeParameter(typeArguments);
 		lastContainer().addVar(var);		
+	}
+	
+	public void addMethodParameter(String paramName) {
+		if (currentFunction()==null) return;
+		VarEntity varEntity = new VarEntity(paramName,null,currentFunction(),idGenerator.generateId());
+		currentFunction().addParameter(varEntity);		
 	}
 
 	public void foundEnumConstDefinition(String varName) {

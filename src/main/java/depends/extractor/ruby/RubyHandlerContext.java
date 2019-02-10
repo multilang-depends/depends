@@ -79,5 +79,11 @@ public class RubyHandlerContext extends HandlerContext {
 		} 
 	}
 
+	public boolean isNameExist(String rawName) {
+		Entity entity = inferer.resolveName(lastContainer(), rawName, true);
+		if (entity==null) return false;
+		if (entity.getId()!=-1) return true;
+		return false;
+	}
 
 }
