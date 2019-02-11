@@ -19,7 +19,6 @@ public class Expression {
 	public boolean isLogic = false;
 	public boolean isCreate = false;
 	public boolean isCast = false;
-	public boolean autoVar = false;
 	public boolean deriveTypeFromChild = true;
 	private TypeEntity type; // the type we care - for relation calculation. 
 	                         //for leaf, it equals to referredEntity.getType. otherwise, depends on child's type strategy
@@ -31,7 +30,15 @@ public class Expression {
 	public void setType(TypeEntity type, Entity referredEntity, Inferer inferer) {
 		if (this.type!=null) return;
 		this.type = type;
-		this.referredEntity  = referredEntity;
+		if (this.identifier!=null && this.identifier.equals("bar")) {
+			System.out.println("helo");
+		}
+		if (this.referredEntity==null) {
+			this.referredEntity  = referredEntity;
+		}else if (this.referredEntity.equals(Inferer.buildInType)) {
+			if (referredEntity!=null)
+				this.referredEntity = referredEntity;
+		}
 		if (this.referredEntity==null)
 			this.referredEntity = type;
 		deduceParentType(inferer);
@@ -63,15 +70,9 @@ public class Expression {
 	 */
 	public void deduceParentType(Inferer inferer) {
 		if (this.type==null) return;
-		//deduceChildrenType(inferer);
 		deduceTheParentType(inferer);
 	}
 
-	private void deduceChildrenType(Inferer inferer) {
-		for (Expression child:this.deduceTypeChildren) {
-			child.setType(type, type, inferer);
-		}
-	}
 
 	private void deduceTheParentType(Inferer inferer) {
 		if (this.parent==null) return;

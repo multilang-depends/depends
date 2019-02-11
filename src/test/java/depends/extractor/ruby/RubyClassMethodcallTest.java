@@ -1,7 +1,5 @@
 package depends.extractor.ruby;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.IOException;
 
 import org.junit.Before;
@@ -29,9 +27,9 @@ public class RubyClassMethodcallTest extends RubyParserTest {
 	    }
 	    inferer.resolveAllBindings();
 	    FunctionEntity function = (FunctionEntity)(entityRepo.getEntity("called_from"));
-	    this.assertContainsRelation(function, DependencyType.CALL, "Foo1");
-	    this.assertContainsRelation(function, DependencyType.CALL, "Foo2");
-	    this.assertContainsRelation(function, DependencyType.CALL, "Foo3");
+	    this.assertContainsRelation(function, DependencyType.CALL, "Foo1.bar");
+	    this.assertContainsRelation(function, DependencyType.CALL, "Foo2.bar");
+	    this.assertContainsRelation(function, DependencyType.CALL, "Foo3.bar");
 	}
 	
 }

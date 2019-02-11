@@ -16,6 +16,10 @@ public class VarEntity extends ContainerEntity {
 		functionCalls = new ArrayList<>();
 	}
 
+	public void setRawType(String rawType) {
+		this.rawType =rawType;
+	}
+	
 	public String getRawType() {
 		return rawType;
 	}
@@ -49,4 +53,6 @@ public class VarEntity extends ContainerEntity {
 	public void addFunctionCall(String fname) {
 		this.functionCalls.add(new FunctionCall(fname));
 	}
+
+
 }

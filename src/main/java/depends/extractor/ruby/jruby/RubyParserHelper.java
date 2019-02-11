@@ -21,6 +21,9 @@ import org.jrubyparser.ast.Node;
 import org.jrubyparser.ast.UnaryCallNode;
 import org.jrubyparser.ast.VCallNode;
 
+import depends.entity.ContainerEntity;
+import depends.extractor.ruby.RubyHandlerContext;
+
 public class RubyParserHelper {
 	public String getName(Node node) {
 		if (node instanceof INameNode)
@@ -78,5 +81,14 @@ public class RubyParserHelper {
 			return ((INameNode)receiver).getName();
 		}
 		return null;
+	}
+
+	public ContainerEntity getScopeOfVar(AssignableNode node, RubyHandlerContext context) {
+		if (node instanceof LocalAsgnNode) return context.lastContainer();
+		if (node instanceof InstAsgnNode) return context.currentType();
+		if (node instanceof ClassVarAsgnNode) return context.currentType();
+		if (node instanceof GlobalAsgnNode) return context.globalScope();
+		if (node instanceof DAsgnNode) return context.lastContainer();
+		return context.lastContainer();
 	}
 }

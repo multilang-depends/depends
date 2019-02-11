@@ -29,10 +29,7 @@ public class RubyInheritTest extends RubyParserTest {
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
-        assertEquals(1,entityRepo.getEntity("Cat").getRelations().size());
-        Relation r = entityRepo.getEntity("Cat").getRelations().get(0);
-        assertEquals(DependencyType.INHERIT,r.getType());
-        assertEquals("Animal",r.getEntity().getRawName());
+	    this.assertContainsRelation(entityRepo.getEntity("Cat"), DependencyType.INHERIT, "Animal");
 	}
 	
 	@Test
@@ -47,10 +44,7 @@ public class RubyInheritTest extends RubyParserTest {
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
-        assertEquals(1,entityRepo.getEntity("Cat").getRelations().size());
-        Relation r = entityRepo.getEntity("Cat").getRelations().get(0);
-        assertEquals(DependencyType.INHERIT,r.getType());
-        assertEquals("Animal",r.getEntity().getRawName());
+	    this.assertContainsRelation(entityRepo.getEntity("Cat"), DependencyType.INHERIT, "Animal");
 	}
 	
 	
@@ -93,10 +87,7 @@ public class RubyInheritTest extends RubyParserTest {
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
-        assertEquals(1,entityRepo.getEntity("Zoo.Cow").getRelations().size());
-        Relation r = entityRepo.getEntity("Zoo.Cow").getRelations().get(0);
-        assertEquals(DependencyType.INHERIT,r.getType());
-        assertEquals("Zoo.Animal",r.getEntity().getQualifiedName());
+	    this.assertContainsRelation(entityRepo.getEntity("Zoo.Cow"), DependencyType.INHERIT, "Zoo.Animal");
 	}
 	
 	@Ignore

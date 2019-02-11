@@ -180,14 +180,20 @@ public abstract class HandlerContext {
 		}
 	}
 	
-	public void foundVarDefinition(ContainerEntity container,String varName) {
+	public VarEntity foundVarDefinition(ContainerEntity container,String varName) {
 		if (container==null) {
 			System.err.println("potentail error:" + varName + " has no container");
-			return;
+			return null;
 		}
-		VarEntity var = new VarEntity(varName, null, container, idGenerator.generateId());
+		
+		VarEntity var = getVar(container,varName);
+		if (var!=null) return var;
+		var = new VarEntity(varName, null, container, idGenerator.generateId());
 		container.addVar(var);
+		return var;
 	}
+	
+
 
 	public void foundVarDefinition(String varName, String type, List<String> typeArguments) {
 		VarEntity var = new VarEntity(varName, type, lastContainer(), idGenerator.generateId());
@@ -217,11 +223,11 @@ public abstract class HandlerContext {
 		entityStack.pop();
 	}
 	
-	public boolean isNameExist(String rawName) {
-		Entity entity = inferer.resolveName(lastContainer(), rawName, true);
-		if (entity==null) return false;
-		if (entity.getId()!=-1) return true;
-		return false;
+	private VarEntity getVar(ContainerEntity container, String varName) {
+		Entity entity = inferer.resolveName(container, varName, true); //TODO: should be check based on local/class/global
+		if (entity ==null ) return null;
+		if (entity instanceof VarEntity) return (VarEntity)entity;
+		return null;
 	}
 
 	public Entity foundEntityWithName(String rawName) {
