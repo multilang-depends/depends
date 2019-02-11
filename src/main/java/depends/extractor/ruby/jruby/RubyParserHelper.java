@@ -9,6 +9,7 @@ import org.jrubyparser.ast.ClassVarAsgnNode;
 import org.jrubyparser.ast.ClassVarDeclNode;
 import org.jrubyparser.ast.ConstDeclNode;
 import org.jrubyparser.ast.DAsgnNode;
+import org.jrubyparser.ast.DefsNode;
 import org.jrubyparser.ast.FCallNode;
 import org.jrubyparser.ast.GlobalAsgnNode;
 import org.jrubyparser.ast.INameNode;
@@ -61,5 +62,21 @@ public class RubyParserHelper {
 			}
 		}
 		return names;
+	}
+
+	public String getReciever(Node ctx) {
+		Node receiver = null;
+		if (ctx instanceof CallNode) {
+			receiver = ((CallNode)ctx).getReceiver();
+		}else if (ctx instanceof DefsNode) {
+			receiver = ((DefsNode)ctx).getReceiver();
+		}
+		if (receiver==null) {
+			return null;
+		}
+		if (receiver instanceof INameNode) {
+			return ((INameNode)receiver).getName();
+		}
+		return null;
 	}
 }

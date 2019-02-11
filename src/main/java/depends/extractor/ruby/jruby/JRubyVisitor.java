@@ -30,6 +30,7 @@ import org.jrubyparser.ast.LocalVarNode;
 import org.jrubyparser.ast.ModuleNode;
 import org.jrubyparser.ast.Node;
 import org.jrubyparser.ast.RootNode;
+import org.jrubyparser.ast.SelfNode;
 import org.jrubyparser.ast.StrNode;
 import org.jrubyparser.ast.SymbolNode;
 import org.jrubyparser.ast.UnaryCallNode;
@@ -88,8 +89,8 @@ public class JRubyVisitor extends NoopVisitor {
 			String name1 = helper.getName(colon2ConstNode.getLeftNode());
 			String superName = colon2ConstNode.getName();
 			context.foundExtends(name1 + "." + superName);
-		}else {
-			if (superNode!=null) {
+		} else {
+			if (superNode != null) {
 				System.err.println("cannot support the super node style" + superNode.toString());
 			}
 		}
@@ -101,7 +102,7 @@ public class JRubyVisitor extends NoopVisitor {
 
 	@Override
 	public Object visitRootNode(RootNode node) {
-		//System.out.println(node);
+		System.out.println(node);
 		return super.visitRootNode(node);
 	}
 
@@ -138,7 +139,7 @@ public class JRubyVisitor extends NoopVisitor {
 			String varName = ((INameNode) varNode).getName();
 			Entity var = context.foundEntityWithName(varName);
 			if (var != null && var instanceof VarEntity) {
-			    VarEntity varEntity = (VarEntity)var;
+				VarEntity varEntity = (VarEntity) var;
 				varEntity.addFunctionCall(fname);
 			}
 		}
@@ -174,14 +175,25 @@ public class JRubyVisitor extends NoopVisitor {
 	public Object visitDefsNode(DefsNode node) {
 		boolean handled = false;
 		Node varNode = node.getReceiver();
-		if (varNode instanceof INameNode) {
+		if (varNode instanceof SelfNode) {
+			//will be handled by context.foundMethodDeclarator(node.getName(), null, new ArrayList<>());
+		} else if (varNode instanceof ConstNode) {
+			String className = ((INameNode) varNode).getName();
+			Entity entity = context.foundEntityWithName(className);
+			if (entity != null && entity instanceof ContainerEntity) {
+				context.foundMethodDeclarator(((ContainerEntity) entity), node.getName());
+				handled = true;
+			}
+
+		} else if (varNode instanceof INameNode) {
 			String varName = ((INameNode) varNode).getName();
 			Entity var = context.foundEntityWithName(varName);
 			if (var != null && var instanceof ContainerEntity) {
 				context.foundMethodDeclarator(((ContainerEntity) var), node.getName());
 				handled = true;
 			}
-		}
+		} 
+
 		if (!handled) {
 			// fallback to add it to last container
 			context.foundMethodDeclarator(node.getName(), null, new ArrayList<>());

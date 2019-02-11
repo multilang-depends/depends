@@ -67,6 +67,10 @@ public class ExpressionUsage {
 			}
 			expression.isCall = true;
 			expression.identifier = name;
+			expression.rawType = helper.getReciever(ctx);
+			if (expression.rawType!=null) {
+				//expression.isDot = true;
+			}
 		}
 		return expression;
 	}
