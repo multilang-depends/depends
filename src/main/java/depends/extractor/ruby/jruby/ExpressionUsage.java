@@ -65,6 +65,8 @@ public class ExpressionUsage {
 				expression.rawType = expression.identifier ;
 				expression.deriveTypeFromChild  = false;
 			}
+			expression.isCall = true;
+			expression.identifier = name;
 		}
 		return expression;
 	}

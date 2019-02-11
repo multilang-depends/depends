@@ -88,17 +88,20 @@ public class JRubyVisitor extends NoopVisitor {
 			String name1 = helper.getName(colon2ConstNode.getLeftNode());
 			String superName = colon2ConstNode.getName();
 			context.foundExtends(name1 + "." + superName);
+		}else {
+			if (superNode!=null) {
+				System.err.println("cannot support the super node style" + superNode.toString());
+			}
 		}
 
 		super.visitClassNode(node);
-
 		context.exitLastedEntity();
 		return null;
 	}
 
 	@Override
 	public Object visitRootNode(RootNode node) {
-		System.out.println(node);
+		//System.out.println(node);
 		return super.visitRootNode(node);
 	}
 
