@@ -65,7 +65,15 @@ public abstract class HandlerContext {
 		return functionEntity;
 	}
 	
-
+	public FunctionEntity foundMethodDeclarator(ContainerEntity containerEntity, String methodName) {
+		FunctionEntity functionEntity = new FunctionEntity(methodName, containerEntity,
+				idGenerator.generateId(),null);
+		entityRepo.add(functionEntity);
+		containerEntity.addFunction(functionEntity);
+		pushToStack(functionEntity);
+		functionEntity.addThrowTypes(new ArrayList<>());
+		return functionEntity;		
+	}
 
 	public void foundNewImport(Import imported) {
 		currentFileEntity.addImport(imported);

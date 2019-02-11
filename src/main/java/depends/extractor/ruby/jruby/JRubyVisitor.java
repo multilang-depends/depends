@@ -22,6 +22,7 @@ import org.jrubyparser.ast.FCallNode;
 import org.jrubyparser.ast.GlobalAsgnNode;
 import org.jrubyparser.ast.GlobalVarNode;
 import org.jrubyparser.ast.IArgumentNode;
+import org.jrubyparser.ast.INameNode;
 import org.jrubyparser.ast.InstAsgnNode;
 import org.jrubyparser.ast.InstVarNode;
 import org.jrubyparser.ast.LocalAsgnNode;
@@ -36,6 +37,7 @@ import org.jrubyparser.ast.VCallNode;
 import org.jrubyparser.util.NoopVisitor;
 
 import depends.entity.ContainerEntity;
+import depends.entity.Entity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.ParserCreator;
 import depends.extractor.ruby.IncludedFileLocator;
@@ -100,7 +102,6 @@ public class JRubyVisitor extends NoopVisitor {
 	
 	@Override
 	public Object visitRootNode(RootNode node) {
-		System.out.println(node);
 		return super.visitRootNode(node);
 	}
 
@@ -166,9 +167,20 @@ public class JRubyVisitor extends NoopVisitor {
 
 	@Override
 	public Object visitDefsNode(DefsNode node) {
-		//TODO: should add the method to the concrete variable
-		//
-		context.foundMethodDeclarator(node.getName(), null, new ArrayList<>());
+		boolean handled=false;
+	    	Node varNode = node.getReceiver();
+		if (varNode instanceof INameNode) {
+		    String varName = ((INameNode)varNode).getName();
+		    Entity var = context.foundEntityWithName(varName);
+		    if (var!=null && var instanceof ContainerEntity) {
+			context.foundMethodDeclarator(((ContainerEntity)var),node.getName());
+			handled = true;
+		    }
+		}
+		if (!handled) {
+		    	//fallback to add it to last container
+			context.foundMethodDeclarator(node.getName(), null, new ArrayList<>());
+		}
 		super.visitDefsNode(node);
 		context.exitLastedEntity();
 		return null;
@@ -210,7 +222,6 @@ public class JRubyVisitor extends NoopVisitor {
 	
 	@Override
 	public Object visitLocalVarNode(LocalVarNode node) {
-		System.out.println("visitLocalVarNode"+node.getName());
 		return super.visitLocalVarNode(node);
 	}
 

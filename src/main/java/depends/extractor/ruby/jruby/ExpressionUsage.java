@@ -1,24 +1,10 @@
 package depends.extractor.ruby.jruby;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.jrubyparser.ast.AssignableNode;
-import org.jrubyparser.ast.CallNode;
-import org.jrubyparser.ast.ClassVarAsgnNode;
-import org.jrubyparser.ast.ClassVarDeclNode;
-import org.jrubyparser.ast.ConstDeclNode;
-import org.jrubyparser.ast.DAsgnNode;
-import org.jrubyparser.ast.FCallNode;
-import org.jrubyparser.ast.GlobalAsgnNode;
 import org.jrubyparser.ast.ILiteralNode;
-import org.jrubyparser.ast.InstAsgnNode;
-import org.jrubyparser.ast.ListNode;
-import org.jrubyparser.ast.LocalAsgnNode;
-import org.jrubyparser.ast.MultipleAsgnNode;
 import org.jrubyparser.ast.Node;
-import org.jrubyparser.ast.UnaryCallNode;
-import org.jrubyparser.ast.VCallNode;
 
 import depends.entity.Expression;
 import depends.entity.repo.IdGenerator;

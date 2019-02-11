@@ -211,4 +211,12 @@ public abstract class ContainerEntity extends DecoratedEntity {
 		return resolvedMixins;
 	}
 
+	public VarEntity getVarOfName(String varName) {
+		for (VarEntity var:this.vars) {
+			if (var.getRawName().equals(varName))
+				return var;
+		}
+		return null;
+	}
+
 }
