@@ -38,6 +38,7 @@ import org.jrubyparser.util.NoopVisitor;
 
 import depends.entity.ContainerEntity;
 import depends.entity.Entity;
+import depends.entity.VarEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.ParserCreator;
 import depends.extractor.ruby.IncludedFileLocator;
@@ -52,19 +53,17 @@ public class JRubyVisitor extends NoopVisitor {
 
 	public JRubyVisitor(String fileFullPath, EntityRepo entityRepo, IncludedFileLocator includedFileLocator,
 			ExecutorService executorService, Inferer inferer, ParserCreator parserCreator) {
-		this.context = new RubyHandlerContext(entityRepo, includedFileLocator, executorService, inferer,parserCreator);
-		expressionUsage = new ExpressionUsage(context, entityRepo, helper,inferer);
+		this.context = new RubyHandlerContext(entityRepo, includedFileLocator, executorService, inferer, parserCreator);
+		expressionUsage = new ExpressionUsage(context, entityRepo, helper, inferer);
 		context.startFile(fileFullPath);
 	}
 
-
 	@Override
 	public Object visitAliasNode(AliasNode node) {
-		context.foundNewTypeAlias(node.getNewNameString(),
-				node.getOldNameString());
+		context.foundNewTypeAlias(node.getNewNameString(), node.getOldNameString());
 		return super.visitAliasNode(node);
 	}
-	
+
 	@Override
 	public Object visitModuleNode(ModuleNode node) {
 		String name = helper.getName(node.getCPath());
@@ -79,81 +78,86 @@ public class JRubyVisitor extends NoopVisitor {
 		context.foundNewType(node.getCPath().getName());
 		Node superNode = node.getSuper();
 		if (superNode instanceof ConstNode) {
-			String superName = ((ConstNode)superNode).getName();
+			String superName = ((ConstNode) superNode).getName();
 			context.foundExtends(superName);
-		}else if (superNode instanceof SymbolNode) {
-			String superName = ((SymbolNode)superNode).getName();
+		} else if (superNode instanceof SymbolNode) {
+			String superName = ((SymbolNode) superNode).getName();
 			context.foundExtends(superName);
-		}else if (superNode instanceof Colon2ConstNode) {
-			Colon2ConstNode colon2ConstNode = (Colon2ConstNode)superNode;
+		} else if (superNode instanceof Colon2ConstNode) {
+			Colon2ConstNode colon2ConstNode = (Colon2ConstNode) superNode;
 			String name1 = helper.getName(colon2ConstNode.getLeftNode());
 			String superName = colon2ConstNode.getName();
-			context.foundExtends(name1 + "."+superName);
+			context.foundExtends(name1 + "." + superName);
 		}
-		
+
 		super.visitClassNode(node);
-		
+
 		context.exitLastedEntity();
 		return null;
 	}
 
-	
 	@Override
 	public Object visitRootNode(RootNode node) {
+		System.out.println(node);
 		return super.visitRootNode(node);
 	}
 
 	@Override
 	public Object visitFCallNode(FCallNode node) {
-		String fname  = helper.getName(node);
+		String fname = helper.getName(node);
 		Collection<String> params = getParams(node);
 		context.processSpecialFuncCall(fname, params);
 		return super.visitFCallNode(node);
 	}
 
-
 	private Collection<String> getParams(IArgumentNode node) {
 		Node args = node.getArgs();
 		Collection<String> params = new ArrayList<>();
 		if (args instanceof ArrayNode) {
-			ArrayNode argArray = (ArrayNode)args;
-			for (Node arg:argArray.childNodes()) {
+			ArrayNode argArray = (ArrayNode) args;
+			for (Node arg : argArray.childNodes()) {
 				if (arg instanceof StrNode) {
-					params.add(((StrNode)arg).getValue());
-				}else if (arg instanceof ConstNode) {
-					params.add(((ConstNode)arg).getName());
+					params.add(((StrNode) arg).getValue());
+				} else if (arg instanceof ConstNode) {
+					params.add(((ConstNode) arg).getName());
 				}
 			}
 		}
 		return params;
 	}
-	
+
 	@Override
 	public Object visitCallNode(CallNode node) {
-		String fname  = helper.getName(node);
+		String fname = helper.getName(node);
 		Collection<String> params = getParams(node);
+		Node varNode = node.getReceiver();
+		if (varNode instanceof INameNode) {
+			String varName = ((INameNode) varNode).getName();
+			Entity var = context.foundEntityWithName(varName);
+			if (var != null && var instanceof VarEntity) {
+			    VarEntity varEntity = (VarEntity)var;
+				varEntity.addFunctionCall(fname);
+			}
+		}
 		context.processSpecialFuncCall(fname, params);
 		return super.visitCallNode(node);
 	}
 
-
 	@Override
 	public Object visitUnaryCallNode(UnaryCallNode node) {
-		String fname  = helper.getName(node);
+		String fname = helper.getName(node);
 		Collection<String> params = new ArrayList<>();
 		context.processSpecialFuncCall(fname, params);
 		return super.visitUnaryCallNode(node);
 	}
 
-
+	/**
+	 * VCallNode is just a function call without parameter
+	 */
 	@Override
 	public Object visitVCallNode(VCallNode node) {
-		String fname  = helper.getName(node);
-		Collection<String> params = new ArrayList<>();
-		context.processSpecialFuncCall(fname, params);
 		return super.visitVCallNode(node);
 	}
-	
 
 	@Override
 	public Object visitDefnNode(DefnNode node) {
@@ -165,18 +169,18 @@ public class JRubyVisitor extends NoopVisitor {
 
 	@Override
 	public Object visitDefsNode(DefsNode node) {
-		boolean handled=false;
-	    	Node varNode = node.getReceiver();
+		boolean handled = false;
+		Node varNode = node.getReceiver();
 		if (varNode instanceof INameNode) {
-		    String varName = ((INameNode)varNode).getName();
-		    Entity var = context.foundEntityWithName(varName);
-		    if (var!=null && var instanceof ContainerEntity) {
-			context.foundMethodDeclarator(((ContainerEntity)var),node.getName());
-			handled = true;
-		    }
+			String varName = ((INameNode) varNode).getName();
+			Entity var = context.foundEntityWithName(varName);
+			if (var != null && var instanceof ContainerEntity) {
+				context.foundMethodDeclarator(((ContainerEntity) var), node.getName());
+				handled = true;
+			}
 		}
 		if (!handled) {
-		    	//fallback to add it to last container
+			// fallback to add it to last container
 			context.foundMethodDeclarator(node.getName(), null, new ArrayList<>());
 		}
 		super.visitDefsNode(node);
@@ -184,73 +188,64 @@ public class JRubyVisitor extends NoopVisitor {
 		return null;
 	}
 
-
 	@Override
 	public Object visitGlobalVarNode(GlobalVarNode node) {
-		foundVar(context.globalScope(),node.getName());
+		foundVar(context.globalScope(), node.getName());
 		return super.visitGlobalVarNode(node);
 	}
 
-
 	@Override
 	public Object visitInstVarNode(InstVarNode node) {
-		foundVar(context.currentType(),node.getName());
+		foundVar(context.currentType(), node.getName());
 		return super.visitInstVarNode(node);
 	}
 
 	@Override
 	public Object visitClassVarAsgnNode(ClassVarAsgnNode node) {
-		foundVar(context.currentType(),node.getName());
+		foundVar(context.currentType(), node.getName());
 		return super.visitClassVarAsgnNode(node);
 	}
 
-
 	@Override
 	public Object visitClassVarDeclNode(ClassVarDeclNode node) {
-		foundVar(context.currentType(),node.getName());
+		foundVar(context.currentType(), node.getName());
 		return super.visitClassVarDeclNode(node);
 	}
 
-
 	@Override
 	public Object visitClassVarNode(ClassVarNode node) {
-		foundVar(context.currentType(),node.getName());
+		foundVar(context.currentType(), node.getName());
 		return super.visitClassVarNode(node);
 	}
-	
+
 	@Override
 	public Object visitLocalVarNode(LocalVarNode node) {
 		return super.visitLocalVarNode(node);
 	}
 
-
 	@Override
 	public Object visitDVarNode(DVarNode node) {
-		foundVar(context.lastContainer(),node.getName());
+		foundVar(context.lastContainer(), node.getName());
 		return super.visitDVarNode(node);
 	}
 
-
 	@Override
 	public Object visitDAsgnNode(DAsgnNode node) {
-		foundVar(context.lastContainer(),node.getName());
+		foundVar(context.lastContainer(), node.getName());
 		return super.visitDAsgnNode(node);
 	}
 
-
 	@Override
 	public Object visitGlobalAsgnNode(GlobalAsgnNode node) {
-		foundVar(context.globalScope(),node.getName());
+		foundVar(context.globalScope(), node.getName());
 		return super.visitGlobalAsgnNode(node);
 	}
 
-
 	@Override
 	public Object visitInstAsgnNode(InstAsgnNode node) {
-		foundVar(context.currentType(),node.getName());
+		foundVar(context.currentType(), node.getName());
 		return super.visitInstAsgnNode(node);
 	}
-
 
 	@Override
 	public Object visitArgumentNode(ArgumentNode node) {
@@ -259,10 +254,9 @@ public class JRubyVisitor extends NoopVisitor {
 		return super.visitArgumentNode(node);
 	}
 
-
 	@Override
 	public Object visitLocalAsgnNode(LocalAsgnNode node) {
-		foundVar(context.lastContainer(),node.getName());
+		foundVar(context.lastContainer(), node.getName());
 		return super.visitLocalAsgnNode(node);
 	}
 
@@ -271,10 +265,10 @@ public class JRubyVisitor extends NoopVisitor {
 		expressionUsage.foundExpression(node);
 		return super.visit(node);
 	}
-	
-	private void foundVar(ContainerEntity container,String varName ) {
+
+	private void foundVar(ContainerEntity container, String varName) {
 		if (!context.isNameExist(varName)) {
-			context.foundVarDefinition(container,varName);
+			context.foundVarDefinition(container, varName);
 		}
 	}
 

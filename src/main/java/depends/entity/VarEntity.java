@@ -1,14 +1,19 @@
 package depends.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import depends.relations.Inferer;
 
 public class VarEntity extends ContainerEntity {
 	private String rawType;
 	private TypeEntity type;
-
+	private List<FunctionCall> functionCalls;
+	
 	public VarEntity(String simpleName,  String rawType, Entity parent, int id) {
 		super(simpleName,  parent,id);
 		this.rawType = rawType;
+		functionCalls = new ArrayList<>();
 	}
 
 	public String getRawType() {
@@ -37,5 +42,11 @@ public class VarEntity extends ContainerEntity {
 		}
 	}
 
-	
+	public List<FunctionCall> getCalledFunctions() {
+		return functionCalls;
+	}
+
+	public void addFunctionCall(String fname) {
+		this.functionCalls.add(new FunctionCall(fname));
+	}
 }
