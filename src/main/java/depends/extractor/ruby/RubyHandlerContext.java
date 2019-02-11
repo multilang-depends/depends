@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ExecutorService;
 
-import depends.entity.ContainerEntity;
 import depends.entity.Entity;
 import depends.entity.PackageEntity;
 import depends.entity.repo.EntityRepo;
@@ -19,16 +18,14 @@ public class RubyHandlerContext extends HandlerContext {
 
 	private IncludedFileLocator includedFileLocator;
 	private ExecutorService executorService;
-	private Inferer inferer;
 	private ParserCreator parserCreator;
 	public RubyHandlerContext(EntityRepo entityRepo, 
 			IncludedFileLocator includedFileLocator,
 			ExecutorService executorService,
 			Inferer inferer, ParserCreator parserCreator) {
-		super(entityRepo);
+		super(entityRepo,inferer);
 		this.includedFileLocator = includedFileLocator;
 		this.executorService = executorService;
-		this.inferer = inferer;
 		this.parserCreator = parserCreator;
 	}
 	
@@ -79,17 +76,5 @@ public class RubyHandlerContext extends HandlerContext {
 			}
 		} 
 	}
-	public boolean isNameExist(String rawName) {
-		Entity entity = inferer.resolveName(lastContainer(), rawName, true);
-		if (entity==null) return false;
-		if (entity.getId()!=-1) return true;
-		return false;
-	}
-
-	public Entity foundEntityWithName(String rawName) {
-		return inferer.resolveName(lastContainer(), rawName, true);
-	}
-
-
 
 }

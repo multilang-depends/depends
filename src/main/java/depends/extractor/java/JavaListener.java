@@ -14,6 +14,7 @@ import depends.extractor.java.context.QualitiedNameContextHelper;
 import depends.extractor.java.context.TypeParameterContextHelper;
 import depends.extractor.java.context.VariableDeclaratorsContextHelper;
 import depends.importtypes.ExactMatchImport;
+import depends.relations.Inferer;
 import depends.extractor.java.JavaParser.AnnotationConstantRestContext;
 import depends.extractor.java.JavaParser.AnnotationMethodRestContext;
 import depends.extractor.java.JavaParser.AnnotationTypeDeclarationContext;
@@ -43,8 +44,8 @@ public class JavaListener extends JavaParserBaseListener {
 	private ExpressionUsage expressionUsage;
 	private EntityRepo entityRepo;
 
-	public JavaListener(String fileFullPath, EntityRepo entityRepo) {
-		this.context = new JavaHandlerContext(entityRepo);
+	public JavaListener(String fileFullPath, EntityRepo entityRepo,Inferer inferer) {
+		this.context = new JavaHandlerContext(entityRepo,inferer);
 		this.entityRepo = entityRepo;
 		annotationProcessor = new AnnotationProcessor(context);
 		expressionUsage = new ExpressionUsage(context,entityRepo);

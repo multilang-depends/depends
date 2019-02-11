@@ -4,11 +4,12 @@ import depends.entity.Entity;
 import depends.entity.PackageEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.HandlerContext;
+import depends.relations.Inferer;
 
 public class JavaHandlerContext extends HandlerContext {
 
-	public JavaHandlerContext(EntityRepo entityRepo) {
-		super(entityRepo);
+	public JavaHandlerContext(EntityRepo entityRepo,Inferer inferer) {
+		super(entityRepo,inferer);
 	}
 
 	public Entity foundNewPackage(String packageName) {

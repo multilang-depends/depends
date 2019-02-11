@@ -4,11 +4,12 @@ import depends.entity.Entity;
 import depends.entity.PackageEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.HandlerContext;
+import depends.relations.Inferer;
 
 public class CppHandlerContext extends HandlerContext {
 
-	public CppHandlerContext(EntityRepo entityRepo) {
-		super(entityRepo);
+	public CppHandlerContext(EntityRepo entityRepo,Inferer inferer) {
+		super(entityRepo,inferer);
 	}
 
 	public Entity foundNamespace(String nampespaceName) {

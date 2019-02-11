@@ -15,18 +15,21 @@ import depends.entity.VarEntity;
 import depends.entity.repo.EntityRepo;
 import depends.entity.repo.IdGenerator;
 import depends.importtypes.Import;
+import depends.relations.Inferer;
 
 public abstract class HandlerContext {
 	protected EntityRepo entityRepo;
 	protected IdGenerator idGenerator;
 
 	protected FileEntity currentFileEntity;
+	protected Inferer inferer;
 
 	
-	public HandlerContext(EntityRepo entityRepo) {
+	public HandlerContext(EntityRepo entityRepo, Inferer inferer) {
 		this.entityRepo = entityRepo;
 		this.idGenerator = entityRepo;
 		entityStack = new Stack<Entity>();
+		this.inferer = inferer;
 	}
 
 	public FileEntity startFile(String fileName) {
@@ -214,4 +217,14 @@ public abstract class HandlerContext {
 		entityStack.pop();
 	}
 	
+	public boolean isNameExist(String rawName) {
+		Entity entity = inferer.resolveName(lastContainer(), rawName, true);
+		if (entity==null) return false;
+		if (entity.getId()!=-1) return true;
+		return false;
+	}
+
+	public Entity foundEntityWithName(String rawName) {
+		return inferer.resolveName(lastContainer(), rawName, true);
+	}
 }

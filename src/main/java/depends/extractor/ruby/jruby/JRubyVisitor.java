@@ -46,8 +46,6 @@ import depends.relations.Inferer;
 
 public class JRubyVisitor extends NoopVisitor {
 
-
-
 	private RubyHandlerContext context;
 	RubyParserHelper helper = new RubyParserHelper();
 	private ExpressionUsage expressionUsage;
