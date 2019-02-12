@@ -2,15 +2,19 @@ package depends.extractor.ruby.jruby;
 
 import java.util.List;
 
+import org.jrubyparser.ast.AndNode;
 import org.jrubyparser.ast.AssignableNode;
 import org.jrubyparser.ast.ClassVarNode;
 import org.jrubyparser.ast.ConstNode;
 import org.jrubyparser.ast.FCallNode;
+import org.jrubyparser.ast.FalseNode;
 import org.jrubyparser.ast.GlobalVarNode;
 import org.jrubyparser.ast.ILiteralNode;
 import org.jrubyparser.ast.InstVarNode;
 import org.jrubyparser.ast.LocalVarNode;
 import org.jrubyparser.ast.Node;
+import org.jrubyparser.ast.OrNode;
+import org.jrubyparser.ast.TrueNode;
 import org.jrubyparser.ast.VCallNode;
 
 import depends.entity.ContainerEntity;
@@ -53,7 +57,13 @@ public class ExpressionUsage {
 		if (ctx instanceof ILiteralNode) {
 			expression.identifier = "<literal>";
 			expression.rawType = Inferer.buildInType.getQualifiedName();
-		} else if (ctx instanceof ConstNode)  {
+		} else if (ctx instanceof TrueNode || ctx instanceof FalseNode) {
+			expression.identifier = "<boolean>";
+			expression.rawType = Inferer.buildInType.getQualifiedName();
+		}else if (ctx instanceof AndNode || ctx instanceof OrNode) {
+			expression.identifier = "<logical>";
+			expression.rawType = Inferer.buildInType.getQualifiedName();
+		}else if (ctx instanceof ConstNode)  {
 			expression.rawType = helper.getName(ctx);
 			expression.identifier = helper.getName(ctx);
 		} else if (ctx instanceof LocalVarNode ||
@@ -77,15 +87,9 @@ public class ExpressionUsage {
 				}
 				expression.rawType = expression.identifier ;
 				expression.deriveTypeFromChild = false;
-				Node parentNode = ctx.getParent();
-				if (parentNode instanceof AssignableNode) {
-					ContainerEntity scope = helper.getScopeOfVar((AssignableNode)parentNode, this.context);
-					VarEntity var = scope.getVarOfName(helper.getName(parentNode));
-					if (var!=null) {
-						var.setRawType(expression.rawType);
-					}
-					System.out.println(var);
-				}
+			} else if (isArithMeticOperator(name)) {
+				expression.identifier = "<operator>";
+				expression.rawType = Inferer.buildInType.getQualifiedName();
 			}else {
 				expression.identifier = name;
 				expression.rawType = helper.getReciever(ctx);
@@ -99,7 +103,46 @@ public class ExpressionUsage {
 				}
 			}
 		}
+		deduceVarTypeInCaseOfAssignment(ctx, expression);
 		return expression;
+	}
+	private boolean isArithMeticOperator(String name) {
+		return name.equals("+") ||
+				name.equals("-") ||
+				name.equals("*") ||
+				name.equals("/") ||
+				name.equals("**") ||
+				name.equals("%") ||
+				name.equals("&") ||
+				name.equals("<") ||
+				name.equals("<=") ||
+				name.equals(">") ||
+				name.equals(">=") ||
+				name.equals("==") ||
+				name.equals("!=") ||
+				name.equals("===") ||
+				name.equals("<<") ||
+				name.equals(">>") ||
+				name.equals("~") ||
+				name.equals("!") ||
+				name.equals("^");
+	}
+	/**
+	 * Auto deduce variable type from assignment.
+	 * for example:
+	 *       c = C.new  then c is type of C
+	 * @param node
+	 * @param expression
+	 */
+	private void deduceVarTypeInCaseOfAssignment(Node node, Expression expression) {
+		Node parentNode = node.getParent();
+		if (parentNode instanceof AssignableNode) {
+			ContainerEntity scope = helper.getScopeOfVar((AssignableNode)parentNode, this.context);
+			VarEntity var = scope.getVarOfName(helper.getName(parentNode));
+			if (var!=null) {
+				expression.addDeducedTypeVar(var);
+			}
+		}
 	}
 	
 	private Expression findParentInStack(Node ctx) {

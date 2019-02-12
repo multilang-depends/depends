@@ -23,6 +23,7 @@ public class Expression {
 	private TypeEntity type; // the type we care - for relation calculation. 
 	                         //for leaf, it equals to referredEntity.getType. otherwise, depends on child's type strategy
 	private Entity referredEntity;
+	private List<VarEntity> deducedTypeVars;
 	public TypeEntity getType() {
 		return type;
 	}
@@ -41,11 +42,15 @@ public class Expression {
 		}
 		if (this.referredEntity==null)
 			this.referredEntity = type;
+		for (VarEntity var:deducedTypeVars) {
+			var.setType(this.type);
+		}
 		deduceParentType(inferer);
 	}
 	
 	public Expression(Integer id) {
 		this.id = id;
+		this.deducedTypeVars = new ArrayList<>();
 	}
 
 	@Override
@@ -121,5 +126,9 @@ public class Expression {
 
 	public void addDeduceTypeChild(Expression expression) {
 		deduceTypeChildren.add(expression);
+	}
+
+	public void addDeducedTypeVar(VarEntity var) {
+		this.deducedTypeVars.add(var);
 	}
 }
