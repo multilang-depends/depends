@@ -9,7 +9,6 @@ public class Expression {
 	public Integer id;
 	public Integer deduceTypeBasedId; //by default, parent expression type determined by most left child
 	public Expression parent;
-	private List<Expression> deduceTypeChildren = new ArrayList<>();
 	public String text; // for debug purpose
 	public String rawType; //the raw type name
 	public String identifier; // the varName, or method name, etc.
@@ -24,16 +23,15 @@ public class Expression {
 	                         //for leaf, it equals to referredEntity.getType. otherwise, depends on child's type strategy
 	private Entity referredEntity;
 	private List<VarEntity> deducedTypeVars;
+	private List<FunctionEntity> deducedTypeFunctions;
 	public TypeEntity getType() {
 		return type;
 	}
 
 	public void setType(TypeEntity type, Entity referredEntity, Inferer inferer) {
+		if (type==null) return;
 		if (this.type!=null) return;
 		this.type = type;
-		if (this.identifier!=null && this.identifier.equals("bar")) {
-			System.out.println("helo");
-		}
 		if (this.referredEntity==null) {
 			this.referredEntity  = referredEntity;
 		}else if (this.referredEntity.equals(Inferer.buildInType)) {
@@ -45,12 +43,16 @@ public class Expression {
 		for (VarEntity var:deducedTypeVars) {
 			var.setType(this.type);
 		}
+		for (FunctionEntity func:deducedTypeFunctions) {
+			func.addReturnType(this.type);
+		}
 		deduceParentType(inferer);
 	}
 	
 	public Expression(Integer id) {
 		this.id = id;
-		this.deducedTypeVars = new ArrayList<>();
+		deducedTypeVars = new ArrayList<>();
+		deducedTypeFunctions = new ArrayList<>();
 	}
 
 	@Override
@@ -124,11 +126,12 @@ public class Expression {
 		return referredEntity;
 	}
 
-	public void addDeduceTypeChild(Expression expression) {
-		deduceTypeChildren.add(expression);
-	}
 
 	public void addDeducedTypeVar(VarEntity var) {
 		this.deducedTypeVars.add(var);
+	}
+
+	public void addDeducedTypeFunction(FunctionEntity function) {
+		this.deducedTypeFunctions.add(function);
 	}
 }

@@ -14,5 +14,6 @@ class Class
     var_4 = true and false
     var_5 = 3 < 2
     var_6 = 3 << 2
+    var_7 <<= 3;
   end
 end

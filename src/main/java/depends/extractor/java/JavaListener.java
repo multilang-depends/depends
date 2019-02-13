@@ -208,7 +208,7 @@ public class JavaListener extends JavaParserBaseListener {
 		FunctionEntity method = context.foundMethodDeclarator(ctx.IDENTIFIER().getText(), ctx.IDENTIFIER().getText(),
 				throwedType);
 		new FormalParameterListContextHelper(ctx.formalParameters(), method, entityRepo);
-		method.setReturnType(context.currentType());
+		method.addReturnType(context.currentType());
 		annotationProcessor.processAnnotationModifier(ctx, "classBodyDeclaration");
 		super.enterConstructorDeclaration(ctx);
 	}

@@ -20,6 +20,7 @@ public abstract class ContainerEntity extends DecoratedEntity {
 	private ArrayList<VarEntity> vars;
 	private ArrayList<FunctionEntity> functions;
 	private HashMap<Object, Expression> expressions;
+	private ArrayList<Expression> expressionList;
 	private Collection<String> mixins;
 	private Collection<ContainerEntity> resolvedMixins;
 
@@ -30,6 +31,7 @@ public abstract class ContainerEntity extends DecoratedEntity {
 		mixins = new ArrayList<>();
 		resolvedMixins = new ArrayList<>();
 		expressions = new HashMap<>();
+		expressionList = new  ArrayList<>();
 	}
 	
 
@@ -59,6 +61,7 @@ public abstract class ContainerEntity extends DecoratedEntity {
 
 	public void addExpression(Object key, Expression expression) {
 		expressions.put(key, expression);
+		expressionList.add(expression);
 	}
 
 	
@@ -96,7 +99,7 @@ public abstract class ContainerEntity extends DecoratedEntity {
 	 * @param inferer
 	 */
 	public void resolveExpressions(Inferer inferer) {
-		for (Expression expression : expressions.values()) {
+		for (Expression expression : expressionList) {
 			//1. if expression's type existed, break;
 			if (expression.getType() != null)
 				continue;
@@ -143,7 +146,7 @@ public abstract class ContainerEntity extends DecoratedEntity {
 
 	public String dumpExpressions() {
 		StringBuilder sb = new StringBuilder();
-		for (Expression exp:expressions.values()) {
+		for (Expression exp:expressionList) {
 			sb.append(exp.toString()).append("\n");
 		}
 		return sb.toString();

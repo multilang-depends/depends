@@ -8,6 +8,7 @@ import java.util.Collection;
 import depends.entity.ContainerEntity;
 import depends.entity.Entity;
 import depends.entity.FunctionEntity;
+import depends.entity.TypeEntity;
 import depends.entity.VarEntity;
 import depends.relations.Relation;
 
@@ -49,4 +50,13 @@ public abstract class ParserTest {
 	    fail("cannot found parameter with rawname " + name);		
 	}
 
+	protected void assertContainReturnType(FunctionEntity function, String name) {
+		Collection<TypeEntity> types = function.getReturnTypes();
+	    for (TypeEntity type:types) {
+	    	if (type.getRawName().equals(name)) {
+	    		return;
+	    	}
+	    }
+	    fail("cannot found return type with rawname " + name);			
+	}
 }

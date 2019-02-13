@@ -14,11 +14,13 @@ import org.jrubyparser.ast.InstVarNode;
 import org.jrubyparser.ast.LocalVarNode;
 import org.jrubyparser.ast.Node;
 import org.jrubyparser.ast.OrNode;
+import org.jrubyparser.ast.ReturnNode;
 import org.jrubyparser.ast.TrueNode;
 import org.jrubyparser.ast.VCallNode;
 
 import depends.entity.ContainerEntity;
 import depends.entity.Expression;
+import depends.entity.FunctionEntity;
 import depends.entity.VarEntity;
 import depends.entity.repo.IdGenerator;
 import depends.extractor.ruby.RubyHandlerContext;
@@ -50,7 +52,6 @@ public class ExpressionUsage {
 			/* Set operation always use the 2nd expr's type*/
 			if (expression.parent.isSet) {
 				expression.parent.deduceTypeBasedId = expression.id;
-				parent.addDeduceTypeChild(expression);
 			}
 		}
 		context.lastContainer().addExpression(ctx,expression);
@@ -104,8 +105,10 @@ public class ExpressionUsage {
 			}
 		}
 		deduceVarTypeInCaseOfAssignment(ctx, expression);
+		deduceReturnTypeInCaseOfReturn(ctx, expression);
 		return expression;
 	}
+
 	private boolean isArithMeticOperator(String name) {
 		return name.equals("+") ||
 				name.equals("-") ||
@@ -142,6 +145,13 @@ public class ExpressionUsage {
 			if (var!=null) {
 				expression.addDeducedTypeVar(var);
 			}
+		}
+	}
+	private void deduceReturnTypeInCaseOfReturn(Node ctx, Expression expression) {
+		FunctionEntity currentFunction = context.currentFunction();
+		if (currentFunction ==null) return;
+		if (ctx instanceof ReturnNode) {
+			expression.addDeducedTypeFunction(currentFunction);
 		}
 	}
 	

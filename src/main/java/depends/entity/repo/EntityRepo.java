@@ -1,14 +1,17 @@
 package depends.entity.repo;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 import depends.entity.Entity;
 import depends.entity.MultiDeclareEntities;
 
 public class EntityRepo extends IdGenerator{
-	public HashMap<String, Entity> allEntieisByName = new HashMap<>();
-	public HashMap<Integer, Entity> allEntitiesById = new HashMap<>();
+	private HashMap<String, Entity> allEntieisByName = new HashMap<>();
+	private HashMap<Integer, Entity> allEntitiesById = new HashMap<>();
+	private List<Entity> allEntitiesByOrder = new ArrayList<>();
 	public static final String GLOBAL_SCOPE_NAME = "::GLOBAL::";
 
 	public EntityRepo() {
@@ -23,6 +26,7 @@ public class EntityRepo extends IdGenerator{
 	}
 	
 	public void add(Entity entity) {
+		allEntitiesByOrder.add(entity);
 		allEntitiesById.put(entity.getId(), entity);
 		String name = entity.getRawName();
 		if (entity.getQualifiedName()!=null && !(entity.getQualifiedName().isEmpty()) ) {
@@ -45,7 +49,7 @@ public class EntityRepo extends IdGenerator{
 	}
 		
 	public Collection<Entity> getEntities() {
-		return allEntitiesById.values();
+		return allEntitiesByOrder;
 	}
 	
 	public void setParent(Entity child, Entity parent) {

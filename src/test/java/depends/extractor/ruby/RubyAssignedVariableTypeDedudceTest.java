@@ -7,7 +7,6 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
-import depends.deptypes.DependencyType;
 import depends.entity.ContainerEntity;
 import depends.entity.VarEntity;
 import depends.extractor.FileParser;
