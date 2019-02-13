@@ -43,7 +43,7 @@ public class RubyHandlerContext extends HandlerContext {
 				if (!importedFilename.endsWith(".rb")) importedFilename = importedFilename + ".rb";
 				String inclFileName = includedFileLocator.uniqFileName(currentFile().getRawName(),importedFilename);
 				if (inclFileName==null) {
-					System.err.println("Warning: cannot found included file " + importedFilename + "\n(maybe it is just a sys/lib file we do not care)");
+					System.err.println("Warning: cannot found included file " + importedFilename );
 					continue;
 				}
 				FileParser importedParser = parserCreator.createFileParser(inclFileName);
