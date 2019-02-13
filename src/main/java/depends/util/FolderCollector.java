@@ -16,6 +16,7 @@ public class FolderCollector implements IFileVisitor {
 	
 	public List<String> getFolders(String path){
 		folders = new ArrayList<>();
+		folders.add(path);
 		fileTransversal.travers(path);
 		return folders;
 	}

@@ -105,6 +105,7 @@ public class FileEntity extends ContainerEntity {
 	public Set<FileEntity> getImportedFilesInAllLevel() {
 		if (importedFileCollector==null)
 			importedFileCollector = new ImportedFileCollector(this);
+
 		return importedFileCollector.getFiles();
 	}
 

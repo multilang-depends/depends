@@ -57,6 +57,7 @@ public class JRubyVisitor extends NoopVisitor {
 		this.context = new RubyHandlerContext(entityRepo, includedFileLocator, executorService, inferer, parserCreator);
 		expressionUsage = new ExpressionUsage(context, entityRepo, helper, inferer);
 		context.startFile(fileFullPath);
+
 	}
 
 	@Override
