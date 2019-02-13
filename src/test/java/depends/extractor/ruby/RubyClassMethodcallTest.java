@@ -16,7 +16,7 @@ public class RubyClassMethodcallTest extends RubyParserTest {
 	}
 	
 	@Test
-	public void test_parameter_should_be_created() throws IOException {
+	public void test_class_method_call() throws IOException {
 		String[] srcs = new String[] {
 	    		"./src/test/resources/ruby-code-examples/class_method_call.rb",
 	    	    };

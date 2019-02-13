@@ -29,24 +29,24 @@ public class Expression {
 	}
 
 	public void setType(TypeEntity type, Entity referredEntity, Inferer inferer) {
-		if (type==null) return;
-		if (this.type!=null) return;
-		this.type = type;
-		if (this.referredEntity==null) {
+		boolean changedType = false;
+		if (this.type==null && type!=null) {
+			this.type = type;
+			for (VarEntity var:deducedTypeVars) {
+				var.setType(this.type);
+			}
+			for (FunctionEntity func:deducedTypeFunctions) {
+				func.addReturnType(this.type);
+			}
+			changedType = true;
+		}
+		if (this.referredEntity==null && referredEntity!=null) {
 			this.referredEntity  = referredEntity;
-		}else if (this.referredEntity.equals(Inferer.buildInType)) {
-			if (referredEntity!=null)
-				this.referredEntity = referredEntity;
 		}
 		if (this.referredEntity==null)
-			this.referredEntity = type;
-		for (VarEntity var:deducedTypeVars) {
-			var.setType(this.type);
-		}
-		for (FunctionEntity func:deducedTypeFunctions) {
-			func.addReturnType(this.type);
-		}
-		deduceParentType(inferer);
+			this.referredEntity = this.type;
+		if (changedType)
+			deduceTheParentType(inferer);
 	}
 	
 	public Expression(Integer id) {
@@ -75,13 +75,8 @@ public class Expression {
 	 * @param expressionList
 	 * @param inferer
 	 */
-	public void deduceParentType(Inferer inferer) {
-		if (this.type==null) return;
-		deduceTheParentType(inferer);
-	}
-
-
 	private void deduceTheParentType(Inferer inferer) {
+		if (this.type==null) return;
 		if (this.parent==null) return;
 		Expression parent = this.parent;
 		if (parent.type != null)return;
@@ -108,18 +103,27 @@ public class Expression {
 				FunctionEntity func = this.getType().lookupFunctionInVisibleScope(parent.identifier);
 				if (func!=null)
 					parent.setType(func.getType(), func,inferer);
+					parent.setReferredEntity(func);
 			}else {
 				parent.setType(inferer.inferTypeFromName(this.getType(), parent.identifier),null,inferer);
-				if (parent.type!=null) return;
 				VarEntity var = this.getType().lookupVarsInVisibleScope(parent.identifier);
-				if (var!=null)
+				if (var!=null) {
 					parent.setType(var.getType(),var, inferer);
+					parent.setReferredEntity(var);
+				}
 			}
+
 		}
 		/* if other situation, simple make the parent and child type same */
 		else {
 			parent.setType(type, null, inferer);
 		}
+		if (parent.referredEntity==null)
+			parent.referredEntity = parent.type;
+	}
+
+	private void setReferredEntity(Entity referredEntity) {
+		this.referredEntity = referredEntity;
 	}
 
 	public Entity getReferredEntity() {

@@ -26,10 +26,10 @@ public class RelationCounter {
 			if (entity instanceof FileEntity) {
 				computeImports((FileEntity)entity);
 			}
-			if (entity instanceof FunctionEntity) {
+			else if (entity instanceof FunctionEntity) {
 				computeFunctionRelations((FunctionEntity)entity);
 			}
-			if (entity instanceof TypeEntity) {
+			else if (entity instanceof TypeEntity) {
 				computeTypeRelations((TypeEntity)entity);
 			}
 			if (entity instanceof ContainerEntity) {

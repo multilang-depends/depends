@@ -2,8 +2,7 @@ package depends.entity;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import depends.relations.Inferer;
 import depends.relations.Relation;
@@ -19,7 +18,7 @@ public abstract class Entity {
 	String qualifiedName = null;
 	String rawName = "";
 	Entity parent;
-	Set<Entity> children = new HashSet<>();
+	List<Entity> children = new ArrayList<>();
     ArrayList<Relation> relations = new ArrayList<>();
 
 	
@@ -39,7 +38,6 @@ public abstract class Entity {
      * Rule 3: if parent exists but no qualified name exists or empty, the name is equal to raw name
      * Rule 4: otherwise, qualified name = parent_qualfied_name + "."+rawName
      * Rule 5: make sure the qualified name do not start with '.'
-     * TODO: the Rule 1 should be further check. Maybe issue exists - (C++中的ClassName::MethodName()会不会有问题？
      */
 	private void deduceQualifiedName() {
 		rawName = rawName.replace("::","." );

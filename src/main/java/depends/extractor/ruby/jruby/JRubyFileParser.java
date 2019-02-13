@@ -20,7 +20,6 @@ import depends.extractor.ruby.IncludedFileLocator;
 import depends.relations.Inferer;
 import depends.util.FileUtil;
 public class JRubyFileParser implements FileParser {
-	private static final long MAX_PARSE_TIME_PER_FILE = 180000L;
 	private String fileFullPath;
 	private EntityRepo entityRepo;
 	private ExecutorService executor;
@@ -40,6 +39,7 @@ public class JRubyFileParser implements FileParser {
         this.parserCreator = parserCreator;
     }
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void parse() throws IOException {
 		/** If file already exist, skip it */

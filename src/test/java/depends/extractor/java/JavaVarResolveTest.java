@@ -54,7 +54,7 @@ public class JavaVarResolveTest extends JavaParserTest{
         JavaFileParser parser = createParser(src);
         parser.parse();
         inferer.resolveAllBindings();
-        assertEquals(22,entityRepo.getEntity("test.ComplexExpressionExample.setExample").getRelations().size());
+        assertEquals(23,entityRepo.getEntity("test.ComplexExpressionExample.setExample").getRelations().size());
 	}
 	
 	@Test
