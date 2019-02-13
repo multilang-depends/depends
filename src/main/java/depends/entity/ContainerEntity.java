@@ -186,7 +186,6 @@ public abstract class ContainerEntity extends DecoratedEntity {
 	 * @return
 	 */
 	public VarEntity lookupVarsInVisibleScope(String varName) {
-		
 		ContainerEntity fromEntity = this;
 		while (fromEntity != null) {
 			if (fromEntity instanceof ContainerEntity) {

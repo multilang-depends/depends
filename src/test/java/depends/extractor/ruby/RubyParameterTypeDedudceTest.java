@@ -1,13 +1,14 @@
 package depends.extractor.ruby;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import depends.entity.CandidateTypes;
 import depends.entity.FunctionEntity;
 import depends.entity.TypeEntity;
 import depends.entity.VarEntity;
@@ -32,10 +33,9 @@ public class RubyParameterTypeDedudceTest extends RubyParserTest {
 	    inferer.resolveAllBindings();
 	    FunctionEntity function = (FunctionEntity)(entityRepo.getEntity("test"));
 	    VarEntity var = function.getVarOfName("t1");
-	    List<TypeEntity> types = var.getCandidateTypes();
-	    assertEquals(2,types.size());
+	    TypeEntity type = var.getType();
+	    assertTrue(type instanceof CandidateTypes);
+	    assertEquals(2,((CandidateTypes)type).getCandidateTypes().size());
 	}
-
-
 }
 

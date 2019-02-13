@@ -298,13 +298,17 @@ public class Inferer {
 	}
 
 	private void searchAllTypesUnder(List<TypeEntity> types, FileEntity file, List<FunctionCall> functionCalls) {
-		for(Entity f:file.getImportedFiles()) {
-			searchAllTypesUnder(types,(FileEntity)f,functionCalls);
+		if (file==null) {
+			System.err.println("file  should not been null");
+			return;
 		}
-		for (TypeEntity type:file.getDeclaredTypes()) {
-			FunctionMatcher functionMatcher = new FunctionMatcher(type.getFunctions());
-			if (functionMatcher.containsAll(functionCalls)) {
-				types.add(type);
+		Set<FileEntity> files = file.getImportedFilesInAllLevel();
+		for(FileEntity f:files) {
+			for (TypeEntity type:f.getDeclaredTypes()) {
+				FunctionMatcher functionMatcher = new FunctionMatcher(type.getFunctions());
+				if (functionMatcher.containsAll(functionCalls)) {
+					types.add(type);
+				}
 			}
 		}
 	}

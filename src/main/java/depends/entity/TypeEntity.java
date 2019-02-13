@@ -53,18 +53,19 @@ public class TypeEntity extends ContainerEntity{
 		if (funcType!=null) return funcType;
 		for (TypeEntity inhertedType : getInheritedTypes()) {
 			funcType = inhertedType.lookupFunctionLocally(functionName);
-			if (funcType == null)
+			if (funcType != null)
 				break;
 		}
 		if (funcType != null)
 			return funcType;
 		for (TypeEntity implType : getImplementedTypes()) {
 			funcType = implType.lookupFunctionLocally( functionName);
-			if (funcType == null)
+			if (funcType != null)
 				break;
 		}
 		return funcType;
  	}
+ 	
  	@Override
  	public TypeEntity getType() {
 		return this;

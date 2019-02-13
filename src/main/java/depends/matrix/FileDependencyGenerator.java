@@ -1,9 +1,12 @@
 package depends.matrix;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import depends.entity.CandidateTypes;
 import depends.entity.Entity;
 import depends.entity.FileEntity;
+import depends.entity.TypeEntity;
 import depends.entity.repo.EntityRepo;
 import depends.relations.Relation;
 
@@ -24,10 +27,24 @@ public class FileDependencyGenerator implements DependencyGenerator{
         	int fileEntityFrom = getFileEntityIdNoException(entityRepo, entity);
         	if (fileEntityFrom==-1) continue;
         	for (Relation relation:entity.getRelations()) {
-        		if (relation.getEntity().getId()>=0) {
-        			int fileEntityTo = getFileEntityIdNoException(entityRepo,relation.getEntity());
-        			if (fileEntityTo==-1) continue;
-        			dependencyMatrix.addDependency(relation.getType(), fileEntityFrom,fileEntityTo,entity,relation.getEntity());
+        		Entity relatedEntity = relation.getEntity();
+        		if (relatedEntity instanceof CandidateTypes) {
+        			List<TypeEntity> candidateTypes = ((CandidateTypes)relatedEntity).getCandidateTypes();
+        			for (TypeEntity candidateType:candidateTypes) {
+    	        		if (candidateType.getId()>=0) {
+    	        			int fileEntityTo = getFileEntityIdNoException(entityRepo,candidateType);
+    	        			if (fileEntityTo!=-1) {
+    	        				dependencyMatrix.addDependency(relation.getType()+"(Candidate)", fileEntityFrom,fileEntityTo,entity,candidateType);
+    	        			}
+    	        		}
+        			}
+        		}else {
+	        		if (relatedEntity.getId()>=0) {
+	        			int fileEntityTo = getFileEntityIdNoException(entityRepo,relatedEntity);
+	        			if (fileEntityTo!=-1) {
+	        				dependencyMatrix.addDependency(relation.getType(), fileEntityFrom,fileEntityTo,entity,relatedEntity);
+	        			}
+	        		}
         		}
         	}
         }

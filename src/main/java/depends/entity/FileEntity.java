@@ -1,7 +1,9 @@
 package depends.entity;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import depends.importtypes.Import;
 import depends.relations.Inferer;
@@ -13,7 +15,7 @@ public class FileEntity extends ContainerEntity {
 	private List<Entity> importedFiles = new ArrayList<>();
 	private List<Entity> importedTypes = new ArrayList<>();
 	private List<TypeEntity> declaredTypes = new ArrayList<>();
-
+	private ImportedFileCollector importedFileCollector = null;
 	public FileEntity(String fullName, int fileId, boolean isInProjectScope) {
 		super(fullName, null, fileId);
 		setQualifiedName(fullName);
@@ -98,6 +100,12 @@ public class FileEntity extends ContainerEntity {
 
 	public void addType(TypeEntity currentTypeEntity) {
 		this.declaredTypes.add(currentTypeEntity);
+	}
+
+	public Set<FileEntity> getImportedFilesInAllLevel() {
+		if (importedFileCollector==null)
+			importedFileCollector = new ImportedFileCollector(this);
+		return importedFileCollector.getFiles();
 	}
 
 }

@@ -53,9 +53,14 @@ public class JRubyFileParser implements FileParser {
 		StringReader in = new StringReader(input.toString());
 		CompatVersion version = CompatVersion.RUBY2_3;
 		ParserConfiguration config = new ParserConfiguration(0, version);
-		Node node = rubyParser.parse("<code>", in, config);
-		node.accept(new JRubyVisitor(fileFullPath, entityRepo, includesFileLocator,executor,inferer,parserCreator));
-		fileEntity = entityRepo.getEntity(fileFullPath);
+		try {
+			Node node = rubyParser.parse("<code>", in, config);
+			node.accept(new JRubyVisitor(fileFullPath, entityRepo, includesFileLocator,executor,inferer,parserCreator));
+			fileEntity = entityRepo.getEntity(fileFullPath);
+			fileEntity.inferEntities(inferer);
+		}catch(Exception e) {
+			System.err.println("parsing error in "+fileFullPath);
+		}
 	}
 
 }

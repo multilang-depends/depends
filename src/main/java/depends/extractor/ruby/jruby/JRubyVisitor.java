@@ -140,7 +140,6 @@ public class JRubyVisitor extends NoopVisitor {
 
 	private void addCallToReceiverVar(CallNode node, String fname) {
 		if (helper.isCommonOperator(fname))return;
-		System.out.println("called ->"+fname);
 		Node varNode = node.getReceiver();
 		if (varNode instanceof INameNode) {
 			String varName = ((INameNode) varNode).getName();

@@ -50,8 +50,8 @@ public class RubyHandlerContext extends HandlerContext {
 				try {
 					System.out.println("parsing "+inclFileName);
 					importedParser.parse();
-				} catch (IOException e) {
-					e.printStackTrace();
+				} catch (Exception e) {
+					System.err.println("parsing error in "+inclFileName);
 				}
 				foundNewImport(new FileImport(inclFileName));
 			}
