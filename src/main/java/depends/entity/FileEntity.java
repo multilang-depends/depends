@@ -12,6 +12,7 @@ public class FileEntity extends ContainerEntity {
 	private List<Entity> importedRelationEntities = new ArrayList<>();
 	private List<Entity> importedFiles = new ArrayList<>();
 	private List<Entity> importedTypes = new ArrayList<>();
+	private List<TypeEntity> declaredTypes = new ArrayList<>();
 
 	public FileEntity(String fullName, int fileId, boolean isInProjectScope) {
 		super(fullName, null, fileId);
@@ -89,6 +90,14 @@ public class FileEntity extends ContainerEntity {
 
 	public List<Entity> getImportedTypes() {
 		return importedTypes;
+	}
+
+	public List<TypeEntity> getDeclaredTypes() {
+		return this.declaredTypes;
+	}
+
+	public void addType(TypeEntity currentTypeEntity) {
+		this.declaredTypes.add(currentTypeEntity);
 	}
 
 }

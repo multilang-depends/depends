@@ -15,13 +15,18 @@ public abstract class BuiltInType {
     	for (String type:getBuiltInTypeStr()) {
     		builtInType.add(type);
     	}		
+    	for (String method:getBuiltInMethods()) {
+    		builtInMethod.add(method);
+    	}
 	}
 	
+	public abstract String[] getBuiltInMethods();
 	public abstract String[] getBuiltInTypeStr();
 	public abstract String[] getBuiltInPrefixStr() ;
 
 	private Set<String> builtInType = new HashSet<>();
 	private Set<String> builtInPrefix = new HashSet<>();
+	private Set<String> builtInMethod = new HashSet<>();
 
 	public boolean isBuiltInType(String type) {
 		if (Inferer.buildInType.getRawName().equals(type)) return true;
@@ -33,6 +38,11 @@ public abstract class BuiltInType {
 			if (type.startsWith(prefix)) return true;
 		}
 		return false;
+	}
+	
+
+	public boolean isBuildInMethod(String name) {
+		return builtInMethod.contains(name); 
 	}
 
 }

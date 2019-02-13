@@ -11,5 +11,8 @@ public class NullBuiltInType extends BuiltInType {
 	public String[] getBuiltInPrefixStr() {
 		return new String[] {};
 	}
-
+	@Override
+	public String[] getBuiltInMethods() {
+		return new String[]{};
+	}
 }

@@ -9,11 +9,13 @@ public class VarEntity extends ContainerEntity {
 	private String rawType;
 	private TypeEntity type;
 	private List<FunctionCall> functionCalls;
+	private List<TypeEntity> candidateTypes;
 	
 	public VarEntity(String simpleName,  String rawType, Entity parent, int id) {
 		super(simpleName,  parent,id);
 		this.rawType = rawType;
 		functionCalls = new ArrayList<>();
+		candidateTypes = new ArrayList<>();
 	}
 
 	public void setRawType(String rawType) {
@@ -54,5 +56,13 @@ public class VarEntity extends ContainerEntity {
 		this.functionCalls.add(new FunctionCall(fname));
 	}
 
+	public void fillCandidateTypes(Inferer inferer) {
+		if (type!=null) return ; //it is a strong type lang, do not need deduce candidate types
+		if (functionCalls.size()==0) return; //no information avaliable for type deduction
+		this.candidateTypes = inferer.calculateCandidateTypes(this,this.functionCalls);
+	}
 
+	public List<TypeEntity> getCandidateTypes() {
+		return candidateTypes;
+	}
 }

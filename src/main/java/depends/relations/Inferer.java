@@ -1,5 +1,6 @@
 package depends.relations;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -10,8 +11,11 @@ import org.slf4j.LoggerFactory;
 import depends.entity.ContainerEntity;
 import depends.entity.Entity;
 import depends.entity.FileEntity;
+import depends.entity.FunctionCall;
+import depends.entity.FunctionEntity;
 import depends.entity.MultiDeclareEntities;
 import depends.entity.TypeEntity;
+import depends.entity.VarEntity;
 import depends.entity.repo.BuiltInType;
 import depends.entity.repo.EntityRepo;
 import depends.entity.repo.NullBuiltInType;
@@ -284,5 +288,24 @@ public class Inferer {
 			}
 		}
 		return fromEntity;
+	}
+
+	public List<TypeEntity> calculateCandidateTypes(VarEntity fromEntity, List<FunctionCall> functionCalls) {
+		List<TypeEntity> types = new ArrayList<>();
+		FileEntity file = (FileEntity) fromEntity.getAncestorOfType(FileEntity.class);
+		searchAllTypesUnder(types,file, functionCalls);
+		return types;
+	}
+
+	private void searchAllTypesUnder(List<TypeEntity> types, FileEntity file, List<FunctionCall> functionCalls) {
+		for(Entity f:file.getImportedFiles()) {
+			searchAllTypesUnder(types,(FileEntity)f,functionCalls);
+		}
+		for (TypeEntity type:file.getDeclaredTypes()) {
+			FunctionMatcher functionMatcher = new FunctionMatcher(type.getFunctions());
+			if (functionMatcher.containsAll(functionCalls)) {
+				types.add(type);
+			}
+		}
 	}
 }

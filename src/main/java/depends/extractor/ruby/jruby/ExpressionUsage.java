@@ -96,7 +96,7 @@ public class ExpressionUsage {
 				}
 				expression.rawType = expression.identifier ;
 				expression.deriveTypeFromChild = false;
-			} else if (isArithMeticOperator(name)) {
+			} else if (helper.isArithMeticOperator(name)) {
 				expression.identifier = "<operator>";
 				expression.rawType = Inferer.buildInType.getQualifiedName();
 			}else {
@@ -117,27 +117,7 @@ public class ExpressionUsage {
 		return expression;
 	}
 
-	private boolean isArithMeticOperator(String name) {
-		return name.equals("+") ||
-				name.equals("-") ||
-				name.equals("*") ||
-				name.equals("/") ||
-				name.equals("**") ||
-				name.equals("%") ||
-				name.equals("&") ||
-				name.equals("<") ||
-				name.equals("<=") ||
-				name.equals(">") ||
-				name.equals(">=") ||
-				name.equals("==") ||
-				name.equals("!=") ||
-				name.equals("===") ||
-				name.equals("<<") ||
-				name.equals(">>") ||
-				name.equals("~") ||
-				name.equals("!") ||
-				name.equals("^");
-	}
+
 	/**
 	 * Auto deduce variable type from assignment.
 	 * for example:

@@ -49,7 +49,7 @@ import depends.relations.Inferer;
 public class JRubyVisitor extends NoopVisitor {
 
 	private RubyHandlerContext context;
-	RubyParserHelper helper = new RubyParserHelper();
+	RubyParserHelper helper = RubyParserHelper.getInst();
 	private ExpressionUsage expressionUsage;
 
 	public JRubyVisitor(String fileFullPath, EntityRepo entityRepo, IncludedFileLocator includedFileLocator,
@@ -102,7 +102,6 @@ public class JRubyVisitor extends NoopVisitor {
 
 	@Override
 	public Object visitRootNode(RootNode node) {
-		System.out.println(node);
 		return super.visitRootNode(node);
 	}
 
@@ -134,6 +133,14 @@ public class JRubyVisitor extends NoopVisitor {
 	public Object visitCallNode(CallNode node) {
 		String fname = helper.getName(node);
 		Collection<String> params = getParams(node);
+		addCallToReceiverVar(node, fname);
+		context.processSpecialFuncCall(fname, params);
+		return super.visitCallNode(node);
+	}
+
+	private void addCallToReceiverVar(CallNode node, String fname) {
+		if (helper.isCommonOperator(fname))return;
+		System.out.println("called ->"+fname);
 		Node varNode = node.getReceiver();
 		if (varNode instanceof INameNode) {
 			String varName = ((INameNode) varNode).getName();
@@ -143,8 +150,6 @@ public class JRubyVisitor extends NoopVisitor {
 				varEntity.addFunctionCall(fname);
 			}
 		}
-		context.processSpecialFuncCall(fname, params);
-		return super.visitCallNode(node);
 	}
 
 	@Override
@@ -280,7 +285,4 @@ public class JRubyVisitor extends NoopVisitor {
 		expressionUsage.foundExpression(node);
 		return super.visit(node);
 	}
-
-	
-
 }

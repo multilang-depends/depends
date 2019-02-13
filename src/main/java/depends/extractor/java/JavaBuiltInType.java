@@ -60,5 +60,9 @@ public class JavaBuiltInType extends BuiltInType{
 				"java.","javax.","com.sun."
 		};
 	}
+	@Override
+	public String[] getBuiltInMethods() {
+		return new String[]{};
+	}
 	
 }

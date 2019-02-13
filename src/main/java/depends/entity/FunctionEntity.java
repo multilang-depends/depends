@@ -49,6 +49,7 @@ public class FunctionEntity extends ContainerEntity{
 	@Override
 	public void inferLocalLevelEntities(Inferer inferer) {
 		for (VarEntity param:parameters) {
+			param.fillCandidateTypes(inferer);
 			param.inferLocalLevelEntities(inferer);
 		}
 		if (returnTypes.size()<returnTypeIdentifiers.size())
@@ -82,5 +83,13 @@ public class FunctionEntity extends ContainerEntity{
 	public String getDisplayName() {
 		FileEntity f = (FileEntity) this.getAncestorOfType(FileEntity.class);
 		return f.getRawName()+"("+getRawName()+")";
+	}
+	@Override
+	public VarEntity getVarOfName(String varName) {
+		for (VarEntity var:this.parameters) {
+			if (var.getRawName().equals(varName))
+				return var;
+		}
+		return super.getVarOfName(varName);
 	}
 }

@@ -22,9 +22,20 @@ import org.jrubyparser.ast.UnaryCallNode;
 import org.jrubyparser.ast.VCallNode;
 
 import depends.entity.ContainerEntity;
+import depends.extractor.ruby.RubyBuiltInType;
 import depends.extractor.ruby.RubyHandlerContext;
 
 public class RubyParserHelper {
+	private static RubyParserHelper inst = new RubyParserHelper();
+	public static RubyParserHelper getInst() {
+		return inst;
+	}
+
+	private RubyBuiltInType buildInType;
+	
+	private RubyParserHelper() {
+		this.buildInType = new RubyBuiltInType();
+	}
 	public String getName(Node node) {
 		if (node instanceof INameNode)
 			return ((INameNode)node).getName();
@@ -90,5 +101,31 @@ public class RubyParserHelper {
 		if (node instanceof GlobalAsgnNode) return context.globalScope();
 		if (node instanceof DAsgnNode) return context.lastContainer();
 		return context.lastContainer();
+	}
+
+	public boolean isArithMeticOperator(String name) {
+		return name.equals("+") ||
+				name.equals("-") ||
+				name.equals("*") ||
+				name.equals("/") ||
+				name.equals("**") ||
+				name.equals("%") ||
+				name.equals("&") ||
+				name.equals("<") ||
+				name.equals("<=") ||
+				name.equals(">") ||
+				name.equals(">=") ||
+				name.equals("==") ||
+				name.equals("!=") ||
+				name.equals("===") ||
+				name.equals("<<") ||
+				name.equals(">>") ||
+				name.equals("~") ||
+				name.equals("!") ||
+				name.equals("^");
+	}
+	
+	public boolean isCommonOperator(String name) {
+		return this.buildInType.isBuildInMethod(name);
 	}
 }

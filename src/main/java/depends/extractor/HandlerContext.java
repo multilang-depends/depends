@@ -46,6 +46,7 @@ public abstract class HandlerContext {
 			idGenerator.generateId());
 		pushToStack(currentTypeEntity);
 	 	entityRepo.add(currentTypeEntity);
+	 	currentFileEntity.addType(currentTypeEntity);
 		return currentTypeEntity;
 	}
 

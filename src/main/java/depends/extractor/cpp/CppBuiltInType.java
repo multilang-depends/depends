@@ -43,5 +43,9 @@ public class CppBuiltInType extends BuiltInType {
 	public String[] getBuiltInPrefixStr() {
 		return new String[] {"__"};
 	}
+	@Override
+	public String[] getBuiltInMethods() {
+		return new String[]{};
+	}
 
 }
