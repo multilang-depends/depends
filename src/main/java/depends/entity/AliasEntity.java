@@ -16,12 +16,17 @@ public class AliasEntity extends Entity {
 
 	public void inferLocalLevelEntities(Inferer inferer) {
 		Entity entity = inferer.resolveName(this, originName, true);
+		while(entity instanceof AliasEntity) {
+			AliasEntity aliasEntity = (AliasEntity)entity;
+			entity = inferer.resolveName(aliasEntity, aliasEntity.originName,true);
+			if (entity==null) break;
+			if (entity.equals(this)) {
+				entity = null;
+				break;
+			}
+		}
 		if (entity != null)
 			referToEntity = entity;
-		if (entity.equals(this)) {
-			referToEntity = new EmptyTypeEntity();
-		}
-		referToEntity.inferLocalLevelEntities(inferer);
 	}
 
 	public Collection<TypeEntity> getResolvedTypeParameters() {

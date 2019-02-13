@@ -20,7 +20,9 @@ public class TypeEntity extends ContainerEntity{
 	@Override
 	public void inferLocalLevelEntities(Inferer inferer) {
 		inheritedTypes= identiferToTypes(inferer,this.inhertedTypeIdentifiers);
+		inheritedTypes.remove(this);
 		implementedTypes= identiferToTypes(inferer,this.implementedIdentifiers);
+		implementedTypes.remove(this);
 		if (inheritedTypes.size()>0)
 			inheritedType = inheritedTypes.iterator().next();
 		super.inferLocalLevelEntities(inferer);
@@ -28,11 +30,13 @@ public class TypeEntity extends ContainerEntity{
 	public void addImplements(String typeName) {
 		if (typeName.equals(this.getRawName())) return;
 		if (implementedIdentifiers.contains(typeName)) return;
+		if (typeName.equals(this.rawName)) return;
 		this.implementedIdentifiers.add(typeName);
 	}
 	public void addExtends(String typeName) {
 		if (typeName.equals(this.getRawName())) return;
 		if (inhertedTypeIdentifiers.contains(typeName)) return;
+		if (typeName.equals(this.rawName)) return;
 		this.inhertedTypeIdentifiers.add(typeName);
 	}
 	public Collection<TypeEntity> getInheritedTypes() {
