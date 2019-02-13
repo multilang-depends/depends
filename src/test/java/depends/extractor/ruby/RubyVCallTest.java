@@ -29,7 +29,6 @@ public class RubyVCallTest extends RubyParserTest {
 	    }
 	    inferer.resolveAllBindings();
 	    FunctionEntity function = (FunctionEntity)(entityRepo.getEntity("called_from"));
-	    assertEquals(1,function.getRelations().size());
 	    this.assertContainsRelation(function, DependencyType.CALL, "called");
 	}
 	

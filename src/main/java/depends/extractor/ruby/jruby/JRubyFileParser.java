@@ -56,9 +56,6 @@ public class JRubyFileParser implements FileParser {
 		Node node = rubyParser.parse("<code>", in, config);
 		node.accept(new JRubyVisitor(fileFullPath, entityRepo, includesFileLocator,executor,inferer,parserCreator));
 		fileEntity = entityRepo.getEntity(fileFullPath);
-		if (fileEntity!=null) {
-			fileEntity.inferEntities(inferer);
-		}
 	}
 
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.jrubyparser.ast.AndNode;
 import org.jrubyparser.ast.AssignableNode;
+import org.jrubyparser.ast.BlockNode;
 import org.jrubyparser.ast.ClassVarNode;
 import org.jrubyparser.ast.ConstNode;
 import org.jrubyparser.ast.FCallNode;
@@ -12,9 +13,11 @@ import org.jrubyparser.ast.GlobalVarNode;
 import org.jrubyparser.ast.ILiteralNode;
 import org.jrubyparser.ast.InstVarNode;
 import org.jrubyparser.ast.LocalVarNode;
+import org.jrubyparser.ast.NewlineNode;
 import org.jrubyparser.ast.Node;
 import org.jrubyparser.ast.OrNode;
 import org.jrubyparser.ast.ReturnNode;
+import org.jrubyparser.ast.RootNode;
 import org.jrubyparser.ast.TrueNode;
 import org.jrubyparser.ast.VCallNode;
 
@@ -39,6 +42,8 @@ public class ExpressionUsage {
 	}
 	@SuppressWarnings("deprecation")
 	public Expression foundExpression(Node ctx) {
+		if (ctx instanceof RootNode) return null;
+		if (ctx instanceof BlockNode) return null;
 		Expression expression = findExpression(ctx);
 		if (expression!=null) return expression;
 		Expression parent = findParentInStack(ctx);
@@ -46,6 +51,9 @@ public class ExpressionUsage {
 		/* create expression and link it with parent*/
 		expression = new Expression(idGenerator.generateId());
 		expression.parent = parent;
+		if (ctx instanceof NewlineNode) {
+			expression.isStatement = true;
+		}
 		if (expression.parent!=null) {
 			if (expression.parent.deduceTypeBasedId==null) 
 				expression.parent.deduceTypeBasedId = expression.id;

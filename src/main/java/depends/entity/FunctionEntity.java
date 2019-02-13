@@ -56,6 +56,9 @@ public class FunctionEntity extends ContainerEntity{
 		if (throwTypes.size()<throwTypesIdentifiers.size())
 			throwTypes = identiferToTypes(inferer,this.throwTypesIdentifiers);
 		super.inferLocalLevelEntities(inferer);
+		if (this.returnTypes.size()==0 && this.getLastExpressionType()!=null) {
+			this.returnTypes.add(this.getLastExpressionType());
+		}
 	}
 	public Collection<VarEntity> getParameters() {
 		return parameters;

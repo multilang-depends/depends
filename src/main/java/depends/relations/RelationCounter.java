@@ -59,11 +59,13 @@ public class RelationCounter {
 		
 		HashSet<Entity> usedEntities = new HashSet<>();
 		for (Expression expression:entity.expressions().values()){
+			if (expression.isStatement) {
+				continue;
+			}
 			Entity referredEntity = expression.getReferredEntity();
 			if (referredEntity==null) {
 				continue;
 			}
-			
 			if (expression.isCall) {
 				entity.addRelation(new Relation(DependencyType.CALL,referredEntity));
 			}

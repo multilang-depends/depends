@@ -18,6 +18,8 @@ public class Expression {
 	public boolean isLogic = false;
 	public boolean isCreate = false;
 	public boolean isCast = false;
+	public boolean isStatement = false; //statement is only used for return type calcuation in some langs such as ruby
+	                                    //they will not be treat as real expressions in case of relation calculation
 	public boolean deriveTypeFromChild = true;
 	private TypeEntity type; // the type we care - for relation calculation. 
 	                         //for leaf, it equals to referredEntity.getType. otherwise, depends on child's type strategy

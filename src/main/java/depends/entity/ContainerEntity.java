@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
-import org.jrubyparser.ast.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,6 +78,7 @@ public abstract class ContainerEntity extends DecoratedEntity {
 			func.inferLocalLevelEntities(inferer);
 		}
 		resolvedMixins = identiferToContainerEntity(inferer, mixins);
+		this.resolveExpressions(inferer);
 	}
 
 	private Collection<ContainerEntity> identiferToContainerEntity(Inferer inferer, Collection<String> identifiers) {
@@ -139,10 +139,14 @@ public abstract class ContainerEntity extends DecoratedEntity {
 		}
 	}
 
-
-	
-
-
+	public TypeEntity getLastExpressionType() {
+		for (int i=this.expressionList.size()-1;i>=0;i--) {
+			Expression expr= this.expressionList.get(i);
+			if (expr.isStatement)
+				return expr.getType();
+		}
+		return null;
+	}
 
 	public String dumpExpressions() {
 		StringBuilder sb = new StringBuilder();
