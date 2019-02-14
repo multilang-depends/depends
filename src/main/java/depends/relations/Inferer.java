@@ -12,7 +12,6 @@ import depends.entity.ContainerEntity;
 import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.FunctionCall;
-import depends.entity.FunctionEntity;
 import depends.entity.MultiDeclareEntities;
 import depends.entity.TypeEntity;
 import depends.entity.VarEntity;
@@ -97,6 +96,7 @@ public class Inferer {
 	/**
 	 * By given raw name, to infer the type of the name
 	 * for example
+	 * (It is just a wrapper of resolve name)
 	 *   if it is a class, the class is the type
 	 *   if it is a function, the return type is the type
 	 *   if it is a variable, type of variable is the type 
@@ -142,18 +142,20 @@ public class Inferer {
 			if (repo.getEntity(rawName) != null)
 				return repo.getEntity(rawName);
 		}
+		
 		// first we lookup the first symbol
 		String[] names = rawName.split("\\.");
 		if (names.length == 0)
 			return null;
-		Entity type = lookupEntity(fromEntity, names[0], searchImport);
-		if (type == null)
+		Entity entity = lookupEntity(fromEntity, names[0], searchImport);
+		if (entity == null) {
 			return null;
+		}
 		if (names.length == 1) {
-			return type;
+			return entity;
 		}
 		// then find the subsequent symbols
-		return findEntitySince(type, names, 1);
+		return findEntitySince(entity, names, 1);
 	}
 	
 	private Entity lookupEntity(Entity fromEntity, String name, boolean searcImport) {
@@ -314,6 +316,13 @@ public class Inferer {
 		return fromEntity;
 	}
 
+	/**
+	 * Deduce type based on function calls
+	 * If the function call is a subset of a type, then the type could be a candidate of the var's type 
+	 * @param fromEntity
+	 * @param functionCalls
+	 * @return
+	 */
 	public List<TypeEntity> calculateCandidateTypes(VarEntity fromEntity, List<FunctionCall> functionCalls) {
 		List<TypeEntity> types = new ArrayList<>();
 		FileEntity file = (FileEntity) fromEntity.getAncestorOfType(FileEntity.class);

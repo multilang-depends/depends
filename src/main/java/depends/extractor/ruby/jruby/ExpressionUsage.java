@@ -42,7 +42,6 @@ public class ExpressionUsage {
 		this.inferer = inferer;
 		this.helper = helper;
 	}
-	@SuppressWarnings("deprecation")
 	public Expression foundExpression(Node ctx) {
 		if (ctx instanceof RootNode) return null;
 		if (ctx instanceof BlockNode) return null;
