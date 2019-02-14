@@ -29,7 +29,7 @@ public class RubySingletonMethodTest extends RubyParserTest {
 		    parser.parse();
 	    }
 	    ContainerEntity file = (ContainerEntity)(entityRepo.getEntity(FileUtil.uniqFilePath(srcs[0])));
-	    VarEntity var = file.getVarOfName("var2");
+	    VarEntity var = file.lookupVarLocally("var2");
 	    assertEquals(1,var.getFunctions().size());
 	}
 }

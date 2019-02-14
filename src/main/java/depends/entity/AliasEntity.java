@@ -75,7 +75,7 @@ public class AliasEntity extends Entity {
 		if (!(referToEntity instanceof ContainerEntity))
 			return null;
 		ContainerEntity origin = (ContainerEntity) referToEntity;
-		return origin.lookupVarsInVisibleScope(varName);
+		return origin.lookupVarInVisibleScope(varName);
 	}
 
 	public Collection<ContainerEntity> getResolvedMixins() {

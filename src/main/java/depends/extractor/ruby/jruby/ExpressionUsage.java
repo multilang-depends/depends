@@ -135,7 +135,7 @@ public class ExpressionUsage {
 		Node parentNode = node.getParent();
 		if (parentNode instanceof AssignableNode) {
 			ContainerEntity scope = helper.getScopeOfVar((AssignableNode)parentNode, this.context);
-			VarEntity var = scope.getVarOfName(helper.getName(parentNode));
+			VarEntity var = scope.lookupVarLocally(helper.getName(parentNode));
 			if (var!=null) {
 				expression.addDeducedTypeVar(var);
 			}

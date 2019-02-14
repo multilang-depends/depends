@@ -32,7 +32,7 @@ public class RubyParameterTypeDedudceTest extends RubyParserTest {
 	    }
 	    inferer.resolveAllBindings();
 	    FunctionEntity function = (FunctionEntity)(entityRepo.getEntity("test"));
-	    VarEntity var = function.getVarOfName("t1");
+	    VarEntity var = function.lookupVarLocally("t1");
 	    TypeEntity type = var.getType();
 	    assertTrue(type instanceof CandidateTypes);
 	    assertEquals(2,((CandidateTypes)type).getCandidateTypes().size());

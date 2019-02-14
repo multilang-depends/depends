@@ -18,7 +18,8 @@ public abstract class Entity {
 	String qualifiedName = null;
 	String rawName = "";
 	Entity parent;
-	List<Entity> children = new ArrayList<>();
+	private MultiDeclareEntities mutliDeclare = null;
+	private List<Entity> children = new ArrayList<>();
     ArrayList<Relation> relations = new ArrayList<>();
 
 	
@@ -147,5 +148,13 @@ public abstract class Entity {
 
 	public String getDisplayName() {
 		return getRawName();
+	}
+
+	public MultiDeclareEntities getMutliDeclare() {
+		return mutliDeclare;
+	}
+
+	public void setMutliDeclare(MultiDeclareEntities mutliDeclare) {
+		this.mutliDeclare = mutliDeclare;
 	}
 }

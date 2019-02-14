@@ -130,7 +130,7 @@ public abstract class ContainerEntity extends DecoratedEntity {
 					}
 				}else {
 					
-					VarEntity varEntity = this.lookupVarsInVisibleScope(expression.identifier);
+					VarEntity varEntity = this.lookupVarInVisibleScope(expression.identifier);
 					if (varEntity!=null) {
 						expression.setType( varEntity.getType(),varEntity,inferer);
 					}
@@ -155,19 +155,38 @@ public abstract class ContainerEntity extends DecoratedEntity {
 		}
 		return sb.toString();
 	}
+
+
 	
-
-
-	protected FunctionEntity lookupFunctionLocally(String functionName) {
-		for (FunctionEntity func : getFunctions()) {
-			if (func.getRawName().equals(functionName))
-				return func;
+	/**
+	 * The entry point of lookup functions. It will treat multi-declare entities and normal
+	 * entity differently.
+	 * - for multiDeclare entity, it means to lookup all entities
+	 * - for normal entity, it means to lookup entities from current scope still root 
+	 * @param functionName
+	 * @return
+	 */
+	public FunctionEntity lookupFunctionInVisibleScope(String functionName) {
+		if (this.getMutliDeclare()!=null) {
+			for (ContainerEntity fromEntity:this.getMutliDeclare().getEntities()) {
+				FunctionEntity f = lookupFunctionBottomUpTillTopContainer(functionName, fromEntity);
+				if (f!=null)
+					return f;
+			}
+		}else {
+			ContainerEntity fromEntity = this;
+			return lookupFunctionBottomUpTillTopContainer(functionName, fromEntity);
 		}
 		return null;
 	}
-	
-	public FunctionEntity lookupFunctionInVisibleScope(String functionName) {
-		ContainerEntity fromEntity = this;
+
+	/**
+	 * lookup function bottom up till the most outside container
+	 * @param functionName
+	 * @param fromEntity
+	 * @return
+	 */
+	private FunctionEntity lookupFunctionBottomUpTillTopContainer(String functionName, ContainerEntity fromEntity) {
 		while (fromEntity != null) {
 			if (fromEntity instanceof ContainerEntity) {
 				FunctionEntity func = ((ContainerEntity) fromEntity).lookupFunctionLocally(functionName);
@@ -180,13 +199,40 @@ public abstract class ContainerEntity extends DecoratedEntity {
 	}
 	
 	/**
-	 * To found the var. Must be invoked after all entities var binding solved
+	 * lookup function in local entity. 
+	 * It could be override such as the type entity (it should also lookup the 
+	 * inherit/implemented types
+	 * @param functionName
+	 * @return
+	 */
+	public FunctionEntity lookupFunctionLocally(String functionName) {
+		for (FunctionEntity func : getFunctions()) {
+			if (func.getRawName().equals(functionName))
+				return func;
+		}
+		return null;
+	}
+
+	/**
+	 * The entry point of lookup var. It will treat multi-declare entities and normal
+	 * entity differently.
+	 * - for multiDeclare entity, it means to lookup all entities
+	 * - for normal entity, it means to lookup entities from current scope still root 
+	 * @param varName
+	 * @return
+	 */
+	public VarEntity lookupVarInVisibleScope(String varName) {
+		ContainerEntity fromEntity = this;
+		return lookupVarBottomUpTillTopContainer(varName, fromEntity);
+	}
+
+	/**
+	 * To found the var. 
 	 * @param fromEntity
 	 * @param varName
 	 * @return
 	 */
-	public VarEntity lookupVarsInVisibleScope(String varName) {
-		ContainerEntity fromEntity = this;
+	private VarEntity lookupVarBottomUpTillTopContainer(String varName, ContainerEntity fromEntity) {
 		while (fromEntity != null) {
 			if (fromEntity instanceof ContainerEntity) {
 				VarEntity var = ((ContainerEntity) fromEntity).lookupVarLocally(varName);
@@ -198,7 +244,7 @@ public abstract class ContainerEntity extends DecoratedEntity {
 		return null;
 	}
 
-	private VarEntity lookupVarLocally(String varName) {
+	public VarEntity lookupVarLocally(String varName) {
 		for (VarEntity var:getVars()) {
 			if (var.getRawName().equals(varName))
 				return var;
@@ -206,28 +252,11 @@ public abstract class ContainerEntity extends DecoratedEntity {
 		return null;
 	}
 
-
-
 	public void addMixin(String moduleName) {
 		mixins.add(moduleName);
 	}
 
-
-
 	public Collection<ContainerEntity> getResolvedMixins() {
 		return resolvedMixins;
 	}
-
-	public VarEntity getVarOfName(String varName) {
-		for (VarEntity var:this.vars) {
-			if (var.getRawName().equals(varName))
-				return var;
-		}
-		return null;
-	}
-
-
-
-
-
 }

@@ -29,7 +29,7 @@ public class RubyVarInvocationRecordTest extends RubyParserTest {
 		    parser.parse();
 	    }
 	    ContainerEntity file = (ContainerEntity)(entityRepo.getEntity(FileUtil.uniqFilePath(srcs[0])));
-	    VarEntity var = file.getVarOfName("var");
+	    VarEntity var = file.lookupVarLocally("var");
 	    assertEquals(1,var.getCalledFunctions().size());
 	}
 }

@@ -53,6 +53,9 @@ public class EntityRepo extends IdGenerator{
 	}
 	
 	public void setParent(Entity child, Entity parent) {
+		if (parent==null) return;
+		if (child==null) return;
+		if (parent.equals(child.getParent())) return;
 		child.setParent(parent);
 		parent.addChild(child);
 	}

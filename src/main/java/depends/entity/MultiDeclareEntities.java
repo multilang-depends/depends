@@ -15,8 +15,7 @@ public class MultiDeclareEntities extends ContainerEntity {
 	List<ContainerEntity> entities = new ArrayList<>();
 	public MultiDeclareEntities(Entity entity, int id ) {
 		super(entity.getRawName(), entity.getParent(), id);
-		if (entity instanceof ContainerEntity)
-			entities.add((ContainerEntity)entity);
+		add(entity);
 	}
 
 	@Override
@@ -27,6 +26,7 @@ public class MultiDeclareEntities extends ContainerEntity {
 	}
 
 	public void add(Entity entity) {
+		entity.setMutliDeclare(this);
 		if (entity instanceof ContainerEntity)
 			entities.add((ContainerEntity)entity);
 	}

@@ -61,9 +61,9 @@ public class CandidateTypes extends TypeEntity {
 	}
  	
 	@Override
-	public VarEntity lookupVarsInVisibleScope(String varName) {
+	public VarEntity lookupVarInVisibleScope(String varName) {
 		for (TypeEntity type:candidateTypes) {
-			VarEntity v = type.lookupVarsInVisibleScope(varName);
+			VarEntity v = type.lookupVarInVisibleScope(varName);
 			if (v!=null) return v;
 		}
  		return null;	
@@ -71,9 +71,9 @@ public class CandidateTypes extends TypeEntity {
 	
 	
 	@Override
-	public VarEntity getVarOfName(String varName) {
+	public VarEntity lookupVarLocally(String varName) {
 		for (TypeEntity type:candidateTypes) {
-			VarEntity v = type.getVarOfName(varName);
+			VarEntity v = type.lookupVarLocally(varName);
 			if (v!=null) return v;
 		}
 		return null;

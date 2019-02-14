@@ -111,7 +111,7 @@ public class Expression {
 					parent.setReferredEntity(func);
 			}else {
 				parent.setType(inferer.inferTypeFromName(this.getType(), parent.identifier),null,inferer);
-				VarEntity var = this.getType().lookupVarsInVisibleScope(parent.identifier);
+				VarEntity var = this.getType().lookupVarInVisibleScope(parent.identifier);
 				if (var!=null) {
 					parent.setType(var.getType(),var, inferer);
 					parent.setReferredEntity(var);

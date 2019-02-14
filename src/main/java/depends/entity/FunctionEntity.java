@@ -32,10 +32,12 @@ public class FunctionEntity extends ContainerEntity{
 	}
 
 	public void addReturnType(String returnType) {
+		if (returnType==null) return;
 		this.returnTypeIdentifiers.add(returnType);
 	}
 	
 	public void addReturnType(TypeEntity returnType) {
+		if (returnType==null) return;
 		if (!this.returnTypeIdentifiers.contains(returnType.rawName)){
 			this.returnTypeIdentifiers.add(returnType.rawName);
 			this.returnTypes.add(returnType);
@@ -68,13 +70,13 @@ public class FunctionEntity extends ContainerEntity{
 		return throwTypes;
 	}
 	@Override
-	public VarEntity lookupVarsInVisibleScope(String varName) {
+	public VarEntity lookupVarInVisibleScope(String varName) {
 		for (VarEntity param:parameters) {
 			if (varName.equals(param.getRawName())) {
 				return param;
 			}
 		}
-		return super.lookupVarsInVisibleScope(varName);
+		return super.lookupVarInVisibleScope(varName);
 	}
 	public void addParameter(VarEntity var) {
 		this.parameters.add(var);
@@ -85,11 +87,11 @@ public class FunctionEntity extends ContainerEntity{
 		return f.getRawName()+"("+getRawName()+")";
 	}
 	@Override
-	public VarEntity getVarOfName(String varName) {
+	public VarEntity lookupVarLocally(String varName) {
 		for (VarEntity var:this.parameters) {
 			if (var.getRawName().equals(varName))
 				return var;
 		}
-		return super.getVarOfName(varName);
+		return super.lookupVarLocally(varName);
 	}
 }

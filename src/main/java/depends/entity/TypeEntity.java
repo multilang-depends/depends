@@ -52,24 +52,41 @@ public class TypeEntity extends ContainerEntity{
 	}
  	
  	@Override
- 	protected FunctionEntity lookupFunctionLocally(String functionName) {
-		FunctionEntity funcType = super.lookupFunctionLocally(functionName);
-		if (funcType!=null) return funcType;
+ 	public FunctionEntity lookupFunctionLocally(String functionName) {
+		FunctionEntity func = super.lookupFunctionLocally(functionName);
+		if (func!=null) return func;
 		for (TypeEntity inhertedType : getInheritedTypes()) {
-			funcType = inhertedType.lookupFunctionLocally(functionName);
-			if (funcType != null)
+			func = inhertedType.lookupFunctionLocally(functionName);
+			if (func != null)
 				break;
 		}
-		if (funcType != null)
-			return funcType;
+		if (func != null)
+			return func;
 		for (TypeEntity implType : getImplementedTypes()) {
-			funcType = implType.lookupFunctionLocally( functionName);
-			if (funcType != null)
+			func = implType.lookupFunctionLocally( functionName);
+			if (func != null)
 				break;
 		}
-		return funcType;
+		return func;
  	}
- 	
+ 	@Override
+ 	public VarEntity lookupVarLocally(String varName) {
+ 		VarEntity var = super.lookupVarLocally(varName);
+		if (var!=null) return var;
+		for (TypeEntity inhertedType : getInheritedTypes()) {
+			var = inhertedType.lookupVarLocally(varName);
+			if (var != null)
+				break;
+		}
+		if (var != null)
+			return var;
+		for (TypeEntity implType : getImplementedTypes()) {
+			var = implType.lookupVarLocally( varName);
+			if (var != null)
+				break;
+		}
+		return var;
+	}
  	@Override
  	public TypeEntity getType() {
 		return this;
