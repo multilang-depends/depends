@@ -244,6 +244,16 @@ public class Inferer {
 				}
 			}
 			
+			if (fromEntity instanceof FileEntity) {
+				FileEntity file = (FileEntity)fromEntity;
+				for (TypeEntity type:file.getDeclaredTypes()) {
+					if (type.getRawName().equals(name)||
+						type.getQualifiedName().equals(name)) {
+						return type;
+					}
+				}
+			}
+			
 			for (Entity child : fromEntity.getChildren()) {
 				if (child instanceof FileEntity) {
 					for (Entity classUnderFile : child.getChildren()) {

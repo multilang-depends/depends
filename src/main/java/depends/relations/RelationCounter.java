@@ -72,6 +72,9 @@ public class RelationCounter {
 			if (expression.isCreate) {
 				entity.addRelation(new Relation(DependencyType.CREATE,referredEntity));
 			}
+			if (expression.isThrow) {
+				entity.addRelation(new Relation(DependencyType.THROW,referredEntity));
+			}
 			if (expression.isSet) { //SET is merged with USE
 				entity.addRelation(new Relation(DependencyType.USE,referredEntity));
 			}

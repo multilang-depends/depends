@@ -18,6 +18,7 @@ public class Expression {
 	public boolean isLogic = false;
 	public boolean isCreate = false;
 	public boolean isCast = false;
+	public boolean isThrow = false;
 	public boolean isStatement = false; //statement is only used for return type calcuation in some langs such as ruby
 	                                    //they will not be treat as real expressions in case of relation calculation
 	public boolean deriveTypeFromChild = true;
@@ -67,6 +68,8 @@ public class Expression {
 		                      .append(isSet?"[set]":"")
 		                      .append(isLogic?"[bool]":"")
 		                      .append(isCall?"[call]":"").append("|")
+		                      .append(isCreate?"[new]":"").append("|")
+		                      .append(isThrow?"[throw]":"").append("|")
 		    .append("parent:").append(parent==null?"nil":parent.text).append("|")
 			.append("type:").append(type).append("|");
 		return s.toString();

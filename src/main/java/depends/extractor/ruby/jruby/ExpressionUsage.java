@@ -3,6 +3,7 @@ package depends.extractor.ruby.jruby;
 import java.util.List;
 
 import org.jrubyparser.ast.AndNode;
+import org.jrubyparser.ast.ArrayNode;
 import org.jrubyparser.ast.AssignableNode;
 import org.jrubyparser.ast.BlockNode;
 import org.jrubyparser.ast.ClassVarNode;
@@ -12,6 +13,7 @@ import org.jrubyparser.ast.FalseNode;
 import org.jrubyparser.ast.GlobalVarNode;
 import org.jrubyparser.ast.ILiteralNode;
 import org.jrubyparser.ast.InstVarNode;
+import org.jrubyparser.ast.ListNode;
 import org.jrubyparser.ast.LocalVarNode;
 import org.jrubyparser.ast.NewlineNode;
 import org.jrubyparser.ast.Node;
@@ -50,6 +52,7 @@ public class ExpressionUsage {
 		//System.out.println("expr " + ctx.toString());
 		/* create expression and link it with parent*/
 		expression = new Expression(idGenerator.generateId());
+		expression.text = ctx.toString();
 		expression.parent = parent;
 		if (ctx instanceof NewlineNode) {
 			expression.isStatement = true;
@@ -63,7 +66,7 @@ public class ExpressionUsage {
 			}
 		}
 		context.lastContainer().addExpression(ctx,expression);
-		if (ctx instanceof ILiteralNode) {
+		if (ctx instanceof ILiteralNode && !(ctx instanceof ListNode)) {
 			expression.identifier = "<literal>";
 			expression.rawType = Inferer.buildInType.getQualifiedName();
 		} else if (ctx instanceof TrueNode || ctx instanceof FalseNode) {
@@ -96,6 +99,9 @@ public class ExpressionUsage {
 				}
 				expression.rawType = expression.identifier ;
 				expression.deriveTypeFromChild = false;
+			} else if (name.equals("raise")) {
+				expression.isThrow = true;
+				expression.deriveTypeFromChild = true;
 			} else if (helper.isArithMeticOperator(name)) {
 				expression.identifier = "<operator>";
 				expression.rawType = Inferer.buildInType.getQualifiedName();
