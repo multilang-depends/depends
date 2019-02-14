@@ -330,10 +330,10 @@ public class JavaListener extends JavaParserBaseListener {
 	}
 	
 	private String sureDotStartName(String name) {
-		if (name==null) return null;
-		if (name.contains(".") && !name.startsWith(".")) {
-			name = "." + name;
-		}
+//		if (name==null) return null;
+//		if (name.contains(".") && !name.startsWith(".")) {
+//			name = "." + name;
+//		}
 		return name;
 	}
 }

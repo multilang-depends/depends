@@ -71,6 +71,7 @@ public class FileEntity extends ContainerEntity {
 		this.importedRelationEntities = inferer.getImportedRelationEntities(importedNames);
 		this.importedTypes = inferer.getImportedTypes(importedNames);
 		this.importedFiles = inferer.getImportedFiles(importedNames);
+
 		super.inferLocalLevelEntities(inferer);
 	}
 

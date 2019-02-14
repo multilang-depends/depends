@@ -173,9 +173,6 @@ public class Inferer {
 
 		Entity inferData = findEntityUnderSamePackage(fromEntity, name);
 		if (inferData != null) {
-			if (repo.getEntity(inferData.getQualifiedName()) instanceof MultiDeclareEntities) {
-				return repo.getEntity(inferData.getQualifiedName());
-			}
 			return inferData;
 		}
 		if (searcImport)
