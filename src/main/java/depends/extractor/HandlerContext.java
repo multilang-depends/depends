@@ -183,8 +183,8 @@ public abstract class HandlerContext {
 	
 	public VarEntity foundVarDefinition(ContainerEntity container,String varName) {
 		if (container==null) {
-			System.err.println("potentail error:" + varName + " has no container");
-			return null;
+			System.out.println("fallback to file container for var " + varName + " in file "+ currentFile().getRawName());
+			container = currentFile();
 		}
 		
 		VarEntity var = getVar(container,varName);

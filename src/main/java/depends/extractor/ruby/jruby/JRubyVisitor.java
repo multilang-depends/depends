@@ -13,6 +13,7 @@ import org.jrubyparser.ast.ClassVarAsgnNode;
 import org.jrubyparser.ast.ClassVarDeclNode;
 import org.jrubyparser.ast.ClassVarNode;
 import org.jrubyparser.ast.Colon2ConstNode;
+import org.jrubyparser.ast.Colon3Node;
 import org.jrubyparser.ast.ConstNode;
 import org.jrubyparser.ast.DAsgnNode;
 import org.jrubyparser.ast.DVarNode;
@@ -90,7 +91,11 @@ public class JRubyVisitor extends NoopVisitor {
 			String name1 = helper.getName(colon2ConstNode.getLeftNode());
 			String superName = colon2ConstNode.getName();
 			context.foundExtends(name1 + "." + superName);
-		} else {
+		} else if (superNode instanceof Colon3Node){
+			Colon3Node colon3Node = (Colon3Node) superNode;
+			String superName = colon3Node.getName();
+			context.foundExtends(superName + "." + superName);
+		}else{
 			if (superNode != null) {
 				System.err.println("cannot support the super node style" + superNode.toString());
 			}
