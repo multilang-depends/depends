@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.concurrent.ExecutorService;
 
 import depends.entity.Entity;
+import depends.entity.FileEntity;
 import depends.entity.PackageEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.FileParser;
@@ -30,7 +31,10 @@ public class RubyHandlerContext extends HandlerContext {
 	}
 	
 	public Entity foundNamespace(String nampespaceName) {
-		PackageEntity pkgEntity = new PackageEntity(nampespaceName, currentFile(),idGenerator.generateId());
+		Entity parentEntity = currentFile();
+		if (latestValidContainer()!=null) 
+			parentEntity = latestValidContainer();
+		PackageEntity pkgEntity = new PackageEntity(nampespaceName, parentEntity,idGenerator.generateId());
 		entityRepo.add(pkgEntity);
 		entityStack.push(pkgEntity);
 		return pkgEntity;

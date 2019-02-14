@@ -6,7 +6,7 @@ public class PackageEntity extends TypeEntity {
 		setQualifiedName(rawName); //in Java, package raw name = full name
 	}
 
-	public PackageEntity(String rawName, FileEntity currentFile, Integer id) {
+	public PackageEntity(String rawName, Entity currentFile, Integer id) {
 		super(rawName,  currentFile,id);
 	}
 }

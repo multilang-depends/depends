@@ -7,7 +7,11 @@ import org.jrubyparser.ast.AssignableNode;
 import org.jrubyparser.ast.CallNode;
 import org.jrubyparser.ast.ClassVarAsgnNode;
 import org.jrubyparser.ast.ClassVarDeclNode;
+import org.jrubyparser.ast.Colon2ConstNode;
+import org.jrubyparser.ast.Colon2Node;
+import org.jrubyparser.ast.Colon3Node;
 import org.jrubyparser.ast.ConstDeclNode;
+import org.jrubyparser.ast.ConstNode;
 import org.jrubyparser.ast.DAsgnNode;
 import org.jrubyparser.ast.DefsNode;
 import org.jrubyparser.ast.FCallNode;
@@ -36,10 +40,21 @@ public class RubyParserHelper {
 	private RubyParserHelper() {
 		this.buildInType = new RubyBuiltInType();
 	}
+	
+	
 	public String getName(Node node) {
-		if (node instanceof INameNode)
-			return ((INameNode)node).getName();
-		return null;
+		String name = "";
+		if (node instanceof INameNode) {
+			name = ((INameNode)node).getName();
+			if (node instanceof Colon2Node) {
+				Node left = ((Colon2Node)node).getLeftNode();
+				if (left!=null) {
+					name = getName(left) + "."+name;
+				}
+			}
+		}
+		System.out.println(name);
+		return name.length()>0?name:null;
 	}
 
 	public boolean isFunctionCall(Node ctx) {

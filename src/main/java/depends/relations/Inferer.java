@@ -248,7 +248,7 @@ public class Inferer {
 				FileEntity file = (FileEntity)fromEntity;
 				for (TypeEntity type:file.getDeclaredTypes()) {
 					if (type.getRawName().equals(name)||
-						type.getQualifiedName().equals(name)) {
+						suffixMatch(name,type.getQualifiedName())) {
 						return type;
 					}
 				}
@@ -271,6 +271,16 @@ public class Inferer {
 	}
 	
 	
+	private boolean suffixMatch(String name, String qualifiedName) {
+		if (qualifiedName.contains(".")) {
+			if (!name.startsWith(".")) name = "." +name;
+			return qualifiedName.endsWith(name);
+		}
+		else {
+			return qualifiedName.equals(name);
+		}
+	}
+
 	private Entity findEntityInChild(Entity fromEntity,String name) {
 		Entity entity =null;
 		for (Entity child : fromEntity.getChildren()) {

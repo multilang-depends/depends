@@ -33,7 +33,7 @@ public abstract class Entity {
 	}
 
     /**
-     * Rule 1: if it contains '.' , then the name is equal to raw name
+     * Rule 1: if it start with '.' , then the name is equal to raw name
      * Rule 2: if parent not exists, the name is equal to raw name
      * Rule 3: if parent exists but no qualified name exists or empty, the name is equal to raw name
      * Rule 4: otherwise, qualified name = parent_qualfied_name + "."+rawName
@@ -41,8 +41,8 @@ public abstract class Entity {
      */
 	private void deduceQualifiedName() {
 		rawName = rawName.replace("::","." );
-		if (this.rawName.contains(".")) {
-			this.qualifiedName = this.rawName;
+		if (this.rawName.startsWith(".")) {
+			this.qualifiedName = this.rawName.substring(1);
 			return; //already qualified
 		}
 		if (parent==null) {
@@ -58,9 +58,6 @@ public abstract class Entity {
 			return;
 		}
 		this.qualifiedName= parent.getQualifiedName(true)+"." + rawName;
-		if (rawName.startsWith(".")) {
-			rawName = rawName.substring(2);
-		}
 	}
 
 

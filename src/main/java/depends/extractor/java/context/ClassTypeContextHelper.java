@@ -21,9 +21,9 @@ public class ClassTypeContextHelper {
      */
 	public static String getClassName(TypeTypeContext ctx) {
 		if (ctx.primitiveType()!=null)
-			return ctx.primitiveType().getText();
+			return sureDotStartName(ctx.primitiveType().getText());
 		if (ctx.classOrInterfaceType()!=null)
-			return getType(ctx.classOrInterfaceType());
+			return sureDotStartName(getType(ctx.classOrInterfaceType()));
 		return null;
 	}
 
@@ -57,6 +57,14 @@ public class ClassTypeContextHelper {
 			}
 		}
 		return typeArguments;
+	}
+	
+	private static String sureDotStartName(String name) {
+		if (name==null) return null;
+		if (name.contains(".") && !name.startsWith(".")) {
+			name = "." + name;
+		}
+		return name;
 	}
 
 }

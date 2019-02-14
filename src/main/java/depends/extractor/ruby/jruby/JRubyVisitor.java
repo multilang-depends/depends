@@ -79,23 +79,15 @@ public class JRubyVisitor extends NoopVisitor {
 
 	@Override
 	public Object visitClassNode(ClassNode node) {
-		context.foundNewType(node.getCPath().getName());
+		context.foundNewType(helper.getName(node.getCPath()));
 		Node superNode = node.getSuper();
-		if (superNode instanceof ConstNode) {
-			String superName = ((ConstNode) superNode).getName();
+		
+		if (superNode instanceof ConstNode ||
+				superNode instanceof SymbolNode ||
+				superNode instanceof Colon2ConstNode ||
+				superNode instanceof Colon3Node) {
+			String superName = helper.getName(superNode);
 			context.foundExtends(superName);
-		} else if (superNode instanceof SymbolNode) {
-			String superName = ((SymbolNode) superNode).getName();
-			context.foundExtends(superName);
-		} else if (superNode instanceof Colon2ConstNode) {
-			Colon2ConstNode colon2ConstNode = (Colon2ConstNode) superNode;
-			String name1 = helper.getName(colon2ConstNode.getLeftNode());
-			String superName = colon2ConstNode.getName();
-			context.foundExtends(name1 + "." + superName);
-		} else if (superNode instanceof Colon3Node){
-			Colon3Node colon3Node = (Colon3Node) superNode;
-			String superName = colon3Node.getName();
-			context.foundExtends(superName + "." + superName);
 		}else{
 			if (superNode != null) {
 				System.err.println("cannot support the super node style" + superNode.toString());
