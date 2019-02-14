@@ -52,11 +52,11 @@ abstract public class AbstractLangProcessor {
 	private String[] includeDirs;
 	private DependencyGenerator dependencyGenerator;
 
-	public AbstractLangProcessor(String inputDir, String[] includeDir) {
+	public AbstractLangProcessor(String inputDir, String[] includeDir, boolean eagerExpressionResolve) {
 		entityRepo = new EntityRepo();
 		this.inputSrcPath = inputDir;
 		this.includeDirs = includeDir;
-		inferer = new Inferer(entityRepo,getImportLookupStrategy(),getBuiltInType());
+		inferer = new Inferer(entityRepo,getImportLookupStrategy(),getBuiltInType(),eagerExpressionResolve);
 	}
 	
     /**

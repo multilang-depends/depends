@@ -14,7 +14,7 @@ public abstract class CppParserTest {
 
 	public void init() {
     	repo = new EntityRepo();
-    	inferer = new Inferer(repo,new CppImportLookupStrategy(),new CppBuiltInType());
+    	inferer = new Inferer(repo,new CppImportLookupStrategy(),new CppBuiltInType(),false);
     	preprocessorHandler = new PreprocessorHandler(new ArrayList<>());
     }
 	

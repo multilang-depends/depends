@@ -12,7 +12,7 @@ public abstract class JavaParserTest {
 
 	public void init() {
 		entityRepo = new EntityRepo();
-		inferer = new Inferer(entityRepo,new JavaImportLookupStrategy(),new JavaBuiltInType());
+		inferer = new Inferer(entityRepo,new JavaImportLookupStrategy(),new JavaBuiltInType(),false);
 	}
 	
 	public JavaFileParser createParser(String src) {

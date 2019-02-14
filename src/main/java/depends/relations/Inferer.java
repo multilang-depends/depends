@@ -31,11 +31,14 @@ public class Inferer {
 	private HashSet<String> unsolvedSymbols;
 	private EntityRepo repo;
 
-	public Inferer(EntityRepo repo, ImportLookupStrategy importLookupStrategy, BuiltInType buildInTypeManager) {
+	private boolean eagerExpressionResolve = false;
+
+	public Inferer(EntityRepo repo, ImportLookupStrategy importLookupStrategy, BuiltInType buildInTypeManager, boolean eagerExpressionResolve) {
 		this.repo = repo;
 		this.importLookupStrategy = importLookupStrategy;
 		this.buildInTypeManager = buildInTypeManager;
 		unsolvedSymbols= new HashSet<>();
+		this.eagerExpressionResolve = eagerExpressionResolve;
 	}
 
 	/**
@@ -143,6 +146,10 @@ public class Inferer {
 				return repo.getEntity(rawName);
 		}
 		
+		if (rawName.contains(".")) {
+			if (repo.getEntity(rawName) != null)
+				return repo.getEntity(rawName);
+		}
 		// first we lookup the first symbol
 		String[] names = rawName.split("\\.");
 		if (names.length == 0)
@@ -341,5 +348,9 @@ public class Inferer {
 				}
 			}
 		}
+	}
+
+	public boolean isEagerExpressionResolve() {
+		return eagerExpressionResolve;
 	}
 }

@@ -21,7 +21,7 @@ public abstract class RubyParserTest extends ParserTest implements ParserCreator
 
 	public void init() {
 		entityRepo = new EntityRepo();
-		inferer = new Inferer(entityRepo,new RubyImportLookupStrategy(),new RubyBuiltInType());
+		inferer = new Inferer(entityRepo,new RubyImportLookupStrategy(),new RubyBuiltInType(),true);
 	}
 	
 	public FileParser createFileParser(String src) {

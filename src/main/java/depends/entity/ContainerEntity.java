@@ -78,7 +78,9 @@ public abstract class ContainerEntity extends DecoratedEntity {
 			func.inferLocalLevelEntities(inferer);
 		}
 		resolvedMixins = identiferToContainerEntity(inferer, mixins);
-		this.resolveExpressions(inferer);
+		if (inferer.isEagerExpressionResolve()) {
+			this.resolveExpressions(inferer);
+		}
 	}
 
 	private Collection<ContainerEntity> identiferToContainerEntity(Inferer inferer, Collection<String> identifiers) {

@@ -106,18 +106,26 @@ public class Expression {
 		else if (parent.isDot) {
 			if (parent.isCall) {
 				FunctionEntity func = this.getType().lookupFunctionInVisibleScope(parent.identifier);
-				if (func!=null)
+				if (func!=null) {
 					parent.setType(func.getType(), func,inferer);
 					parent.setReferredEntity(func);
+				}
 			}else {
-				parent.setType(inferer.inferTypeFromName(this.getType(), parent.identifier),null,inferer);
 				VarEntity var = this.getType().lookupVarInVisibleScope(parent.identifier);
 				if (var!=null) {
 					parent.setType(var.getType(),var, inferer);
 					parent.setReferredEntity(var);
+				}else {
+					FunctionEntity func = this.getType().lookupFunctionInVisibleScope(parent.identifier);
+					if (func!=null) {
+						parent.setType(func.getType(), func,inferer);
+						parent.setReferredEntity(func);
+					}
 				}
 			}
-
+			if (parent.getType()==null) {
+				parent.setType(inferer.inferTypeFromName(this.getType(), parent.identifier),null,inferer);
+			}
 		}
 		/* if other situation, simple make the parent and child type same */
 		else {

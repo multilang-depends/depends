@@ -10,7 +10,7 @@ public class JavaProcessor extends AbstractLangProcessor {
     private static final String JAVA_SUFFIX = ".java";
     
     public JavaProcessor(String inputDir, String[] includeDir) {
-    	super(inputDir,includeDir);
+    	super(inputDir,includeDir,false);
     }
     
 	@Override
