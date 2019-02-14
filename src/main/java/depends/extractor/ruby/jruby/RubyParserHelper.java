@@ -51,6 +51,8 @@ public class RubyParserHelper {
 				if (left!=null) {
 					name = getName(left) + "."+name;
 				}
+			}else if (node instanceof Colon3Node) {
+				name = "."+name;
 			}
 		}
 		System.out.println(name);
@@ -104,7 +106,7 @@ public class RubyParserHelper {
 			return null;
 		}
 		if (receiver instanceof INameNode) {
-			return ((INameNode)receiver).getName();
+			return this.getName(receiver);
 		}
 		return null;
 	}

@@ -140,13 +140,13 @@ public class JRubyVisitor extends NoopVisitor {
 	private void addCallToReceiverVar(CallNode node, String fname) {
 		if (helper.isCommonOperator(fname))return;
 		Node varNode = node.getReceiver();
-		if (varNode instanceof INameNode) {
-			String varName = ((INameNode) varNode).getName();
-			Entity var = context.foundEntityWithName(varName);
-			if (var != null && var instanceof VarEntity) {
-				VarEntity varEntity = (VarEntity) var;
-				varEntity.addFunctionCall(fname);
-			}
+		
+		String varName = helper.getName(varNode);
+		if (varName==null) return;
+		Entity var = context.foundEntityWithName(varName);
+		if (var != null && var instanceof VarEntity) {
+			VarEntity varEntity = (VarEntity) var;
+			varEntity.addFunctionCall(fname);
 		}
 	}
 

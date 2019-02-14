@@ -137,8 +137,8 @@ public class Inferer {
 			return buildInType;
 		}
 		// qualified name will first try global name directly
-		if (rawName.contains(".")) {
-			if (rawName.startsWith(".")) rawName = rawName.substring(1);
+		if (rawName.startsWith(".")) {
+			rawName = rawName.substring(1);
 			if (repo.getEntity(rawName) != null)
 				return repo.getEntity(rawName);
 		}

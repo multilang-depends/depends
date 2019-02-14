@@ -3,10 +3,10 @@ package depends.extractor.ruby.jruby;
 import java.util.List;
 
 import org.jrubyparser.ast.AndNode;
-import org.jrubyparser.ast.ArrayNode;
 import org.jrubyparser.ast.AssignableNode;
 import org.jrubyparser.ast.BlockNode;
 import org.jrubyparser.ast.ClassVarNode;
+import org.jrubyparser.ast.Colon3Node;
 import org.jrubyparser.ast.ConstNode;
 import org.jrubyparser.ast.FCallNode;
 import org.jrubyparser.ast.FalseNode;
@@ -81,7 +81,8 @@ public class ExpressionUsage {
 		} else if (ctx instanceof LocalVarNode ||
 				ctx instanceof GlobalVarNode ||
 				ctx instanceof ClassVarNode||
-				ctx instanceof InstVarNode)  {
+				ctx instanceof InstVarNode ||
+				ctx instanceof Colon3Node)  {
 			expression.identifier = helper.getName(ctx);
 		} 
 		if (ctx instanceof AssignableNode) {
