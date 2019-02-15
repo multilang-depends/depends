@@ -70,7 +70,6 @@ public class JRubyVisitor extends NoopVisitor {
 	@Override
 	public Object visitModuleNode(ModuleNode node) {
 		String name = helper.getName(node.getCPath());
-		System.out.println("module "+ name);
 		context.foundNamespace(name);
 		super.visitModuleNode(node);
 		context.exitLastedEntity();

@@ -55,7 +55,6 @@ public class RubyParserHelper {
 				name = "."+name;
 			}
 		}
-		System.out.println(name);
 		return name.length()>0?name:null;
 	}
 
