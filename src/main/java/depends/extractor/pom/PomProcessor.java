@@ -4,7 +4,6 @@ import depends.entity.repo.BuiltInType;
 import depends.extractor.AbstractLangProcessor;
 import depends.extractor.FileParser;
 import depends.extractor.empty.EmptyBuiltInType;
-import depends.extractor.empty.EmptyImportLookupStategy;
 import depends.relations.ImportLookupStrategy;
 
 public class PomProcessor extends AbstractLangProcessor {
@@ -25,7 +24,7 @@ public class PomProcessor extends AbstractLangProcessor {
 
 	@Override
 	public ImportLookupStrategy getImportLookupStrategy() {
-		return new EmptyImportLookupStategy();
+		return new PomImportLookupStategy();
 	}
 
 	@Override

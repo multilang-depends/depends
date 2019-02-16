@@ -8,4 +8,8 @@ public abstract class Import {
 	public Import(String content) {
 		this.content = content;
 	}
+	public void setContent(String content) {
+		this.content = content;
+	}
+
 }
