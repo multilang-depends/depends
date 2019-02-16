@@ -31,7 +31,7 @@ public class EntityExtractTest extends MavenParserTest{
 	
 	
 	@Test
-	public void test2() throws IOException {
+	public void should_use_parent_groupId() throws IOException {
 	    String[] srcs = new String[] {
 	    		"./src/test/resources/maven-code-examples/use_parent_groupId_and_version.pom",
 	    	    };

@@ -16,7 +16,10 @@ public class PomListener extends XMLParserBaseListener{
 	private VarEntity currentVar;
 	Expression currentExpression;
 	private PomParent pomParent;
-	private static String elementNamePattern = "$$GROUP_ID.$$ARTIFACT_ID($$VERSION)";
+	private static String groupIdPattern = "$$GROUP_ID";
+	private static String artifactIdPattern = "$$ARTIFACT_ID";
+	private static String versionPattern = "$$VERSION";
+	private static String elementNamePattern = groupIdPattern+"."+artifactIdPattern + "(" + versionPattern +")";
 	public PomListener(String fileFullPath, EntityRepo entityRepo) {
 		this.context = new PomHandlerContext(entityRepo);
 		this.entityRepo = entityRepo;
@@ -39,11 +42,11 @@ public class PomListener extends XMLParserBaseListener{
 		
 		//Add attribute
 		else if (name.equals("groupId")) {
-			appendGroupId(ctx.getParent(),ctx.content().getText());
+			appendData(ctx,ctx.content().getText(),groupIdPattern);
 		}else if (name.equals("artifactId")) {
-			appendArtifactId(ctx.getParent(),ctx.content().getText());
+			appendData(ctx,ctx.content().getText(),artifactIdPattern);
 		}else if (name.equals("version")) {
-			appendVersion(ctx.getParent(),ctx.content().getText());
+			appendData(ctx,ctx.content().getText(),versionPattern);
 		} 
 		super.enterElement(ctx);
 	}
@@ -53,7 +56,7 @@ public class PomListener extends XMLParserBaseListener{
 		String name = ctx.Name(0).getText();
 		if (name.equals("project")) {
 			if (pomParent!=null) {
-				currentEntity.setRawName(currentEntity.getRawName().replace("$$ARTIFACT_ID", pomParent.artifactId));
+				currentEntity.setRawName(currentEntity.getRawName().replace(artifactIdPattern, pomParent.artifactId));
 				currentEntity.setRawName(currentEntity.getRawName().replace("$$GROUP_ID", pomParent.groupId));
 				currentEntity.setRawName(currentEntity.getRawName().replace("$$VERSION", pomParent.version));
 			}
@@ -70,72 +73,50 @@ public class PomListener extends XMLParserBaseListener{
 		super.exitElement(ctx);
 	}
 	
-	private void appendVersion(ParserRuleContext parent, String version) {
-		Object currentElement = getElement(parent);
-		if (currentElement==null) return;
-		if (currentElement instanceof Entity) {
-			Entity e = ((Entity)currentElement);
-			e.setRawName(e.getRawName().replace("$$VERSION", version));
-		}else if (currentElement instanceof Expression) {
-			Expression e = (Expression)currentElement;
-			e.rawType = (e.rawType.replace("$$VERSION", version));
-		}else if (currentElement instanceof PomParent) {
-			PomParent p = (PomParent)currentElement;
-			p.setContent(p.getContent().replace("$$VERSION", version));
-			p.version = version;
-		}
-	}
 
-	private Object getElement(ParserRuleContext parent) {
-		parent = parent.getParent();
-		if (!(parent instanceof ElementContext)) return null;
-		
-		ElementContext p = (ElementContext)parent;
-		String name = p.Name().get(0).getText();
-		if (name.equals("project")) {
+	private Object getElement(ParserRuleContext node) {
+		String name = getParentElementName(node);
+		if ("project".equals(name)) {
 			return currentEntity;
-		}else if (name.equals("plugin")) {
+		}else if ("plugin".equals(name)) {
 			return currentExpression;
-		}else if (name.equals("dependency")) {
+		}else if ("dependency".equals(name)) {
 			return currentVar;
-		}else if (name.equals("parent")) {
+		}else if ("parent".equals(name)) {
 			return pomParent;
 		}
 		return null;
 	}
 
-	private void appendArtifactId(ParserRuleContext parent, String artifactId) {
-		Object currentElement = getElement(parent);
+	private String getParentElementName(ParserRuleContext node) {
+		node = node.getParent();
+		if(node==null) return "project";
+		node = node.getParent();
+		if (!(node instanceof ElementContext)) return "project";
+		
+		ElementContext p = (ElementContext)node;
+		String name = p.Name().get(0).getText();
+		return name;
+	}
+
+	private void appendData(ParserRuleContext node, String name, String pattern) {
+		Object currentElement = getElement(node);
 		if (currentElement==null) return;
 		if (currentElement instanceof Entity) {
 			Entity e = ((Entity)currentElement);
-			e.setRawName(e.getRawName().replace("$$ARTIFACT_ID", artifactId));
+			e.setRawName(e.getRawName().replace(pattern, name));
 		}else if (currentElement instanceof Expression) {
 			Expression e = (Expression)currentElement;
-			e.rawType = (e.rawType.replace("$$ARTIFACT_ID", artifactId));
+			e.rawType = (e.rawType.replace(pattern, name));
 		}else if (currentElement instanceof PomParent) {
 			PomParent p = (PomParent)currentElement;
-			p.setContent(p.getContent().replace("$$ARTIFACT_ID", artifactId));
-			p.artifactId = artifactId;
-
+			p.setContent(p.getContent().replace(pattern, name));
+			if (pattern.equals(artifactIdPattern))
+				p.artifactId = name;
+			else if (pattern.equals(groupIdPattern))
+				p.groupId = name;
+			else if (pattern.equals(versionPattern))
+				p.version = name;
 		}		
 	}
-
-	private void appendGroupId(ParserRuleContext parent, String groupId) {
-		Object currentElement = getElement(parent);
-		if (currentElement==null) return;
-		if (currentElement instanceof Entity) {
-			Entity e = ((Entity)currentElement);
-			e.setRawName(e.getRawName().replace("$$GROUP_ID", groupId));
-		}else if (currentElement instanceof Expression) {
-			Expression e = (Expression)currentElement;
-			e.rawType = (e.rawType.replace("$$GROUP_ID", groupId));
-		}else if (currentElement instanceof PomParent) {
-			PomParent p = (PomParent)currentElement;
-			p.setContent(p.getContent().replace("$$GROUP_ID", groupId));
-			p.groupId = groupId;
-		}	
-	}
-
-
 }
