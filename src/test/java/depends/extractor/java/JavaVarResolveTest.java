@@ -45,7 +45,7 @@ public class JavaVarResolveTest extends JavaParserTest{
         parser.parse();
         inferer.resolveAllBindings();
         ContainerEntity e = (ContainerEntity) entityRepo.getEntity("LocalVarInferExample.setExample");
-        assertEquals(18,entityRepo.getEntity("LocalVarInferExample.setExample").getRelations().size());
+        assertEquals(18,e.getRelations().size());
 	}
 	
 	@Test

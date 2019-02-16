@@ -3,7 +3,6 @@ package depends.matrix;
 import java.util.ArrayList;
 
 import depends.entity.Entity;
-import depends.entity.FileEntity;
 import depends.entity.FunctionEntity;
 import depends.entity.repo.EntityRepo;
 import depends.relations.Relation;
@@ -34,12 +33,6 @@ public class FunctionDependencyGenerator implements DependencyGenerator {
 		return dependencyMatrix;
 	}
 
-	private String getFileNameNoException(Entity entity) {
-		Entity ancestor = entity.getAncestorOfType(FileEntity.class);
-		if (ancestor == null)
-			return "";
-		return ancestor.getRawName();
-	}
 
 	private int getFunctionEntityIdNoException(Entity entity) {
 		Entity ancestor = entity.getAncestorOfType(FunctionEntity.class);

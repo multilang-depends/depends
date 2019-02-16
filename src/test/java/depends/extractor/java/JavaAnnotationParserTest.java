@@ -7,8 +7,6 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
-import depends.entity.repo.EntityRepo;
-
 public class JavaAnnotationParserTest extends JavaParserTest {
 	@Before
 	public void setUp() {

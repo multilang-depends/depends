@@ -23,6 +23,7 @@ public class DependencyDumper {
 	}
 	
 	private final void outputDeps(String projectName, String outputDir, String[] outputFormat) {
+		@SuppressWarnings("unchecked")
 		List<String> formatList = Arrays.asList(outputFormat);
 		AbstractFormatDependencyDumper[] builders = new AbstractFormatDependencyDumper[] {
 		 	new DetailTextFormatDependencyDumper(dependencyMatrix,projectName,outputDir),

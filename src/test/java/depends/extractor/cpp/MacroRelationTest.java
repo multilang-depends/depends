@@ -6,8 +6,6 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
-import depends.extractor.cpp.cdt.CdtCppFileParser;
-
 public class MacroRelationTest extends CppParserTest{
     @Before
     public void setUp() {

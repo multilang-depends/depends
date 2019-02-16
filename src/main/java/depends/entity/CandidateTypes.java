@@ -267,7 +267,7 @@ public class CandidateTypes extends TypeEntity {
 
 	
 	@Override
-	public Entity getAncestorOfType(Class classType) {
+	public Entity getAncestorOfType(@SuppressWarnings("rawtypes") Class classType) {
 		System.err.println("error: getAncestorOfType should not been invoked");
 		return super.getAncestorOfType(classType);
 	}

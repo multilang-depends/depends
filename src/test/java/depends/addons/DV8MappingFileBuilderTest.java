@@ -1,7 +1,5 @@
 package depends.addons;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
 
 public class DV8MappingFileBuilderTest {

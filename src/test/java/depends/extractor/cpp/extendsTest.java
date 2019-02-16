@@ -1,17 +1,12 @@
 package depends.extractor.cpp;
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import depends.entity.Entity;
-import depends.entity.AliasEntity;
-import depends.extractor.cpp.CppFileParser;
 
 public class extendsTest extends CppParserTest{
     @Before
@@ -30,7 +25,6 @@ public class extendsTest extends CppParserTest{
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
-        File f = new File(srcs[0]);
         Entity e = repo.getEntity("B");
         assertEquals(2,e.getRelations().size());
 	}

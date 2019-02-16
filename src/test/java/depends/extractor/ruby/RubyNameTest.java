@@ -1,6 +1,5 @@
 package depends.extractor.ruby;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
@@ -8,11 +7,7 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
-import depends.entity.ContainerEntity;
-import depends.entity.FunctionEntity;
 import depends.entity.PackageEntity;
-import depends.entity.TypeEntity;
-import depends.entity.repo.EntityRepo;
 import depends.extractor.FileParser;
 
 public class RubyNameTest extends RubyParserTest {

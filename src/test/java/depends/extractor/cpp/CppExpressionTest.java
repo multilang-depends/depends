@@ -2,12 +2,9 @@ package depends.extractor.cpp;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import depends.extractor.cpp.CppFileParser;
 
 public class CppExpressionTest extends CppParserTest{
     @Before

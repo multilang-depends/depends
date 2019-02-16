@@ -306,13 +306,13 @@ public class JavaListener extends JavaParserBaseListener {
 	// Block
 	@Override
 	public void enterBlock(BlockContext ctx) {
-		// TODO Auto-generated method stub
+		// TODO support block in java
 		super.enterBlock(ctx);
 	}
 
 	@Override
 	public void exitBlock(BlockContext ctx) {
-		// TODO Auto-generated method stub
+		// TODO support block in java
 		super.exitBlock(ctx);
 	}
 

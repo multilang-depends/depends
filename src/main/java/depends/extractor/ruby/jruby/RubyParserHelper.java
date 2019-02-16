@@ -7,11 +7,9 @@ import org.jrubyparser.ast.AssignableNode;
 import org.jrubyparser.ast.CallNode;
 import org.jrubyparser.ast.ClassVarAsgnNode;
 import org.jrubyparser.ast.ClassVarDeclNode;
-import org.jrubyparser.ast.Colon2ConstNode;
 import org.jrubyparser.ast.Colon2Node;
 import org.jrubyparser.ast.Colon3Node;
 import org.jrubyparser.ast.ConstDeclNode;
-import org.jrubyparser.ast.ConstNode;
 import org.jrubyparser.ast.DAsgnNode;
 import org.jrubyparser.ast.DefsNode;
 import org.jrubyparser.ast.FCallNode;
@@ -83,12 +81,8 @@ public class RubyParserHelper {
 			names.add(((LocalAsgnNode)ctx).getName());
 		}else if (ctx instanceof MultipleAsgnNode) {
 			ListNode pre = ((MultipleAsgnNode)ctx).getPre();
-			Node rest = ((MultipleAsgnNode)ctx).getRest();
-			ListNode post = ((MultipleAsgnNode)ctx).getPost();
 			if (pre!=null) {
-				for ( Node preNode:pre.childNodes()) {
-					
-				}
+				//TODO: support multiple assignment
 			}
 		}
 		return names;

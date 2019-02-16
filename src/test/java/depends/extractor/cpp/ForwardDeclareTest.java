@@ -1,12 +1,9 @@
 package depends.extractor.cpp;
-import java.io.File;
 import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import depends.entity.Entity;
-import depends.matrix.DependencyMatrix;
 import depends.matrix.FileDependencyGenerator;
 
 public class ForwardDeclareTest extends CppParserTest{
@@ -28,8 +25,6 @@ public class ForwardDeclareTest extends CppParserTest{
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
-        File f = new File(srcs[0]);
-        Entity e = repo.getEntity("App.foo");
         FileDependencyGenerator dependencyGenerator= new FileDependencyGenerator();
         dependencyGenerator.build(repo);
 	}

@@ -1,7 +1,5 @@
 package depends.format.path;
 
-import java.io.File;
-
 import org.apache.commons.io.FilenameUtils;
 
 public class DotPathFilenameWritter implements FilenameWritter {

@@ -1,12 +1,10 @@
 package depends.extractor.ruby;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ExecutorService;
 
 import depends.entity.Entity;
-import depends.entity.FileEntity;
 import depends.entity.PackageEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.FileParser;
@@ -18,7 +16,6 @@ import depends.relations.Inferer;
 public class RubyHandlerContext extends HandlerContext {
 
 	private IncludedFileLocator includedFileLocator;
-	private ExecutorService executorService;
 	private ParserCreator parserCreator;
 	public RubyHandlerContext(EntityRepo entityRepo, 
 			IncludedFileLocator includedFileLocator,
@@ -26,7 +23,6 @@ public class RubyHandlerContext extends HandlerContext {
 			Inferer inferer, ParserCreator parserCreator) {
 		super(entityRepo,inferer);
 		this.includedFileLocator = includedFileLocator;
-		this.executorService = executorService;
 		this.parserCreator = parserCreator;
 	}
 	
