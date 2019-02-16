@@ -25,6 +25,21 @@ public class EntityExtractTest extends MavenParserTest{
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
-        assertEquals(0,repo.getEntity("log4j.log4j(1.2.12)").getRelations().size());
+        assertEquals(0,repo.getEntity("org.log4j-test.log4j(1.2.12)").getRelations().size());
+	}
+	
+	
+	@Test
+	public void test2() throws IOException {
+	    String[] srcs = new String[] {
+	    		"./src/test/resources/maven-code-examples/surefire-junit4-2.12.4.pom",
+	    	    };
+	    
+	    for (String src:srcs) {
+		    PomFileParser parser = createParser(src);
+		    parser.parse();
+	    }
+	    inferer.resolveAllBindings();
+        //TODO: add assert 
 	}
 }

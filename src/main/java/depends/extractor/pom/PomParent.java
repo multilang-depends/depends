@@ -8,5 +8,8 @@ public class PomParent extends Import {
 		super(content);
 	}
 
+	public String groupId;
+	public String artifactId;
+	public String version;
 
 }

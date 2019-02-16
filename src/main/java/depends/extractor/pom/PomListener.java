@@ -16,7 +16,7 @@ public class PomListener extends XMLParserBaseListener{
 	private VarEntity currentVar;
 	Expression currentExpression;
 	private PomParent pomParent;
-	private static String elementNamePattern = "{$$GROUP_ID}.{$$ARTIFACT_ID}($$VERSION)";
+	private static String elementNamePattern = "$$GROUP_ID.$$ARTIFACT_ID($$VERSION)";
 	public PomListener(String fileFullPath, EntityRepo entityRepo) {
 		this.context = new PomHandlerContext(entityRepo);
 		this.entityRepo = entityRepo;
@@ -48,6 +48,28 @@ public class PomListener extends XMLParserBaseListener{
 		super.enterElement(ctx);
 	}
 	
+	@Override
+	public void exitElement(ElementContext ctx) {
+		String name = ctx.Name(0).getText();
+		if (name.equals("project")) {
+			if (pomParent!=null) {
+				currentEntity.setRawName(currentEntity.getRawName().replace("$$ARTIFACT_ID", pomParent.artifactId));
+				currentEntity.setRawName(currentEntity.getRawName().replace("$$GROUP_ID", pomParent.groupId));
+				currentEntity.setRawName(currentEntity.getRawName().replace("$$VERSION", pomParent.version));
+			}
+			currentEntity.setQualifiedName(currentEntity.getRawName());
+			entityRepo.add(currentEntity);
+		}else if (name.equals("plugin")) {
+			currentEntity.addExpression(ctx, currentExpression);
+		}else if (name.equals("dependency")) {
+			currentVar.setRawType(currentVar.getRawName());
+			currentEntity.addVar(currentVar);
+		}else if (name.equals("parent")) {
+			context.currentFile().addImport(pomParent);
+		}
+		super.exitElement(ctx);
+	}
+	
 	private void appendVersion(ParserRuleContext parent, String version) {
 		Object currentElement = getElement(parent);
 		if (currentElement==null) return;
@@ -60,13 +82,16 @@ public class PomListener extends XMLParserBaseListener{
 		}else if (currentElement instanceof PomParent) {
 			PomParent p = (PomParent)currentElement;
 			p.setContent(p.getContent().replace("$$VERSION", version));
+			p.version = version;
 		}
 	}
 
 	private Object getElement(ParserRuleContext parent) {
+		parent = parent.getParent();
 		if (!(parent instanceof ElementContext)) return null;
+		
 		ElementContext p = (ElementContext)parent;
-		String name = p.Name(0).getText();
+		String name = p.Name().get(0).getText();
 		if (name.equals("project")) {
 			return currentEntity;
 		}else if (name.equals("plugin")) {
@@ -91,6 +116,8 @@ public class PomListener extends XMLParserBaseListener{
 		}else if (currentElement instanceof PomParent) {
 			PomParent p = (PomParent)currentElement;
 			p.setContent(p.getContent().replace("$$ARTIFACT_ID", artifactId));
+			p.artifactId = artifactId;
+
 		}		
 	}
 
@@ -106,23 +133,9 @@ public class PomListener extends XMLParserBaseListener{
 		}else if (currentElement instanceof PomParent) {
 			PomParent p = (PomParent)currentElement;
 			p.setContent(p.getContent().replace("$$GROUP_ID", groupId));
+			p.groupId = groupId;
 		}	
 	}
 
-	@Override
-	public void exitElement(ElementContext ctx) {
-		String name = ctx.Name(0).getText();
-		if (name.equals("project")) {
-			currentEntity.setQualifiedName(currentEntity.getRawName());
-			entityRepo.add(currentEntity);
-		}else if (name.equals("plugin")) {
-			currentEntity.addExpression(ctx, currentExpression);
-		}else if (name.equals("dependency")) {
-			currentVar.setRawType(currentVar.getRawName());
-			currentEntity.addVar(currentVar);
-		}else if (name.equals("parent")) {
-			context.currentFile().addImport(pomParent);
-		}
-		super.exitElement(ctx);
-	}
+
 }
