@@ -58,6 +58,7 @@ public class PomListener extends XMLParserBaseListener{
 		}else if (name.equals("dependency")) {
 			currentVar.setRawName(elementName);
 			currentVar.setRawType(elementName);
+			currentEntity.addVar(currentVar);
 		}
 		super.exitElement(ctx);
 	}
