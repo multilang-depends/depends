@@ -8,6 +8,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import depends.entity.CandidateTypes;
 import depends.entity.ContainerEntity;
 import depends.entity.Entity;
 import depends.entity.FileEntity;
@@ -308,6 +309,18 @@ public class Inferer {
 	 * @return
 	 */
 	private Entity tryToFindEntityWithName(Entity fromEntity, String name) {
+		if (fromEntity instanceof CandidateTypes) {
+			for (TypeEntity type:((CandidateTypes)fromEntity).getCandidateTypes()) {
+				Entity e = tryToFindEntityWithNameSureSingleEntity(type,name);
+				if (e !=null) return e;
+			}
+			return null;
+		}
+		else 
+			return tryToFindEntityWithNameSureSingleEntity(fromEntity,name);
+	}
+	
+	private Entity tryToFindEntityWithNameSureSingleEntity(Entity fromEntity, String name) {
 		if (!fromEntity.getRawName().equals(name))
 			return null;
 		if (fromEntity instanceof MultiDeclareEntities) {
