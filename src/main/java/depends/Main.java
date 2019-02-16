@@ -17,11 +17,14 @@ import depends.util.FileUtil;
 import depends.util.FolderCollector;
 import edu.emory.mathcs.backport.java.util.Arrays;
 import picocli.CommandLine;
+import picocli.CommandLine.PicocliException;
 
 public class Main {
 
 	public static void main(String[] args) {
 		try {
+			LangRegister langRegister = new LangRegister();
+			langRegister.register();
 			DependsCommand app = CommandLine.populateCommand(new DependsCommand(), args);
 			if (app.help) {
 				CommandLine.usage(new DependsCommand(), System.out);
@@ -29,14 +32,17 @@ public class Main {
 			}
 			executeCommand(app);
 		} catch (Exception e) {
-			System.err.println("Exception encountered:" );
-			e.printStackTrace();
-			CommandLine.usage(new DependsCommand(), System.out);
+			if (e instanceof PicocliException) {
+				CommandLine.usage(new DependsCommand(), System.out);
+			}else {
+				System.err.println("Exception encountered. If it is a design error, please report issue to us." );
+				e.printStackTrace();
+			}
 			System.exit(0);
 		}
-
 	}
 
+	@SuppressWarnings("unchecked")
 	private static void executeCommand(DependsCommand app) {
 		String lang = app.getLang();
 		String inputDir = app.getSrc();
@@ -56,9 +62,6 @@ public class Main {
 			additionalIncludePaths.addAll(Arrays.asList(includeDir));
 			includeDir = additionalIncludePaths.toArray(new String[] {});
 		}
-		
-		LangRegister langRegister = new LangRegister(inputDir, includeDir);
-		langRegister.register();
 			
 		AbstractLangProcessor langProcessor = LangProcessorRegistration.getRegistry().getProcessorOf(lang);
 		if (langProcessor == null) {
@@ -70,7 +73,7 @@ public class Main {
 		DependencyGenerator dependencyGenerator = app.getGranularity().equals("file")?
 				(new FileDependencyGenerator()):(new FunctionDependencyGenerator());
 		langProcessor.setDependencyGenerator(dependencyGenerator);
-		langProcessor.buildDependencies();
+		langProcessor.buildDependencies(inputDir, includeDir);
 		if (app.isStripLeadingPath()) {
 			langProcessor.getDependencies().stripFilenames(inputDir);
 		}

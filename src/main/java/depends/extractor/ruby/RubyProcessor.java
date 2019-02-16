@@ -14,10 +14,9 @@ public class RubyProcessor extends AbstractLangProcessor implements ParserCreato
     private static final String LANG = "ruby";
     private static final String[] SUFFIX = new String[] {".rb"};
 	private ExecutorService executor;
-    public RubyProcessor(String inputDir, String[] includeDirs) {
-    	super(inputDir,includeDirs,true);
+    public RubyProcessor() {
+    	super(true);
     }
-
 
 	@Override
 	public String supportedLanguage() {

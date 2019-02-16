@@ -52,10 +52,9 @@ abstract public class AbstractLangProcessor {
 	private String[] includeDirs;
 	private DependencyGenerator dependencyGenerator;
 
-	public AbstractLangProcessor(String inputDir, String[] includeDir, boolean eagerExpressionResolve) {
+	public AbstractLangProcessor(boolean eagerExpressionResolve) {
 		entityRepo = new EntityRepo();
-		this.inputSrcPath = inputDir;
-		this.includeDirs = includeDir;
+
 		inferer = new Inferer(entityRepo,getImportLookupStrategy(),getBuiltInType(),eagerExpressionResolve);
 	}
 	
@@ -64,8 +63,12 @@ abstract public class AbstractLangProcessor {
      * Step 1: parse all files, add entities and expression into repositories
      * Step 2: resolve bindings of files (if not resolved yet)
      * Step 3: identify dependencies 
+     * @param includeDir 
+     * @param inputDir 
      */
-	public void buildDependencies() {
+	public void buildDependencies(String inputDir, String[] includeDir) {
+		this.inputSrcPath = inputDir;
+		this.includeDirs = includeDir;
         parseAllFiles();
         resolveBindings();
         identifyDependencies();

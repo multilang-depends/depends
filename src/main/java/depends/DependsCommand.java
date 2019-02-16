@@ -1,12 +1,19 @@
 package depends;
 
+import java.util.ArrayList;
+import depends.extractor.LangProcessorRegistration;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
 @Command(name = "depends")
 public class DependsCommand {
-	@Parameters(index = "0", description = "The lanauge of project files: [java, cpp]")
+	public static class SupportedLangs extends ArrayList<String> {
+		private static final long serialVersionUID = 1L;
+		public SupportedLangs() { super( LangProcessorRegistration.getRegistry().getLangs()); }
+	}
+	
+	@Parameters(index = "0", completionCandidates = DependsCommand.SupportedLangs.class, description = "The lanauge of project files: [${COMPLETION-CANDIDATES}]")
     private String lang;
 	@Parameters(index = "1", description = "The directory to be analyzed")
     private String src;
@@ -30,6 +37,8 @@ public class DependsCommand {
 	private boolean autoInclude = false;
     @Option(names = {"-h","--help"}, usageHelp = true, description = "display this help and exit")
     boolean help;
+	public DependsCommand() {
+	}
 	public String getLang() {
 		return lang;
 	}
