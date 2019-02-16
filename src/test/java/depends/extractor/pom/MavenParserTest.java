@@ -1,4 +1,4 @@
-package depends.extractor.maven;
+package depends.extractor.pom;
 
 import depends.entity.repo.EntityRepo;
 import depends.extractor.empty.EmptyBuiltInType;

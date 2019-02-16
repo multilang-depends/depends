@@ -1,5 +1,6 @@
-package depends.extractor.maven;
+package depends.extractor.pom;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 
@@ -32,7 +33,7 @@ public class EntityExtractTest extends MavenParserTest{
 	@Test
 	public void test2() throws IOException {
 	    String[] srcs = new String[] {
-	    		"./src/test/resources/maven-code-examples/surefire-junit4-2.12.4.pom",
+	    		"./src/test/resources/maven-code-examples/use_parent_groupId_and_version.pom",
 	    	    };
 	    
 	    for (String src:srcs) {
@@ -40,6 +41,6 @@ public class EntityExtractTest extends MavenParserTest{
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
-        //TODO: add assert 
+        assertNotNull(repo.getEntity("org.apache.maven.surefire.surefire-junit4(2.12.4)"));
 	}
 }
