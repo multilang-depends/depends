@@ -23,9 +23,9 @@ public class PomListener extends XMLParserBaseListener{
 	private PomProcessor parseCreator;
 	private List<String> includePaths;
 	private Inferer inferer;
-	private static String groupIdPattern = "$$GROUP_ID";
-	private static String artifactIdPattern = "$$ARTIFACT_ID";
-	private static String versionPattern = "$$VERSION";
+	private static String groupIdPattern = "project.groupId";
+	private static String artifactIdPattern = "project.artifactId";
+	private static String versionPattern = "project.version";
 	private static String elementNamePattern = groupIdPattern+"."+artifactIdPattern + "(" + versionPattern +")";
 	public PomListener(String fileFullPath, EntityRepo entityRepo, List<String> includePaths, PomProcessor parseCreator,Inferer inferer) {
 		this.context = new PomHandlerContext(entityRepo);
@@ -52,17 +52,25 @@ public class PomListener extends XMLParserBaseListener{
 		
 		//Add attribute
 		else if (name.equals("groupId")) {
-			appendData(ctx,ctx.content().getText(),groupIdPattern);
+			appendData(ctx,getContentValueOf(ctx),groupIdPattern);
 		}else if (name.equals("artifactId")) {
-			appendData(ctx,ctx.content().getText(),artifactIdPattern);
+			appendData(ctx,getContentValueOf(ctx),artifactIdPattern);
 		}else if (name.equals("version")) {
-			appendData(ctx,ctx.content().getText(),versionPattern);
+			appendData(ctx,getContentValueOf(ctx),versionPattern);
 		} else if ("properties".equals(getParentElementName(ctx))) {
 			if (ctx.content()!=null) {
-				currentEntity.addProperty(name, ctx.content().getText());
+				currentEntity.addProperty(name, getContentValueOf(ctx));
 			}
 		}
 		super.enterElement(ctx);
+	}
+
+	private String getContentValueOf(ElementContext ctx) {
+		String text = ctx.content().getText();
+		if (text==null) return "";
+		if (text.contains("${"))
+			text = currentEntity.replaceProperty(text);
+		return text;
 	}
 	
 	@Override
@@ -131,6 +139,9 @@ public class PomListener extends XMLParserBaseListener{
 		if (currentElement instanceof Entity) {
 			Entity e = ((Entity)currentElement);
 			e.setRawName(e.getRawName().replace(pattern, name));
+			if (e instanceof PomArtifactEntity) {
+				((PomArtifactEntity)e).addProperty(pattern, name);
+			}
 		}else if (currentElement instanceof Expression) {
 			Expression e = (Expression)currentElement;
 			e.rawType = (e.rawType.replace(pattern, name));
