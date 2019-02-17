@@ -43,4 +43,25 @@ public class EntityExtractTest extends MavenParserTest{
 	    inferer.resolveAllBindings();
         assertNotNull(repo.getEntity("org.apache.maven.surefire.surefire-junit4(2.12.4)"));
 	}
+	
+	@Test
+	public void should_parse_properties_in_same_pom() throws IOException {
+		String[] srcs = new String[] {
+	    		"./src/test/resources/maven-code-examples/properties-test1.pom",
+	    	    };
+	    
+	    for (String src:srcs) {
+		    PomFileParser parser = createParser(src);
+		    parser.parse();
+	    }
+	    inferer.resolveAllBindings();
+        PomArtifactEntity entity = (PomArtifactEntity)(repo.getEntity("properties-test.test(1)"));
+    	/*
+        <project.version>1.00</project.version>
+        <activeio-version>3.1.4</activeio-version>
+        <projectName>Apache ActiveMQ</projectName>
+        <siteId>activemq-${project.version}</siteId>	 */
+        assertEquals("1.00",entity.getProperty("project.version"));
+        assertEquals("activemq-1.00",entity.getProperty("siteId"));
+	}
 }

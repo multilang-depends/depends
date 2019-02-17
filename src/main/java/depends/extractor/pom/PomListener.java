@@ -54,7 +54,9 @@ public class PomListener extends XMLParserBaseListener{
 			appendData(ctx,ctx.content().getText(),artifactIdPattern);
 		}else if (name.equals("version")) {
 			appendData(ctx,ctx.content().getText(),versionPattern);
-		} 
+		} else if ("properties".equals(getParentElementName(ctx))) {
+			currentEntity.addProperty(name, ctx.content().getText());
+		}
 		super.enterElement(ctx);
 	}
 	
