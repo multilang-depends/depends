@@ -1,5 +1,7 @@
 package depends.extractor.pom;
 
+import java.util.List;
+
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import depends.entity.Entity;
@@ -7,6 +9,7 @@ import depends.entity.Expression;
 import depends.entity.VarEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.xml.XMLParser.ElementContext;
+import depends.extractor.FileParser;
 import depends.extractor.xml.XMLParserBaseListener;
 
 public class PomListener extends XMLParserBaseListener{
@@ -16,13 +19,17 @@ public class PomListener extends XMLParserBaseListener{
 	private VarEntity currentVar;
 	Expression currentExpression;
 	private PomParent pomParent;
+	private PomProcessor parseCreator;
+	private List<String> includePaths;
 	private static String groupIdPattern = "$$GROUP_ID";
 	private static String artifactIdPattern = "$$ARTIFACT_ID";
 	private static String versionPattern = "$$VERSION";
 	private static String elementNamePattern = groupIdPattern+"."+artifactIdPattern + "(" + versionPattern +")";
-	public PomListener(String fileFullPath, EntityRepo entityRepo) {
+	public PomListener(String fileFullPath, EntityRepo entityRepo, List<String> includePaths, PomProcessor parseCreator) {
 		this.context = new PomHandlerContext(entityRepo);
 		this.entityRepo = entityRepo;
+        this.parseCreator = parseCreator;
+        this.includePaths = includePaths;
 		context.startFile(fileFullPath);		
 	}
 
@@ -68,6 +75,16 @@ public class PomListener extends XMLParserBaseListener{
 			currentVar.setRawType(currentVar.getRawName());
 			currentEntity.addVar(currentVar);
 		}else if (name.equals("parent")) {
+			String parentFileName = new PomLocator(includePaths,pomParent).getLocation();
+			if (parentFileName!=null) {
+				FileParser importedParser = parseCreator.createFileParser(parentFileName);
+				try {
+					System.out.println("[parent]parsing "+parentFileName);
+					importedParser.parse();
+				} catch (Exception e) {
+					System.err.println("parsing error in "+parentFileName);
+				}			
+			}
 			context.currentFile().addImport(pomParent);
 		}
 		super.exitElement(ctx);

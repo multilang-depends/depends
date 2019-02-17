@@ -1,5 +1,7 @@
 package depends.extractor.pom;
 
+import java.util.ArrayList;
+
 import depends.entity.repo.EntityRepo;
 import depends.extractor.empty.EmptyBuiltInType;
 import depends.extractor.empty.EmptyImportLookupStategy;
@@ -16,6 +18,6 @@ public abstract class MavenParserTest {
     }
 	
 	public PomFileParser createParser(String src) {
-		return new  PomFileParser(src,repo);
+		return new  PomFileParser(src,repo,new ArrayList<>(),null);
 	}
 }
