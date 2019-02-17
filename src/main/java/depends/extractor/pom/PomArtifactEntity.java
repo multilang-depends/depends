@@ -24,7 +24,7 @@ public class PomArtifactEntity extends TypeEntity {
 	}
 
 	public String replaceProperty(String content) {
-	    Pattern pattern = Pattern.compile("\\$\\{.*\\}");
+	    Pattern pattern = Pattern.compile("\\$\\{[_A-Za-z0-9\\-\\.]*\\}");
 	    Matcher matcher = pattern.matcher(content);
 	    String s = content;
 	    while (matcher.find()) {

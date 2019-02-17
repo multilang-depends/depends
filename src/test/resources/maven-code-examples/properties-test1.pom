@@ -6,7 +6,7 @@
   <properties>
     <project.version>1.00</project.version>
     <activeio-version>3.1.4</activeio-version>
-    <projectName>Apache ActiveMQ</projectName>
+    <anotherId>activemq-${project.version}-${activeio-version}</anotherId>
     <siteId>activemq-${project.version}</siteId>
   </properties>
 </project>
