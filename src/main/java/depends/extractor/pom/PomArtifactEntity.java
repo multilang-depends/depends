@@ -1,10 +1,12 @@
 package depends.extractor.pom;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import depends.entity.Entity;
+import depends.entity.FileEntity;
 import depends.entity.TypeEntity;
 
 public class PomArtifactEntity extends TypeEntity {
@@ -15,7 +17,16 @@ public class PomArtifactEntity extends TypeEntity {
 	}
 
 	public String getProperty(String key) {
-		return properties.get(key);
+		String v = properties.get(key);
+		if (v!=null) return v;
+		FileEntity file = (FileEntity)(this.getAncestorOfType(FileEntity.class));
+		List<Entity> parents = file.getImportedRelationEntities();
+		for(Entity parent:parents) {
+			if (parent instanceof PomArtifactEntity) {
+				return ((PomArtifactEntity)parent).getProperty(key);
+			}
+		}
+		return null;
 	}
 	
 	public void addProperty(String key, String value) {

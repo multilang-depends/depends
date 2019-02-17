@@ -11,6 +11,7 @@ import depends.entity.repo.EntityRepo;
 import depends.extractor.xml.XMLParser.ElementContext;
 import depends.extractor.FileParser;
 import depends.extractor.xml.XMLParserBaseListener;
+import depends.relations.Inferer;
 
 public class PomListener extends XMLParserBaseListener{
 	private PomHandlerContext context;
@@ -21,15 +22,17 @@ public class PomListener extends XMLParserBaseListener{
 	private PomParent pomParent;
 	private PomProcessor parseCreator;
 	private List<String> includePaths;
+	private Inferer inferer;
 	private static String groupIdPattern = "$$GROUP_ID";
 	private static String artifactIdPattern = "$$ARTIFACT_ID";
 	private static String versionPattern = "$$VERSION";
 	private static String elementNamePattern = groupIdPattern+"."+artifactIdPattern + "(" + versionPattern +")";
-	public PomListener(String fileFullPath, EntityRepo entityRepo, List<String> includePaths, PomProcessor parseCreator) {
+	public PomListener(String fileFullPath, EntityRepo entityRepo, List<String> includePaths, PomProcessor parseCreator,Inferer inferer) {
 		this.context = new PomHandlerContext(entityRepo);
 		this.entityRepo = entityRepo;
         this.parseCreator = parseCreator;
         this.includePaths = includePaths;
+        this.inferer = inferer;
 		context.startFile(fileFullPath);		
 	}
 
@@ -55,7 +58,9 @@ public class PomListener extends XMLParserBaseListener{
 		}else if (name.equals("version")) {
 			appendData(ctx,ctx.content().getText(),versionPattern);
 		} else if ("properties".equals(getParentElementName(ctx))) {
-			currentEntity.addProperty(name, ctx.content().getText());
+			if (ctx.content()!=null) {
+				currentEntity.addProperty(name, ctx.content().getText());
+			}
 		}
 		super.enterElement(ctx);
 	}
@@ -77,21 +82,23 @@ public class PomListener extends XMLParserBaseListener{
 			currentVar.setRawType(currentVar.getRawName());
 			currentEntity.addVar(currentVar);
 		}else if (name.equals("parent")) {
+			context.currentFile().addImport(pomParent);
 			String parentFileName = new PomLocator(includePaths,pomParent).getLocation();
 			if (parentFileName!=null) {
 				FileParser importedParser = parseCreator.createFileParser(parentFileName);
 				try {
-					System.out.println("[parent]parsing "+parentFileName);
+					System.out.println("parsing "+parentFileName);
 					importedParser.parse();
 				} catch (Exception e) {
 					System.err.println("parsing error in "+parentFileName);
 				}			
 			}
-			context.currentFile().addImport(pomParent);
+			context.currentFile().inferLocalLevelEntities(inferer);
 		}
 		super.exitElement(ctx);
 	}
 	
+
 
 	private Object getElement(ParserRuleContext node) {
 		String name = getParentElementName(node);

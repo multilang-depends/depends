@@ -45,11 +45,11 @@ abstract public class AbstractLangProcessor {
 	 */
     protected abstract FileParser createFileParser(String fileFullPath);
 
-	protected Inferer inferer;
+	public Inferer inferer;
 	protected EntityRepo entityRepo;
 	DependencyMatrix dependencyMatrix;
 	private String inputSrcPath;
-	private String[] includeDirs;
+	public String[] includeDirs;
 	private DependencyGenerator dependencyGenerator;
 
 	public AbstractLangProcessor(boolean eagerExpressionResolve) {

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <groupId>group</groupId>
+    <artifactId>parent-artifactid</artifactId>
+    <version>v1</version>
+  </parent>
+    <groupId>properties-test</groupId>
+    <artifactId>test</artifactId>
+    <version>1</version>
+  <properties>
+    <project.version>${parent-prop}</project.version>
+  </properties>
+</project>
+
+
+

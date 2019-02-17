@@ -1,23 +1,28 @@
 package depends.extractor.pom;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import depends.entity.repo.EntityRepo;
-import depends.extractor.empty.EmptyBuiltInType;
-import depends.extractor.empty.EmptyImportLookupStategy;
-import depends.extractor.pom.PomFileParser;
 import depends.relations.Inferer;
 
 public abstract class MavenParserTest {
+
 	protected EntityRepo repo;
+	private PomProcessor p;
 	protected Inferer inferer;
 
 	public void init() {
-    	repo = new EntityRepo();
-    	inferer = new Inferer(repo,new EmptyImportLookupStategy(),new EmptyBuiltInType(),false);
+		List<String> includeDir = new ArrayList<>();
+		includeDir.add("./src/test/resources/maven-code-examples/");
+		this.p = new PomProcessor();
+		p.includeDirs = includeDir.toArray(new String[] {});
+		
+		this.repo = p.getEntityRepo();
+		this.inferer = p.inferer;
     }
 	
 	public PomFileParser createParser(String src) {
-		return new  PomFileParser(src,repo,new ArrayList<>(),null);
+		return (PomFileParser) p.createFileParser(src);
 	}
 }

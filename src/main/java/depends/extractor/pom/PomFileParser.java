@@ -15,6 +15,7 @@ import depends.entity.repo.EntityRepo;
 import depends.extractor.FileParser;
 import depends.extractor.xml.XMLLexer;
 import depends.extractor.xml.XMLParser;
+import depends.relations.Inferer;
 
 public class PomFileParser implements FileParser {
 
@@ -22,12 +23,14 @@ public class PomFileParser implements FileParser {
 	private EntityRepo entityRepo;
 	private PomProcessor parseCreator;
 	private List<String> includePaths;
+	private Inferer inferer;
 
-	public PomFileParser(String fileFullPath, EntityRepo entityRepo, List<String> includePaths, PomProcessor pomProcessor) {
+	public PomFileParser(String fileFullPath, EntityRepo entityRepo, List<String> includePaths, PomProcessor pomProcessor,Inferer inferer) {
         this.fileFullPath = fileFullPath;
         this.entityRepo = entityRepo;
         this.parseCreator = pomProcessor;
         this.includePaths = includePaths;
+        this.inferer = inferer;
 	}
 
 	@Override
@@ -42,9 +45,11 @@ public class PomFileParser implements FileParser {
         Lexer lexer = new XMLLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         XMLParser parser = new XMLParser(tokens);
-        PomListener bridge = new PomListener(fileFullPath, entityRepo, includePaths,parseCreator);
+        PomListener bridge = new PomListener(fileFullPath, entityRepo, includePaths,parseCreator,inferer);
 	    ParseTreeWalker walker = new ParseTreeWalker();
 	    walker.walk(bridge, parser.document());
+		fileEntity = entityRepo.getEntity(fileFullPath);
+		fileEntity.inferEntities(inferer);
 	}
 
 }

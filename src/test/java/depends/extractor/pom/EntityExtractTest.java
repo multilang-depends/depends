@@ -3,13 +3,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import depends.extractor.pom.PomFileParser;
 
 public class EntityExtractTest extends MavenParserTest{
     @Before
@@ -70,15 +66,6 @@ public class EntityExtractTest extends MavenParserTest{
 	
 	@Test
 	public void should_parse_multiple_properties_in_same_pom() throws IOException {
-		Pattern p = Pattern.compile("cat");
-	     Matcher m = p.matcher("one cat two cats in the yard");
-	     StringBuffer sb = new StringBuffer();
-	     while (m.find()) {
-	         m.appendReplacement(sb, "dog");
-	     }
-	     m.appendTail(sb);
-	     
-	     System.out.println(sb.toString());
 		String[] srcs = new String[] {
 	    		"./src/test/resources/maven-code-examples/properties-test1.pom",
 	    	    };
@@ -95,5 +82,20 @@ public class EntityExtractTest extends MavenParserTest{
         <projectName>Apache ActiveMQ</projectName>
         <anotherId>activemq-${project.version}--${activeio-version}</anotherId>	 */
         assertEquals("activemq-1.00-3.1.4",entity.getProperty("anotherId"));
+	}
+	
+	@Test
+	public void should_parse_multiple_properties_in_parent_pom() throws IOException {
+		String[] srcs = new String[] {
+	    		"./src/test/resources/maven-code-examples/properties-test-child.pom"
+	    	    };
+	    
+	    for (String src:srcs) {
+		    PomFileParser parser = createParser(src);
+		    parser.parse();
+	    }
+	    inferer.resolveAllBindings();
+        PomArtifactEntity entity = (PomArtifactEntity)(repo.getEntity("properties-test.test(1)"));
+        assertEquals("13",entity.getProperty("project.version"));
 	}
 }
