@@ -79,8 +79,8 @@ public class PomListener extends XMLParserBaseListener{
 		if (name.equals("project")) {
 			if (pomParent!=null) {
 				currentEntity.setRawName(currentEntity.getRawName().replace(artifactIdPattern, pomParent.artifactId));
-				currentEntity.setRawName(currentEntity.getRawName().replace("$$GROUP_ID", pomParent.groupId));
-				currentEntity.setRawName(currentEntity.getRawName().replace("$$VERSION", pomParent.version));
+				currentEntity.setRawName(currentEntity.getRawName().replace(groupIdPattern, pomParent.groupId));
+				currentEntity.setRawName(currentEntity.getRawName().replace(versionPattern, pomParent.version));
 			}
 			currentEntity.setQualifiedName(currentEntity.getRawName());
 			entityRepo.add(currentEntity);
