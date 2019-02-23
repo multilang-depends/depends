@@ -4,7 +4,7 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
-import depends.matrix.FileDependencyGenerator;
+import depends.generator.FileDependencyGenerator;
 
 public class ForwardDeclareTest extends CppParserTest{
     @Before

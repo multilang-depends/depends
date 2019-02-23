@@ -26,7 +26,7 @@ package depends.format;
 
 import java.io.File;
 
-import depends.matrix.DependencyMatrix;
+import depends.matrix.core.DependencyMatrix;
 
 public abstract class AbstractFormatDependencyDumper {
 	protected String name;

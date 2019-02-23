@@ -30,8 +30,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import depends.format.AbstractFormatDependencyDumper;
-import depends.matrix.DependencyMatrix;
-import depends.matrix.DependencyPair;
+import depends.matrix.core.DependencyMatrix;
+import depends.matrix.core.DependencyPair;
 
 public class DotFormatDependencyDumper extends  AbstractFormatDependencyDumper{
 	@Override

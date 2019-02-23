@@ -22,9 +22,22 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-package depends.matrix;
+package depends.generator;
 
-public interface ILeadingNameStrippper {
-	String stripFilename(String path);
+import depends.entity.Entity;
+import depends.entity.repo.EntityRepo;
+import depends.matrix.core.DependencyMatrix;
+import depends.matrix.transform.strip.EmptyLeadingNameStripper;
+import depends.matrix.transform.strip.ILeadingNameStrippper;
 
+public abstract class DependencyGenerator {
+	public abstract DependencyMatrix build(EntityRepo entityRepo);
+
+	protected ILeadingNameStrippper stripper = new EmptyLeadingNameStripper();
+	public void setLeadingStripper(ILeadingNameStrippper stripper) {
+		this.stripper = stripper;
+	}
+	protected String buildDescription(Entity fromEntity, Entity toEntity) {
+		return fromEntity.getQualifiedName()+"->"+toEntity.getQualifiedName();
+	}
 }

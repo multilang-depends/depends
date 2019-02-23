@@ -31,7 +31,7 @@ import javax.xml.bind.Marshaller;
 
 import depends.format.AbstractFormatDependencyDumper;
 import depends.format.FileAttributes;
-import depends.matrix.DependencyMatrix;
+import depends.matrix.core.DependencyMatrix;
 
 public class XmlFormatDependencyDumper extends AbstractFormatDependencyDumper{
 	@Override

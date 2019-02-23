@@ -9,9 +9,9 @@ import java.util.Set;
 
 import depends.deptypes.DependencyType;
 import depends.format.AbstractFormatDependencyDumper;
-import depends.matrix.DependencyMatrix;
-import depends.matrix.DependencyPair;
-import depends.matrix.DependencyValue;
+import depends.matrix.core.DependencyMatrix;
+import depends.matrix.core.DependencyPair;
+import depends.matrix.core.DependencyValue;
 
 public class PlantUmlFormatDependencyDumper extends AbstractFormatDependencyDumper {
 	@Override

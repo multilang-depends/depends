@@ -32,7 +32,7 @@ import depends.format.excel.ExcelFormatDependencyDumper;
 import depends.format.json.JsonFormatDependencyDumper;
 import depends.format.plantuml.PlantUmlFormatDependencyDumper;
 import depends.format.xml.XmlFormatDependencyDumper;
-import depends.matrix.DependencyMatrix;
+import depends.matrix.core.DependencyMatrix;
 import edu.emory.mathcs.backport.java.util.Arrays;
 
 public class DependencyDumper {

@@ -22,12 +22,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-package depends.matrix;
+package depends.matrix.transform;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+
+import depends.matrix.core.DependencyMatrix;
+import depends.matrix.core.DependencyPair;
+import depends.matrix.core.DependencyValue;
 
 public class MatrixLevelReducer {
 

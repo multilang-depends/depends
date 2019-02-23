@@ -34,9 +34,9 @@ import org.codehaus.plexus.util.FileUtils;
 
 import depends.entity.repo.BuiltInType;
 import depends.entity.repo.EntityRepo;
-import depends.matrix.DependencyGenerator;
-import depends.matrix.DependencyMatrix;
-import depends.matrix.OrderedMatrixGenerator;
+import depends.generator.DependencyGenerator;
+import depends.matrix.core.DependencyMatrix;
+import depends.matrix.transform.OrderedMatrixGenerator;
 import depends.relations.ImportLookupStrategy;
 import depends.relations.Inferer;
 import depends.util.FileTraversal;

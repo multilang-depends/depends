@@ -21,37 +21,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+package depends.matrix.transform.strip;
 
-package depends.matrix;
-
-public class DependencyValue{
-	private int weight;
-	private String type;
-	private StringBuffer dependencyDetail;
-	public DependencyValue(String type) {
-		this.type = type;
-		this.weight=0;
-		dependencyDetail = new StringBuffer();
-	}
-
-	public void addDependency(int weight, String detail) {
-		this.weight += weight;
-		if (dependencyDetail.length()>0) {
-			dependencyDetail.append("\n");
-		}
-		dependencyDetail.append(detail);
-	}
-	
-	public int getWeight() {
-		return weight;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public String getDetails() {
-		return dependencyDetail.toString();
-	}
-
+public class EmptyLeadingNameStripper implements ILeadingNameStrippper {
+	@Override
+	public String stripFilename(String path) {
+		return path;
+	}	
 }

@@ -1,4 +1,4 @@
-package depends.matrix;
+package depends.matrix.transform;
 /*
 MIT License
 
@@ -26,6 +26,10 @@ SOFTWARE.
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+
+import depends.matrix.core.DependencyMatrix;
+import depends.matrix.core.DependencyPair;
+import depends.matrix.core.DependencyValue;
 
 public class OrderedMatrixGenerator  {
 	private DependencyMatrix matrix;

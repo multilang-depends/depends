@@ -30,9 +30,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import depends.format.FileAttributes;
-import depends.matrix.DependencyMatrix;
-import depends.matrix.DependencyPair;
-import depends.matrix.DependencyValue;
+import depends.matrix.core.DependencyMatrix;
+import depends.matrix.core.DependencyPair;
+import depends.matrix.core.DependencyValue;
 
 public class JDataBuilder {
 	public JDepObject build(DependencyMatrix dependencyMatrix, FileAttributes attribute) {

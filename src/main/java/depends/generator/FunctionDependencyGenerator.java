@@ -22,11 +22,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-package depends.matrix;
+package depends.generator;
 
 import depends.entity.Entity;
 import depends.entity.FunctionEntity;
 import depends.entity.repo.EntityRepo;
+import depends.matrix.core.DependencyMatrix;
 import depends.relations.Relation;
 
 public class FunctionDependencyGenerator extends DependencyGenerator {

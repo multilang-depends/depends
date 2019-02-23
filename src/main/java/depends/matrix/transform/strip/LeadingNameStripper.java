@@ -21,11 +21,18 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-package depends.matrix;
 
-public class EmptyLeadingNameStripper implements ILeadingNameStrippper {
+package depends.matrix.transform.strip;
+
+public class LeadingNameStripper implements ILeadingNameStrippper {
+	String leadingSrcPath;
+	public LeadingNameStripper(String leadingSrcPath) {
+		this.leadingSrcPath = leadingSrcPath;
+	}
 	@Override
 	public String stripFilename(String path) {
+		if (path.startsWith(leadingSrcPath))
+			path = "."+path.substring(leadingSrcPath.length());
 		return path;
-	}	
+	}
 }

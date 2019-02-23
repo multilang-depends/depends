@@ -22,17 +22,36 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-package depends.matrix;
+package depends.matrix.core;
 
-public class LeadingNameStripper implements ILeadingNameStrippper {
-	String leadingSrcPath;
-	public LeadingNameStripper(String leadingSrcPath) {
-		this.leadingSrcPath = leadingSrcPath;
+public class DependencyValue{
+	private int weight;
+	private String type;
+	private StringBuffer dependencyDetail;
+	public DependencyValue(String type) {
+		this.type = type;
+		this.weight=0;
+		dependencyDetail = new StringBuffer();
 	}
-	@Override
-	public String stripFilename(String path) {
-		if (path.startsWith(leadingSrcPath))
-			path = "."+path.substring(leadingSrcPath.length());
-		return path;
+
+	public void addDependency(int weight, String detail) {
+		this.weight += weight;
+		if (dependencyDetail.length()>0) {
+			dependencyDetail.append("\n");
+		}
+		dependencyDetail.append(detail);
 	}
+	
+	public int getWeight() {
+		return weight;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public String getDetails() {
+		return dependencyDetail.toString();
+	}
+
 }

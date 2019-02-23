@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-package depends.matrix;
+package depends.generator;
 
 import java.util.List;
 
@@ -31,6 +31,7 @@ import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.TypeEntity;
 import depends.entity.repo.EntityRepo;
+import depends.matrix.core.DependencyMatrix;
 import depends.relations.Relation;
 
 public class FileDependencyGenerator extends DependencyGenerator{

@@ -22,19 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-package depends.matrix;
+package depends.matrix.transform.strip;
 
-import depends.entity.Entity;
-import depends.entity.repo.EntityRepo;
+public interface ILeadingNameStrippper {
+	String stripFilename(String path);
 
-public abstract class DependencyGenerator {
-	public abstract DependencyMatrix build(EntityRepo entityRepo);
-
-	protected ILeadingNameStrippper stripper = new EmptyLeadingNameStripper();
-	public void setLeadingStripper(ILeadingNameStrippper stripper) {
-		this.stripper = stripper;
-	}
-	protected String buildDescription(Entity fromEntity, Entity toEntity) {
-		return fromEntity.getQualifiedName()+"->"+toEntity.getQualifiedName();
-	}
 }
