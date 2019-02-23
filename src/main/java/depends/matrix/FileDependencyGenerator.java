@@ -35,6 +35,8 @@ import depends.entity.repo.EntityRepo;
 import depends.relations.Relation;
 
 public class FileDependencyGenerator implements DependencyGenerator{
+	private ILeadingNameStrippper stripper = new EmptyLeadingNameStripper();
+
 	/**
 	 * Build the dependency matrix (without re-mapping file id)
 	 * @param entityRepo which contains entities and relations
@@ -43,10 +45,9 @@ public class FileDependencyGenerator implements DependencyGenerator{
 	@Override
 	public DependencyMatrix build(EntityRepo entityRepo) {
 		DependencyMatrix dependencyMatrix = new DependencyMatrix();
-        ArrayList<String> files = new ArrayList<String>();
 		for (Entity entity:entityRepo.getEntities()) {
         	if (entity instanceof FileEntity){
-        		files.add( entity.getDisplayName());
+        		dependencyMatrix.addNode(stripper.stripFilename(entity.getDisplayName()),entity.getId());
         	}
         	int fileEntityFrom = getFileEntityIdNoException(entityRepo, entity);
         	if (fileEntityFrom==-1) continue;
@@ -72,7 +73,6 @@ public class FileDependencyGenerator implements DependencyGenerator{
         		}
         	}
         }
-		dependencyMatrix.setNodes(files);
 		return dependencyMatrix;
 	}
 
@@ -82,5 +82,11 @@ public class FileDependencyGenerator implements DependencyGenerator{
 		if (ancestor==null)
 			return -1;
 		return ancestor.getId();
+	}
+
+
+	@Override
+	public void setLeadingStripper(ILeadingNameStrippper stripper) {
+		this.stripper = stripper;
 	}
 }

@@ -37,6 +37,7 @@ import depends.format.path.FilenameWritter;
 import depends.matrix.DependencyGenerator;
 import depends.matrix.FileDependencyGenerator;
 import depends.matrix.FunctionDependencyGenerator;
+import depends.matrix.LeadingNameStripper;
 import depends.util.FileUtil;
 import depends.util.FolderCollector;
 import edu.emory.mathcs.backport.java.util.Arrays;
@@ -94,13 +95,22 @@ public class Main {
 		}
 
 		long startTime = System.currentTimeMillis();
-		DependencyGenerator dependencyGenerator = app.getGranularity().equals("file")?
-				(new FileDependencyGenerator()):(new FunctionDependencyGenerator());
+		/* by default use file dependency generator */
+		DependencyGenerator dependencyGenerator = new FileDependencyGenerator();
+		/* method parameter means use method generator */
+		if (app.getGranularity().equals("method"))
+				dependencyGenerator = new FunctionDependencyGenerator();
+		if (app.getGranularity().startsWith("l")) {
+			
+		}
+		
+		if (app.isStripLeadingPath()) {
+			dependencyGenerator.setLeadingStripper(new LeadingNameStripper(inputDir));
+		}
+		
 		langProcessor.setDependencyGenerator(dependencyGenerator);
 		langProcessor.buildDependencies(inputDir, includeDir);
-		if (app.isStripLeadingPath()) {
-			langProcessor.getDependencies().stripFilenames(inputDir);
-		}
+		
 		
 		FilenameWritter filenameWritter = new EmptyFilenameWritter();
 		if (app.getNamePathPattern().equals("dot")) {

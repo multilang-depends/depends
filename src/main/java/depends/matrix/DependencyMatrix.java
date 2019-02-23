@@ -30,12 +30,12 @@ import java.util.Comparator;
 import java.util.HashMap;
 
 import depends.entity.Entity;
-import depends.entity.repo.EntityRepo;
 import depends.format.path.FilenameWritter;
 
 public class DependencyMatrix {
     private HashMap<String, DependencyPair> dependencyPairs = new HashMap<>();
-    private ArrayList<String> nodes;
+    private ArrayList<String> nodes = new ArrayList<>();
+    private HashMap<Integer,String> originNodeMap = new HashMap<>();
     private ArrayList<String> reMappedNodes;
 	private Integer relationCount=0;
     public DependencyMatrix() {
@@ -45,6 +45,11 @@ public class DependencyMatrix {
         return dependencyPairs.values();
     }
 
+	public void addNode(String name, int id) {
+		this.nodes.add(name);
+		this.originNodeMap.put(id, name);
+	}
+	
     public void addDependency(String depType, Integer from, Integer to, Entity fromEntity, Entity toEntity) {
 		if(from.equals(to) || from == -1 || to == -1) {
 		    return;
@@ -61,16 +66,7 @@ public class DependencyMatrix {
 		return reMappedNodes;
 	}
 
-	public void setNodes(ArrayList<String> nodes) {
-		this.nodes = nodes;
-	}
-
-
-	private Integer translateToNewId(EntityRepo repo, HashMap<String, Integer> nodesMap, Integer key) {
-		return nodesMap.get(repo.getEntity(key).getDisplayName());
-	}
-
-	public void remapIds(EntityRepo repo) {
+	public void remapIds() {
 		HashMap<String, Integer> nodesMap = new HashMap<>();
 		reMappedNodes = new ArrayList<>(nodes);
 		reMappedNodes.sort(new Comparator<String>() {
@@ -86,26 +82,21 @@ public class DependencyMatrix {
 		for (DependencyPair dependencyPair:dependencyPairs.values()) {
 			Integer from = dependencyPair.getFrom();
 			Integer to = dependencyPair.getTo();
-			dependencyPair.reMap(translateToNewId(repo, nodesMap, from),translateToNewId(repo, nodesMap, to));
+			dependencyPair.reMap(translateToNewId( nodesMap, from),translateToNewId( nodesMap, to));
 		}
 	}
 
 	public Integer relationCount() {
 		return relationCount;
 	}
-
-	public void stripFilenames(String leadingSrcPath) {
-		for (int i=0;i<reMappedNodes.size();i++) {
-			String shortPath = reMappedNodes.get(i);
-			if (shortPath.startsWith(leadingSrcPath))
-				shortPath = "."+shortPath.substring(leadingSrcPath.length());
-			reMappedNodes.set(i, shortPath);
-		}
-	}
-
+	
 	public void reWriteFilenamePattern(FilenameWritter filenameRewritter) {
 		for (int i=0;i<reMappedNodes.size();i++) {
 			reMappedNodes.set(i, filenameRewritter.reWrite(reMappedNodes.get(i)));
 		}		
+	}
+	
+	private Integer translateToNewId( HashMap<String, Integer> nodesMap, Integer key) {
+		return nodesMap.get(originNodeMap.get(key));
 	}
 }

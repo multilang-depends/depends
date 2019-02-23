@@ -28,4 +28,5 @@ import depends.entity.repo.EntityRepo;
 
 public interface DependencyGenerator {
 	DependencyMatrix build(EntityRepo entityRepo);
+	void setLeadingStripper(ILeadingNameStrippper stripper);
 }
