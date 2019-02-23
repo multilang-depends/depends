@@ -51,7 +51,7 @@ public class DependsCommand {
     private boolean dv8map = true;
 	@Option(names = {"-s", "--strip-leading-path"},  description = "Strip the leading path.")
     private boolean stripLeadingPath = false;
-	@Option(names = {"-g", "--granularity"},  description = "Granularity of dependency.[file(default),method]")
+	@Option(names = {"-g", "--granularity"},  description = "Granularity of dependency.[file(default),method,L#]")
     private String granularity="file";
 	@Option(names = {"-p", "--namepattern"},  description = "The name path pattern.[default(/),dot(.)")
     private String namePathPattern="default";

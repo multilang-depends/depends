@@ -68,20 +68,16 @@ public class DependencyMatrix {
 	}
 	
 	public DependencyMatrix reWriteFilenamePattern(FilenameWritter filenameRewritter) {
+		this.nodeIdToName.clear();
 		for (int i=0;i<nodes.size();i++) {
-			nodes.set(i, filenameRewritter.reWrite(nodes.get(i)));
+			String name = filenameRewritter.reWrite(nodes.get(i));
+			nodes.set(i, name );
+			nodeIdToName.put(i, name);
 		}		
 		return this;
 	}
-	
-
 
 	public String getNodeName(Integer key) {
 		return nodeIdToName.get(key);
 	}
-
-	public void setNodes(ArrayList<String> nodes) {
-		this.nodes = nodes;
-	}
-
 }

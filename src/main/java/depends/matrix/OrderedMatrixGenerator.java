@@ -41,13 +41,14 @@ public class OrderedMatrixGenerator  {
 				return o1.compareTo(o2);
 			}
 		});
-	    DependencyMatrix ordered = new DependencyMatrix();
-	    ordered.setNodes(reMappedNodes); 
 	    
+	    DependencyMatrix ordered = new DependencyMatrix();
 		HashMap<String, Integer> nodesMap = new HashMap<>();
-		for (int i=0;i<reMappedNodes.size();i++) {
-			nodesMap.put(reMappedNodes.get(i), i);
+		for (int id=0;id<reMappedNodes.size();id++) {
+			nodesMap.put(reMappedNodes.get(id), id);
+			ordered.addNode(reMappedNodes.get(id), id);
 		}
+
 		//add dependencies
 		for (DependencyPair dependencyPair:matrix.getDependencyPairs()) {
 			Integer from = dependencyPair.getFrom();

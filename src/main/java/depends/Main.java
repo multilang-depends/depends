@@ -39,7 +39,7 @@ import depends.matrix.DependencyMatrix;
 import depends.matrix.FileDependencyGenerator;
 import depends.matrix.FunctionDependencyGenerator;
 import depends.matrix.LeadingNameStripper;
-import depends.matrix.MatrixLevelShinker;
+import depends.matrix.MatrixLevelReducer;
 import depends.util.FileUtil;
 import depends.util.FolderCollector;
 import edu.emory.mathcs.backport.java.util.Arrays;
@@ -118,8 +118,8 @@ public class Main {
 		DependencyMatrix matrix = langProcessor.getDependencies();
 		matrix = matrix.reWriteFilenamePattern(filenameWritter );
 
-		if (app.getGranularity().startsWith("l")) {
-			matrix = new MatrixLevelShinker(matrix,app.getGranularity().substring(1)).shrinkToLevel();
+		if (app.getGranularity().startsWith("L")) {
+			matrix = new MatrixLevelReducer(matrix,app.getGranularity().substring(1)).shrinkToLevel();
 		}
 		DependencyDumper output = new DependencyDumper(matrix);
 		output.outputResult(outputName,outputDir,outputFormat);
