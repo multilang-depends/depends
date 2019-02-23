@@ -73,17 +73,11 @@ public class FileDependencyGenerator extends DependencyGenerator{
 		return dependencyMatrix;
 	}
 
-	
-
-
-
 	private int getFileEntityIdNoException(EntityRepo entityRepo, Entity entity) {
 		Entity ancestor = entity.getAncestorOfType(FileEntity.class);
 		if (ancestor==null)
 			return -1;
 		return ancestor.getId();
 	}
-
-
 
 }

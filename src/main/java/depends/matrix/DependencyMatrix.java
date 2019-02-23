@@ -97,20 +97,22 @@ public class DependencyMatrix {
 		return relationCount;
 	}
 	
-	public void reWriteFilenamePattern(FilenameWritter filenameRewritter) {
+	public DependencyMatrix reWriteFilenamePattern(FilenameWritter filenameRewritter) {
 		for (int i=0;i<nodes.size();i++) {
 			nodes.set(i, filenameRewritter.reWrite(nodes.get(i)));
 		}		
+		return this;
 	}
 	
 	private Integer translateToNewId( HashMap<String, Integer> nodesMap, Integer key) {
 		return nodesMap.get(nodeIdToName.get(key));
 	}
 
-	public void shrinkToLevel(String levelString) {
+	public DependencyMatrix shrinkToLevel(String levelString) {
 		int level = stringToPositiveInt(levelString);
-		if (level<0) return;
+		if (level<0) return this;
 		
+		return this;
 	}
 	
 	private int stringToPositiveInt(String level) {

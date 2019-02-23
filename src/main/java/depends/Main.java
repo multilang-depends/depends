@@ -35,6 +35,7 @@ import depends.format.path.DotPathFilenameWritter;
 import depends.format.path.EmptyFilenameWritter;
 import depends.format.path.FilenameWritter;
 import depends.matrix.DependencyGenerator;
+import depends.matrix.DependencyMatrix;
 import depends.matrix.FileDependencyGenerator;
 import depends.matrix.FunctionDependencyGenerator;
 import depends.matrix.LeadingNameStripper;
@@ -112,12 +113,14 @@ public class Main {
 		if (app.getNamePathPattern().equals("dot")) {
 			filenameWritter = new DotPathFilenameWritter();
 		}
-		langProcessor.getDependencies().reWriteFilenamePattern(filenameWritter );
+		
+		DependencyMatrix finalMatrix = langProcessor.getDependencies();
+		finalMatrix = finalMatrix.reWriteFilenamePattern(filenameWritter );
 
 		if (app.getGranularity().startsWith("l")) {
-			langProcessor.getDependencies().shrinkToLevel(app.getGranularity().substring(1));
+			finalMatrix = langProcessor.getDependencies().shrinkToLevel(app.getGranularity().substring(1));
 		}
-		DependencyDumper output = new DependencyDumper(langProcessor.getDependencies());
+		DependencyDumper output = new DependencyDumper(finalMatrix);
 		output.outputResult(outputName,outputDir,outputFormat);
 		long endTime = System.currentTimeMillis();
 		System.out.println("Consumed time: " + (float) ((endTime - startTime) / 1000.00) + " s,  or "
