@@ -29,14 +29,12 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 
-import depends.entity.Entity;
 import depends.format.path.FilenameWritter;
 
 public class DependencyMatrix {
     private HashMap<String, DependencyPair> dependencyPairs = new HashMap<>();
     private ArrayList<String> nodes = new ArrayList<>();
-    private HashMap<Integer,String> originNodeMap = new HashMap<>();
-    private ArrayList<String> reMappedNodes;
+    private HashMap<Integer,String> nodeIdToName = new HashMap<>();
 	private Integer relationCount=0;
     public DependencyMatrix() {
     }
@@ -47,10 +45,10 @@ public class DependencyMatrix {
 
 	public void addNode(String name, int id) {
 		this.nodes.add(name);
-		this.originNodeMap.put(id, name);
+		this.nodeIdToName.put(id, name);
 	}
 	
-    public void addDependency(String depType, Integer from, Integer to, Entity fromEntity, Entity toEntity) {
+	public void addDependency(String depType, Integer from, Integer to,  int weight,String detail) {
 		if(from.equals(to) || from == -1 || to == -1) {
 		    return;
 		}
@@ -58,45 +56,74 @@ public class DependencyMatrix {
 			dependencyPairs.put(DependencyPair.key(from,to),new DependencyPair(from,to));
 		}
 		DependencyPair dependencyPair = dependencyPairs.get(DependencyPair.key(from,to));
-		dependencyPair.addDependency(depType,fromEntity, toEntity);
-		relationCount++;
+		dependencyPair.addDependency(depType,weight,detail);
+		relationCount+=weight;		
+	}
+	
+    public ArrayList<String> getNodes() {
+		return nodes;
 	}
 
-	public ArrayList<String> getNodes() {
-		return reMappedNodes;
-	}
-
-	public void remapIds() {
-		HashMap<String, Integer> nodesMap = new HashMap<>();
-		reMappedNodes = new ArrayList<>(nodes);
-		reMappedNodes.sort(new Comparator<String>() {
+	public DependencyMatrix orderedMatrix() {
+	    ArrayList<String> reMappedNodes= new ArrayList<>(nodes);
+	    //sort nodes by name
+	    reMappedNodes.sort(new Comparator<String>() {
 			@Override
 			public int compare(String o1, String o2) {
 				return o1.compareTo(o2);
 			}
 		});
-
+	    DependencyMatrix ordered = new DependencyMatrix();
+	    ordered.nodes  = reMappedNodes; 
+	    
+		HashMap<String, Integer> nodesMap = new HashMap<>();
 		for (int i=0;i<reMappedNodes.size();i++) {
 			nodesMap.put(reMappedNodes.get(i), i);
 		}
+		//add dependencies
 		for (DependencyPair dependencyPair:dependencyPairs.values()) {
 			Integer from = dependencyPair.getFrom();
 			Integer to = dependencyPair.getTo();
-			dependencyPair.reMap(translateToNewId( nodesMap, from),translateToNewId( nodesMap, to));
+			for (DependencyValue dep:dependencyPair.getDependencies()) {
+				ordered.addDependency(dep.getType(), translateToNewId( nodesMap, from), translateToNewId( nodesMap, to), dep.getWeight(),dep.getDetails());
+			}
 		}
+		return ordered;
 	}
+
+
 
 	public Integer relationCount() {
 		return relationCount;
 	}
 	
 	public void reWriteFilenamePattern(FilenameWritter filenameRewritter) {
-		for (int i=0;i<reMappedNodes.size();i++) {
-			reMappedNodes.set(i, filenameRewritter.reWrite(reMappedNodes.get(i)));
+		for (int i=0;i<nodes.size();i++) {
+			nodes.set(i, filenameRewritter.reWrite(nodes.get(i)));
 		}		
 	}
 	
 	private Integer translateToNewId( HashMap<String, Integer> nodesMap, Integer key) {
-		return nodesMap.get(originNodeMap.get(key));
+		return nodesMap.get(nodeIdToName.get(key));
 	}
+
+	public void shrinkToLevel(String levelString) {
+		int level = stringToPositiveInt(levelString);
+		if (level<0) return;
+		
+	}
+	
+	private int stringToPositiveInt(String level) {
+		int result = -1;
+		try {
+			result  = Integer.parseInt(level);}
+		catch(Exception e) {
+			result = -1;
+		}
+		if (result<=0) {
+			result = -1; 
+		}
+		return result;
+	}
+
 }

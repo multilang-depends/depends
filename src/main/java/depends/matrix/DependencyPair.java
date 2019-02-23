@@ -27,8 +27,6 @@ package depends.matrix;
 import java.util.Collection;
 import java.util.HashMap;
 
-import depends.entity.Entity;
-
 public class DependencyPair {
 	private Integer from;
 	private Integer to;
@@ -41,12 +39,14 @@ public class DependencyPair {
 	public static String key(Integer from, Integer to) {
 		return ""+from+"-->"+to;
 	}
-	public void addDependency(String depType, Entity fromEntity, Entity toEntity) {
+	
+	public void addDependency(String depType, int weight, String detail) {
 		if (dependencies.get(depType)==null)
 			dependencies.put(depType, new DependencyValue(depType));
 		DependencyValue value = dependencies.get(depType);
-		value.addDependency(fromEntity, toEntity);
+		value.addDependency(weight,detail);
 	}
+	
 	public Integer getFrom() {
 		return from;
 	}
@@ -60,4 +60,5 @@ public class DependencyPair {
 		this.from = from;
 		this.to = to;
 	}
+
 }

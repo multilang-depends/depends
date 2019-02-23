@@ -24,33 +24,28 @@ SOFTWARE.
 
 package depends.matrix;
 
-import java.util.ArrayList;
-
 import depends.entity.Entity;
 import depends.entity.FunctionEntity;
 import depends.entity.repo.EntityRepo;
 import depends.relations.Relation;
 
-public class FunctionDependencyGenerator implements DependencyGenerator {
-	private ILeadingNameStrippper stripper = new EmptyLeadingNameStripper();
-
-	@Override
+public class FunctionDependencyGenerator extends DependencyGenerator {
 	public DependencyMatrix build(EntityRepo entityRepo) {
 		DependencyMatrix dependencyMatrix = new DependencyMatrix();
 		for (Entity entity : entityRepo.getEntities()) {
 			if (entity instanceof FunctionEntity) {
 				dependencyMatrix.addNode(stripper.stripFilename(entity.getDisplayName()),entity.getId());
 			}
-			int fileEntityFrom = getFunctionEntityIdNoException(entity);
-			if (fileEntityFrom == -1)
+			int entityFrom = getFunctionEntityIdNoException(entity);
+			if (entityFrom == -1)
 				continue;
 			for (Relation relation : entity.getRelations()) {
 				if (relation.getEntity().getId() >= 0) {
-					int fileEntityTo = getFunctionEntityIdNoException(relation.getEntity());
-					if (fileEntityTo == -1)
+					int entityTo = getFunctionEntityIdNoException(relation.getEntity());
+					if (entityTo == -1)
 						continue;
-					dependencyMatrix.addDependency(relation.getType(), fileEntityFrom, fileEntityTo, entity,
-							relation.getEntity());
+					dependencyMatrix.addDependency(relation.getType(), entityFrom, entityTo, 1,buildDescription(entity,
+							relation.getEntity()));
 				}
 			}
 		}
@@ -65,8 +60,4 @@ public class FunctionDependencyGenerator implements DependencyGenerator {
 		return ancestor.getId();
 	}
 
-	@Override
-	public void setLeadingStripper(ILeadingNameStrippper stripper) {
-		this.stripper = stripper;
-	}
 }

@@ -24,9 +24,17 @@ SOFTWARE.
 
 package depends.matrix;
 
+import depends.entity.Entity;
 import depends.entity.repo.EntityRepo;
 
-public interface DependencyGenerator {
-	DependencyMatrix build(EntityRepo entityRepo);
-	void setLeadingStripper(ILeadingNameStrippper stripper);
+public abstract class DependencyGenerator {
+	public abstract DependencyMatrix build(EntityRepo entityRepo);
+
+	protected ILeadingNameStrippper stripper = new EmptyLeadingNameStripper();
+	public void setLeadingStripper(ILeadingNameStrippper stripper) {
+		this.stripper = stripper;
+	}
+	protected String buildDescription(Entity fromEntity, Entity toEntity) {
+		return fromEntity.getQualifiedName()+"->"+toEntity.getQualifiedName();
+	}
 }

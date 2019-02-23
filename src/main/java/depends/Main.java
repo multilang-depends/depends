@@ -100,9 +100,6 @@ public class Main {
 		/* method parameter means use method generator */
 		if (app.getGranularity().equals("method"))
 				dependencyGenerator = new FunctionDependencyGenerator();
-		if (app.getGranularity().startsWith("l")) {
-			
-		}
 		
 		if (app.isStripLeadingPath()) {
 			dependencyGenerator.setLeadingStripper(new LeadingNameStripper(inputDir));
@@ -111,12 +108,15 @@ public class Main {
 		langProcessor.setDependencyGenerator(dependencyGenerator);
 		langProcessor.buildDependencies(inputDir, includeDir);
 		
-		
 		FilenameWritter filenameWritter = new EmptyFilenameWritter();
 		if (app.getNamePathPattern().equals("dot")) {
 			filenameWritter = new DotPathFilenameWritter();
 		}
 		langProcessor.getDependencies().reWriteFilenamePattern(filenameWritter );
+
+		if (app.getGranularity().startsWith("l")) {
+			langProcessor.getDependencies().shrinkToLevel(app.getGranularity().substring(1));
+		}
 		DependencyDumper output = new DependencyDumper(langProcessor.getDependencies());
 		output.outputResult(outputName,outputDir,outputFormat);
 		long endTime = System.currentTimeMillis();

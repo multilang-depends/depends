@@ -24,8 +24,6 @@ SOFTWARE.
 
 package depends.matrix;
 
-import depends.entity.Entity;
-
 public class DependencyValue{
 	private int weight;
 	private String type;
@@ -36,13 +34,14 @@ public class DependencyValue{
 		dependencyDetail = new StringBuffer();
 	}
 
-	public void addDependency(Entity from, Entity to) {
-		this.weight++;
-		dependencyDetail.append("[").append(type).append("]")
-		.append(from.getQualifiedName()).append("->").append(to.getQualifiedName())
-		.append("\n");
+	public void addDependency(int weight, String detail) {
+		this.weight += weight;
+		if (dependencyDetail.length()>0) {
+			dependencyDetail.append("\n");
+		}
+		dependencyDetail.append(detail);
 	}
-
+	
 	public int getWeight() {
 		return weight;
 	}
@@ -54,4 +53,5 @@ public class DependencyValue{
 	public String getDetails() {
 		return dependencyDetail.toString();
 	}
+
 }

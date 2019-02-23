@@ -24,7 +24,6 @@ SOFTWARE.
 
 package depends.matrix;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import depends.entity.CandidateTypes;
@@ -34,9 +33,7 @@ import depends.entity.TypeEntity;
 import depends.entity.repo.EntityRepo;
 import depends.relations.Relation;
 
-public class FileDependencyGenerator implements DependencyGenerator{
-	private ILeadingNameStrippper stripper = new EmptyLeadingNameStripper();
-
+public class FileDependencyGenerator extends DependencyGenerator{
 	/**
 	 * Build the dependency matrix (without re-mapping file id)
 	 * @param entityRepo which contains entities and relations
@@ -59,7 +56,7 @@ public class FileDependencyGenerator implements DependencyGenerator{
     	        		if (candidateType.getId()>=0) {
     	        			int fileEntityTo = getFileEntityIdNoException(entityRepo,candidateType);
     	        			if (fileEntityTo!=-1) {
-    	        				dependencyMatrix.addDependency(relation.getType(), fileEntityFrom,fileEntityTo,entity,candidateType);
+    	        				dependencyMatrix.addDependency(relation.getType(), fileEntityFrom,fileEntityTo,1,buildDescription(entity,candidateType));
     	        			}
     	        		}
         			}
@@ -67,7 +64,7 @@ public class FileDependencyGenerator implements DependencyGenerator{
 	        		if (relatedEntity.getId()>=0) {
 	        			int fileEntityTo = getFileEntityIdNoException(entityRepo,relatedEntity);
 	        			if (fileEntityTo!=-1) {
-	        				dependencyMatrix.addDependency(relation.getType(), fileEntityFrom,fileEntityTo,entity,relatedEntity);
+	        				dependencyMatrix.addDependency(relation.getType(), fileEntityFrom,fileEntityTo,1,buildDescription(entity,relatedEntity));
 	        			}
 	        		}
         		}
@@ -77,6 +74,9 @@ public class FileDependencyGenerator implements DependencyGenerator{
 	}
 
 	
+
+
+
 	private int getFileEntityIdNoException(EntityRepo entityRepo, Entity entity) {
 		Entity ancestor = entity.getAncestorOfType(FileEntity.class);
 		if (ancestor==null)
@@ -85,8 +85,5 @@ public class FileDependencyGenerator implements DependencyGenerator{
 	}
 
 
-	@Override
-	public void setLeadingStripper(ILeadingNameStrippper stripper) {
-		this.stripper = stripper;
-	}
+
 }

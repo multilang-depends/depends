@@ -65,7 +65,7 @@ public class DetailTextFormatDependencyDumper extends AbstractFormatDependencyDu
             int dst = dependencyPair.getTo();
         	writer.println("======="+files.get(src) + " -> " + files.get(dst) + "=========");
         	for (DependencyValue dependency:dependencyPair.getDependencies()) {
-        	writer.println(dependency.getDetails());
+        	writer.println("["+dependency.getType()+"]"+dependency.getDetails()+"\n");
         	}
         }		
 	}
