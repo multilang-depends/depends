@@ -39,6 +39,7 @@ import depends.matrix.DependencyMatrix;
 import depends.matrix.FileDependencyGenerator;
 import depends.matrix.FunctionDependencyGenerator;
 import depends.matrix.LeadingNameStripper;
+import depends.matrix.MatrixLevelShinker;
 import depends.util.FileUtil;
 import depends.util.FolderCollector;
 import edu.emory.mathcs.backport.java.util.Arrays;
@@ -114,13 +115,13 @@ public class Main {
 			filenameWritter = new DotPathFilenameWritter();
 		}
 		
-		DependencyMatrix finalMatrix = langProcessor.getDependencies();
-		finalMatrix = finalMatrix.reWriteFilenamePattern(filenameWritter );
+		DependencyMatrix matrix = langProcessor.getDependencies();
+		matrix = matrix.reWriteFilenamePattern(filenameWritter );
 
 		if (app.getGranularity().startsWith("l")) {
-			finalMatrix = langProcessor.getDependencies().shrinkToLevel(app.getGranularity().substring(1));
+			matrix = new MatrixLevelShinker(matrix,app.getGranularity().substring(1)).shrinkToLevel();
 		}
-		DependencyDumper output = new DependencyDumper(finalMatrix);
+		DependencyDumper output = new DependencyDumper(matrix);
 		output.outputResult(outputName,outputDir,outputFormat);
 		long endTime = System.currentTimeMillis();
 		System.out.println("Consumed time: " + (float) ((endTime - startTime) / 1000.00) + " s,  or "

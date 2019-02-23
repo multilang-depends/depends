@@ -36,6 +36,7 @@ import depends.entity.repo.BuiltInType;
 import depends.entity.repo.EntityRepo;
 import depends.matrix.DependencyGenerator;
 import depends.matrix.DependencyMatrix;
+import depends.matrix.OrderedMatrixGenerator;
 import depends.relations.ImportLookupStrategy;
 import depends.relations.Inferer;
 import depends.util.FileTraversal;
@@ -114,7 +115,7 @@ abstract public class AbstractLangProcessor {
     private void identifyDependencies(){
 		System.out.println("dependencie data generating...");	
         dependencyMatrix  = dependencyGenerator.build(entityRepo);
-        dependencyMatrix = dependencyMatrix.orderedMatrix();
+        dependencyMatrix = new OrderedMatrixGenerator(dependencyMatrix).build();
         System.out.println("dependencie data generating done successfully...");	 	
     }
 
