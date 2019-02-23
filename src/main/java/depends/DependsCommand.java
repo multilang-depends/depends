@@ -43,7 +43,7 @@ public class DependsCommand {
     private String src;
 	@Parameters(index = "2",  description = "The output file name")
 	private String output;
-    @Option(names = {"-f", "--format"},split=",",  description = "the output format: [json(default),xml,excel,detail(text format),dot]")
+    @Option(names = {"-f", "--format"},split=",",  description = "the output format: [json(default),xml,excel,detail,dot,plantuml]")
     private String[] format=new String[]{"json"};
 	@Option(names = {"-d", "--dir"},  description = "The output directory")
 	private String dir;
