@@ -163,7 +163,7 @@ public class CppVisitor  extends ASTVisitor {
 			String returnType = null;
 			if ( declarator.getParent() instanceof IASTSimpleDeclaration) {
 				IASTSimpleDeclaration decl = (IASTSimpleDeclaration)(declarator.getParent());
-				returnType = ASTStringUtil.getName(decl.getDeclSpecifier());
+				returnType = ASTStringUtilExt.getName(decl.getDeclSpecifier());
 				String rawName = declarator.getName().toString();
 				FunctionEntity namedEntity = context.currentFile().lookupFunctionInVisibleScope(rawName);
 				if (namedEntity!=null) {
@@ -174,7 +174,7 @@ public class CppVisitor  extends ASTVisitor {
 			}
 			else if ( declarator.getParent() instanceof IASTFunctionDefinition) {
 				IASTFunctionDefinition decl = (IASTFunctionDefinition)declarator.getParent();
-				returnType= ASTStringUtil.getReturnTypeString(decl.getDeclSpecifier(), decl.getDeclarator());
+				returnType= ASTStringUtilExt.getReturnTypeString(decl.getDeclSpecifier(), decl.getDeclarator());
 				String rawName = declarator.getName().toString();
 				FunctionEntity namedEntity = context.currentFile().lookupFunctionInVisibleScope(rawName);
 				if (namedEntity!=null) {
@@ -243,9 +243,9 @@ public class CppVisitor  extends ASTVisitor {
 				IASTDeclSpecifier declSpecifier = ((IASTSimpleDeclaration) declaration).getDeclSpecifier();
 				//Found new typedef definition
 				if (declSpecifier.getStorageClass()==IASTDeclSpecifier.sc_typedef) {
-					context.foundNewTypeAlias(declarator.getName().toString(),ASTStringUtil.getName(declSpecifier));
+					context.foundNewTypeAlias(declarator.getName().toString(),ASTStringUtilExt.getName(declSpecifier));
 				}else if (!(declarator instanceof IASTFunctionDeclarator)) {
-					String varType = ASTStringUtil.getName(declSpecifier);
+					String varType = ASTStringUtilExt.getName(declSpecifier);
 					String varName = declarator.getName().toString();
 					if (!StringUtils.isEmpty(varType)) {
 						context.foundVarDefinition(varName, varType,new ArrayList<>());
@@ -288,7 +288,7 @@ public class CppVisitor  extends ASTVisitor {
 	@Override
 	public int visit(IASTParameterDeclaration parameterDeclaration) {
 		String parameterName = parameterDeclaration.getDeclarator().getName().toString();
-		String parameterType = ASTStringUtil.getName(parameterDeclaration.getDeclSpecifier());
+		String parameterType = ASTStringUtilExt.getName(parameterDeclaration.getDeclSpecifier());
 		if (context.currentFunction()!=null) {
 			VarEntity var = new VarEntity(parameterName,parameterType,context.currentFunction(),idGenerator.generateId());
 			context.currentFunction().addParameter(var );

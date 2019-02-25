@@ -94,14 +94,14 @@ public class ExpressionUsage {
 			expression.isCall = true;
 		}
 		if (ctx instanceof ICPPASTNewExpression) {
-			expression.rawType = ASTStringUtil.getTypeIdString(((ICPPASTNewExpression)ctx).getTypeId());
+			expression.rawType = ASTStringUtilExt.getTypeIdString(((ICPPASTNewExpression)ctx).getTypeId());
 			expression.isCall = true;
 			expression.deriveTypeFromChild = false;
 		}
 
 		if (ctx instanceof IASTCastExpression) {
 			expression.isCast=true;
-			expression.rawType = ASTStringUtil.getTypeIdString(((IASTCastExpression)ctx).getTypeId());
+			expression.rawType = ASTStringUtilExt.getTypeIdString(((IASTCastExpression)ctx).getTypeId());
 			expression.deriveTypeFromChild = false;
 
 		}
@@ -137,7 +137,7 @@ public class ExpressionUsage {
 			expression.rawType =  "<Built-in>";
 		}else if (ctx instanceof IASTTypeIdExpression) {
 		//3. if given type directly
-			expression.rawType = ASTStringUtil.getTypeIdString(((IASTTypeIdExpression)ctx).getTypeId());
+			expression.rawType = ASTStringUtilExt.getTypeIdString(((IASTTypeIdExpression)ctx).getTypeId());
 			//TODO: check
 		}
 	}
