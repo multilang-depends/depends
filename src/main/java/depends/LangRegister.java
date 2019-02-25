@@ -26,6 +26,7 @@ package depends;
 
 import depends.extractor.AbstractLangProcessor;
 import depends.extractor.LangProcessorRegistration;
+import depends.extractor.kotlin.KotlinProcessor;
 
 public class LangRegister {
 
@@ -35,6 +36,7 @@ public class LangRegister {
 		add (new depends.extractor.cpp.CppProcessor());
 		add (new depends.extractor.ruby.RubyProcessor());
 		add (new depends.extractor.pom.PomProcessor());
+		add (new depends.extractor.kotlin.KotlinProcessor());
 }
 
 	public void register() {
