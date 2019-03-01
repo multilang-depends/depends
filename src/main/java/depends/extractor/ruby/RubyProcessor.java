@@ -24,6 +24,10 @@ SOFTWARE.
 
 package depends.extractor.ruby;
 
+import static depends.deptypes.DependencyType.*;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -77,4 +81,21 @@ public class RubyProcessor extends AbstractLangProcessor implements ParserCreato
 		return new RubyBuiltInType();
 	}
 	
+	@Override
+	public List<String> supportedRelations() {
+		ArrayList<String> depedencyTypes = new ArrayList<>();
+		depedencyTypes.add(IMPORT);
+		depedencyTypes.add(CONTAIN);
+		depedencyTypes.add(INHERIT);
+		depedencyTypes.add(CALL);
+		depedencyTypes.add(PARAMETER);
+		depedencyTypes.add(RETURN);
+		depedencyTypes.add(SET);
+		depedencyTypes.add(CREATE);
+		depedencyTypes.add(USE);
+		depedencyTypes.add(CAST);
+		depedencyTypes.add(THROW);
+		depedencyTypes.add(MIXIN);
+		return depedencyTypes;
+	}		
 }

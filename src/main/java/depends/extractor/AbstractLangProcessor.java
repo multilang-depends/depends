@@ -170,5 +170,6 @@ abstract public class AbstractLangProcessor {
 	public void setDependencyGenerator(DependencyGenerator dependencyGenerator) {
 		this.dependencyGenerator = dependencyGenerator;
 	}
+	public abstract List<String> supportedRelations();
 
 }

@@ -24,6 +24,13 @@ SOFTWARE.
 
 package depends.extractor.pom;
 
+import static depends.deptypes.DependencyType.CONTAIN;
+import static depends.deptypes.DependencyType.IMPORT;
+import static depends.deptypes.DependencyType.USE;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import depends.entity.repo.BuiltInType;
 import depends.extractor.AbstractLangProcessor;
 import depends.extractor.FileParser;
@@ -60,4 +67,13 @@ public class PomProcessor extends AbstractLangProcessor {
 	protected FileParser createFileParser(String fileFullPath) {
 		return new PomFileParser(fileFullPath,entityRepo,includePaths(),this,inferer);
 	}
+	
+	@Override
+	public List<String> supportedRelations() {
+		ArrayList<String> depedencyTypes = new ArrayList<>();
+		depedencyTypes.add(IMPORT);
+		depedencyTypes.add(CONTAIN);
+		depedencyTypes.add(USE);
+		return depedencyTypes;
+	}			
 }

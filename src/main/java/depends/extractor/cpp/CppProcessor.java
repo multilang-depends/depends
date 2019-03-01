@@ -24,6 +24,10 @@ SOFTWARE.
 
 package depends.extractor.cpp;
 
+import static depends.deptypes.DependencyType.*;
+import java.util.ArrayList;
+import java.util.List;
+
 import depends.entity.repo.BuiltInType;
 import depends.extractor.AbstractLangProcessor;
 import depends.extractor.FileParser;
@@ -67,4 +71,22 @@ public class CppProcessor extends AbstractLangProcessor {
 	public BuiltInType getBuiltInType() {
 		return new CppBuiltInType();
 	}
+	
+	@Override
+	public List<String> supportedRelations() {
+		ArrayList<String> depedencyTypes = new ArrayList<>();
+		depedencyTypes.add(IMPORT);
+		depedencyTypes.add(CONTAIN);
+		depedencyTypes.add(IMPLEMENT);
+		depedencyTypes.add(INHERIT);
+		depedencyTypes.add(CALL);
+		depedencyTypes.add(PARAMETER);
+		depedencyTypes.add(RETURN);
+		depedencyTypes.add(SET);
+		depedencyTypes.add(CREATE);
+		depedencyTypes.add(USE);
+		depedencyTypes.add(CAST);
+		depedencyTypes.add(THROW);
+		return depedencyTypes;
+	}	
 }

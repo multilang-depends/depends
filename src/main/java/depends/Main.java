@@ -77,10 +77,7 @@ public class Main {
 		String outputName = app.getOutputName();
 		String outputDir = app.getOutputDir();
 		String[] outputFormat = app.getFormat();
-		if ( app.isDv8map()) {
-			DV8MappingFileBuilder dv8MapfileBuilder = new DV8MappingFileBuilder();
-			dv8MapfileBuilder.create(outputDir+File.separator+"depends-dv8map.json");
-		}
+
 		inputDir = FileUtil.uniqFilePath(inputDir);
 
 		if (app.isAutoInclude()) {
@@ -96,6 +93,11 @@ public class Main {
 			return;
 		}
 
+		if ( app.isDv8map()) {
+			DV8MappingFileBuilder dv8MapfileBuilder = new DV8MappingFileBuilder(langProcessor.supportedRelations());
+			dv8MapfileBuilder.create(outputDir+File.separator+"depends-dv8map.json");
+		}
+		
 		long startTime = System.currentTimeMillis();
 		/* by default use file dependency generator */
 		DependencyGenerator dependencyGenerator = new FileDependencyGenerator();

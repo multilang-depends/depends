@@ -24,11 +24,14 @@ SOFTWARE.
 
 package depends.extractor.java;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import depends.entity.repo.BuiltInType;
 import depends.extractor.AbstractLangProcessor;
 import depends.extractor.FileParser;
 import depends.relations.ImportLookupStrategy;
-
+import static depends.deptypes.DependencyType.*;
 public class JavaProcessor extends AbstractLangProcessor {
     private static final String JAVA_LANG = "java";
     private static final String JAVA_SUFFIX = ".java";
@@ -60,5 +63,24 @@ public class JavaProcessor extends AbstractLangProcessor {
 	@Override
 	public BuiltInType getBuiltInType() {
 		return new JavaBuiltInType();
+	}
+	
+	@Override
+	public List<String> supportedRelations() {
+		ArrayList<String> depedencyTypes = new ArrayList<>();
+		depedencyTypes.add(IMPORT);
+		depedencyTypes.add(CONTAIN);
+		depedencyTypes.add(IMPLEMENT);
+		depedencyTypes.add(INHERIT);
+		depedencyTypes.add(CALL);
+		depedencyTypes.add(PARAMETER);
+		depedencyTypes.add(RETURN);
+		depedencyTypes.add(SET);
+		depedencyTypes.add(CREATE);
+		depedencyTypes.add(USE);
+		depedencyTypes.add(CAST);
+		depedencyTypes.add(THROW);
+		depedencyTypes.add(ANNOTATION);
+		return depedencyTypes;
 	}
 }

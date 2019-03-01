@@ -25,13 +25,11 @@ SOFTWARE.
 package depends.addons;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import depends.deptypes.DependencyType;
 
 class MappingValue{
 	int family = 0;
@@ -85,11 +83,16 @@ class MappingItem {
 
 public class DV8MappingFileBuilder {
 
+	private List<String> supportedRelations;
+
+	public DV8MappingFileBuilder(List<String> supportedRelations) {
+		this.supportedRelations = supportedRelations;
+	}
+
 	public void create(String fileName)  {
 		Map<String,MappingItem> values = new HashMap<>();
-		ArrayList<String> dependencies = DependencyType.allDependencies();
-    	for (int i=0;i<dependencies.size();i++) {
-    		String dep = dependencies.get(i);
+    	for (int i=0;i<supportedRelations.size();i++) {
+    		String dep = supportedRelations.get(i);
     		values.put(dep,new MappingItem(dep,i));
     	}
 		ObjectMapper mapper = new ObjectMapper();
