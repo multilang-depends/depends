@@ -103,7 +103,7 @@ The project built on a lot of previous works, especically the excellent work of 
 * Eclipse CDT (www.eclipse.org/cdt)
 * JRuby(https://github.com/jruby/jruby)
 
-# Founders/Authors
+# Authors
  - Gang ZHANG (https://github.com/gangz)
  - Jin Wuxia (https://github.com/jinwuxia)
  
