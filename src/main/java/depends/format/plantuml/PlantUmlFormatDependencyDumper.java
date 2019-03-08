@@ -53,7 +53,7 @@ public class PlantUmlFormatDependencyDumper extends AbstractFormatDependencyDump
             int dst = dependencyPair.getTo();
             Set<String> relations = new HashSet<>();
             for (DependencyValue dep:dependencyPair.getDependencies()) {
-            	relations.add("\t"+ getNodeName(src) + getRelationSymbol(dep.getType()) +getNodeName(dst) + "");
+            	relations.add("\t"+ getNodeName(src) + " " + getRelationSymbol(dep.getType()) +" " + getNodeName(dst) + "");
             }
             for (String relation:relations) {
             	writer.println(relation);
@@ -76,9 +76,7 @@ public class PlantUmlFormatDependencyDumper extends AbstractFormatDependencyDump
 
 	private String getNodeName(int src) {
 		String result = matrix.getNodeName(src);
-//		if(result.startsWith(".")) result = result.substring(1);
-//		if(result.startsWith("/")) result = result.substring(1);
-//		if(result.startsWith("\\")) result = result.substring(1);
+		result = result.replace("-", "_");
 		return result;
 	}
 }
