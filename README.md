@@ -96,9 +96,9 @@ We will be very happy if *depends* is used under your project (including commerc
 
 # Acknowledgement
 
-The project built on a lot of previous works, especically the excellent work of Jin Wuxia on ENER(https://github.com/jinwuxia/ENRE) and the excellent work of Prof. Yuanfang Cai 's research team(https://www.cs.drexel.edu/~yfcai/) on dependency analysis.
+The project built on a lot of previous works, especically the excellent work of Jin Wuxia on ENRE(https://github.com/jinwuxia/ENRE) and the excellent work of Prof. Yuanfang Cai 's research team(https://www.cs.drexel.edu/~yfcai/) on dependency analysis.
 
-*Depends* language specific front-end is built upon the open source projects, including Antlr and Antlr Grammar V4 (https://github.com/antlr), Eclipse CDT (www.eclipse.org/cdt), and JRuby(https://github.com/jruby/jruby).
+*Depends* language specific front-end is built upon several excellent open source projects, including Antlr and Antlr Grammar V4 (https://github.com/antlr), Eclipse CDT (www.eclipse.org/cdt), and JRuby(https://github.com/jruby/jruby).
 
 # Authors
  - Gang ZHANG (https://github.com/gangz)
