@@ -105,6 +105,6 @@ The project built on a lot of previous works, especically the excellent work of 
  - Jin Wuxia (https://github.com/jinwuxia)
 
 # Sponsors
- - ArchDia (www.archdia.net)
+ - ArchDia LLC. (www.archdia.net)
  - Emergent Design Inc.(www.emergentdesign.cn)
 
