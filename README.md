@@ -68,6 +68,22 @@ Dot file could be used to generate graphics by GraphViz(http://graphviz.org/).
 
 Plantuml file could be used to generate UML diagram by PlantUML(http://plantuml.com/).
 
+### How many dependency types *depends* suported?
+
+*Depends* support all types of dependencies, including:
+* Call: function/method invoke
+* Cast: type cast
+* Contain: variable/field definition
+* Create: create a instance of a certain type
+* Extend: parent-child relation
+* Implement: implemented interface
+* Import/Include: for example java ```import```, c/c++ ```#include```, ruby ```require```.
+* Mixin: mix-in relation, for example ruby include
+* Parameter: as a parameter of a method
+* Return: returned type
+* Throw: throw exceptions
+* Use: use or set variables
+
 # How to contribute
 
 There are variety of ways to contribute to *depends*. For example:
