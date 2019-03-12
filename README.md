@@ -1,23 +1,27 @@
 # Introduction
 
-*Depends* is a code dependency analysis tool. It's goal is to analyze the dependencies of software code, to better support software code visualization, program understanding,  bad smell detection, architecture guardiance, design refactoring, and more.
+*Depends* is a source code dependency extraction tool, designed to infer syntactical relations among source code entities, such as files and methods, from various programming languages. Our objective is to provide a framework that is easily extensible to support dependency extraction from different programming languages and configuration files, so that other high-level analysis tools can be built upon it, in a language-independent fashion. Sample applications include code visualization, program comprehension, code smell detection, architecture analysis, design refactoring, etc.  
 
-*Depends* is open source and free. The authors believe that dependency analysis of software code is one of the most important base of software engineering. An open source approach can better promote community collaboration, avoid repetitive labor, and improve the quality of analytical tools itself.
+Our creation of *Depends* is motivated by the observations that different vendors, such as Understand, Structure 101, and Lattix, created their own dependency extraction tools that are packaged with their other analysis functions. To conduct new analysis, vendors and researchers must each create their own dependency extraction tools, or use the output of other tools, which are usually not designed to be reusable. 
 
-# How to use *depends*
+We believe that dependency analysis of software source code is one of the most important foundations of software engineering. Given the growing number of systems built on new languages and multi-languages, the need of a flexible, extensible multi-language dependency extraction framework, with simple and unified interfaces is widely recognized. 
+
+*Depends* is open source and free, to promote community collaboration, to avoid repetitive work, and to improve the quality of analytical tools.
+
+# How to use *Depends*
 
 ## Download and installation
 
-You could download the latest version of depends from https://github.com/multilang-depends/depends/releases/ 
+You could download the latest version of *Depends* from https://github.com/multilang-depends/depends/releases/,  
 and then unzip the ```depends-*version*.tgz``` file in any directory of your computer.
 
 *Depends* is written in java, so it could be run on any OS with a JRE or JDK envoirment (like Windows, Linux or Mac OS). 
 
 ## Run it from commmand line
 
-Follow the single responsibility principle, *depends* is designed to be a minimum dependency analysis tool. It only provides CLI interface, and without GUI support. (note: GUI tool will be created in seperated projects, and currently there is still no agenda on that).
+Following the single responsibility principle, *Depends* is designed for the purpose of extracting dependencies only. It only provides CLI interface, without GUI. But you can convert the output of *Depends* into the GUI of other tools, such as GraphViz(http://graphviz.org/), PlantUML(http://plantuml.com/), and DV8 (https://www.archdia.net). 
 
-You could run *depends* by run ```depends.sh``` on Linux/Mac or ```depends.bat``` on Microsoft Windows, or you could run ```java -jar depends.jar``` directly.
+You could run *Depends* in the following ways: ```depends.sh``` on Linux/Mac, ```depends.bat``` on Microsoft Windows, or  ```java -jar depends.jar```.
 
 ## Parameters
 
@@ -26,7 +30,7 @@ The CLI tool usage could be listed by ```depends --help```, like following:
     Usage: depends [-hms] [--auto-include] [-d=<dir>] [-g=<granularity>]
                    [-p=<namePathPattern>] [-f=<format>[,<format>...]]...
                    [-i=<includes>[,<includes>...]]... <lang> <src> <output>
-          <lang>                 The lanauge of project files: [cpp, java, ruby,
+          <lang>                 The language of project files: [cpp, java, ruby,
                                    pom]
           <src>                  The directory to be analyzed
           <output>               The output file name
@@ -36,48 +40,50 @@ The CLI tool usage could be listed by ```depends --help```, like following:
                                  The files of searching path
       -d, --dir=<dir>            The output directory
       -f, --format=<format>[,<format>...]
-                                 the output format: [json(default),xml,excel,dot,
+                                 The output format: [json(default),xml,excel,dot,
                                    plantuml]
       -g, --granularity=<granularity>
                                  Granularity of dependency.[file(default),method,L#]
-      -h, --help                 display this help and exit
+      -h, --help                 Display this help and exit
       -s, --strip-leading-path   Strip the leading path.
       
       -m, --map                  Output DV8 dependency map file.
       -p, --namepattern=<namePathPattern>
-                                 The name path pattern.[default(/),dot(.)
+                                 The name path separators.[default(/),dot(.)
 
 
-To run *depends*, there are 3 most important parameters ```lang```, ```src```,```output```. The explaination is already given above.
+To run *Depends*, you need to specify 3 most important parameters: ```lang```, ```src```,```output```, as explained above. 
 
-## Rememeber to specify include paths
+## Remember to specify include paths
 
-Please note that for most of lanaguages, like ```C/C++, Ruby, Maven/Gradle```, the ```--includes``` path is important for *depends* to find the right file during code analysis, just like what you usually do in Makefile/IDE.  Otherwise, the dependency analysis result could be not accurate. 
+Please note that for most programming languages, such as ```C/C++, Ruby, Maven/Gradle```, the ```--includes``` path is important for *Depends* to find the right files when conducting code dependency analysis, similar to Makefile/IDE.  Otherwise, the extracted dependencies may not be accurate. 
 
-You do not need to tell *depends* the include paths outside of src directory (e.g. system level include path , or outside dependencies) due to *depends* will not use them.
+Do not specify include paths outside of src directory (e.g. system level include paths, or external dependencies) because *Depends* will not process them.
 
-```--auto-include``` is a useful parameter to simplify the input of include dirs. It will include all sub-directories of ```src```.
+```--auto-include``` is a useful parameter to simplify the input of include dirs: with this parameter, *Depends* will include all sub-directories of ```src```.
 
-For ```java``` language, you do not required to identify include paths, due to java built the mapping between java file path and import statements.
+For ```Java``` programs, you are not required to specify include paths, because the mapping between java file paths are explicitly stated in the import statements.
 
 ### Output
 
-*Depends* support 5 output formats: json, xml, excel, dot, and plantuml. (Due to limitation of MS excel, the excel file is only outputted when the element size less than 256.)
+The output of *Depends* can be exported into 5 formats: json, xml, excel, dot, and plantuml. Due to the limitation of MS excel,  you can only export into a excel file if the number of elements is less than 256.)
 
-Dot file could be used to generate graphics by GraphViz(http://graphviz.org/).
+Dot files could be used to generate graphs using GraphViz (http://graphviz.org/).
 
-Plantuml file could be used to generate UML diagram by PlantUML(http://plantuml.com/).
+Plantuml files could be used to generate UML diagram using PlantUML (http://plantuml.com/).
 
-### How many dependency types *depends* suported?
+Json and XML files could be used to generate Design Structure Matrices (DSMs) using DV8 (https://www.archdia.net).
 
-*Depends* support all types of dependencies, including:
+### How many dependency types does *Depends* support?
+
+*Depends* supports major dependency types, including:
 * Call: function/method invoke
 * Cast: type cast
 * Contain: variable/field definition
-* Create: create a instance of a certain type
+* Create: create an instance of a certain type
 * Extend: parent-child relation
 * Implement: implemented interface
-* Import/Include: for example java ```import```, c/c++ ```#include```, ruby ```require```.
+* Import/Include: for example, java ```import```, c/c++ ```#include```, ruby ```require```.
 * Mixin: mix-in relation, for example ruby include
 * Parameter: as a parameter of a method
 * Return: returned type
@@ -86,35 +92,35 @@ Plantuml file could be used to generate UML diagram by PlantUML(http://plantuml.
 
 # How to contribute
 
-There are variety of ways to contribute to *depends*. For example:
+There are many ways to contribute to *Depends*. For example:
 
-## Supporting of new lanaguages
+## Support new languages
 
-*Depends* implemented a graceful kernel for dependency analysis. However, it only supports very limited languages yet (so far they are Java, C/C++, Ruby and Maven). 
+*Depends* implemented a graceful kernel for dependency analysis, which can be extended to accommodate various programming languages. So far, it only supports Java, C/C++, Ruby, and Maven. Please feel free to leverage this framework to add your own dependency extractor. 
 
-The effort required for each lanaguage is vary depends on different language. For example, Maven's support was completed in one night plus one day, while ruby's work lasted for weeks. 
+The effort needed for each language varies a lot. We spent 24 hours to support Maven, but spent weeks to extract dependencies from Ruby
 
-## Enhance lanaguage features and fix issues
+## Enhance language features and fix issues
 
-Parse source file is a very trival work. There are lots of lanague features need to be handled. Reporting unsupported language features or fixing existing issues will make *depends* eolve better. 
+Parsing source files is not trivial. There are many language-specific features that need to be taken into consideration. Reporting unsupported language features or fixing existing issues will make *Depends* better. 
 
-## Build useful tools upon
+## Create useful tools
 
-To build useful tools, no matter open source tools or commercial tools, for example GUI tool, code visualization, etc.
+You could use *Depends* as building blocks to create various tools, either open source or commercial, for productions or research, such as GUI tools, code visualization tools, etc.
 
 ## Become a sponsor
 
-If your company or institute becomes a sponsor of our project, which will help us a lot. Denotes could help *depends* project more sustainable and involve more contributors.
+It will help us a great deal if your company or institute becomes a sponsor of our project. Your donation could help *Depends* to be independent, sustainable, and support more contributors.
 
-# Tell us your usage
+# Tell us your thoughts
 
-We will be very happy if *depends* is used under your project (including commercial projects) or software engineering research. Give us feedback on your usage is highly appreciated. It will encourage more people to use it.
+You are welcome to use "Depends" in your projects, either open source or commercial ones, as well as software engineering research. Your feedback is highly appreciated.  We will also be thankful if you could help us spread the words and encourage more people to use it.
 
 # Acknowledgement
 
-The project built on a lot of previous works, especically the excellent work of Jin Wuxia on ENRE(https://github.com/jinwuxia/ENRE) and the excellent work of Prof. Yuanfang Cai 's research team(https://www.cs.drexel.edu/~yfcai/) on dependency analysis.
+This project is built upon the excellent work of other researchers, including the ENRE framework (https://github.com/jinwuxia/ENRE) proposed by Jin Wuxia et al., and the architecture research from Prof. Yuanfang Cai 's team (https://www.cs.drexel.edu/~yfcai/) on dependency analysis.
 
-*Depends* language specific front-end is built upon several excellent open source projects, including Antlr and Antlr Grammar V4 (https://github.com/antlr), Eclipse CDT (www.eclipse.org/cdt), and JRuby(https://github.com/jruby/jruby).
+The language specific front-end of *Depends* is built upon several excellent open source projects, including Antlr/Antlr Grammar V4 (https://github.com/antlr), Eclipse CDT (www.eclipse.org/cdt), and JRuby(https://github.com/jruby/jruby).
 
 # Authors
  - Gang ZHANG (https://github.com/gangz)
