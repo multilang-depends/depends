@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import depends.entity.VarEntity;
 import depends.entity.repo.EntityRepo;
+import depends.extractor.python.Python3Parser.ClassdefContext;
 import depends.extractor.python.Python3Parser.FuncdefContext;
 import depends.extractor.python.Python3Parser.TfpdefContext;
 import depends.relations.Inferer;
@@ -41,5 +42,20 @@ public class Python3CodeListener extends Python3BaseListener {
 		context.exitLastedEntity();
 		super.exitFuncdef(ctx);
 	}
+
+	@Override
+	public void enterClassdef(ClassdefContext ctx) {
+		String name = ctx.NAME().getText();
+		context.foundNewType(name);
+		super.enterClassdef(ctx);
+	}
+	
+	@Override
+	public void exitClassdef(ClassdefContext ctx) {
+		context.exitLastedEntity();
+		super.exitClassdef(ctx);
+	}
+	
+	
 	
 }
