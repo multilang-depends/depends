@@ -2,6 +2,7 @@ package depends.extractor.python;
 
 import java.util.ArrayList;
 
+import depends.entity.TypeEntity;
 import depends.entity.VarEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.python.Python3Parser.ClassdefContext;
@@ -46,7 +47,10 @@ public class Python3CodeListener extends Python3BaseListener {
 	@Override
 	public void enterClassdef(ClassdefContext ctx) {
 		String name = ctx.NAME().getText();
-		context.foundNewType(name);
+		TypeEntity type = context.foundNewType(name);
+		ArrayList<String> baseClasses = this.helper.getBaseClassList(ctx.arglist());
+		baseClasses.forEach(base->type.addExtends(base));
+		
 		super.enterClassdef(ctx);
 	}
 	

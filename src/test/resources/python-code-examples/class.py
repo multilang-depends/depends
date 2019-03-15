@@ -5,7 +5,7 @@ class Foo:
     def to_string(self):
         return "aaaa"
 
-class Bar:
+class Bar (Foo):
     def __init__(self):
         self
 

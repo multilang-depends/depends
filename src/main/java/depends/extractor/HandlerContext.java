@@ -64,8 +64,12 @@ public abstract class HandlerContext {
 	}
 
 	
-
-	public Entity foundNewType(String classOrInterfaceName) {
+	/**
+	 * Tell the context object that a new type founded.
+	 * @param classOrInterfaceName
+	 * @return
+	 */
+	public TypeEntity foundNewType(String classOrInterfaceName) {
 		TypeEntity currentTypeEntity = new TypeEntity(classOrInterfaceName, this.latestValidContainer(),
 			idGenerator.generateId());
 		pushToStack(currentTypeEntity);

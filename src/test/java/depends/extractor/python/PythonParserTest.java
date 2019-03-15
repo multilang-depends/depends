@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import depends.entity.repo.EntityRepo;
+import depends.extractor.FileParser;
+import depends.extractor.ParserCreator;
+import depends.extractor.ParserTest;
 import depends.relations.Inferer;
 
-public abstract class PythonParserTest {
+public abstract class PythonParserTest extends ParserTest implements ParserCreator {
 
 	protected EntityRepo repo;
 	private PythonProcessor p;
@@ -24,5 +27,11 @@ public abstract class PythonParserTest {
 	
 	public PythonFileParser createParser(String src) {
 		return (PythonFileParser) p.createFileParser(src);
+	}
+	
+	@Override
+	public FileParser createFileParser(String src) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
