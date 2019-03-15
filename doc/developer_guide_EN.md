@@ -17,49 +17,103 @@ Extending a new language involving the following aspects
 
 This chapter first introduces the above points. Then use a chapter to explain the data structure of the language independent part, and then explain how to implement a Listener or Visitor inside the Parser to write the information that is heard.
 
-### Registration Language Support
+### Step 1: Registration Language Support
 
 In the LangRegister class, add 1 line, as shown below:
 
-![](./img_devguide/image1.png){width="5.7625in" height="3.8895833333333334in"}
+    public LangRegister() {
+        /* Add a new line in LangRegister Class */
+        add (new depends.extractor.python.PythonProcessor());
+    }
 
-Description:
-The design is not elegant enough, and it is best to make further improvements without having to open the file for modification.
 
-### Implementing the processor of the language
+### Step 2: Implementing the processor of the language
 
 A language processor is a summary entry that describes everything related to the implementation of a language. Specifically include:
 
 - the name of the supported language (string)
-
 - the suffix name of the language file (array, there can be more than one)
-
 - File parser corresponding to this language FileParser
-
 - Import lookup strategy (ImportLookupStrategy) for this language
-
 - the built-in type of the language (for statically typed languages)
+- the supported relation type
+ 
+Take the Python language as an example:
 
-Take the Java language as an example:
+    public class PythonProcessor extends AbstractLangProcessor {
+    
+        public String supportedLanguage() {
+            return "python";
+        }
+    
+        public String[] fileSuffixes() {
+            return new String[] {".py"};
+        }
+    
+        public ImportLookupStrategy getImportLookupStrategy() {
+            return new PythonImportLookupStrategy();
+        }
+    
+        public BuiltInType getBuiltInType() {
+            return new PythonBuiltInType();
+        }
+        
+        protected FileParser createFileParser(String fileFullPath) {
+            return new PythonFileParser(...);
+        }
+    
+        @Override
+        public List<String> supportedRelations() {
+            ...
+            depedencyTypes.add(THROW);
+            ...
+            return depedencyTypes;
+        }
+    }
 
-![](./img_devguide/image2.png){width="5.763888888888889in"
-Height="5.709722222222222in"}
-
-### Language-specific FileParser
+### Step 3: Language-specific FileParser
 
 FileParser is a language-specific class named *Lang*FileParser that implements the FileParse interface and must implement the *parse()* method.
 
 The goal of the parse method is to read in the file, call lexical parsing and parsing, construct a Listener or a Visitor, and correctly write the parsed structure information and expression information into EntityRepo.
 
-For details on the storage structure of EntityRepo, see the description of EntityRepo (??).
+For details on the storage structure of EntityRepo, see the description of EntityRepo.
+For example, the implementation of FileParser is as follows:
 
-Taking Java as an example, the implementation of FileParser is as follows:
-
-![](./img_devguide/image3.png){width="5.763888888888889in"
-Height="2.8465277777777778in"}
+    public void parse() throws IOException {
+        CharStream input = CharStreams.fromFileName(fileFullPath);
+        Lexer lexer = new Python3Lexer(input);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        Python3Parser parser = new Python3Parser(tokens);
+        Python3CodeListener bridge = new Python3CodeListener(fileFullPath,
+                 entityRepo,inferer);
+        ParseTreeWalker walker = new ParseTreeWalker();
+        walker.walk(bridge, parser.file_input());
+    }
 
 The steps are:
 Create a Lexer, create a Parse, create a Listener, and start traversing each of the syntax elements of interest.
+
+### Impelemnt the listener/visitor:
+
+First, create a context for the file:
+
+    public Python3CodeListener(String fileFullPath, EntityRepo entityRepo, 
+                                Inferer inferer) {
+        this.context = new PythonHandlerContext(entityRepo,inferer);
+        this.expressionUsage = new ExpressionUsage();
+        context.startFile(fileFullPath);
+    }
+    
+Then, for each code element, tell the context some information required. for example:
+
+    public void enterFuncdef(FuncdefContext ctx) {
+        String functionName = ctx.NAME().getText();
+        context.foundMethodDeclarator(functionName, null, new ArrayList<>());
+        super.enterFuncdef(ctx);
+    }
+
+We already succefully make the depends knows that a function entity is created.    
 
 ### Language-specific Import Locator
 
