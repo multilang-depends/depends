@@ -83,6 +83,15 @@ public abstract class HandlerContext {
 		return ;		
 	}
 	
+	/**
+	 * Tell the context that a new method was found.
+	 * Do not forget to tell the context leave the method when you finish
+	 * the process of the method
+	 * @param methodName
+	 * @param returnType  - if no return type information avaliable, keep it as null;
+	 * @param throwedType - if no throwed type information avaliable, keep it as empty list;  
+	 * @return the new function enity
+	 */
 	public FunctionEntity foundMethodDeclarator(String methodName, String returnType, List<String> throwedType) {
 		FunctionEntity functionEntity = new FunctionEntity(methodName, this.latestValidContainer(),
 				idGenerator.generateId(),returnType);

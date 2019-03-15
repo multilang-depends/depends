@@ -2,8 +2,10 @@ package depends.extractor.python;
 
 import java.util.ArrayList;
 
+import depends.entity.VarEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.python.Python3Parser.FuncdefContext;
+import depends.extractor.python.Python3Parser.TfpdefContext;
 import depends.relations.Inferer;
 
 public class Python3CodeListener extends Python3BaseListener {
@@ -23,6 +25,15 @@ public class Python3CodeListener extends Python3BaseListener {
         String functionName = ctx.NAME().getText();
         context.foundMethodDeclarator(functionName, null, new ArrayList<>());
         super.enterFuncdef(ctx);
+	}
+	
+	
+
+	@Override
+	public void enterTfpdef(TfpdefContext ctx) {
+		String paramName = ctx.NAME().getText();
+		context.addMethodParameter(paramName);
+		super.enterTfpdef(ctx);
 	}
 
 	@Override
