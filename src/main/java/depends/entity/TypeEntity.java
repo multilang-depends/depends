@@ -43,9 +43,12 @@ public class TypeEntity extends ContainerEntity{
 	}
 	@Override
 	public void inferLocalLevelEntities(Inferer inferer) {
-		inheritedTypes= identiferToTypes(inferer,this.inhertedTypeIdentifiers);
+		inheritedTypes= new ArrayList<>();
+		identiferToEntities(inferer,this.inhertedTypeIdentifiers).forEach(item->inheritedTypes.add((TypeEntity)item));
 		inheritedTypes.remove(this);
-		implementedTypes= identiferToTypes(inferer,this.implementedIdentifiers);
+
+		implementedTypes= new ArrayList<>();
+		identiferToEntities(inferer,this.implementedIdentifiers).forEach(item->implementedTypes.add((TypeEntity)item));
 		implementedTypes.remove(this);
 		if (inheritedTypes.size()>0)
 			inheritedType = inheritedTypes.iterator().next();

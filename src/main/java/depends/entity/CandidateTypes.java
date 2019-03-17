@@ -200,13 +200,13 @@ public class CandidateTypes extends TypeEntity {
 	}
 
 	@Override
-	public Collection<TypeEntity> getResolvedTypeParameters() {
+	public Collection<Entity> getResolvedTypeParameters() {
 		System.err.println("error: getResolvedTypeParameters should not been invoked");
 		return super.getResolvedTypeParameters();
 	}
 
 	@Override
-	public Collection<TypeEntity> getResolvedAnnotations() {
+	public Collection<Entity> getResolvedAnnotations() {
 		System.err.println("error: getResolvedAnnotations should not been invoked");
 		return super.getResolvedAnnotations();
 	}
@@ -218,9 +218,9 @@ public class CandidateTypes extends TypeEntity {
 	}
 
 	@Override
-	protected Collection<TypeEntity> identiferToTypes(Inferer inferer, Collection<String> identifiers) {
+	protected Collection<Entity> identiferToEntities(Inferer inferer, Collection<String> identifiers) {
 		System.err.println("error: identiferToTypes should not been invoked");
-		return super.identiferToTypes(inferer, identifiers);
+		return super.identiferToEntities(inferer, identifiers);
 	}
 
 	@Override

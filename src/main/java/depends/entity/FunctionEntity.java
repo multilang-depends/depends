@@ -34,8 +34,8 @@ public class FunctionEntity extends ContainerEntity{
 	private List<String> returnTypeIdentifiers = new ArrayList<>();
 	Collection<VarEntity> parameters;
     Collection<String> throwTypesIdentifiers = new ArrayList<>(); 
-	private Collection<TypeEntity> returnTypes = new ArrayList<>();
-	private Collection<TypeEntity> throwTypes = new ArrayList<>();
+	private Collection<Entity> returnTypes = new ArrayList<>();
+	private Collection<Entity> throwTypes = new ArrayList<>();
     public FunctionEntity(String simpleName, Entity parent, Integer id, String returnType) {
 		super(simpleName, parent,id);
 		this.returnTypes = new ArrayList<>();
@@ -44,14 +44,17 @@ public class FunctionEntity extends ContainerEntity{
 		throwTypesIdentifiers = new ArrayList<>();
 		addReturnType(returnType);
 	}
-	public Collection<TypeEntity> getReturnTypes() {
+	public Collection<Entity> getReturnTypes() {
 		return returnTypes;
 	}
 	
 	@Override
 	public TypeEntity getType() {
-		if (returnTypes.size()>0)
-			return returnTypes.iterator().next();
+		if (returnTypes.size()>0){
+			Object type = returnTypes.iterator().next();
+			if (type instanceof TypeEntity)
+				return (TypeEntity)type;
+		}
 		return null;
 	}
 
@@ -79,9 +82,9 @@ public class FunctionEntity extends ContainerEntity{
 			param.inferLocalLevelEntities(inferer);
 		}
 		if (returnTypes.size()<returnTypeIdentifiers.size())
-			returnTypes = identiferToTypes(inferer,this.returnTypeIdentifiers);
+			returnTypes = identiferToEntities(inferer,this.returnTypeIdentifiers);
 		if (throwTypes.size()<throwTypesIdentifiers.size())
-			throwTypes = identiferToTypes(inferer,this.throwTypesIdentifiers);
+			throwTypes = identiferToEntities(inferer,this.throwTypesIdentifiers);
 		super.inferLocalLevelEntities(inferer);
 		if (this.returnTypes.size()==0 && this.getLastExpressionType()!=null) {
 			this.returnTypes.add(this.getLastExpressionType());
@@ -90,7 +93,7 @@ public class FunctionEntity extends ContainerEntity{
 	public Collection<VarEntity> getParameters() {
 		return parameters;
 	}
-	public Collection<TypeEntity> getThrowTypes() {
+	public Collection<Entity> getThrowTypes() {
 		return throwTypes;
 	}
 	@Override

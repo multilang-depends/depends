@@ -67,14 +67,14 @@ public class RelationCounter {
 		for (VarEntity var:entity.getVars()) {
 			if (var.getType()!=null)
 				entity.addRelation(new Relation(DependencyType.CONTAIN,var.getType()));
-			for (TypeEntity type:var.getResolvedTypeParameters()) {
+			for (Entity type:var.getResolvedTypeParameters()) {
 				entity.addRelation(new Relation(DependencyType.USE,type));
 			}
 		}
-		for (TypeEntity type:entity.getResolvedAnnotations()) {
+		for (Entity type:entity.getResolvedAnnotations()) {
 			entity.addRelation(new Relation(DependencyType.USE,type));
 		}
-		for (TypeEntity type:entity.getResolvedTypeParameters()) {
+		for (Entity type:entity.getResolvedTypeParameters()) {
 			entity.addRelation(new Relation(DependencyType.USE,type));
 		}
 		for (ContainerEntity mixin:entity.getResolvedMixins()) {
@@ -125,14 +125,14 @@ public class RelationCounter {
 	}
 
 	private void computeFunctionRelations(FunctionEntity func) {
-		for (TypeEntity returnType:func.getReturnTypes()) {
+		for (Entity returnType:func.getReturnTypes()) {
 			func.addRelation(new Relation(DependencyType.RETURN,returnType));
 		}
 		for (VarEntity parameter:func.getParameters()) {
 			if (parameter.getType()!=null) 
 				func.addRelation(new Relation(DependencyType.PARAMETER,parameter.getType()));
 		}
-		for (TypeEntity throwType:func.getThrowTypes()) {
+		for (Entity throwType:func.getThrowTypes()) {
 			func.addRelation(new Relation(DependencyType.THROW,throwType));
 		}
 	}

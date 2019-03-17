@@ -53,14 +53,14 @@ public class AliasEntity extends Entity {
 			referToEntity = entity;
 	}
 
-	public Collection<TypeEntity> getResolvedTypeParameters() {
+	public Collection<Entity> getResolvedTypeParameters() {
 		if (!(referToEntity instanceof DecoratedEntity))
 			return new ArrayList<>();
 		DecoratedEntity origin = (DecoratedEntity) referToEntity;
 		return origin.getResolvedTypeParameters();
 	}
 
-	public Collection<TypeEntity> getResolvedAnnotations() {
+	public Collection<Entity> getResolvedAnnotations() {
 		if (!(referToEntity instanceof DecoratedEntity))
 			return new ArrayList<>();
 		DecoratedEntity origin = (DecoratedEntity) referToEntity;
@@ -127,7 +127,7 @@ public class AliasEntity extends Entity {
 		return null;
 	}
 
-	public Collection<TypeEntity> getReturnTypes() {
+	public Collection<Entity> getReturnTypes() {
 		if (!(referToEntity instanceof FunctionEntity))
 			return new ArrayList<>();
 		FunctionEntity origin = (FunctionEntity) referToEntity;
@@ -145,7 +145,7 @@ public class AliasEntity extends Entity {
 		return origin.getParameters();
 	}
 
-	public Collection<TypeEntity> getThrowTypes() {
+	public Collection<Entity> getThrowTypes() {
 		if (!(referToEntity instanceof FunctionEntity))
 			return new ArrayList<>();
 		FunctionEntity origin = (FunctionEntity) referToEntity;

@@ -2,10 +2,14 @@ package depends.extractor.python;
 
 import java.util.ArrayList;
 
+import depends.entity.DecoratedEntity;
+import depends.entity.Entity;
 import depends.entity.TypeEntity;
 import depends.entity.VarEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.python.Python3Parser.ClassdefContext;
+import depends.extractor.python.Python3Parser.DecoratedContext;
+import depends.extractor.python.Python3Parser.DecoratorContext;
 import depends.extractor.python.Python3Parser.FuncdefContext;
 import depends.extractor.python.Python3Parser.TfpdefContext;
 import depends.relations.Inferer;
@@ -48,7 +52,7 @@ public class Python3CodeListener extends Python3BaseListener {
 	public void enterClassdef(ClassdefContext ctx) {
 		String name = ctx.NAME().getText();
 		TypeEntity type = context.foundNewType(name);
-		ArrayList<String> baseClasses = this.helper.getBaseClassList(ctx.arglist());
+		ArrayList<String> baseClasses = this.helper.getArgList(ctx.arglist());
 		baseClasses.forEach(base->type.addExtends(base));
 		
 		super.enterClassdef(ctx);
@@ -60,6 +64,43 @@ public class Python3CodeListener extends Python3BaseListener {
 		super.exitClassdef(ctx);
 	}
 	
-	
+    @Override
+    public void exitDecorated(DecoratedContext ctx) {
+    	String name = helper.getDecoratedElementName(ctx);
+    	if (name==null) {
+            super.exitDecorated(ctx);
+    		return;
+    	}
+		Entity entity = context.foundEntityWithName(name);
+		if (entity instanceof DecoratedEntity) {
+	    	for (DecoratorContext decorator:ctx.decorators().decorator()){
+		        ((DecoratedEntity)entity).addAnnotation(decorator.dotted_name().getText());
+		    	//TODO: Annotation parameters  helper.getArgList(decorator.arglist()));
+	    	}
+		}
+        super.exitDecorated(ctx);
+    }
+
 	
 }
+
+
+//gloal statement
+//nonlocal statement
+//expr_stmt: testlist_star_expr (annassign | augassign (yield_expr|testlist) |
+//('=' (yield_expr|testlist_star_expr))*);
+//return_stmt: 'return' (testlist)?;
+//raise_stmt: 'raise' (test ('from' test)?)?;
+
+// Question : in wuxia's  impl, why should we add __init__ method? -- is there any special purpose of init?
+// Is python package must include a __init__.py?
+// How to identify import relation in python?
+
+
+//expr_stmt: testlist_star_expr 
+//( - );
+//
+//annassign 
+//| augassign (yield_expr|testlist) 
+//| ('=' (yield_expr|testlist_star_expr))*
+

@@ -51,8 +51,8 @@ public abstract class ParserTest {
 	}
 
 	protected void assertContainReturnType(FunctionEntity function, String name) {
-		Collection<TypeEntity> types = function.getReturnTypes();
-	    for (TypeEntity type:types) {
+		Collection<Entity> types = function.getReturnTypes();
+	    for (Entity type:types) {
 	    	if (type.getRawName().equals(name)) {
 	    		return;
 	    	}

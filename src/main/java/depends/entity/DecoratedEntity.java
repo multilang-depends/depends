@@ -33,8 +33,8 @@ import depends.relations.Inferer;
 public abstract class DecoratedEntity extends Entity{
 	private Collection<String> typeParameters; // Generic type parameters like <T>, <String>, <? extends Object>
 	private Collection<String> annotations = new ArrayList<>();
-	private Collection<TypeEntity> resolvedTypeParameters = new ArrayList<>();
-	private Collection<TypeEntity> resolvedAnnotations = new ArrayList<>();
+	private Collection<Entity> resolvedTypeParameters = new ArrayList<>();
+	private Collection<Entity> resolvedAnnotations = new ArrayList<>();
 	
 	public DecoratedEntity(String rawName, Entity parent, Integer id) {
 		super(rawName, parent, id);
@@ -57,16 +57,16 @@ public abstract class DecoratedEntity extends Entity{
 	 * Should be override in sub-classes 
 	 */
 	public void inferLocalLevelEntities(Inferer inferer) {
-		resolvedTypeParameters = identiferToTypes(inferer, typeParameters);
-		resolvedAnnotations = identiferToTypes(inferer, annotations);
+		resolvedTypeParameters = identiferToEntities(inferer, typeParameters);
+		resolvedAnnotations = identiferToEntities(inferer, annotations);
 	}
 	
-	public Collection<TypeEntity> getResolvedTypeParameters() {
+	public Collection<Entity> getResolvedTypeParameters() {
 		return resolvedTypeParameters;
 	}
 
 
-	public Collection<TypeEntity> getResolvedAnnotations() {
+	public Collection<Entity> getResolvedAnnotations() {
 		return resolvedAnnotations;
 	}
 
@@ -83,18 +83,20 @@ public abstract class DecoratedEntity extends Entity{
 	 * @param identifiers - the identifiers will be translated
 	 * @return The translated Types
 	 */
-	protected Collection<TypeEntity> identiferToTypes(Inferer inferer, Collection<String> identifiers) {
-		ArrayList<TypeEntity> r = new ArrayList<>();
+	protected Collection<Entity> identiferToEntities(Inferer inferer, Collection<String> identifiers) {
+		ArrayList<Entity> r = new ArrayList<>();
 		for (String typeParameter : identifiers) {
-			TypeEntity typeEntity = inferer.inferTypeFromName(this, typeParameter);
-			if (typeEntity==null) {
+			Entity entity = inferer.resolveName(this, typeParameter, true);
+			if (entity==null) {
 				if (((ContainerEntity)getParent()).isGenericTypeParameter(typeParameter)) {
-					typeEntity = Inferer.genericParameterType;
+					entity = Inferer.genericParameterType;
 				}
 			}
-			if (typeEntity != null)
-				r.add(typeEntity);
+			if (entity != null)
+				r.add(entity);
 		}
 		return r;
 	}
+	
+	
 }
