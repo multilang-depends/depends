@@ -31,7 +31,7 @@ import java.util.Set;
 import depends.importtypes.Import;
 import depends.relations.Inferer;
 
-public class FileEntity extends ContainerEntity {
+public class FileEntity extends TypeEntity {
 	private List<Import> importedNames = new ArrayList<>();
 	private boolean isInProjectScope = false;
 	private List<Entity> importedRelationEntities = new ArrayList<>();

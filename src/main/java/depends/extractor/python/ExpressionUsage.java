@@ -86,9 +86,14 @@ public class ExpressionUsage {
 		}else if (ctx instanceof Atom_exprContext) {
 			Atom_exprContext expr = ((Atom_exprContext)ctx);
 			if (expr.func_call()!=null) {
-				expression.identifier = helper.getFirstName(expr);
-				expression.isCreate = true;
-				expression.isCall = true;
+				//TODO: should be refined later. Currently only a.b.c could be solved.
+				expression.identifier = expr.atom_expr().getText();
+				Entity entity = context.foundEntityWithName(expression.identifier);
+				if (entity instanceof FunctionEntity) {
+					expression.isCall = true;
+				}else {
+					expression.isCreate = true;
+				}
 			}
 			else if (expr.member_access()!=null) {
 				expression.isDot = true;

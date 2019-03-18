@@ -53,8 +53,24 @@ public class PythonImportTest extends PythonParserTest {
 	    inferer.resolveAllBindings();
 	    Entity file = repo.getEntity(FileUtil.uniqFilePath(srcs[0]));
 		this.assertContainsRelation(file, DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[1]));
+		this.assertContainsRelation(file, DependencyType.CALL,"foo");
 	}
 	
-	
+	@Test
+	public void should_parse_module_in_same_package_with_alias() throws IOException {
+		String[] srcs = new String[] {
+	    		"./src/test/resources/python-code-examples/importing_with_alias.py",
+	    		"./src/test/resources/python-code-examples/imported_a.py",
+	    	    };
+	    
+	    for (String src:srcs) {
+		    PythonFileParser parser = createParser(src);
+		    parser.parse();
+	    }
+	    inferer.resolveAllBindings();
+	    Entity file = repo.getEntity(FileUtil.uniqFilePath(srcs[0]));
+		this.assertContainsRelation(file, DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[1]));
+		this.assertContainsRelation(file, DependencyType.CALL,"foo");
+	}
 	
 }
