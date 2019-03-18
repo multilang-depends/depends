@@ -5,8 +5,10 @@ import java.util.List;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import depends.entity.ContainerEntity;
+import depends.entity.Entity;
 import depends.entity.Expression;
 import depends.entity.FunctionEntity;
+import depends.entity.TypeEntity;
 import depends.entity.VarEntity;
 import depends.entity.repo.IdGenerator;
 import depends.extractor.python.Python3Parser.And_testContext;
@@ -94,11 +96,18 @@ public class ExpressionUsage {
 		}else if (ctx instanceof Atom_exprContext) {
 			Atom_exprContext expr = ((Atom_exprContext)ctx);
 			if (expr.func_call()!=null) {
-				expression.isCall = true;
 				expression.identifier = helper.getFirstName(expr.atom_expr());
+
+				Entity entity = context.foundEntityWithName(expression.identifier);
+				if (entity instanceof TypeEntity) {
+					expression.isCreate = true;
+				}else {
+					expression.isCall = true;
+				}
 			}
 			else if (expr.member_access()!=null) {
 				expression.isDot = true;
+				expression.identifier = expr.member_access().NAME().getText();
 			}
 			//TODO: member access in python should be handled seperately. they could be different types;
 		}else if (ctx instanceof Return_stmtContext) {
