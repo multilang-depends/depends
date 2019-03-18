@@ -8,22 +8,13 @@ import depends.entity.ContainerEntity;
 import depends.entity.Entity;
 import depends.entity.Expression;
 import depends.entity.FunctionEntity;
-import depends.entity.TypeEntity;
 import depends.entity.VarEntity;
 import depends.entity.repo.IdGenerator;
-import depends.extractor.python.Python3Parser.And_testContext;
-import depends.extractor.python.Python3Parser.Arith_exprContext;
 import depends.extractor.python.Python3Parser.AtomContext;
 import depends.extractor.python.Python3Parser.Atom_exprContext;
-import depends.extractor.python.Python3Parser.AugassignContext;
-import depends.extractor.python.Python3Parser.ComparisonContext;
 import depends.extractor.python.Python3Parser.Expr_stmtContext;
-import depends.extractor.python.Python3Parser.Not_testContext;
-import depends.extractor.python.Python3Parser.Or_testContext;
 import depends.extractor.python.Python3Parser.Raise_stmtContext;
 import depends.extractor.python.Python3Parser.Return_stmtContext;
-import depends.extractor.python.Python3Parser.Shift_exprContext;
-import depends.extractor.python.Python3Parser.Xor_exprContext;
 import depends.relations.Inferer;
 
 public class ExpressionUsage {

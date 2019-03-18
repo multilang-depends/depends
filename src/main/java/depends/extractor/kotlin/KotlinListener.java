@@ -1,10 +1,6 @@
 package depends.extractor.kotlin;
 
 import depends.entity.repo.EntityRepo;
-import depends.extractor.java.JavaParser.ImportDeclarationContext;
-import depends.extractor.java.JavaParser.PackageDeclarationContext;
-import depends.extractor.java.context.QualitiedNameContextHelper;
-import depends.extractor.kotlin.KotlinHandlerContext;
 import depends.extractor.kotlin.KotlinParser.ImportHeaderContext;
 import depends.extractor.kotlin.KotlinParser.PackageHeaderContext;
 import depends.extractor.kotlin.context.ExpressionUsage;

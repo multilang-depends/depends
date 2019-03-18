@@ -26,7 +26,6 @@ package depends;
 
 import depends.extractor.AbstractLangProcessor;
 import depends.extractor.LangProcessorRegistration;
-import depends.extractor.python.PythonProcessor;
 
 public class LangRegister {
 

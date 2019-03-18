@@ -26,7 +26,6 @@ package depends.extractor.pom;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

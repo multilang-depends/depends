@@ -8,7 +8,6 @@ import java.util.Collection;
 import depends.entity.ContainerEntity;
 import depends.entity.Entity;
 import depends.entity.FunctionEntity;
-import depends.entity.TypeEntity;
 import depends.entity.VarEntity;
 import depends.relations.Relation;
 

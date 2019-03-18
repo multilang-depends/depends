@@ -6,12 +6,9 @@ import static org.junit.Assert.assertNotNull;
 import java.io.IOException;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import depends.entity.Entity;
 import depends.entity.FunctionEntity;
-import depends.extractor.pom.PomFileParser;
 
 public class PythonFunctionTest extends PythonParserTest {
     @Before

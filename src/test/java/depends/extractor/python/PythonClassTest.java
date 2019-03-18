@@ -9,11 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import depends.deptypes.DependencyType;
-import depends.entity.Entity;
-import depends.entity.FunctionEntity;
 import depends.entity.TypeEntity;
-import depends.extractor.FileParser;
-import depends.extractor.pom.PomFileParser;
 
 public class PythonClassTest extends PythonParserTest {
     @Before
