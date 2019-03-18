@@ -55,4 +55,6 @@ public class PythonImportTest extends PythonParserTest {
 		this.assertContainsRelation(file, DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[1]));
 	}
 	
+	
+	
 }

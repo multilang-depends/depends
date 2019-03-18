@@ -63,14 +63,14 @@ public class Python3CodeListener extends Python3BaseListener {
 			aliasedName = ctx.NAME().getText();
 		}
 		String importedName = originalName.replace(".", File.separator);
-		String fullName = includeFileLocator.uniqFileName(null, importedName);
+		String fullName = includeFileLocator.uniqFileName(context.currentFile().getRawName(), importedName);
 		if (fullName==null) {
-			fullName = includeFileLocator.uniqFileName(null, importedName+".py");
+			fullName = includeFileLocator.uniqFileName(context.currentFile().getRawName(), importedName+".py");
 		}
 		if (fullName!=null) {
 			visitIncludedFile(fullName);
 		}
-		context.foundNewImport(new NameAliasImport(fullName,aliasedName));
+		context.foundNewImport(new NameAliasImport(fullName,entityRepo.getEntity(fullName),aliasedName));
 		super.enterDotted_as_name(ctx);
 	}
 

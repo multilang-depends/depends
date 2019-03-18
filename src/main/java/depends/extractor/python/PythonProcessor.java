@@ -45,7 +45,6 @@ public class PythonProcessor extends AbstractLangProcessor {
 	@Override
 	protected FileParser createFileParser(String fileFullPath) {
 		IncludedFileLocator includeFileLocator = new IncludedFileLocator(super.includePaths());
-		importedLookupStrategy.setLocator(includeFileLocator);
 		return new PythonFileParser(fileFullPath,entityRepo,includeFileLocator,inferer,this);
 	}
 

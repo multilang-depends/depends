@@ -133,4 +133,8 @@ public class FileEntity extends ContainerEntity {
 		return importedFileCollector.getFiles();
 	}
 
+	public List<Import> getImportedNames() {
+		return importedNames;
+	}
+
 }

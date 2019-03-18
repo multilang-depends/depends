@@ -86,14 +86,9 @@ public class ExpressionUsage {
 		}else if (ctx instanceof Atom_exprContext) {
 			Atom_exprContext expr = ((Atom_exprContext)ctx);
 			if (expr.func_call()!=null) {
-				expression.identifier = helper.getFirstName(expr.atom_expr());
-
-				Entity entity = context.foundEntityWithName(expression.identifier);
-				if (entity instanceof TypeEntity) {
-					expression.isCreate = true;
-				}else {
-					expression.isCall = true;
-				}
+				expression.identifier = helper.getFirstName(expr);
+				expression.isCreate = true;
+				expression.isCall = true;
 			}
 			else if (expr.member_access()!=null) {
 				expression.isDot = true;

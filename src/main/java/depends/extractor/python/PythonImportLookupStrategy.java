@@ -1,27 +1,30 @@
 package depends.extractor.python;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.repo.EntityRepo;
-import depends.extractor.ruby.IncludedFileLocator;
 import depends.importtypes.Import;
 import depends.relations.ImportLookupStrategy;
 import depends.relations.Inferer;
 
 public class PythonImportLookupStrategy implements ImportLookupStrategy {
-
-	private IncludedFileLocator includeFileLocator;
-
 	public PythonImportLookupStrategy() {
 	}
 
 	@Override
 	public Entity lookupImportedType(String name, FileEntity fileEntity, EntityRepo repo, Inferer inferer) {
-		// TODO Auto-generated method stub
+		List<Import> importedNames = fileEntity.getImportedNames();
+		for (Import importedItem:importedNames) {
+			if (importedItem instanceof NameAliasImport) {
+				NameAliasImport nameAliasImport = (NameAliasImport)importedItem;
+				if (name.equals(nameAliasImport.getAlias())) {
+					return nameAliasImport.getEntity();
+				}
+			}
+		}
 		return null;
 	}
 
@@ -30,8 +33,8 @@ public class PythonImportLookupStrategy implements ImportLookupStrategy {
 		ArrayList<Entity> result = new ArrayList<>();
 		for (Import importedItem:importedNames) {
 			if (importedItem instanceof NameAliasImport) {
-				String importedName = importedItem.getContent();
-				Entity imported = repo.getEntity(importedName);
+				NameAliasImport nameAliasImport = (NameAliasImport)importedItem;
+				Entity imported = nameAliasImport.getEntity();
 				if (imported==null) continue;
 				result.add(imported);
 			}
@@ -49,9 +52,4 @@ public class PythonImportLookupStrategy implements ImportLookupStrategy {
 	public List<Entity> getImportedFiles(List<Import> importedNames, EntityRepo repo) {
 		return getImportedRelationEntities(importedNames,repo);
 	}
-
-	public void setLocator(IncludedFileLocator includeFileLocator) {
-		this.includeFileLocator = includeFileLocator;
-	}
-
 }

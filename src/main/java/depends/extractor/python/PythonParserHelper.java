@@ -81,4 +81,19 @@ public class PythonParserHelper {
 		if (names.size()>0) return names.get(0);
 		return null;
 	}
+	
+	public String getFullName(Atom_exprContext atom_expr) {
+		List<String> names = new ArrayList<>();
+		atom_expr.accept(new NameCollector(names));
+		if (names.size()>0) {
+			StringBuilder sb = new StringBuilder();
+			names.forEach(item->{
+				if (sb.length()>0)
+					sb.append(".");
+				sb.append(item);
+				});
+			return sb.toString();
+		}
+		return null;
+	}
 }
