@@ -176,14 +176,15 @@ public class Inferer {
 		int indexCount = 0;
 		String name = rawName;
 		do {
-			if (repo.getEntity(name) != null) {
-				entity = repo.getEntity(name);
-				break;
-			}
 			entity = lookupEntity(fromEntity, name, searchImport);
 			if (entity!=null && !entity.equals(externalType)) {
 				break;
 			}
+			if (repo.getEntity(name) != null) {
+				entity = repo.getEntity(name);
+				break;
+			}
+			
 			indexCount++;
 			if (name.contains("."))
 				name = name.substring(0,name.lastIndexOf('.'));
