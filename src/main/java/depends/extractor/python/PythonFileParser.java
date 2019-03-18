@@ -48,9 +48,6 @@ public class PythonFileParser implements FileParser {
 	    walker.walk(bridge, parser.file_input());
 	    
 		fileEntity = entityRepo.getEntity(fileFullPath);
-		if (fileEntity.getRawName().contains("av_bench.py")) {
-			System.out.println("hlo");
-		}
 		fileEntity.inferEntities(inferer);
 	}
 
