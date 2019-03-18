@@ -12,7 +12,9 @@ import depends.extractor.python.Python3Parser.Atom_exprContext;
 import depends.extractor.python.Python3Parser.DecoratedContext;
 import depends.extractor.python.Python3Parser.Expr_stmtContext;
 import depends.extractor.python.Python3Parser.Global_stmtContext;
+import depends.extractor.python.Python3Parser.ParametersContext;
 import depends.extractor.python.Python3Parser.Testlist_star_exprContext;
+import depends.extractor.python.Python3Parser.TfpdefContext;
 
 public class PythonParserHelper {
 
@@ -95,5 +97,13 @@ public class PythonParserHelper {
 			return sb.toString();
 		}
 		return null;
+	}
+	public List<String> getParameterList(ParametersContext parameters) {
+		List<String> r = new ArrayList<String>();
+		if (parameters.typedargslist()==null) return r;
+		for (TfpdefContext item:parameters.typedargslist().tfpdef()) {
+			r.add(item.NAME().getText());
+		}
+		return r;
 	}
 }

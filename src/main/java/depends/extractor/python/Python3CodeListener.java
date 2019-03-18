@@ -3,6 +3,7 @@ package depends.extractor.python;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 
@@ -24,7 +25,6 @@ import depends.extractor.python.Python3Parser.Global_stmtContext;
 import depends.extractor.python.Python3Parser.Import_as_nameContext;
 import depends.extractor.python.Python3Parser.Import_fromContext;
 import depends.extractor.python.Python3Parser.Nonlocal_stmtContext;
-import depends.extractor.python.Python3Parser.TfpdefContext;
 import depends.extractor.ruby.IncludedFileLocator;
 import depends.relations.Inferer;
 import depends.util.FileUtil;
@@ -150,16 +150,11 @@ public class Python3CodeListener extends Python3BaseListener {
 	public void enterFuncdef(FuncdefContext ctx) {
         String functionName = ctx.NAME().getText();
         context.foundMethodDeclarator(functionName, null, new ArrayList<>());
+        List<String> parameters = helper.getParameterList(ctx.parameters());
+        for (String param:parameters) {
+        	context.addMethodParameter(param);
+        }
         super.enterFuncdef(ctx);
-	}
-	
-	
-
-	@Override
-	public void enterTfpdef(TfpdefContext ctx) {
-		String paramName = ctx.NAME().getText();
-		context.addMethodParameter(paramName);
-		super.enterTfpdef(ctx);
 	}
 
 	@Override
