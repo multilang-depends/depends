@@ -2,15 +2,18 @@ package depends.extractor.python;
 
 import java.util.ArrayList;
 
+import org.antlr.v4.runtime.ParserRuleContext;
+
 import depends.entity.DecoratedEntity;
 import depends.entity.Entity;
 import depends.entity.TypeEntity;
-import depends.entity.VarEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.python.Python3Parser.ClassdefContext;
 import depends.extractor.python.Python3Parser.DecoratedContext;
 import depends.extractor.python.Python3Parser.DecoratorContext;
 import depends.extractor.python.Python3Parser.FuncdefContext;
+import depends.extractor.python.Python3Parser.Global_stmtContext;
+import depends.extractor.python.Python3Parser.Nonlocal_stmtContext;
 import depends.extractor.python.Python3Parser.TfpdefContext;
 import depends.relations.Inferer;
 
@@ -22,7 +25,7 @@ public class Python3CodeListener extends Python3BaseListener {
 
 	public Python3CodeListener(String fileFullPath, EntityRepo entityRepo, Inferer inferer) {
 		this.context = new PythonHandlerContext(entityRepo,inferer);
-		this.expressionUsage = new ExpressionUsage();
+		this.expressionUsage = new ExpressionUsage(context, entityRepo, helper, inferer);
 		context.startFile(fileFullPath);
 	}
 
@@ -65,6 +68,20 @@ public class Python3CodeListener extends Python3BaseListener {
 	}
 	
     @Override
+	public void enterGlobal_stmt(Global_stmtContext ctx) {
+    	//TODO: need to check
+		context.foundVarDefinition(context.globalScope(), helper.getName(ctx));
+    	super.enterGlobal_stmt(ctx);
+	}
+
+	@Override
+	public void enterNonlocal_stmt(Nonlocal_stmtContext ctx) {
+		//TODO: it is about scope , will be impl asap
+		//context.foundVarDefinition(parent, helper.getName(ctx));
+		super.enterNonlocal_stmt(ctx);
+	}
+
+	@Override
     public void exitDecorated(DecoratedContext ctx) {
     	String name = helper.getDecoratedElementName(ctx);
     	if (name==null) {
@@ -81,26 +98,10 @@ public class Python3CodeListener extends Python3BaseListener {
         super.exitDecorated(ctx);
     }
 
-	
+	@Override
+	public void enterEveryRule(ParserRuleContext ctx) {
+		expressionUsage.foundExpression(ctx);
+		super.enterEveryRule(ctx);
+	}
 }
-
-
-//gloal statement
-//nonlocal statement
-//expr_stmt: testlist_star_expr (annassign | augassign (yield_expr|testlist) |
-//('=' (yield_expr|testlist_star_expr))*);
-//return_stmt: 'return' (testlist)?;
-//raise_stmt: 'raise' (test ('from' test)?)?;
-
-// Question : in wuxia's  impl, why should we add __init__ method? -- is there any special purpose of init?
-// Is python package must include a __init__.py?
-// How to identify import relation in python?
-
-
-//expr_stmt: testlist_star_expr 
-//( - );
-//
-//annassign 
-//| augassign (yield_expr|testlist) 
-//| ('=' (yield_expr|testlist_star_expr))*
 

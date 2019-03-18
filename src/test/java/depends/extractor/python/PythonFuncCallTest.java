@@ -1,7 +1,5 @@
 package depends.extractor.python;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.IOException;
 
 import org.junit.Before;
@@ -10,7 +8,7 @@ import org.junit.Test;
 import depends.deptypes.DependencyType;
 import depends.entity.FunctionEntity;
 
-public class PythonDecoratorTest extends PythonParserTest {
+public class PythonFuncCallTest extends PythonParserTest {
     @Before
     public void setUp() {
     	super.init();
@@ -18,9 +16,9 @@ public class PythonDecoratorTest extends PythonParserTest {
 
 	
 	@Test
-	public void could_parse_decorated() throws IOException {
+	public void could_parse_func_call() throws IOException {
 		String[] srcs = new String[] {
-	    		"./src/test/resources/python-code-examples/decorated.py",
+	    		"./src/test/resources/python-code-examples/func_call.py",
 	    	    };
 	    
 	    for (String src:srcs) {
@@ -29,8 +27,7 @@ public class PythonDecoratorTest extends PythonParserTest {
 	    }
 	    inferer.resolveAllBindings();
 	    FunctionEntity func = (FunctionEntity)repo.getEntity("foo");
-		this.assertContainsRelation(func, DependencyType.ANNOTATION	, "our_decorator");
-	    assertEquals(1,func.getResolvedAnnotations().size());
+	    this.assertContainsRelation(func, DependencyType.CALL, "bar");
 	}
 
 }

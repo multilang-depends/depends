@@ -1,9 +1,18 @@
 package depends.extractor.python;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import org.antlr.v4.runtime.tree.TerminalNode;
+
+import depends.entity.ContainerEntity;
 import depends.extractor.python.Python3Parser.ArglistContext;
+import depends.extractor.python.Python3Parser.AtomContext;
+import depends.extractor.python.Python3Parser.Atom_exprContext;
 import depends.extractor.python.Python3Parser.DecoratedContext;
+import depends.extractor.python.Python3Parser.Expr_stmtContext;
+import depends.extractor.python.Python3Parser.Global_stmtContext;
+import depends.extractor.python.Python3Parser.Testlist_star_exprContext;
 
 public class PythonParserHelper {
 
@@ -31,6 +40,45 @@ public class PythonParserHelper {
     	}
 		return name;
 	}
-
-
+	
+	public String getName(Global_stmtContext ctx) {
+		return getName(ctx.NAME());
+	}
+	private String getName(List<TerminalNode> nodes) {
+		StringBuilder sb = new StringBuilder();
+		for (TerminalNode node:nodes) {
+			if (sb.length()>0)
+				sb.append(".");
+			sb.append(node.getText());
+		}
+		return sb.toString();
+	}
+	class NameCollector extends Python3BaseVisitor<Void>{
+		private List<String> names;
+		NameCollector(List<String> names){
+			this.names = names;
+		}
+		@Override
+		public Void visitAtom(AtomContext ctx) {
+			if (ctx.NAME()!=null)
+				names.add(ctx.NAME().getText());
+			return super.visitAtom(ctx);
+		}
+		
+	}
+	public List<String> getName(Testlist_star_exprContext testlist_star_expr) {
+		List<String> names = new ArrayList<>();
+		testlist_star_expr.accept(new NameCollector(names));
+		return names;
+	}
+	public ContainerEntity getScopeOfVar(Expr_stmtContext expr, PythonHandlerContext context) {
+		return context.lastContainer();
+	}
+	
+	public String getFirstName(Atom_exprContext atom_expr) {
+		List<String> names = new ArrayList<>();
+		atom_expr.accept(new NameCollector(names));
+		if (names.size()>0) return names.get(0);
+		return null;
+	}
 }
