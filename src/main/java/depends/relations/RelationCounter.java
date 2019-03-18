@@ -138,7 +138,7 @@ public class RelationCounter {
 	}
 
 	private void computeImports(FileEntity file) {
-		List<Entity> imports = file.getImportedRelationEntities();
+		Collection<Entity> imports = file.getImportedRelationEntities();
 		if (imports==null) return;
 		for (Entity imported:imports) {
 			if (imported instanceof FileEntity)

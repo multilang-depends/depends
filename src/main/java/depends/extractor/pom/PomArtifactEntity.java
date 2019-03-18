@@ -24,6 +24,7 @@ SOFTWARE.
 
 package depends.extractor.pom;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -44,7 +45,7 @@ public class PomArtifactEntity extends TypeEntity {
 		String v = properties.get(key);
 		if (v!=null) return v;
 		FileEntity file = (FileEntity)(this.getAncestorOfType(FileEntity.class));
-		List<Entity> parents = file.getImportedRelationEntities();
+		Collection<Entity> parents = file.getImportedRelationEntities();
 		for(Entity parent:parents) {
 			if (parent instanceof PomArtifactEntity) {
 				return ((PomArtifactEntity)parent).getProperty(key);

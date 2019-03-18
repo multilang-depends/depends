@@ -25,6 +25,7 @@ SOFTWARE.
 package depends.entity;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -34,9 +35,9 @@ import depends.relations.Inferer;
 public class FileEntity extends TypeEntity {
 	private List<Import> importedNames = new ArrayList<>();
 	private boolean isInProjectScope = false;
-	private List<Entity> importedRelationEntities = new ArrayList<>();
-	private List<Entity> importedFiles = new ArrayList<>();
-	private List<Entity> importedTypes = new ArrayList<>();
+	private Collection<Entity> importedRelationEntities = new ArrayList<>();
+	private Collection<Entity> importedFiles = new ArrayList<>();
+	private Collection<Entity> importedTypes = new ArrayList<>();
 	private List<TypeEntity> declaredTypes = new ArrayList<>();
 	private ImportedFileCollector importedFileCollector = null;
 	public FileEntity(String fullName, int fileId, boolean isInProjectScope) {
@@ -106,15 +107,15 @@ public class FileEntity extends TypeEntity {
 		this.isInProjectScope = isInProjectScope;
 	}
 
-	public List<Entity> getImportedRelationEntities() {
+	public Collection<Entity> getImportedRelationEntities() {
 		return importedRelationEntities;
 	}
 
-	public List<Entity> getImportedFiles() {
+	public Collection<Entity> getImportedFiles() {
 		return importedFiles;
 	}
 
-	public List<Entity> getImportedTypes() {
+	public Collection<Entity> getImportedTypes() {
 		return importedTypes;
 	}
 

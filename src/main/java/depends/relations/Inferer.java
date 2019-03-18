@@ -25,6 +25,7 @@ SOFTWARE.
 package depends.relations;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -109,15 +110,15 @@ public class Inferer {
 	 * For example, in C/C++, both imported types (using namespace, using <type>) and imported files exists. 
 	 * while in java, only 'import class/function, or import wildcard class.* package.* exists. 
 	 */
-	public List<Entity> getImportedRelationEntities(List<Import> importedNames) {
+	public Collection<Entity> getImportedRelationEntities(List<Import> importedNames) {
 		return importLookupStrategy.getImportedRelationEntities(importedNames, repo);
 	}
 
-	public List<Entity> getImportedTypes(List<Import> importedNames) {
+	public Collection<Entity> getImportedTypes(List<Import> importedNames) {
 		return importLookupStrategy.getImportedTypes(importedNames, repo);
 	}
 
-	public List<Entity> getImportedFiles(List<Import> importedNames) {
+	public Collection<Entity> getImportedFiles(List<Import> importedNames) {
 		return importLookupStrategy.getImportedFiles(importedNames, repo);
 	}
 

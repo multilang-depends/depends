@@ -1,7 +1,10 @@
 package depends.extractor.python;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import depends.entity.Entity;
 import depends.entity.FileEntity;
@@ -29,7 +32,12 @@ public class PythonImportLookupStrategy implements ImportLookupStrategy {
 	}
 
 	@Override
-	public List<Entity> getImportedRelationEntities(List<Import> importedNames, EntityRepo repo) {
+	public Collection<Entity> getImportedRelationEntities(List<Import> importedNames, EntityRepo repo) {
+		return getImportedFiles(importedNames,repo);
+	}
+
+	@Override
+	public Collection<Entity> getImportedTypes(List<Import> importedNames, EntityRepo repo) {
 		ArrayList<Entity> result = new ArrayList<>();
 		for (Import importedItem:importedNames) {
 			if (importedItem instanceof NameAliasImport) {
@@ -43,13 +51,15 @@ public class PythonImportLookupStrategy implements ImportLookupStrategy {
 	}
 
 	@Override
-	public List<Entity> getImportedTypes(List<Import> importedNames, EntityRepo repo) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Entity> getImportedFiles(List<Import> importedNames, EntityRepo repo) {
-		return getImportedRelationEntities(importedNames,repo);
+	public Collection<Entity> getImportedFiles(List<Import> importedNames, EntityRepo repo) {
+		Set<Entity> files = new HashSet<>();
+		Collection<Entity> entities = getImportedTypes(importedNames,repo);
+		for (Entity entity:entities) {
+			if (entity instanceof FileEntity)
+				files.add(entity);
+			else
+				files.add(entity.getAncestorOfType(FileEntity.class));
+		}
+		return files;
 	}
 }

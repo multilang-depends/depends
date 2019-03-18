@@ -25,6 +25,7 @@ SOFTWARE.
 package depends.extractor.cpp;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
@@ -55,7 +56,7 @@ public class CppImportLookupStrategy implements ImportLookupStrategy {
 				if (importedFile==null) continue;
 				 Entity entity = inferer.resolveName(importedFile,name, false);
 				if (entity!=null) return entity;
-				 List<Entity> namespaces = fileEntity.getImportedTypes();
+				Collection<Entity> namespaces = fileEntity.getImportedTypes();
 				for (Entity ns:namespaces) {
 					String nameWithPrefix = ns.getQualifiedName() + "." + name;
 					entity = inferer.resolveName(importedFile,nameWithPrefix, false);
@@ -66,7 +67,7 @@ public class CppImportLookupStrategy implements ImportLookupStrategy {
 		return null;
 	}
 
-	private void foundIncludedFiles(HashSet<String> fileSet, List<Entity> importedFiles, EntityRepo repo) {
+	private void foundIncludedFiles(HashSet<String> fileSet, Collection<Entity> importedFiles, EntityRepo repo) {
 		for (Entity file:importedFiles) {
 			if (file==null ) continue;
 			if (!(file instanceof FileEntity)) continue;

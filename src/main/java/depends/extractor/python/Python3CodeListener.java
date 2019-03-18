@@ -6,9 +6,12 @@ import java.util.ArrayList;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 
+import depends.entity.ContainerEntity;
 import depends.entity.DecoratedEntity;
 import depends.entity.Entity;
+import depends.entity.FunctionEntity;
 import depends.entity.TypeEntity;
+import depends.entity.VarEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.cpp.cdt.CdtCppFileParser;
 import depends.extractor.python.Python3Parser.ClassdefContext;
@@ -18,6 +21,7 @@ import depends.extractor.python.Python3Parser.Dotted_as_nameContext;
 import depends.extractor.python.Python3Parser.FuncdefContext;
 import depends.extractor.python.Python3Parser.Global_stmtContext;
 import depends.extractor.python.Python3Parser.Import_as_nameContext;
+import depends.extractor.python.Python3Parser.Import_fromContext;
 import depends.extractor.python.Python3Parser.Nonlocal_stmtContext;
 import depends.extractor.python.Python3Parser.TfpdefContext;
 import depends.extractor.ruby.IncludedFileLocator;
@@ -47,9 +51,29 @@ public class Python3CodeListener extends Python3BaseListener {
 	
 
 	@Override
-	public void enterImport_as_name(Import_as_nameContext ctx) {
-		// TODO Auto-generated method stub
-		super.enterImport_as_name(ctx);
+	public void enterImport_from(Import_fromContext ctx) {
+		String moduleName = ctx.dotted_name().getText();
+		String fullName = foundImportedModule(moduleName);
+
+		if (ctx.import_as_names()==null) {//import *
+			ContainerEntity moduleEntity = (ContainerEntity)(entityRepo.getEntity(fullName));
+			for (FunctionEntity func:moduleEntity.getFunctions()) {
+				context.foundNewImport(new NameAliasImport(fullName, func	,func.getRawName()));
+			}
+			for ( VarEntity var:moduleEntity.getVars()) {
+				context.foundNewImport(new NameAliasImport(fullName, var	,var.getRawName()));
+			}
+		}else {
+			for (Import_as_nameContext item:ctx.import_as_names().import_as_name()) {
+				String name = item.NAME(0).getText();
+				String alias = name;
+				if (item.NAME().size()>1)
+					alias = item.NAME(1).getText();
+				Entity itemEntity = inferer.resolveName(entityRepo.getEntity(fullName), name, true);
+				context.foundNewImport(new NameAliasImport(fullName, itemEntity	,alias));
+			}
+		}
+		super.enterImport_from(ctx);
 	}
 
 
@@ -62,6 +86,14 @@ public class Python3CodeListener extends Python3BaseListener {
 		if (ctx.NAME()!=null) {
 			aliasedName = ctx.NAME().getText();
 		}
+		String fullName = foundImportedModule(originalName);
+		context.foundNewImport(new NameAliasImport(fullName,entityRepo.getEntity(fullName),aliasedName));
+		super.enterDotted_as_name(ctx);
+	}
+
+
+
+	private String foundImportedModule(String originalName) {
 		String importedName = originalName.replace(".", File.separator);
 		String fullName = includeFileLocator.uniqFileName(context.currentFile().getRawName(), importedName);
 		if (fullName==null) {
@@ -70,8 +102,7 @@ public class Python3CodeListener extends Python3BaseListener {
 		if (fullName!=null) {
 			visitIncludedFile(fullName);
 		}
-		context.foundNewImport(new NameAliasImport(fullName,entityRepo.getEntity(fullName),aliasedName));
-		super.enterDotted_as_name(ctx);
+		return fullName;
 	}
 
 	private void visitIncludedFile(String fullName) {

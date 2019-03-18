@@ -24,12 +24,12 @@ SOFTWARE.
 
 package depends.relations;
 
+import java.util.Collection;
 import java.util.List;
 
 import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.repo.EntityRepo;
-import depends.extractor.ruby.IncludedFileLocator;
 import depends.importtypes.Import;
 
 public interface ImportLookupStrategy {
@@ -52,7 +52,7 @@ public interface ImportLookupStrategy {
 	 * @param repo - entity repo
 	 * @return the corresponding entities related with importedNames
 	 */
-	List<Entity> getImportedRelationEntities(List<Import> importedNames, EntityRepo repo);
+	Collection<Entity> getImportedRelationEntities(List<Import> importedNames, EntityRepo repo);
 	
 	/**
 	 * The types been imported
@@ -60,7 +60,7 @@ public interface ImportLookupStrategy {
 	 * @param repo
 	 * @return
 	 */
-	List<Entity> getImportedTypes(List<Import> importedNames, EntityRepo repo);
+	Collection<Entity> getImportedTypes(List<Import> importedNames, EntityRepo repo);
 	
 	/**
 	 * The files been imported
@@ -68,6 +68,6 @@ public interface ImportLookupStrategy {
 	 * @param repo
 	 * @return
 	 */
-	List<Entity> getImportedFiles(List<Import> importedNames, EntityRepo repo);
+	Collection<Entity> getImportedFiles(List<Import> importedNames, EntityRepo repo);
 
 }
