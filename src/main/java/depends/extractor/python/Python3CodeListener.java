@@ -1,5 +1,7 @@
 package depends.extractor.python;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -8,6 +10,7 @@ import depends.entity.DecoratedEntity;
 import depends.entity.Entity;
 import depends.entity.TypeEntity;
 import depends.entity.repo.EntityRepo;
+import depends.extractor.cpp.cdt.CdtCppFileParser;
 import depends.extractor.python.Python3Parser.ClassdefContext;
 import depends.extractor.python.Python3Parser.DecoratedContext;
 import depends.extractor.python.Python3Parser.DecoratorContext;
@@ -17,6 +20,7 @@ import depends.extractor.python.Python3Parser.Global_stmtContext;
 import depends.extractor.python.Python3Parser.Import_as_nameContext;
 import depends.extractor.python.Python3Parser.Nonlocal_stmtContext;
 import depends.extractor.python.Python3Parser.TfpdefContext;
+import depends.extractor.ruby.IncludedFileLocator;
 import depends.importtypes.ExactMatchImport;
 import depends.relations.Inferer;
 
@@ -25,11 +29,19 @@ public class Python3CodeListener extends Python3BaseListener {
 	private PythonHandlerContext context;
 	private PythonParserHelper helper = PythonParserHelper.getInst();
 	private ExpressionUsage expressionUsage;
+	private EntityRepo entityRepo;
+	private IncludedFileLocator includeFileLocator;
+	private PythonProcessor pythonProcessor;
+	private Inferer inferer;
 
-	public Python3CodeListener(String fileFullPath, EntityRepo entityRepo, Inferer inferer) {
+	public Python3CodeListener(String fileFullPath, EntityRepo entityRepo, Inferer inferer,IncludedFileLocator includeFileLocator,PythonProcessor pythonProcessor) {
 		this.context = new PythonHandlerContext(entityRepo,inferer);
 		this.expressionUsage = new ExpressionUsage(context, entityRepo, helper, inferer);
 		context.startFile(fileFullPath);
+		this.entityRepo = entityRepo;
+		this.includeFileLocator = includeFileLocator;
+		this.inferer = inferer;
+		this.pythonProcessor = pythonProcessor;
 	}
 	
 	
@@ -50,9 +62,27 @@ public class Python3CodeListener extends Python3BaseListener {
 		if (ctx.NAME()!=null) {
 			aliasedName = ctx.NAME().getText();
 		}
-		context.foundNewImport(new NameAliasImport(originalName,aliasedName));
+		String importedName = originalName.replace(".", File.separator);
+		String fullName = includeFileLocator.uniqFileName(null, importedName);
+		if (fullName==null) {
+			fullName = includeFileLocator.uniqFileName(null, importedName+".py");
+		}
+		if (fullName!=null) {
+			visitIncludedFile(fullName);
+		}
+		context.foundNewImport(new NameAliasImport(fullName,aliasedName));
 		super.enterDotted_as_name(ctx);
 	}
+
+	private void visitIncludedFile(String fullName) {
+		PythonFileParser importedParser = new PythonFileParser(fullName, entityRepo, includeFileLocator,inferer, pythonProcessor);
+		try {
+			importedParser.parse();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}		
+	}
+
 
 
 	@Override

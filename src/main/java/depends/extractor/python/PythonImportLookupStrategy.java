@@ -11,7 +11,6 @@ import depends.extractor.ruby.IncludedFileLocator;
 import depends.importtypes.Import;
 import depends.relations.ImportLookupStrategy;
 import depends.relations.Inferer;
-import depends.util.FileUtil;
 
 public class PythonImportLookupStrategy implements ImportLookupStrategy {
 
@@ -32,16 +31,9 @@ public class PythonImportLookupStrategy implements ImportLookupStrategy {
 		for (Import importedItem:importedNames) {
 			if (importedItem instanceof NameAliasImport) {
 				String importedName = importedItem.getContent();
-				importedName = importedName.replace(".", File.separator);
-				String fullName = includeFileLocator.uniqFileName(null, importedName);
-				if (fullName==null) {
-					fullName = includeFileLocator.uniqFileName(null, importedName+".py");
-				}
-				if (fullName!=null) {
-					Entity imported = repo.getEntity(fullName);
-					if (imported==null) continue;
-					result.add(imported);
-				}
+				Entity imported = repo.getEntity(importedName);
+				if (imported==null) continue;
+				result.add(imported);
 			}
 		}
 		return result;
