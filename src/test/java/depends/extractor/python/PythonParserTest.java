@@ -8,6 +8,7 @@ import depends.extractor.FileParser;
 import depends.extractor.ParserCreator;
 import depends.extractor.ParserTest;
 import depends.relations.Inferer;
+import depends.util.FileUtil;
 
 public abstract class PythonParserTest extends ParserTest implements ParserCreator {
 
@@ -26,12 +27,11 @@ public abstract class PythonParserTest extends ParserTest implements ParserCreat
     }
 	
 	public PythonFileParser createParser(String src) {
-		return (PythonFileParser) p.createFileParser(src);
+		return (PythonFileParser)createFileParser(src);
 	}
 	
 	@Override
 	public FileParser createFileParser(String src) {
-		// TODO Auto-generated method stub
-		return null;
+		return  p.createFileParser(FileUtil.uniqFilePath(src));
 	}
 }

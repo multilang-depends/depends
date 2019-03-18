@@ -29,6 +29,7 @@ import java.util.List;
 import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.repo.EntityRepo;
+import depends.extractor.ruby.IncludedFileLocator;
 import depends.importtypes.Import;
 
 public interface ImportLookupStrategy {
@@ -68,4 +69,5 @@ public interface ImportLookupStrategy {
 	 * @return
 	 */
 	List<Entity> getImportedFiles(List<Import> importedNames, EntityRepo repo);
+
 }

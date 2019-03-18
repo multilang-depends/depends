@@ -36,11 +36,13 @@ public class IncludedFileLocator {
 	}
 	public String uniqFileName(String startLocation, String importedFilename) {
 		if (FileUtil.existFile(importedFilename)) return FileUtil.uniqFilePath(importedFilename);
-		String dirPath = FileUtil.getLocatedDir(startLocation);
-		String path = dirPath + File.separator + importedFilename;
-		if (FileUtil.existFile(path)) return FileUtil.uniqFilePath(path);
+		if (startLocation!=null) {
+			String dirPath = FileUtil.getLocatedDir(startLocation);
+			String path = dirPath + File.separator + importedFilename;
+			if (FileUtil.existFile(path)) return FileUtil.uniqFilePath(path);
+		}
 		for (String includePath:includesPath) {
-			path = includePath + File.separator + importedFilename;
+			String path = includePath + File.separator + importedFilename;
 			if (FileUtil.existFile(path)) return FileUtil.uniqFilePath(path);
 		}
 		return null;

@@ -18,12 +18,14 @@ public class PythonFileParser implements FileParser {
 	private String fileFullPath;
 	private EntityRepo entityRepo;
 	private Inferer inferer;
+	private IncludedFileLocator includeFileLocator;
 
-	public PythonFileParser(String fileFullPath, EntityRepo entityRepo, IncludedFileLocator includedFileLocator,
+	public PythonFileParser(String fileFullPath, EntityRepo entityRepo, IncludedFileLocator includeFileLocator,
 			Inferer inferer, PythonProcessor pythonProcessor) {
 		this.fileFullPath = fileFullPath;
 		this.entityRepo = entityRepo;
 		this.inferer = inferer;
+		this.includeFileLocator = includeFileLocator;
 	}
 
 	@Override

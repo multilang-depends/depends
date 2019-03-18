@@ -12,6 +12,8 @@ import depends.extractor.ruby.IncludedFileLocator;
 import depends.relations.ImportLookupStrategy;
 
 public class PythonProcessor extends AbstractLangProcessor {
+	private PythonImportLookupStrategy importedLookupStrategy;
+
 	public PythonProcessor() {
 		/* Because Python is dynamic languange, 
 		 * we eagerly resolve expression*/
@@ -30,7 +32,8 @@ public class PythonProcessor extends AbstractLangProcessor {
 
 	@Override
 	public ImportLookupStrategy getImportLookupStrategy() {
-		return new PythonImportLookupStrategy();
+		importedLookupStrategy = new PythonImportLookupStrategy();
+		return this.importedLookupStrategy;
 	}
 
 
@@ -41,7 +44,9 @@ public class PythonProcessor extends AbstractLangProcessor {
 	
 	@Override
 	protected FileParser createFileParser(String fileFullPath) {
-		return new PythonFileParser(fileFullPath,entityRepo,new IncludedFileLocator(super.includePaths()),inferer,this);
+		IncludedFileLocator includeFileLocator = new IncludedFileLocator(super.includePaths());
+		importedLookupStrategy.setLocator(includeFileLocator);
+		return new PythonFileParser(fileFullPath,entityRepo,includeFileLocator,inferer,this);
 	}
 
 	@Override

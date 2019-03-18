@@ -11,10 +11,13 @@ import depends.entity.repo.EntityRepo;
 import depends.extractor.python.Python3Parser.ClassdefContext;
 import depends.extractor.python.Python3Parser.DecoratedContext;
 import depends.extractor.python.Python3Parser.DecoratorContext;
+import depends.extractor.python.Python3Parser.Dotted_as_nameContext;
 import depends.extractor.python.Python3Parser.FuncdefContext;
 import depends.extractor.python.Python3Parser.Global_stmtContext;
+import depends.extractor.python.Python3Parser.Import_as_nameContext;
 import depends.extractor.python.Python3Parser.Nonlocal_stmtContext;
 import depends.extractor.python.Python3Parser.TfpdefContext;
+import depends.importtypes.ExactMatchImport;
 import depends.relations.Inferer;
 
 public class Python3CodeListener extends Python3BaseListener {
@@ -28,6 +31,29 @@ public class Python3CodeListener extends Python3BaseListener {
 		this.expressionUsage = new ExpressionUsage(context, entityRepo, helper, inferer);
 		context.startFile(fileFullPath);
 	}
+	
+	
+
+	@Override
+	public void enterImport_as_name(Import_as_nameContext ctx) {
+		// TODO Auto-generated method stub
+		super.enterImport_as_name(ctx);
+	}
+
+
+
+	@Override
+	public void enterDotted_as_name(Dotted_as_nameContext ctx) {
+		String originalName = ctx.dotted_name().getText();
+		String aliasedName = originalName;
+		//Alias
+		if (ctx.NAME()!=null) {
+			aliasedName = ctx.NAME().getText();
+		}
+		context.foundNewImport(new NameAliasImport(originalName,aliasedName));
+		super.enterDotted_as_name(ctx);
+	}
+
 
 	@Override
 	public void enterFuncdef(FuncdefContext ctx) {
