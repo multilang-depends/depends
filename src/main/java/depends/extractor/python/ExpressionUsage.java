@@ -44,7 +44,7 @@ public class ExpressionUsage {
 		Expression parent = findParentInStack(ctx);
 		/* create expression and link it with parent*/
 		expression = new Expression(idGenerator.generateId());
-		expression.text = ctx.toString();
+		expression.text = ctx.getText();
 		expression.parent = parent;
 		if (expression.parent!=null) {
 			if (expression.parent.deduceTypeBasedId==null) 
@@ -72,16 +72,6 @@ public class ExpressionUsage {
 			}else if (atom.NAME()!=null) {
 				expression.identifier = atom.NAME().getText();
 			}
-		}else if (ctx instanceof Or_testContext || ctx instanceof And_testContext ||
-				ctx instanceof Not_testContext || ctx instanceof ComparisonContext){ 
-			expression.identifier = "<logical>";
-			expression.rawType = Inferer.buildInType.getQualifiedName();
-		}else if (ctx instanceof Xor_exprContext ||
-				ctx instanceof Shift_exprContext ||
-				ctx instanceof Arith_exprContext ||
-				ctx instanceof AugassignContext) {
-			expression.identifier = "<arith>";
-			expression.rawType = Inferer.buildInType.getQualifiedName();
 		}
 		
 		
