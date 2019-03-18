@@ -9,11 +9,12 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import depends.entity.ContainerEntity;
 import depends.entity.DecoratedEntity;
 import depends.entity.Entity;
+import depends.entity.FileEntity;
 import depends.entity.FunctionEntity;
+import depends.entity.PackageEntity;
 import depends.entity.TypeEntity;
 import depends.entity.VarEntity;
 import depends.entity.repo.EntityRepo;
-import depends.extractor.cpp.cdt.CdtCppFileParser;
 import depends.extractor.python.Python3Parser.ClassdefContext;
 import depends.extractor.python.Python3Parser.DecoratedContext;
 import depends.extractor.python.Python3Parser.DecoratorContext;
@@ -25,8 +26,8 @@ import depends.extractor.python.Python3Parser.Import_fromContext;
 import depends.extractor.python.Python3Parser.Nonlocal_stmtContext;
 import depends.extractor.python.Python3Parser.TfpdefContext;
 import depends.extractor.ruby.IncludedFileLocator;
-import depends.importtypes.ExactMatchImport;
 import depends.relations.Inferer;
+import depends.util.FileUtil;
 
 public class Python3CodeListener extends Python3BaseListener {
 
@@ -39,38 +40,55 @@ public class Python3CodeListener extends Python3BaseListener {
 	private Inferer inferer;
 
 	public Python3CodeListener(String fileFullPath, EntityRepo entityRepo, Inferer inferer,IncludedFileLocator includeFileLocator,PythonProcessor pythonProcessor) {
+		
 		this.context = new PythonHandlerContext(entityRepo,inferer);
 		this.expressionUsage = new ExpressionUsage(context, entityRepo, helper, inferer);
-		context.startFile(fileFullPath);
+		FileEntity fileEntity = context.startFile(fileFullPath);
 		this.entityRepo = entityRepo;
 		this.includeFileLocator = includeFileLocator;
 		this.inferer = inferer;
 		this.pythonProcessor = pythonProcessor;
+
+		String dir = FileUtil.uniqFilePath(FileUtil.getLocatedDir(fileFullPath));
+		if (entityRepo.getEntity(dir)==null) {
+			entityRepo.add(new PackageEntity(dir,entityRepo.generateId()));
+		}
+		
+		PackageEntity packageEntity = (PackageEntity) entityRepo.getEntity(dir);
+		String moduleName = fileEntity.getRawName().substring(packageEntity.getRawName().length()+1);
+		if (moduleName.endsWith(".py"))
+			moduleName= moduleName.substring(0,moduleName.length()-".py".length());
+		packageEntity.addChild(moduleName, fileEntity);
 	}
-	
-	
 
 	@Override
 	public void enterImport_from(Import_fromContext ctx) {
 		String moduleName = ctx.dotted_name().getText();
-		String fullName = foundImportedModule(moduleName);
-
-		if (ctx.import_as_names()==null) {//import *
-			ContainerEntity moduleEntity = (ContainerEntity)(entityRepo.getEntity(fullName));
-			for (FunctionEntity func:moduleEntity.getFunctions()) {
-				context.foundNewImport(new NameAliasImport(fullName, func	,func.getRawName()));
-			}
-			for ( VarEntity var:moduleEntity.getVars()) {
-				context.foundNewImport(new NameAliasImport(fullName, var	,var.getRawName()));
-			}
-		}else {
-			for (Import_as_nameContext item:ctx.import_as_names().import_as_name()) {
-				String name = item.NAME(0).getText();
-				String alias = name;
-				if (item.NAME().size()>1)
-					alias = item.NAME(1).getText();
-				Entity itemEntity = inferer.resolveName(entityRepo.getEntity(fullName), name, true);
-				context.foundNewImport(new NameAliasImport(fullName, itemEntity	,alias));
+		String fullName = foundImportedModuleOrPackage(moduleName);
+		if (fullName!=null) {
+			if (ctx.import_as_names()==null) {//import *
+				ContainerEntity moduleEntity = (ContainerEntity)(entityRepo.getEntity(fullName));
+				for (FunctionEntity func:moduleEntity.getFunctions()) {
+					context.foundNewImport(new NameAliasImport(fullName, func	,func.getRawName()));
+				}
+				for ( VarEntity var:moduleEntity.getVars()) {
+					context.foundNewImport(new NameAliasImport(fullName, var	,var.getRawName()));
+				}
+				if (moduleEntity instanceof PackageEntity) {
+					for (Entity file:moduleEntity.getChildren()) {
+						String fileName = file.getRawName().substring(fullName.length());
+						context.foundNewImport(new NameAliasImport(file.getRawName(), file, fileName));
+					}
+				}
+			}else {
+				for (Import_as_nameContext item:ctx.import_as_names().import_as_name()) {
+					String name = item.NAME(0).getText();
+					String alias = name;
+					if (item.NAME().size()>1)
+						alias = item.NAME(1).getText();
+					Entity itemEntity = inferer.resolveName(entityRepo.getEntity(fullName), name, true);
+					context.foundNewImport(new NameAliasImport(fullName, itemEntity	,alias));
+				}
 			}
 		}
 		super.enterImport_from(ctx);
@@ -86,21 +104,33 @@ public class Python3CodeListener extends Python3BaseListener {
 		if (ctx.NAME()!=null) {
 			aliasedName = ctx.NAME().getText();
 		}
-		String fullName = foundImportedModule(originalName);
+		String fullName = foundImportedModuleOrPackage(originalName);
 		context.foundNewImport(new NameAliasImport(fullName,entityRepo.getEntity(fullName),aliasedName));
 		super.enterDotted_as_name(ctx);
 	}
 
 
 
-	private String foundImportedModule(String originalName) {
+	private String foundImportedModuleOrPackage(String originalName) {
 		String importedName = originalName.replace(".", File.separator);
 		String fullName = includeFileLocator.uniqFileName(context.currentFile().getRawName(), importedName);
 		if (fullName==null) {
 			fullName = includeFileLocator.uniqFileName(context.currentFile().getRawName(), importedName+".py");
 		}
 		if (fullName!=null) {
-			visitIncludedFile(fullName);
+			if (FileUtil.isDirectory(fullName)) {
+				File d = new File(fullName);
+				File[] files = d.listFiles();
+				for (File file:files) {
+					if (!file.isDirectory()) {
+						if (file.getAbsolutePath().endsWith(".py")) {
+							visitIncludedFile(FileUtil.uniqFilePath(file.getAbsolutePath()));
+						}
+					}
+				}
+			}else {
+				visitIncludedFile(fullName);
+			}
 		}
 		return fullName;
 	}

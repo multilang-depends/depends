@@ -51,6 +51,7 @@ public class FileDependencyGenerator extends DependencyGenerator{
         	if (fileEntityFrom==-1) continue;
         	for (Relation relation:entity.getRelations()) {
         		Entity relatedEntity = relation.getEntity();
+        		if (relatedEntity==null) continue;
         		if (relatedEntity instanceof CandidateTypes) {
         			List<TypeEntity> candidateTypes = ((CandidateTypes)relatedEntity).getCandidateTypes();
         			for (TypeEntity candidateType:candidateTypes) {

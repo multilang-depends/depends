@@ -24,13 +24,32 @@ SOFTWARE.
 
 package depends.entity;
 
+import java.util.HashMap;
+
 public class PackageEntity extends TypeEntity {
+	HashMap<String,Entity> entities;
 	public PackageEntity(String rawName, Integer id) {
 		super(rawName,  null,id);
 		setQualifiedName(rawName); //in Java, package raw name = full name
+		entities = new HashMap<>();
 	}
 
 	public PackageEntity(String rawName, Entity currentFile, Integer id) {
 		super(rawName,  currentFile,id);
+	}
+
+	public Entity getChildOfName(String name) {
+		for (Entity child:this.getChildren()) {
+			if (child.getRawName().equals(name)) 
+				return child;
+		}
+		if (entities.get(name)!=null)
+			return entities.get(name);
+		return null;
+	}
+
+	public void addChild(String moduleName, Entity entity) {
+		super.addChild(entity);
+		entities.put(moduleName, entity);
 	}
 }

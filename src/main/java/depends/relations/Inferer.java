@@ -39,6 +39,7 @@ import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.FunctionCall;
 import depends.entity.MultiDeclareEntities;
+import depends.entity.PackageEntity;
 import depends.entity.TypeEntity;
 import depends.entity.VarEntity;
 import depends.entity.repo.BuiltInType;
@@ -171,24 +172,35 @@ public class Inferer {
 			if (repo.getEntity(rawName) != null)
 				return repo.getEntity(rawName);
 		}
-		
-		if (rawName.contains(".")) {
-			if (repo.getEntity(rawName) != null)
-				return repo.getEntity(rawName);
-		}
-		// first we lookup the first symbol
-		String[] names = rawName.split("\\.");
-		if (names.length == 0)
-			return null;
-		Entity entity = lookupEntity(fromEntity, names[0], searchImport);
+		Entity entity = null;
+		int indexCount = 0;
+		String name = rawName;
+		do {
+			if (repo.getEntity(name) != null) {
+				entity = repo.getEntity(name);
+				break;
+			}
+			entity = lookupEntity(fromEntity, name, searchImport);
+			if (entity!=null && !entity.equals(externalType)) {
+				break;
+			}
+			indexCount++;
+			if (name.contains("."))
+				name = name.substring(0,name.lastIndexOf('.'));
+			else
+				break;
+		}while (true);
 		if (entity == null) {
 			return null;
 		}
+		String[] names = rawName.split("\\.");
+		if (names.length == 0)
+			return null;
 		if (names.length == 1) {
 			return entity;
 		}
 		// then find the subsequent symbols
-		return findEntitySince(entity, names, 1);
+		return findEntitySince(entity, names, names.length-indexCount);
 	}
 	
 	private Entity lookupEntity(Entity fromEntity, String name, boolean searcImport) {
@@ -341,8 +353,12 @@ public class Inferer {
 			}
 			return null;
 		}
-		else 
-			return tryToFindEntityWithNameSureSingleEntity(fromEntity,name);
+		else if (fromEntity instanceof PackageEntity) {
+			Entity entity = ((PackageEntity)fromEntity).getChildOfName(name);
+			if (entity!=null)
+				return entity;
+		}
+		return tryToFindEntityWithNameSureSingleEntity(fromEntity,name);
 	}
 	
 	private Entity tryToFindEntityWithNameSureSingleEntity(Entity fromEntity, String name) {

@@ -107,4 +107,22 @@ public class PythonImportTest extends PythonParserTest {
 		this.assertContainsRelation(file, DependencyType.CALL,"foo");
 		this.assertContainsRelation(file, DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[1]));
 	}
+	
+	
+	@Test
+	public void should_parse_import_with_multi_dots() throws IOException {
+		String[] srcs = new String[] {
+	    		"./src/test/resources/python-code-examples/from_importing_multidot.py",
+	    		"./src/test/resources/python-code-examples/pkg/imported.py",
+	    	    };
+	    
+	    for (String src:srcs) {
+		    PythonFileParser parser = createParser(src);
+		    parser.parse();
+	    }
+	    inferer.resolveAllBindings();
+	    Entity file = repo.getEntity(FileUtil.uniqFilePath(srcs[0]));
+		this.assertContainsRelation(file, DependencyType.CALL,"foo");
+		this.assertContainsRelation(file, DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[1]));
+	}
 }
