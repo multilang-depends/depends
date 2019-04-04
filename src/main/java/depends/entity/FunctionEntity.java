@@ -111,7 +111,7 @@ public class FunctionEntity extends ContainerEntity{
 	@Override
 	public String getDisplayName() {
 		FileEntity f = (FileEntity) this.getAncestorOfType(FileEntity.class);
-		return f.getRawName()+"("+getRawName()+")";
+		return f.getRawName()+"("+this.getQualifiedName()+")";
 	}
 	@Override
 	public VarEntity lookupVarLocally(String varName) {
