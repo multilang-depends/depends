@@ -29,7 +29,7 @@ import java.util.Collection;
 
 import depends.relations.Inferer;
 
-public class TypeEntity extends ContainerEntity{
+public class TypeEntity extends ContainerEntity {
 	Collection<TypeEntity> inheritedTypes = new ArrayList<>();
 	Collection<TypeEntity> implementedTypes = new ArrayList<>();
 	Collection<String> inhertedTypeIdentifiers;
@@ -37,51 +37,75 @@ public class TypeEntity extends ContainerEntity{
 	TypeEntity inheritedType;
 
 	public TypeEntity(String simpleName, Entity parent, Integer id) {
-		super(simpleName,parent,id);
+		super(simpleName, parent, id);
 		inhertedTypeIdentifiers = new ArrayList<>();
 		implementedIdentifiers = new ArrayList<>();
 	}
+
 	@Override
 	public void inferLocalLevelEntities(Inferer inferer) {
-		inheritedTypes= new ArrayList<>();
-		identiferToEntities(inferer,this.inhertedTypeIdentifiers).forEach(item->inheritedTypes.add((TypeEntity)item));
+		inheritedTypes = new ArrayList<>();
+		identiferToEntities(inferer, this.inhertedTypeIdentifiers).forEach(item -> {
+			if (item instanceof TypeEntity) {
+				inheritedTypes.add((TypeEntity) item);
+			}else {
+				System.err.println(item.getRawName() + " expected a type, but actually it is "+ item.getClass().getSimpleName());
+			}
+		});
 		inheritedTypes.remove(this);
 
-		implementedTypes= new ArrayList<>();
-		identiferToEntities(inferer,this.implementedIdentifiers).forEach(item->implementedTypes.add((TypeEntity)item));
+		implementedTypes = new ArrayList<>();
+		identiferToEntities(inferer, this.implementedIdentifiers)
+				.forEach(item -> {
+					if (item instanceof TypeEntity) {
+						implementedTypes.add((TypeEntity) item);
+					}else {
+						System.err.println(item.getRawName() + " expected a type, but actually it is "+ item.getClass().getSimpleName());
+					}
+				});
 		implementedTypes.remove(this);
-		if (inheritedTypes.size()>0)
+		if (inheritedTypes.size() > 0)
 			inheritedType = inheritedTypes.iterator().next();
 		super.inferLocalLevelEntities(inferer);
 	}
+
 	public void addImplements(String typeName) {
-		if (typeName.equals(this.getRawName())) return;
-		if (implementedIdentifiers.contains(typeName)) return;
-		if (typeName.equals(this.rawName)) return;
+		if (typeName.equals(this.getRawName()))
+			return;
+		if (implementedIdentifiers.contains(typeName))
+			return;
+		if (typeName.equals(this.rawName))
+			return;
 		this.implementedIdentifiers.add(typeName);
 	}
+
 	public void addExtends(String typeName) {
-		if (typeName.equals(this.getRawName())) return;
-		if (inhertedTypeIdentifiers.contains(typeName)) return;
-		if (typeName.equals(this.rawName)) return;
+		if (typeName.equals(this.getRawName()))
+			return;
+		if (inhertedTypeIdentifiers.contains(typeName))
+			return;
+		if (typeName.equals(this.rawName))
+			return;
 		this.inhertedTypeIdentifiers.add(typeName);
 	}
+
 	public Collection<TypeEntity> getInheritedTypes() {
 		return inheritedTypes;
 	}
-	
+
 	public Collection<TypeEntity> getImplementedTypes() {
 		return implementedTypes;
 	}
-	
- 	public TypeEntity getInheritedType() {
+
+	public TypeEntity getInheritedType() {
 		return inheritedType;
 	}
- 	
- 	@Override
- 	public FunctionEntity lookupFunctionLocally(String functionName) {
+
+	@Override
+	public FunctionEntity lookupFunctionLocally(String functionName) {
 		FunctionEntity func = super.lookupFunctionLocally(functionName);
-		if (func!=null) return func;
+		if (func != null)
+			return func;
 		for (TypeEntity inhertedType : getInheritedTypes()) {
 			func = inhertedType.lookupFunctionLocally(functionName);
 			if (func != null)
@@ -90,16 +114,18 @@ public class TypeEntity extends ContainerEntity{
 		if (func != null)
 			return func;
 		for (TypeEntity implType : getImplementedTypes()) {
-			func = implType.lookupFunctionLocally( functionName);
+			func = implType.lookupFunctionLocally(functionName);
 			if (func != null)
 				break;
 		}
 		return func;
- 	}
- 	@Override
- 	public VarEntity lookupVarLocally(String varName) {
- 		VarEntity var = super.lookupVarLocally(varName);
-		if (var!=null) return var;
+	}
+
+	@Override
+	public VarEntity lookupVarLocally(String varName) {
+		VarEntity var = super.lookupVarLocally(varName);
+		if (var != null)
+			return var;
 		for (TypeEntity inhertedType : getInheritedTypes()) {
 			var = inhertedType.lookupVarLocally(varName);
 			if (var != null)
@@ -108,14 +134,15 @@ public class TypeEntity extends ContainerEntity{
 		if (var != null)
 			return var;
 		for (TypeEntity implType : getImplementedTypes()) {
-			var = implType.lookupVarLocally( varName);
+			var = implType.lookupVarLocally(varName);
 			if (var != null)
 				break;
 		}
 		return var;
 	}
- 	@Override
- 	public TypeEntity getType() {
+
+	@Override
+	public TypeEntity getType() {
 		return this;
 	}
 }

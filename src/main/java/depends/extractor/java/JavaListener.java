@@ -131,6 +131,13 @@ public class JavaListener extends JavaParserBaseListener {
 	}
 
 	@Override
+	public void enterAnnotationTypeDeclaration(AnnotationTypeDeclarationContext ctx) {
+		context.foundNewType(sureDotStartName(ctx.IDENTIFIER().getText()));
+		annotationProcessor.processAnnotationModifier(ctx, "classOrInterfaceModifier");
+		super.enterAnnotationTypeDeclaration(ctx);
+	}
+	
+	@Override
 	public void exitEnumDeclaration(EnumDeclarationContext ctx) {
 		exitLastEntity();
 		super.exitEnumDeclaration(ctx);
@@ -163,12 +170,7 @@ public class JavaListener extends JavaParserBaseListener {
 		super.exitInterfaceDeclaration(ctx);
 	}
 
-	@Override
-	public void enterAnnotationTypeDeclaration(AnnotationTypeDeclarationContext ctx) {
-		context.foundNewType(sureDotStartName(ctx.IDENTIFIER().getText()));
-		annotationProcessor.processAnnotationModifier(ctx, "classOrInterfaceModifier");
-		super.enterAnnotationTypeDeclaration(ctx);
-	}
+
 
 	@Override
 	public void exitAnnotationTypeDeclaration(AnnotationTypeDeclarationContext ctx) {
