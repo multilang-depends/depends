@@ -3,11 +3,12 @@ package depends.extractor.cpp;
 import java.util.ArrayList;
 
 import depends.entity.repo.EntityRepo;
+import depends.extractor.ParserTest;
 import depends.extractor.cpp.cdt.CdtCppFileParser;
 import depends.extractor.cpp.cdt.PreprocessorHandler;
 import depends.relations.Inferer;
 
-public abstract class CppParserTest {
+public abstract class CppParserTest extends ParserTest{
 	protected EntityRepo repo;
 	protected Inferer inferer;
     protected PreprocessorHandler preprocessorHandler;

@@ -7,6 +7,7 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
+import depends.deptypes.DependencyType;
 import depends.entity.ContainerEntity;
 import depends.entity.Entity;
 import depends.entity.FunctionEntity;
@@ -45,7 +46,7 @@ public class JavaVarResolveTest extends JavaParserTest{
         parser.parse();
         inferer.resolveAllBindings();
         ContainerEntity e = (ContainerEntity) entityRepo.getEntity("LocalVarInferExample.setExample");
-        assertEquals(18,e.getRelations().size());
+        this.assertContainsRelation(e, DependencyType.CONTAIN, "MyInteger");
 	}
 	
 	@Test
@@ -54,7 +55,18 @@ public class JavaVarResolveTest extends JavaParserTest{
         JavaFileParser parser = createParser(src);
         parser.parse();
         inferer.resolveAllBindings();
-        assertEquals(23,entityRepo.getEntity("test.ComplexExpressionExample.setExample").getRelations().size());
+        Entity e = entityRepo.getEntity("test.ComplexExpressionExample.setExample");
+        this.assertContainsRelation(e, DependencyType.PARAMETER, "test.ClassA");
+        this.assertContainsRelation(e, DependencyType.CREATE, "test.ClassA");
+        this.assertContainsRelation(e, DependencyType.CALL, "test.ClassA");
+        this.assertContainsRelation(e, DependencyType.CAST, "test.ClassA");
+        this.assertContainsRelation(e, DependencyType.CALL, "test.ClassA.foo");
+        this.assertContainsRelation(e, DependencyType.CALL, "test.ClassA");
+        this.assertContainsRelation(e, DependencyType.USE, "test.ComplexExpressionExample.setExample.a3");
+        this.assertContainsRelation(e, DependencyType.USE, "test.ClassX.m");
+        this.assertContainsRelation(e, DependencyType.USE, "test.ComplexExpressionExample.setExample.a2");
+        this.assertContainsRelation(e, DependencyType.USE, "test.ClassA.x");
+        this.assertContainsRelation(e, DependencyType.USE, "test.ComplexExpressionExample.setExample.a");
 	}
 	
 	@Test

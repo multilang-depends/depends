@@ -89,19 +89,24 @@ public class RelationCounter {
 			if (referredEntity==null) {
 				continue;
 			}
+			boolean matched = false;
 			if (expression.isCall) {
 				entity.addRelation(new Relation(DependencyType.CALL,referredEntity));
+				matched = true;
 			}
-			else if (expression.isCreate) {
+			if (expression.isCreate) {
 				entity.addRelation(new Relation(DependencyType.CREATE,referredEntity));
+				matched = true;
 			}
-			else if (expression.isThrow) {
+			if (expression.isThrow) {
 				entity.addRelation(new Relation(DependencyType.THROW,referredEntity));
+				matched = true;
 			}
-			else if (expression.isCast) { 
+			if (expression.isCast) { 
 				entity.addRelation(new Relation(DependencyType.CAST,referredEntity));
+				matched = true;
 			}
-			else  {
+			if (!matched)  {
 				usedEntities.add(expression.getReferredEntity());
 			}
 		}

@@ -1,10 +1,11 @@
 package depends.extractor.cpp;
-import static org.junit.Assert.assertEquals;
-
 import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import depends.deptypes.DependencyType;
+import depends.entity.Entity;
 
 public class CppExpressionTest extends CppParserTest{
     @Before
@@ -18,7 +19,16 @@ public class CppExpressionTest extends CppParserTest{
 	    CppFileParser parser = createParser(src);
         parser.parse();
         inferer.resolveAllBindings();
-        assertEquals(21,repo.getEntity("foo").getRelations().size());
+        Entity e = repo.getEntity("foo");
+        this.assertContainsRelation(e, DependencyType.PARAMETER,"ClassA");
+        this.assertContainsRelation(e, DependencyType.CONTAIN,"ClassA");
+        this.assertContainsRelation(e, DependencyType.CAST,"ClassA");
+        this.assertContainsRelation(e, DependencyType.CALL,"ClassA");
+        this.assertContainsRelation(e, DependencyType.CREATE,"ClassA");
+        this.assertContainsRelation(e, DependencyType.USE,"ClassA");
+        this.assertContainsRelation(e, DependencyType.USE,"foo.a2");
+        this.assertContainsRelation(e, DependencyType.USE,"foo.a3");
+        this.assertContainsRelation(e, DependencyType.USE,"foo.a");        
 	}
 
 }
