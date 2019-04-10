@@ -1,12 +1,13 @@
 package depends.extractor.java;
 
 import depends.entity.repo.EntityRepo;
+import depends.extractor.ParserTest;
 import depends.extractor.java.JavaBuiltInType;
 import depends.extractor.java.JavaFileParser;
 import depends.extractor.java.JavaImportLookupStrategy;
 import depends.relations.Inferer;
 
-public abstract class JavaParserTest {
+public abstract class JavaParserTest  extends ParserTest{
 	protected  EntityRepo entityRepo ;
 	protected Inferer inferer ;
 

@@ -12,6 +12,16 @@ import depends.entity.VarEntity;
 import depends.relations.Relation;
 
 public abstract class ParserTest {
+	protected void assertNotContainsRelation(Entity inEntity, String dependencyType, String dependedEntityFullName) {
+		for (Relation r:inEntity.getRelations()) {
+			if (r.getType().equals(dependencyType)) {
+				if (r.getEntity().getQualifiedName().equals(dependedEntityFullName)) {
+					fail("found unexpected relation: type = " + dependencyType + " to entity " + dependedEntityFullName);
+				}
+			}
+		}
+	}
+	
 	protected void assertContainsRelation(Entity inEntity, String dependencyType, String dependedEntityFullName) {
 		Relation relation = null;
 		for (Relation r:inEntity.getRelations()) {

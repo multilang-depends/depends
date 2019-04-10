@@ -27,6 +27,7 @@ package depends.extractor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 import depends.entity.ContainerEntity;
 import depends.entity.Entity;
@@ -212,10 +213,8 @@ public abstract class HandlerContext {
 	}
 
 
-	public void foundVarDefinitions(List<String> varNames, String type, List<String> typeArguments) {
-		for (String varName : varNames) {
-			foundVarDefinition(varName,type,typeArguments);
-		}
+	public List<VarEntity> foundVarDefinitions(List<String> varNames, String type, List<String> typeArguments) {
+		return varNames.stream().map(item->foundVarDefinition(item,type,typeArguments)).collect(Collectors.toList());
 	}
 	
 	public VarEntity foundVarDefinition(ContainerEntity container,String varName) {
@@ -228,15 +227,19 @@ public abstract class HandlerContext {
 		if (var!=null) return var;
 		var = new VarEntity(varName, null, container, idGenerator.generateId());
 		container.addVar(var);
+		entityRepo.add(var);
+
 		return var;
 	}
 	
 
 
-	public void foundVarDefinition(String varName, String type, List<String> typeArguments) {
+	public VarEntity foundVarDefinition(String varName, String type, List<String> typeArguments) {
 		VarEntity var = new VarEntity(varName, type, lastContainer(), idGenerator.generateId());
 		var.addTypeParameter(typeArguments);
-		lastContainer().addVar(var);		
+		lastContainer().addVar(var);	
+		entityRepo.add(var);
+		return var;
 	}
 	
 	public void addMethodParameter(String paramName) {
