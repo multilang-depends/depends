@@ -29,5 +29,6 @@
 			<scope>runtime</scope>
 		</dependencySet>
 	</dependencySets>
+
 </assembly>
 <!-- END SNIPPET: jar-with-dependencies -->
