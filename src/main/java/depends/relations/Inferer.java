@@ -85,13 +85,19 @@ public class Inferer {
 	private void resolveTypes() {
 		for (Entity entity:repo.getEntities()) {
 			if (!(entity instanceof FileEntity)) continue;
+			if (entity.getDisplayName().equals("/home/gangz/work/depends/data/github/eclipse.jdt.core-master/org.eclipse.jdt.apt.pluggable.tests/src/org/eclipse/jdt/apt/pluggable/tests/TestBase.java")) {
+				System.out.println("resolve type of entity " + entity.getDisplayName());
+			}
+			System.out.println("resolve type of entity " + entity.getDisplayName());
 			entity.inferEntities(this);
 		}
 	}
 	private void resolveExpressoins() {
 		for (Entity entity:repo.getEntities()) {
-			if ((entity instanceof ContainerEntity))
+			if ((entity instanceof ContainerEntity)) {
+				System.out.println("resolve expression of entity " + entity.getDisplayName());
 				((ContainerEntity)entity).resolveExpressions(this);
+			}
 		}
 	}
 	
@@ -273,9 +279,12 @@ public class Inferer {
 			entity = findEntityInChild(fromEntity,name);
 			if (entity!=null) return entity;
 			
+			Collection<TypeEntity> searchedTypes = new ArrayList<>();
 			if (fromEntity instanceof TypeEntity) {
 				TypeEntity type = (TypeEntity)fromEntity;
 				while(true) {
+					if (searchedTypes.contains(type)) break;
+					searchedTypes.add(type);
 					if (type.getInheritedTypes().size()==0) break;
 					for (TypeEntity child:type.getInheritedTypes()) {
 						entity = findEntityInChild(child,name);
@@ -284,6 +293,8 @@ public class Inferer {
 					}
 				}
 				while(true) {
+					if (searchedTypes.contains(type)) break;
+					searchedTypes.add(type);
 					if (type.getImplementedTypes().size()==0) break;
 					for (TypeEntity child:type.getImplementedTypes()) {
 						entity = findEntityInChild(child,name);

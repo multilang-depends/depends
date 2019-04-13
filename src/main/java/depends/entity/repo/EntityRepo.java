@@ -24,9 +24,9 @@ SOFTWARE.
 
 package depends.entity.repo;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import depends.entity.Entity;
@@ -35,7 +35,7 @@ import depends.entity.MultiDeclareEntities;
 public class EntityRepo extends IdGenerator{
 	private HashMap<String, Entity> allEntieisByName = new HashMap<>();
 	private HashMap<Integer, Entity> allEntitiesById = new HashMap<>();
-	private List<Entity> allEntitiesByOrder = new ArrayList<>();
+	private List<Entity> allEntitiesByOrder = new LinkedList<>();
 	public static final String GLOBAL_SCOPE_NAME = "::GLOBAL::";
 
 	public EntityRepo() {

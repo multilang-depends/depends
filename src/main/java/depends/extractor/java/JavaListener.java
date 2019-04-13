@@ -30,23 +30,12 @@ import java.util.List;
 import depends.entity.FunctionEntity;
 import depends.entity.VarEntity;
 import depends.entity.repo.EntityRepo;
-import depends.extractor.java.context.AnnotationProcessor;
-import depends.extractor.java.context.ClassTypeContextHelper;
-import depends.extractor.java.context.ExpressionUsage;
-import depends.extractor.java.context.FormalParameterListContextHelper;
-import depends.extractor.java.context.IdentifierContextHelper;
-import depends.extractor.java.context.QualitiedNameContextHelper;
-import depends.extractor.java.context.TypeParameterContextHelper;
-import depends.extractor.java.context.VariableDeclaratorsContextHelper;
-import depends.importtypes.ExactMatchImport;
-import depends.relations.Inferer;
 import depends.extractor.java.JavaParser.AnnotationConstantRestContext;
 import depends.extractor.java.JavaParser.AnnotationMethodRestContext;
 import depends.extractor.java.JavaParser.AnnotationTypeDeclarationContext;
 import depends.extractor.java.JavaParser.BlockContext;
 import depends.extractor.java.JavaParser.ClassBodyDeclarationContext;
 import depends.extractor.java.JavaParser.ClassDeclarationContext;
-import depends.extractor.java.JavaParser.ClassOrInterfaceModifierContext;
 import depends.extractor.java.JavaParser.ConstDeclarationContext;
 import depends.extractor.java.JavaParser.ConstructorDeclarationContext;
 import depends.extractor.java.JavaParser.EnhancedForControlContext;
@@ -58,7 +47,6 @@ import depends.extractor.java.JavaParser.ImportDeclarationContext;
 import depends.extractor.java.JavaParser.InterfaceBodyDeclarationContext;
 import depends.extractor.java.JavaParser.InterfaceDeclarationContext;
 import depends.extractor.java.JavaParser.InterfaceMethodDeclarationContext;
-import depends.extractor.java.JavaParser.InterfaceMethodModifierContext;
 import depends.extractor.java.JavaParser.LocalVariableDeclarationContext;
 import depends.extractor.java.JavaParser.MethodDeclarationContext;
 import depends.extractor.java.JavaParser.PackageDeclarationContext;
@@ -66,7 +54,16 @@ import depends.extractor.java.JavaParser.ResourceContext;
 import depends.extractor.java.JavaParser.TypeDeclarationContext;
 import depends.extractor.java.JavaParser.TypeParameterContext;
 import depends.extractor.java.JavaParser.TypeParametersContext;
-import depends.extractor.java.JavaParserBaseListener;
+import depends.extractor.java.context.AnnotationProcessor;
+import depends.extractor.java.context.ClassTypeContextHelper;
+import depends.extractor.java.context.ExpressionUsage;
+import depends.extractor.java.context.FormalParameterListContextHelper;
+import depends.extractor.java.context.IdentifierContextHelper;
+import depends.extractor.java.context.QualitiedNameContextHelper;
+import depends.extractor.java.context.TypeParameterContextHelper;
+import depends.extractor.java.context.VariableDeclaratorsContextHelper;
+import depends.importtypes.ExactMatchImport;
+import depends.relations.Inferer;
 
 public class JavaListener extends JavaParserBaseListener {
 	private JavaHandlerContext context;
@@ -104,6 +101,7 @@ public class JavaListener extends JavaParserBaseListener {
 	/////////////////////// annotationTypeDeclaration
 	@Override
 	public void enterClassDeclaration(ClassDeclarationContext ctx) {
+		if (ctx.IDENTIFIER()==null) return;
 		context.foundNewType(sureDotStartName(ctx.IDENTIFIER().getText()));
 		// implements
 		if (ctx.typeList() != null) {

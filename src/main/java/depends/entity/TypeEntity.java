@@ -70,6 +70,9 @@ public class TypeEntity extends ContainerEntity {
 	}
 
 	public void addImplements(String typeName) {
+		if (typeName==null) {
+			return;
+		}
 		if (typeName.equals(this.getRawName()))
 			return;
 		if (implementedIdentifiers.contains(typeName))
@@ -80,6 +83,9 @@ public class TypeEntity extends ContainerEntity {
 	}
 
 	public void addExtends(String typeName) {
+		if (typeName==null) {
+			return;
+		}
 		if (typeName.equals(this.getRawName()))
 			return;
 		if (inhertedTypeIdentifiers.contains(typeName))
@@ -103,38 +109,52 @@ public class TypeEntity extends ContainerEntity {
 
 	@Override
 	public FunctionEntity lookupFunctionLocally(String functionName) {
+		Collection<TypeEntity> searchedTypes = new ArrayList<>();
+		return lookupFunctionLocally(functionName,searchedTypes);
+	}
+
+	private FunctionEntity lookupFunctionLocally(String functionName, Collection<TypeEntity> searched) {
+		if (searched.contains(this)) return null;
+		searched.add(this);
 		FunctionEntity func = super.lookupFunctionLocally(functionName);
 		if (func != null)
 			return func;
 		for (TypeEntity inhertedType : getInheritedTypes()) {
-			func = inhertedType.lookupFunctionLocally(functionName);
+			func = inhertedType.lookupFunctionLocally(functionName, searched);
 			if (func != null)
 				break;
 		}
 		if (func != null)
 			return func;
 		for (TypeEntity implType : getImplementedTypes()) {
-			func = implType.lookupFunctionLocally(functionName);
+			func = implType.lookupFunctionLocally(functionName,searched);
 			if (func != null)
 				break;
 		}
 		return func;
 	}
-
+	
 	@Override
 	public VarEntity lookupVarLocally(String varName) {
+		Collection<TypeEntity> searchedTypes = new ArrayList<>();
+		return lookupVarLocally(varName,searchedTypes);
+	}
+	
+	private VarEntity lookupVarLocally(String varName, Collection<TypeEntity> searched) {
+		if (searched.contains(this)) return null;
+		searched.add(this);
 		VarEntity var = super.lookupVarLocally(varName);
 		if (var != null)
 			return var;
 		for (TypeEntity inhertedType : getInheritedTypes()) {
-			var = inhertedType.lookupVarLocally(varName);
+			var = inhertedType.lookupVarLocally(varName,searched);
 			if (var != null)
 				break;
 		}
 		if (var != null)
 			return var;
 		for (TypeEntity implType : getImplementedTypes()) {
-			var = implType.lookupVarLocally(varName);
+			var = implType.lookupVarLocally(varName,searched);
 			if (var != null)
 				break;
 		}

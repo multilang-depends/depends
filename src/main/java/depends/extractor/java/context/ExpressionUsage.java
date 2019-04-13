@@ -46,8 +46,11 @@ public class ExpressionUsage {
 		/* create expression and link it with parent*/
 		Expression expression = new Expression(idGenerator.generateId());
 		context.lastContainer().addExpression(ctx,expression);
-
-		expression.text = ctx.getText(); //for debug purpose. no actual effect
+//		try {
+//			expression.text = ctx.getText(); //for debug purpose. no actual effect
+//		}catch (Exception e) {
+//			expression.text = "error during getText";
+//		}
 		expression.parent = parent;
 		if (expression.parent!=null) {
 			if (expression.parent.deduceTypeBasedId==null) 

@@ -56,7 +56,12 @@ public class JavaFileParser implements depends.extractor.FileParser{
         JavaParser parser = new JavaParser(tokens);
         JavaListener bridge = new JavaListener(fileFullPath, entityRepo,inferer);
 	    ParseTreeWalker walker = new ParseTreeWalker();
-	    walker.walk(bridge, parser.compilationUnit());
+	    try {
+	    	walker.walk(bridge, parser.compilationUnit());
+	    }catch (Exception e) {
+	    	System.err.println("error encountered during parse..." );
+	    	e.printStackTrace();
+	    }
     }
 	
 }

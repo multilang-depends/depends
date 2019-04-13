@@ -9,22 +9,6 @@ import org.junit.Test;
 
 import depends.deptypes.DependencyType;
 
-/*
- * classOrInterfaceModifier
-interfaceMethodModifier
-
-packageDeclaration
-
-variableModifier
-typeParameter
-enumConstant
-interfaceMethodDeclaration
-
-elementValue
-classType
-typeType
-
- */
 public class JavaAnnotationParserTest extends JavaParserTest {
 	@Before
 	public void setUp() {
