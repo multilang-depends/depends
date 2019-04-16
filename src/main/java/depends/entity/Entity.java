@@ -45,6 +45,7 @@ public abstract class Entity {
 	private MultiDeclareEntities mutliDeclare = null;
 	private List<Entity> children = new ArrayList<>();
     ArrayList<Relation> relations = new ArrayList<>();
+	private Entity actualReferTo = null;
 
 	
     public Entity(String rawName, Entity parent, Integer id) {
@@ -181,4 +182,15 @@ public abstract class Entity {
 	public void setMutliDeclare(MultiDeclareEntities mutliDeclare) {
 		this.mutliDeclare = mutliDeclare;
 	}
+
+	public Entity getActualReferTo() {
+		if (this.actualReferTo ==null)
+			return this;
+		return actualReferTo;
+	}
+	
+	public void setActualReferTo(Entity actualReferTo) {
+		this.actualReferTo = actualReferTo;
+	}
+
 }

@@ -27,6 +27,7 @@ package depends.entity;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -165,6 +166,10 @@ public abstract class ContainerEntity extends DecoratedEntity {
 		}
 	}
 
+	public void cleanExpression() {
+		this.expressions = null;
+	}
+
 	public TypeEntity getLastExpressionType() {
 		for (int i=this.expressionList.size()-1;i>=0;i--) {
 			Expression expr= this.expressionList.get(i);
@@ -285,4 +290,14 @@ public abstract class ContainerEntity extends DecoratedEntity {
 	public Collection<ContainerEntity> getResolvedMixins() {
 		return resolvedMixins;
 	}
+
+
+
+	public List<Expression> expressionList() {
+		return expressionList;
+	}
+
+
+
+	
 }

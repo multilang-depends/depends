@@ -81,7 +81,7 @@ public class RelationCounter {
 		}
 		
 		HashSet<Entity> usedEntities = new HashSet<>();
-		for (Expression expression:entity.expressions().values()){
+		for (Expression expression:entity.expressionList()){
 			if (expression.isStatement) {
 				continue;
 			}
@@ -127,11 +127,11 @@ public class RelationCounter {
 
 	private void computeFunctionRelations(FunctionEntity func) {
 		for (Entity returnType:func.getReturnTypes()) {
-			func.addRelation(new Relation(DependencyType.RETURN,returnType));
+			func.addRelation(new Relation(DependencyType.RETURN,returnType.getActualReferTo()));
 		}
 		for (VarEntity parameter:func.getParameters()) {
 			if (parameter.getType()!=null) 
-				func.addRelation(new Relation(DependencyType.PARAMETER,parameter.getType()));
+				func.addRelation(new Relation(DependencyType.PARAMETER,parameter.getActualReferTo()));
 		}
 		for (Entity throwType:func.getThrowTypes()) {
 			func.addRelation(new Relation(DependencyType.THROW,throwType));

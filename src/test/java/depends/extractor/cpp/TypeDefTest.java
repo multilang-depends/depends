@@ -14,7 +14,7 @@ public class TypeDefTest extends CppParserTest{
     	super.init();
     }
 	
-	@Ignore
+	@Test
 	public void test_ref_parameter() throws IOException {
 	    String[] srcs = new String[] {
 	    		"./src/test/resources/cpp-code-examples/TypeDefTest.cpp",

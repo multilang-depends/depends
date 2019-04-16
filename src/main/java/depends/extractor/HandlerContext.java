@@ -261,6 +261,11 @@ public abstract class HandlerContext {
 	
 	
 	public void exitLastedEntity() {
+		Entity e = entityStack.peek();
+		if (e instanceof ContainerEntity) {
+			ContainerEntity container = (ContainerEntity)e;
+			container.cleanExpression();
+		}
 		entityStack.pop();
 	}
 	

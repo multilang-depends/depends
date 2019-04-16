@@ -62,6 +62,7 @@ public class VarEntity extends ContainerEntity {
 		super.inferLocalLevelEntities(inferer);
 		Entity entity = inferer.resolveName(this, rawType, true);
 		if (entity==null) return;
+		this.setActualReferTo(entity);
 		type = entity.getType();
 		if (type==null) {
 			if (((ContainerEntity)getParent()).isGenericTypeParameter(rawType)) {

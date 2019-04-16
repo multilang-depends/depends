@@ -85,9 +85,6 @@ public class Inferer {
 	private void resolveTypes() {
 		for (Entity entity:repo.getEntities()) {
 			if (!(entity instanceof FileEntity)) continue;
-			if (entity.getDisplayName().equals("/home/gangz/work/depends/data/github/eclipse.jdt.core-master/org.eclipse.jdt.apt.pluggable.tests/src/org/eclipse/jdt/apt/pluggable/tests/TestBase.java")) {
-				System.out.println("resolve type of entity " + entity.getDisplayName());
-			}
 			System.out.println("resolve type of entity " + entity.getDisplayName());
 			entity.inferEntities(this);
 		}
