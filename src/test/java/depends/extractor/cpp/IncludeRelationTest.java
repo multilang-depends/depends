@@ -60,7 +60,7 @@ public class IncludeRelationTest extends CppParserTest{
 	@Test
 	public void test_type_t_should_be_treat_as_structure() throws IOException {
 	    String[] srcs = new String[] {
-	    		"./src/test/resources/cpp-code-examples/typedefTest.cpp",
+	    		"./src/test/resources/cpp-code-examples/typedeftest2.cpp",
 	    	    };
 	    
 	    for (String src:srcs) {
