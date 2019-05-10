@@ -23,6 +23,9 @@ Following the single responsibility principle, *Depends* is designed for the pur
 
 You could run *Depends* in the following ways: ```depends.sh``` on Linux/Mac, ```depends.bat``` on Microsoft Windows, or  ```java -jar depends.jar```.
 
+Note: If you encountered Out of Memory error like ```GC overhead limt exceed```, please expands
+the JVM memory like follwing ```java -Xmx4g -jar depends.jar <args>```.
+
 ## Parameters
 
 The CLI tool usage could be listed by ```depends --help```, like following:
@@ -30,7 +33,7 @@ The CLI tool usage could be listed by ```depends --help```, like following:
     Usage: depends [-hms] [--auto-include] [-d=<dir>] [-g=<granularity>]
                    [-p=<namePathPattern>] [-f=<format>[,<format>...]]...
                    [-i=<includes>[,<includes>...]]... <lang> <src> <output>
-          <lang>                 The language of project files: [cpp, java, ruby,
+          <lang>                 The language of project files: [cpp, java, ruby, python,
                                    pom]
           <src>                  The directory to be analyzed
           <output>               The output file name
@@ -43,7 +46,7 @@ The CLI tool usage could be listed by ```depends --help```, like following:
                                  The output format: [json(default),xml,excel,dot,
                                    plantuml]
       -g, --granularity=<granularity>
-                                 Granularity of dependency.[file(default),method,L#]
+                                 Granularity of dependency.[file(default),method,L#(the level of folder. e.g. L1=1st level folder)  ]
       -h, --help                 Display this help and exit
       -s, --strip-leading-path   Strip the leading path.
       
