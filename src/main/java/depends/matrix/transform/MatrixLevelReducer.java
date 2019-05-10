@@ -86,7 +86,7 @@ public class MatrixLevelReducer {
 		
 		if (node.contains(windowsSplitter)) {
 			splitter = windowsSplitter;
-			splitterRegex = windowsSplitter;
+			splitterRegex = windowsSplitter+windowsSplitter;
 		}else if (node.contains(unixSplitter)) {
 			splitter = unixSplitter;
 			splitterRegex = unixSplitter;		
