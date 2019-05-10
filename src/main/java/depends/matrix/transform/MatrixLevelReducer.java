@@ -81,9 +81,15 @@ public class MatrixLevelReducer {
 	public static String calcuateNodeAtLevel(String node, int level) {
 		String splitterRegex = "\\.";
 		String splitter = ".";
-		if (node.contains(File.separator)) {
-			splitter = File.separator;
-			splitterRegex = File.separator;
+		String windowsSplitter = "\\";
+		String unixSplitter = "/";
+		
+		if (node.contains(windowsSplitter)) {
+			splitter = windowsSplitter;
+			splitterRegex = windowsSplitter;
+		}else if (node.contains(unixSplitter)) {
+			splitter = unixSplitter;
+			splitterRegex = unixSplitter;		
 		}
 		String prefix = "";
 		if (node.startsWith(splitter)) {
