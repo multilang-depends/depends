@@ -130,6 +130,6 @@ The language specific front-end of *Depends* is built upon several excellent ope
  - Jin Wuxia (https://github.com/jinwuxia)
 
 # Sponsors
- - ArchDia LLC. (www.archdia.net)
+ - ArchDia LLC. (www.archdia.com)
  - Emergent Design Inc.(www.emergentdesign.cn)
 
