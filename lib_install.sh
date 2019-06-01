@@ -1,3 +1,5 @@
+mvn install:install-file -DgroupId=org.jruby	-DartifactId=org.jruby.jrubyparser  -Dversion=0.5.5-SNAPSHOT    -Dpackaging=jar -Dfile=./jars/jrubyparser-0.5.5-SNAPSHOT.jar  -DgeneratePom=true
+
 mvn install:install-file -DgroupId=org.eclipse.cdt	-DartifactId=org.eclipse.cdt.core  -Dversion=6.5.0.201806170908    -Dpackaging=jar -Dfile=./jars/org.eclipse.cdt.core-6.5.0.201806170908.jar -DgeneratePom=true
 
 mvn install:install-file -DgroupId=eclipse-photon -DartifactId=org.eclipse.equinox.registry -Dversion=3.8.0.v20180426-1327  -Dpackaging=jar -Dfile=./jars/org.eclipse.equinox.registry-3.8.0.v20180426-1327.jar -DgeneratePom=true
