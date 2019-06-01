@@ -19,7 +19,7 @@ and then unzip the ```depends-*version*.tgz``` file in any directory of your com
 
 ## Run it from commmand line
 
-Following the single responsibility principle, *Depends* is designed for the purpose of extracting dependencies only. It only provides CLI interface, without GUI. But you can convert the output of *Depends* into the GUI of other tools, such as GraphViz(http://graphviz.org/), PlantUML(http://plantuml.com/), and DV8 (https://www.archdia.net). 
+Following the single responsibility principle, *Depends* is designed for the purpose of extracting dependencies only. It only provides CLI interface, without GUI. But you can convert the output of *Depends* into the GUI of other tools, such as GraphViz(http://graphviz.org/), PlantUML(http://plantuml.com/), and DV8 (https://www.archdia.com). 
 
 You could run *Depends* in the following ways: ```depends.sh``` on Linux/Mac, ```depends.bat``` on Microsoft Windows, or  ```java -jar depends.jar```.
 
@@ -130,6 +130,6 @@ The language specific front-end of *Depends* is built upon several excellent ope
  - Jin Wuxia (https://github.com/jinwuxia)
 
 # Sponsors
- - ArchDia LLC. (www.archdia.net)
+ - ArchDia LLC. (www.archdia.com)
  - Emergent Design Inc.(www.emergentdesign.cn)
 
