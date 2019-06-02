@@ -19,6 +19,7 @@ import depends.entity.repo.EntityRepo;
 import depends.extractor.python.Python3Parser.ClassdefContext;
 import depends.extractor.python.Python3Parser.DecoratedContext;
 import depends.extractor.python.Python3Parser.DecoratorContext;
+import depends.extractor.python.Python3Parser.Dot_or_ellipsisContext;
 import depends.extractor.python.Python3Parser.Dotted_as_nameContext;
 import depends.extractor.python.Python3Parser.FuncdefContext;
 import depends.extractor.python.Python3Parser.Global_stmtContext;
@@ -63,8 +64,16 @@ public class Python3CodeListener extends Python3BaseListener {
 
 	@Override
 	public void enterImport_from(Import_fromContext ctx) {
-		String moduleName = ctx.dotted_name().getText();
-		String fullName = foundImportedModuleOrPackage(moduleName);
+		String moduleName = null;
+		if (ctx.dotted_name()!=null) {
+			moduleName = ctx.dotted_name().getText();
+		}
+		int prefixDotCount = 0;
+		for (Dot_or_ellipsisContext item:ctx.dot_or_ellipsis()) {
+			prefixDotCount +=item.getText().length();
+		}
+		
+		String fullName = foundImportedModuleOrPackage(prefixDotCount,moduleName);
 		if (fullName!=null) {
 			if (ctx.import_as_names()==null) {//import *
 				ContainerEntity moduleEntity = (ContainerEntity)(entityRepo.getEntity(fullName));
@@ -104,27 +113,40 @@ public class Python3CodeListener extends Python3BaseListener {
 		if (ctx.NAME()!=null) {
 			aliasedName = ctx.NAME().getText();
 		}
-		String fullName = foundImportedModuleOrPackage(originalName);
+		String fullName = foundImportedModuleOrPackage(0,originalName);
 		context.foundNewImport(new NameAliasImport(fullName,entityRepo.getEntity(fullName),aliasedName));
 		super.enterDotted_as_name(ctx);
 	}
 
 
 
-	private String foundImportedModuleOrPackage(String originalName) {
-		String importedName = originalName.replace(".", File.separator);
-		String fullName = includeFileLocator.uniqFileName(context.currentFile().getRawName(), importedName);
-		if (fullName==null) {
-			fullName = includeFileLocator.uniqFileName(context.currentFile().getRawName(), importedName+".py");
+	private String foundImportedModuleOrPackage(int prefixDotCount, String originalName) {
+		String dir = FileUtil.getLocatedDir(context.currentFile().getRawName());
+		String preFix = "";
+		for (int i=0;i<prefixDotCount-1;i++) {
+			preFix = preFix + ".." + File.separator;
+		}
+		dir = dir + preFix;
+		String fullName = null;
+		if (originalName!=null) {
+			String importedName = originalName.replace(".", File.separator);
+			fullName = includeFileLocator.uniqFileName(dir, importedName);
+			if (fullName==null) {
+				fullName = includeFileLocator.uniqFileName(dir, importedName+".py");
+			}
+		}else {
+			fullName = FileUtil.uniqFilePath(dir);
 		}
 		if (fullName!=null) {
 			if (FileUtil.isDirectory(fullName)) {
-				File d = new File(fullName);
-				File[] files = d.listFiles();
-				for (File file:files) {
-					if (!file.isDirectory()) {
-						if (file.getAbsolutePath().endsWith(".py")) {
-							visitIncludedFile(FileUtil.uniqFilePath(file.getAbsolutePath()));
+				if (!FileUtil.uniqFilePath(fullName).equals(FileUtil.uniqFilePath(dir))){
+					File d = new File(fullName);
+					File[] files = d.listFiles();
+					for (File file:files) {
+						if (!file.isDirectory()) {
+							if (file.getAbsolutePath().endsWith(".py")) {
+								visitIncludedFile(FileUtil.uniqFilePath(file.getAbsolutePath()));
+							}
 						}
 					}
 				}

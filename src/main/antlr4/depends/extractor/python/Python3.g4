@@ -186,7 +186,7 @@ raise_stmt: 'raise' (test ('from' test)?)?;
 import_stmt: import_name | import_from;
 import_name: 'import' dotted_as_names;
 // note below: the ('.' | '...') is necessary because '...' is tokenized as ELLIPSIS
-import_from: ('from' (('.' | '...')* dotted_name | ('.' | '...')+)
+import_from: ('from' (dot_or_ellipsis* dotted_name | dot_or_ellipsis+)
               'import' ('*' | '(' import_as_names ')' | import_as_names));
 import_as_name: NAME ('as' NAME)?;
 dotted_as_name: dotted_name ('as' NAME)?;
@@ -196,6 +196,7 @@ dotted_name: NAME ('.' NAME)*;
 global_stmt: 'global' NAME (',' NAME)*;
 nonlocal_stmt: 'nonlocal' NAME (',' NAME)*;
 assert_stmt: 'assert' test (',' test)?;
+dot_or_ellipsis: ('.' | '...');
 
 compound_stmt: if_stmt | while_stmt | for_stmt | try_stmt | with_stmt | funcdef | classdef | decorated | async_stmt;
 async_stmt: ASYNC (funcdef | with_stmt | for_stmt);

@@ -36,6 +36,7 @@ import depends.extractor.HandlerContext;
 import depends.extractor.ParserCreator;
 import depends.importtypes.FileImport;
 import depends.relations.Inferer;
+import depends.util.FileUtil;
 
 public class RubyHandlerContext extends HandlerContext {
 
@@ -65,7 +66,8 @@ public class RubyHandlerContext extends HandlerContext {
 		if(methodName.equals("require") || methodName.equals("require_relative")) { 
 			for (String importedFilename:params) {
 				if (!importedFilename.endsWith(".rb")) importedFilename = importedFilename + ".rb";
-				String inclFileName = includedFileLocator.uniqFileName(currentFile().getRawName(),importedFilename);
+				String dir = FileUtil.getLocatedDir(currentFile().getRawName());
+				String inclFileName = includedFileLocator.uniqFileName(dir,importedFilename);
 				if (inclFileName==null) {
 					System.err.println("Warning: cannot found included file " + importedFilename );
 					continue;
