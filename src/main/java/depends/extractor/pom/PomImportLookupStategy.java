@@ -43,4 +43,9 @@ public class PomImportLookupStategy extends EmptyImportLookupStategy  {
 		}
 		return result;
 	}
+	
+	@Override
+	public boolean supportGlobalNameLookup() {
+		return true;
+	}
 }
