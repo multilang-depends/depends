@@ -70,4 +70,10 @@ public interface ImportLookupStrategy {
 	 */
 	Collection<Entity> getImportedFiles(List<Import> importedNames, EntityRepo repo);
 
+	/** Whether support global name lookup
+	 * for java, it should be true;
+	 * for most of langs, it should be false;
+	 */
+	boolean supportGlobalNameLookup();
+
 }

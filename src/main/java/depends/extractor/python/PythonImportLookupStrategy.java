@@ -62,4 +62,9 @@ public class PythonImportLookupStrategy implements ImportLookupStrategy {
 		}
 		return files;
 	}
+	
+	@Override
+	public boolean supportGlobalNameLookup() {
+		return false;
+	}
 }

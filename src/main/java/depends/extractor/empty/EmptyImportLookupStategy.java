@@ -55,5 +55,8 @@ public class EmptyImportLookupStategy implements ImportLookupStrategy {
 	public List<Entity> getImportedFiles(List<Import> importedNames, EntityRepo repo) {
 		return new ArrayList<Entity>();
 	}
-
+	@Override
+	public boolean supportGlobalNameLookup() {
+		return false;
+	}
 }

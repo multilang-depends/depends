@@ -183,9 +183,11 @@ public class Inferer {
 			if (entity!=null && !entity.equals(externalType)) {
 				break;
 			}
-			if (repo.getEntity(name) != null) {
-				entity = repo.getEntity(name);
-				break;
+			if (importLookupStrategy.supportGlobalNameLookup()) {
+				if (repo.getEntity(name) != null) {
+					entity = repo.getEntity(name);
+					break;
+				}
 			}
 			
 			indexCount++;

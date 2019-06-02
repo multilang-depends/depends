@@ -96,7 +96,8 @@ public class Python3CodeListener extends Python3BaseListener {
 					if (item.NAME().size()>1)
 						alias = item.NAME(1).getText();
 					Entity itemEntity = inferer.resolveName(entityRepo.getEntity(fullName), name, true);
-					context.foundNewImport(new NameAliasImport(fullName, itemEntity	,alias));
+					if (itemEntity!=null)
+					context.foundNewImport(new NameAliasImport(itemEntity.getQualifiedName(), itemEntity	,alias));
 				}
 			}
 		}

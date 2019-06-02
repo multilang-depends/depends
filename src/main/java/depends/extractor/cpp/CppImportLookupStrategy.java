@@ -108,5 +108,9 @@ public class CppImportLookupStrategy implements ImportLookupStrategy {
 	public List<Entity> getImportedFiles(List<Import> importedList, EntityRepo repo) {
 		return getImportedRelationEntities(importedList,repo);
 	}
-
+	
+	@Override
+	public boolean supportGlobalNameLookup() {
+		return false;
+	}
 }

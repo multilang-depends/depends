@@ -74,5 +74,9 @@ public class JavaImportLookupStrategy implements ImportLookupStrategy{
 	}
 
 
+	@Override
+	public boolean supportGlobalNameLookup() {
+		return true;
+	}
 
 }

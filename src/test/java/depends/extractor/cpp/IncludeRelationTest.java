@@ -9,6 +9,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+import depends.deptypes.DependencyType;
 import depends.entity.AliasEntity;
 import depends.extractor.cpp.CppFileParser;
 
@@ -70,5 +71,22 @@ public class IncludeRelationTest extends CppParserTest{
 	    inferer.resolveAllBindings();
         assertEquals("abc",((AliasEntity)repo.getEntity("abc_t")).getOriginType().getRawName());
         
+	}
+	
+	@Test
+	public void test_call_should_only_in_relations_with_include() throws IOException {
+		String[] srcs = new String[] {
+	    		"./src/test/resources/cpp-code-examples/includeTest2/f0.cpp",
+	    		"./src/test/resources/cpp-code-examples/includeTest2/f_with_include.cpp",
+	    		"./src/test/resources/cpp-code-examples/includeTest2/f_without_include.cpp",
+	    	    };
+	    
+	    for (String src:srcs) {
+		    CppFileParser parser = createParser(src);
+		    parser.parse();
+	    }
+	    inferer.resolveAllBindings();
+	    this.assertContainsRelation(this.repo.getEntity("foo"), DependencyType.CALL, "bar");
+	    this.assertNotContainsRelation(this.repo.getEntity("foo2"), DependencyType.CALL, "bar");
 	}
 }
