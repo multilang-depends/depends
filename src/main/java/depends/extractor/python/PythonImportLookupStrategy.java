@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.collections4.CollectionUtils;
+
 import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.repo.EntityRepo;
@@ -33,7 +35,9 @@ public class PythonImportLookupStrategy implements ImportLookupStrategy {
 
 	@Override
 	public Collection<Entity> getImportedRelationEntities(List<Import> importedNames, EntityRepo repo) {
-		return getImportedTypes(importedNames,repo);
+		Collection<Entity> files = getImportedFiles(importedNames,repo);
+		Collection<Entity> types = this.getImportedTypes(importedNames, repo);
+		return CollectionUtils.union(files, types);
 	}
 
 	@Override

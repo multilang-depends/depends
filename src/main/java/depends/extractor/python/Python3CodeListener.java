@@ -127,7 +127,7 @@ public class Python3CodeListener extends Python3BaseListener {
 		for (int i=0;i<prefixDotCount-1;i++) {
 			preFix = preFix + ".." + File.separator;
 		}
-		dir = dir + preFix;
+		dir = dir + File.separator + preFix;
 		String fullName = null;
 		if (originalName!=null) {
 			String importedName = originalName.replace(".", File.separator);
