@@ -33,7 +33,7 @@ public class PythonImportLookupStrategy implements ImportLookupStrategy {
 
 	@Override
 	public Collection<Entity> getImportedRelationEntities(List<Import> importedNames, EntityRepo repo) {
-		return getImportedFiles(importedNames,repo);
+		return getImportedTypes(importedNames,repo);
 	}
 
 	@Override
