@@ -26,7 +26,9 @@ package depends.entity;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import depends.relations.Inferer;
 import depends.relations.Relation;
@@ -43,7 +45,7 @@ public abstract class Entity {
 	String rawName = "";
 	Entity parent;
 	private MultiDeclareEntities mutliDeclare = null;
-	private List<Entity> children = new ArrayList<>();
+	private Set<Entity> children = new HashSet<>();
     ArrayList<Relation> relations = new ArrayList<>();
 	private Entity actualReferTo = null;
 

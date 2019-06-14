@@ -125,6 +125,7 @@ public class PythonImportTest extends PythonParserTest {
 	    		"./src/test/resources/python-code-examples/import_with_dir/importing.py",
 	    		"./src/test/resources/python-code-examples/import_with_dir/imported_a.py",
 	    		"./src/test/resources/python-code-examples/import_with_dir/subdir/importing.py",
+	    		"./src/test/resources/python-code-examples/import_with_dir/subdir/importing2.py",
 	    	    };
 	    
 	    for (String src:srcs) {
@@ -134,5 +135,6 @@ public class PythonImportTest extends PythonParserTest {
 	    inferer.resolveAllBindings();
 		this.assertContainsRelation(repo.getEntity(FileUtil.uniqFilePath(srcs[0])), DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[1]));
 		this.assertContainsRelation(repo.getEntity(FileUtil.uniqFilePath(srcs[2])), DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[1]));
+		this.assertContainsRelation(repo.getEntity(FileUtil.uniqFilePath(srcs[3])), DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[1]));
 	}
 }

@@ -50,4 +50,8 @@ public class FileUtil {
 		if (!file.exists()) return null;
 		return file.getParent();
 	}
+
+	public static String getShortFileName(String path) {
+		return new File(path).getName();
+	}
 }

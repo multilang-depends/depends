@@ -267,8 +267,11 @@ public class CandidateTypes extends TypeEntity {
 
 	@Override
 	public Collection<Entity> getChildren() {
-		System.err.println("error: getChildren should not been invoked");
-		return super.getChildren();
+		List<Entity> children = new ArrayList<>();
+		for (Entity entity:this.candidateTypes) {
+			children.addAll(entity.getChildren());
+		}
+		return children;
 	}
 
 	@Override

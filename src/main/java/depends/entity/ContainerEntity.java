@@ -178,6 +178,15 @@ public abstract class ContainerEntity extends DecoratedEntity {
 		}
 		return null;
 	}
+	
+	public List<Expression> expressionList() {
+		return expressionList;
+	}
+
+	public boolean containsExpression() {
+		return expressions.size()>0;
+	}
+
 
 	public String dumpExpressions() {
 		StringBuilder sb = new StringBuilder();
@@ -293,9 +302,6 @@ public abstract class ContainerEntity extends DecoratedEntity {
 
 
 
-	public List<Expression> expressionList() {
-		return expressionList;
-	}
 
 
 

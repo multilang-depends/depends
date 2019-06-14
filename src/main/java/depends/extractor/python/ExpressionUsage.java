@@ -8,6 +8,7 @@ import depends.entity.ContainerEntity;
 import depends.entity.Entity;
 import depends.entity.Expression;
 import depends.entity.FunctionEntity;
+import depends.entity.TypeEntity;
 import depends.entity.VarEntity;
 import depends.entity.repo.IdGenerator;
 import depends.extractor.python.Python3Parser.AtomContext;
@@ -15,6 +16,8 @@ import depends.extractor.python.Python3Parser.Atom_exprContext;
 import depends.extractor.python.Python3Parser.Expr_stmtContext;
 import depends.extractor.python.Python3Parser.Raise_stmtContext;
 import depends.extractor.python.Python3Parser.Return_stmtContext;
+import depends.extractor.python.Python3Parser.SuiteContext;
+import depends.extractor.python.Python3Parser.TestContext;
 import depends.relations.Inferer;
 
 public class ExpressionUsage {
@@ -30,6 +33,11 @@ public class ExpressionUsage {
 	}
 	
 	public Expression foundExpression(ParserRuleContext ctx) {
+		if (!context.lastContainer().containsExpression()){
+			if (!isStartOfContainerRule(ctx)) {
+				return null;
+			}
+		}
 		Expression expression = findExpression(ctx);
 		if (expression!=null) return expression;
 		Expression parent = findParentInStack(ctx);
@@ -79,11 +87,26 @@ public class ExpressionUsage {
 			if (expr.func_call()!=null) {
 				//TODO: should be refined later. Currently only a.b.c could be solved.
 				expression.identifier = expr.atom_expr().getText();
-				Entity entity = context.foundEntityWithName(expression.identifier);
-				if (entity instanceof FunctionEntity) {
-					expression.isCall = true;
-				}else {
-					expression.isCreate = true;
+				String callPrefix = expr.atom_expr().getText();
+				//call with variables
+				if (callPrefix.contains(".")) {
+					int pos = callPrefix.lastIndexOf('.');
+					String functionName = callPrefix.substring(pos+1);
+					String preFix = callPrefix.substring(0,pos);
+					Entity prefixEntity = context.foundEntityWithName(preFix);
+					if (prefixEntity instanceof VarEntity) {
+						((VarEntity)prefixEntity).addFunctionCall(functionName);
+						expression.isCall = true;
+					}
+				}
+				if (!expression.isCall) {
+					Entity typeEntity = context.foundEntityWithName(expression.identifier);
+					if (typeEntity instanceof TypeEntity &&
+							typeEntity.getId()>0) {
+						expression.isCreate = true;
+					}else {
+						expression.isCall = true;
+					}
 				}
 			}
 			else if (expr.member_access()!=null) {
@@ -99,6 +122,17 @@ public class ExpressionUsage {
 		}
 		deduceVarTypeInCaseOfAssignment(ctx, expression);
 		return expression;
+	}
+
+	/**
+	 * To judge whether is an 'real' expression 
+	 * @param ctx
+	 * @return
+	 */
+	private boolean isStartOfContainerRule(ParserRuleContext ctx) {
+		return ctx instanceof SuiteContext ||
+				ctx instanceof TestContext ||
+				ctx instanceof Expr_stmtContext;
 	}
 
 

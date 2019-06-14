@@ -59,7 +59,8 @@ public class Python3CodeListener extends Python3BaseListener {
 		String moduleName = fileEntity.getRawName().substring(packageEntity.getRawName().length()+1);
 		if (moduleName.endsWith(".py"))
 			moduleName= moduleName.substring(0,moduleName.length()-".py".length());
-		packageEntity.addChild(moduleName, fileEntity);
+		entityRepo.setParent(fileEntity,packageEntity);
+		packageEntity.addChild(FileUtil.getShortFileName(fileEntity.getRawName()).replace(".py", ""),fileEntity);
 	}
 
 	@Override
@@ -175,7 +176,10 @@ public class Python3CodeListener extends Python3BaseListener {
         context.foundMethodDeclarator(functionName, null, new ArrayList<>());
         List<String> parameters = helper.getParameterList(ctx.parameters());
         for (String param:parameters) {
-        	context.addMethodParameter(param);
+        	VarEntity paramEntity = context.addMethodParameter(param);
+        	if (param.equals("self")) {
+        		paramEntity.setType(context.currentType());
+        	}
         }
         super.enterFuncdef(ctx);
 	}

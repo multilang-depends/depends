@@ -242,10 +242,11 @@ public abstract class HandlerContext {
 		return var;
 	}
 	
-	public void addMethodParameter(String paramName) {
-		if (currentFunction()==null) return;
+	public VarEntity addMethodParameter(String paramName) {
+		if (currentFunction()==null) return null;
 		VarEntity varEntity = new VarEntity(paramName,null,currentFunction(),idGenerator.generateId());
-		currentFunction().addParameter(varEntity);		
+		currentFunction().addParameter(varEntity);
+		return varEntity;
 	}
 
 	public void foundEnumConstDefinition(String varName) {

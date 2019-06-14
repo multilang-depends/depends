@@ -56,6 +56,9 @@ public class Expression {
 	}
 
 	public void setType(TypeEntity type, Entity referredEntity, Inferer inferer) {
+		if (type instanceof CandidateTypes) {
+			return ;
+		}
 		boolean changedType = false;
 		if (this.type==null && type!=null) {
 			this.type = type;
