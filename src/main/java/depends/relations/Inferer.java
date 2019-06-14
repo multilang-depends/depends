@@ -178,6 +178,7 @@ public class Inferer {
 		Entity entity = null;
 		int indexCount = 0;
 		String name = rawName;
+		if (fromEntity==null) return null;
 		do {
 			entity = lookupEntity(fromEntity, name, searchImport);
 			if (entity!=null && !entity.equals(externalType)) {
@@ -373,6 +374,9 @@ public class Inferer {
 	}
 	
 	private Entity tryToFindEntityWithNameSureSingleEntity(Entity fromEntity, String name) {
+		if(fromEntity==null) {
+			System.out.print("hhh");
+		}
 		if (!fromEntity.getRawName().equals(name))
 			return null;
 		if (fromEntity instanceof MultiDeclareEntities) {

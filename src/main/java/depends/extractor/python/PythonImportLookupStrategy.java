@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -36,8 +38,18 @@ public class PythonImportLookupStrategy implements ImportLookupStrategy {
 	@Override
 	public Collection<Entity> getImportedRelationEntities(List<Import> importedNames, EntityRepo repo) {
 		Collection<Entity> files = getImportedFiles(importedNames,repo);
-		Collection<Entity> types = this.getImportedTypes(importedNames, repo);
-		return CollectionUtils.union(files, types);
+		Collection<Entity> filescontainsTypes = 	this.getImportedTypes(importedNames, repo).stream().map(e->{
+			return e.getAncestorOfType(FileEntity.class);
+		}).filter(new Predicate<Entity>() {
+
+			@Override
+			public boolean test(Entity t) {
+				return t!=null;
+			}
+		}).collect(Collectors.toSet());
+		
+		
+		return CollectionUtils.union(files, filescontainsTypes);
 	}
 
 	@Override
