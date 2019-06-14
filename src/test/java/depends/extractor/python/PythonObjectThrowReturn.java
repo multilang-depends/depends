@@ -26,8 +26,8 @@ public class PythonObjectThrowReturn extends PythonParserTest {
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
-	    FunctionEntity func = (FunctionEntity)repo.getEntity("t1");
-	    this.assertContainsRelation(func, DependencyType.THROW, "Bar");
+	    FunctionEntity func = (FunctionEntity)repo.getEntity(withPackageName(srcs[0],"t1"));
+	    this.assertContainsRelation(func, DependencyType.THROW, withPackageName(srcs[0],"Bar"));
 	}
 	
 	
@@ -42,8 +42,8 @@ public class PythonObjectThrowReturn extends PythonParserTest {
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
-	    FunctionEntity func = (FunctionEntity)repo.getEntity("t2");
-	    this.assertContainsRelation(func, DependencyType.RETURN, "Bar");
+	    FunctionEntity func = (FunctionEntity)repo.getEntity(withPackageName(srcs[0],"t2"));
+	    this.assertContainsRelation(func, DependencyType.RETURN, withPackageName(srcs[0],"Bar"));
 	}
 
 

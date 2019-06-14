@@ -46,7 +46,7 @@ public class PythonImportTest extends PythonParserTest {
 	    inferer.resolveAllBindings();
 	    Entity file = repo.getEntity(FileUtil.uniqFilePath(srcs[0]));
 		this.assertContainsRelation(file, DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[1]));
-		this.assertContainsRelation(file, DependencyType.CALL,"foo");
+		this.assertContainsRelation(file, DependencyType.CALL,withPackageName(srcs[0],"foo"));
 	}
 	
 	@Test
@@ -63,7 +63,7 @@ public class PythonImportTest extends PythonParserTest {
 	    inferer.resolveAllBindings();
 	    Entity file = repo.getEntity(FileUtil.uniqFilePath(srcs[0]));
 		this.assertContainsRelation(file, DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[1]));
-		this.assertContainsRelation(file, DependencyType.CALL,"foo");
+		this.assertContainsRelation(file, DependencyType.CALL,withPackageName(srcs[0],"foo"));
 	}
 	
 	@Test
@@ -79,7 +79,7 @@ public class PythonImportTest extends PythonParserTest {
 	    }
 	    inferer.resolveAllBindings();
 	    Entity file = repo.getEntity(FileUtil.uniqFilePath(srcs[0]));
-		this.assertContainsRelation(file, DependencyType.CALL,"foo");
+		this.assertContainsRelation(file, DependencyType.CALL,withPackageName(srcs[0],"foo"));
 		this.assertContainsRelation(file, DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[1]));
 	}
 	
@@ -97,7 +97,7 @@ public class PythonImportTest extends PythonParserTest {
 	    }
 	    inferer.resolveAllBindings();
 	    Entity file = repo.getEntity(FileUtil.uniqFilePath(srcs[0]));
-		this.assertContainsRelation(file, DependencyType.CALL,"foo");
+		this.assertContainsRelation(file, DependencyType.CALL,withPackageName(srcs[0],"foo"));
 		this.assertContainsRelation(file, DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[1]));
 	}
 	
@@ -115,7 +115,7 @@ public class PythonImportTest extends PythonParserTest {
 	    }
 	    inferer.resolveAllBindings();
 	    Entity file = repo.getEntity(FileUtil.uniqFilePath(srcs[0]));
-		this.assertContainsRelation(file, DependencyType.CALL,"foo");
+		this.assertContainsRelation(file, DependencyType.CALL,withPackageName(srcs[1],"foo"));
 		this.assertContainsRelation(file, DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[1]));
 	}
 	

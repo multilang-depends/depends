@@ -34,4 +34,8 @@ public abstract class PythonParserTest extends ParserTest implements ParserCreat
 	public FileParser createFileParser(String src) {
 		return  p.createFileParser(FileUtil.uniqFilePath(src));
 	}
+	
+	protected String withPackageName(String theFile,String entityName) {
+		return FileUtil.uniqFilePath(FileUtil.getLocatedDir(theFile))+"."+entityName;
+	}
 }

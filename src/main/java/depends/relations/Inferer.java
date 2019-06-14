@@ -394,6 +394,31 @@ public class Inferer {
 	 * @return
 	 */
 	public List<TypeEntity> calculateCandidateTypes(VarEntity fromEntity, List<FunctionCall> functionCalls) {
+		return searchTypesInRepo(fromEntity, functionCalls);
+	}
+
+	private List<TypeEntity> searchTypesInRepo(VarEntity fromEntity, List<FunctionCall> functionCalls) {
+		List<TypeEntity> types = new ArrayList<>();
+
+		for(Entity f:repo.getEntities()) {
+			if (f instanceof FileEntity)
+			for (TypeEntity type:((FileEntity)f).getDeclaredTypes()) {
+				FunctionMatcher functionMatcher = new FunctionMatcher(type.getFunctions());
+				if (functionMatcher.containsAll(functionCalls)) {
+					types.add(type);
+				}
+			}
+		}
+		return types;
+	}
+
+	/**
+	 * Only refer to the candidate types with import relations. 
+	 * @param fromEntity
+	 * @param functionCalls
+	 * @return
+	 */
+	private List<TypeEntity> searchTypesWithImportedRelations(VarEntity fromEntity, List<FunctionCall> functionCalls) {
 		List<TypeEntity> types = new ArrayList<>();
 		FileEntity file = (FileEntity) fromEntity.getAncestorOfType(FileEntity.class);
 		searchAllTypesUnder(types,file, functionCalls);

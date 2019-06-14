@@ -26,8 +26,8 @@ public class PythonObjectCreationTest extends PythonParserTest {
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
-	    FunctionEntity func = (FunctionEntity)repo.getEntity("foo");
-	    this.assertContainsRelation(func, DependencyType.CREATE, "Bar");
+	    FunctionEntity func = (FunctionEntity)repo.getEntity(withPackageName(srcs[0],"foo"));
+	    this.assertContainsRelation(func, DependencyType.CREATE, withPackageName(srcs[0],"Bar"));
 	}
 
 }

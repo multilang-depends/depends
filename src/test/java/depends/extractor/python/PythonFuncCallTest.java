@@ -26,8 +26,8 @@ public class PythonFuncCallTest extends PythonParserTest {
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
-	    FunctionEntity func = (FunctionEntity)repo.getEntity("foo");
-	    this.assertContainsRelation(func, DependencyType.CALL, "bar");
+	    FunctionEntity func = (FunctionEntity)repo.getEntity(withPackageName(srcs[0],"foo"));
+	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[0],"bar"));
 	}
 
 }

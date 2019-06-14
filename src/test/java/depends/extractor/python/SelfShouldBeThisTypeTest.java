@@ -31,10 +31,10 @@ public class SelfShouldBeThisTypeTest extends PythonParserTest {
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
-	    FunctionEntity function = (FunctionEntity)(repo.getEntity("A.foo"));
+	    FunctionEntity function = (FunctionEntity)(repo.getEntity(withPackageName(srcs[0],"A.foo")));
 	    VarEntity var = function.lookupVarLocally("self");
 	    TypeEntity type = var.getType();
-	    assertTrue(type.getQualifiedName().equals("A"));
+	    assertTrue(type.getQualifiedName().equals(withPackageName(srcs[0],"A")));
 	}
 }
 

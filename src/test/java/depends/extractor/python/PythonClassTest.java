@@ -28,7 +28,7 @@ public class PythonClassTest extends PythonParserTest {
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
-        assertNotNull(repo.getEntity("Foo"));
+        assertNotNull(repo.getEntity(withPackageName(srcs[0],"Foo")));
 	}
 	
 	@Test
@@ -42,7 +42,7 @@ public class PythonClassTest extends PythonParserTest {
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
-	    TypeEntity type = (TypeEntity)repo.getEntity("Foo");
+	    TypeEntity type = (TypeEntity)repo.getEntity(withPackageName(srcs[0],"Foo"));
         assertEquals(2,type.getFunctions().size());
 	}
 	
@@ -57,8 +57,8 @@ public class PythonClassTest extends PythonParserTest {
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
-	    TypeEntity type = (TypeEntity)repo.getEntity("Bar");
-	    this.assertContainsRelation(type, DependencyType.INHERIT, "Foo");
+	    TypeEntity type = (TypeEntity)repo.getEntity(withPackageName(srcs[0],"Bar"));
+	    this.assertContainsRelation(type, DependencyType.INHERIT, withPackageName(srcs[0],"Foo"));
 	}
 
 
