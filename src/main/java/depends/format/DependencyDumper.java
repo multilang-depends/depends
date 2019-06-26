@@ -30,6 +30,7 @@ import depends.format.detail.DetailTextFormatDependencyDumper;
 import depends.format.dot.DotFormatDependencyDumper;
 import depends.format.excel.ExcelFormatDependencyDumper;
 import depends.format.json.JsonFormatDependencyDumper;
+import depends.format.plantuml.BriefPlantUmlFormatDependencyDumper;
 import depends.format.plantuml.PlantUmlFormatDependencyDumper;
 import depends.format.xml.XmlFormatDependencyDumper;
 import depends.matrix.core.DependencyMatrix;
@@ -57,6 +58,7 @@ public class DependencyDumper {
 		 	new ExcelFormatDependencyDumper(dependencyMatrix,projectName,outputDir),
 		 	new DotFormatDependencyDumper(dependencyMatrix,projectName,outputDir),
 		 	new PlantUmlFormatDependencyDumper(dependencyMatrix,projectName,outputDir),
+		 	new BriefPlantUmlFormatDependencyDumper(dependencyMatrix,projectName,outputDir)
 		};
 		for (AbstractFormatDependencyDumper builder:builders) {
 			if (formatList.contains(builder.getFormatName())){
