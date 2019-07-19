@@ -30,6 +30,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.neo4j.ogm.annotation.Id;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import depends.relations.Inferer;
 import depends.relations.Relation;
 
@@ -40,7 +44,9 @@ import depends.relations.Relation;
  * We also use entity to record relations 
  */
 public abstract class Entity {
-	int id=-1;
+	
+    @Id
+    Integer id=-1;
 	String qualifiedName = null;
 	String rawName = "";
 	Entity parent;

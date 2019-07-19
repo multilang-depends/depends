@@ -12,6 +12,12 @@ import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.graphdb.factory.GraphDatabaseSettings;
 import org.neo4j.ogm.session.Session;
+
+import depends.entity.Entity;
+import depends.entity.FileEntity;
+import depends.entity.TypeEntity;
+import depends.entity.VarEntity;
+
 import org.neo4j.graphdb.Transaction;
 
 
@@ -82,17 +88,22 @@ public class TestNeo4j {
 	
 	@Test
 	public void test2() {
-		Person p1 = new Person();
-		p1.setName("pa");
-		
-		Person p2 = new Person();
-		p2.setName("pb");
-		p2.addFriend(p1);
+		FileEntity p1 = new FileEntity("f1",1);
+		TypeEntity p2 = new TypeEntity("t2",p1,2);
+		VarEntity var = new VarEntity("a","int",p2,3);
+		p2.addVar(var);
 		Session session = Neo4jSessionFactory.getInstance().getNeo4jSession();
 		session.purgeDatabase();
 		session.save(p1);
 		session.save(p2);
+		session.save(var);
 		
-		session.deleteAll(Person.class);
+		Entity p3 =  session.load(FileEntity.class, 1, 1);
+		System.out.print(p3.getDisplayName());
+		System.out.print(p3.getChildren());
+		TypeEntity t2 = (TypeEntity)(p3.getChildren().iterator().next());
+		System.out.print(t2.getVars().size());
+		System.out.print(p2.getVars().size());
+		
 	}
 }

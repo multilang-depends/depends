@@ -11,7 +11,7 @@ class Neo4jSessionFactory {
             new ClasspathConfigurationSource("ogm.properties");
     private static Configuration configuration = new Configuration.Builder(configurationSource).build();
     
-    private static SessionFactory sessionFactory = new SessionFactory(configuration, "depends.persistent.neo4j.executor");
+    private static SessionFactory sessionFactory = new SessionFactory(configuration, "depends.persistent.neo4j.executor","depends.entity");
     private static Neo4jSessionFactory factory = new Neo4jSessionFactory();
 
     static Neo4jSessionFactory getInstance() {
@@ -22,7 +22,6 @@ class Neo4jSessionFactory {
     }
 
     Session getNeo4jSession() {
-    	configurationSource.properties().setProperty(key, value)
         return sessionFactory.openSession();
     }
 }

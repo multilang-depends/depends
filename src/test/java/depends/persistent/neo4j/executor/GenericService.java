@@ -13,6 +13,8 @@ package depends.persistent.neo4j.executor;
 
 import org.neo4j.ogm.session.Session;
 
+import depends.entity.Entity;
+
 abstract class GenericService<T extends Entity> implements Service<T> {
 
     private static final int DEPTH_LIST = 0;
@@ -44,7 +46,7 @@ abstract class GenericService<T extends Entity> implements Service<T> {
 	public
     T createOrUpdate(T entity) {
         session.save(entity, DEPTH_ENTITY);
-        return find(entity.getId());
+        return find(new Long(entity.getId()));
     }
 
     abstract Class<T> getEntityType();
