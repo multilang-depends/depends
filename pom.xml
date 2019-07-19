@@ -7,11 +7,13 @@
 	<groupId>cn.emergentdesign.se</groupId>
 	<artifactId>depends</artifactId>
 	<!-- <version>1.0-SNAPSHOT</version> -->
-    <version>0.9.1</version>
+    <version>0.9.2</version>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<antlr4.visitor>true</antlr4.visitor>
 		<antlr4.listener>true</antlr4.listener>
+		<neo4j-ogm.version>3.1.9</neo4j-ogm.version>
+		
 	</properties>
 	<build>
 		<plugins>
@@ -60,6 +62,21 @@
 			        </execution>  
 			    </executions>				
 			</plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <mainClass>depends.Main</mainClass>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>
 
@@ -160,5 +177,29 @@
 			<artifactId>jrubyparser</artifactId>
 			<version>0.5.5-SNAPSHOT</version>
 		</dependency>
+		
+        <dependency>
+            <groupId>com.voodoodyne.jackson.jsog</groupId>
+            <artifactId>jackson-jsog</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+		<dependency>
+			<groupId>org.neo4j</groupId>
+			<artifactId>neo4j</artifactId>
+			<version>${neo4j-ogm.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.neo4j</groupId>
+			<artifactId>neo4j-ogm-embedded-driver</artifactId>
+			<version>${neo4j-ogm.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.neo4j</groupId>
+			<artifactId>neo4j-ogm-bolt-driver</artifactId>
+			<version>${neo4j-ogm.version}</version>
+		</dependency>
+
+       		
 	</dependencies>
 </project>
