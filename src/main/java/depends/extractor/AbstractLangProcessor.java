@@ -34,6 +34,7 @@ import org.codehaus.plexus.util.FileUtils;
 
 import depends.entity.repo.BuiltInType;
 import depends.entity.repo.EntityRepo;
+import depends.entity.repo.InMemoryEntityRepo;
 import depends.generator.DependencyGenerator;
 import depends.matrix.core.DependencyMatrix;
 import depends.matrix.transform.OrderedMatrixGenerator;
@@ -78,7 +79,7 @@ abstract public class AbstractLangProcessor {
 	private DependencyGenerator dependencyGenerator;
 
 	public AbstractLangProcessor(boolean eagerExpressionResolve) {
-		entityRepo = new EntityRepo();
+		entityRepo = new InMemoryEntityRepo();
 
 		inferer = new Inferer(entityRepo,getImportLookupStrategy(),getBuiltInType(),eagerExpressionResolve);
 	}

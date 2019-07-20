@@ -6,6 +6,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import depends.entity.repo.EntityRepo;
+import depends.entity.repo.InMemoryEntityRepo;
 import depends.extractor.FileParser;
 import depends.extractor.ParserCreator;
 import depends.extractor.ParserTest;
@@ -16,7 +17,7 @@ public abstract class RubyParserTest extends ParserTest implements ParserCreator
 	protected Inferer inferer ;
 
 	public void init() {
-		entityRepo = new EntityRepo();
+		entityRepo = new InMemoryEntityRepo();
 		inferer = new Inferer(entityRepo,new RubyImportLookupStrategy(),new RubyBuiltInType(),true);
 	}
 	

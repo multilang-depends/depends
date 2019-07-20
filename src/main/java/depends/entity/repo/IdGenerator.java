@@ -24,16 +24,11 @@ SOFTWARE.
 
 package depends.entity.repo;
 
-public class IdGenerator {
-	private int nextAvaliableIndex;
-	public IdGenerator() {
-		nextAvaliableIndex = 0;
-	}
+public interface IdGenerator {
+
 	/**
 	 * Generate a global unique ID for entity
 	 * @return the unique id
 	 */
-	public Integer generateId() {
-		return nextAvaliableIndex++;
-	}
+	Integer generateId();
 }

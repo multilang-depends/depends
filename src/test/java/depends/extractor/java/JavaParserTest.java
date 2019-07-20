@@ -1,6 +1,7 @@
 package depends.extractor.java;
 
 import depends.entity.repo.EntityRepo;
+import depends.entity.repo.InMemoryEntityRepo;
 import depends.extractor.ParserTest;
 import depends.extractor.java.JavaBuiltInType;
 import depends.extractor.java.JavaFileParser;
@@ -12,7 +13,7 @@ public abstract class JavaParserTest  extends ParserTest{
 	protected Inferer inferer ;
 
 	public void init() {
-		entityRepo = new EntityRepo();
+		entityRepo = new InMemoryEntityRepo();
 		inferer = new Inferer(entityRepo,new JavaImportLookupStrategy(),new JavaBuiltInType(),false);
 	}
 	

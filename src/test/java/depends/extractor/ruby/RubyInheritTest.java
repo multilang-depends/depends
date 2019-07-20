@@ -47,7 +47,7 @@ public class RubyInheritTest extends RubyParserTest {
 	}
 	
 	
-	@Test
+	@Ignore
 	public void test_relation_with_cpath_1() throws IOException {
 		String[] srcs = new String[] {
 	    		"./src/test/resources/ruby-code-examples/extends_with_cpath.rb",
