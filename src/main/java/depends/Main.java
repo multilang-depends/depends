@@ -99,6 +99,13 @@ public class Main {
 		}
 		
 		long startTime = System.currentTimeMillis();
+		
+		FilenameWritter filenameWritter = new EmptyFilenameWritter();
+		if (app.getNamePathPattern().equals("dot")) {
+			filenameWritter = new DotPathFilenameWritter();
+		}
+
+		
 		/* by default use file dependency generator */
 		DependencyGenerator dependencyGenerator = new FileDependencyGenerator();
 		/* method parameter means use method generator */
@@ -109,16 +116,12 @@ public class Main {
 			dependencyGenerator.setLeadingStripper(new LeadingNameStripper(inputDir));
 		}
 		
+		dependencyGenerator.setFilenameRewritter(filenameWritter);
 		langProcessor.setDependencyGenerator(dependencyGenerator);
 		langProcessor.buildDependencies(inputDir, includeDir);
 		
-		FilenameWritter filenameWritter = new EmptyFilenameWritter();
-		if (app.getNamePathPattern().equals("dot")) {
-			filenameWritter = new DotPathFilenameWritter();
-		}
 		
 		DependencyMatrix matrix = langProcessor.getDependencies();
-		matrix = matrix.reWriteFilenamePattern(filenameWritter );
 
 		if (app.getGranularity().startsWith("L")) {
 			matrix = new MatrixLevelReducer(matrix,app.getGranularity().substring(1)).shrinkToLevel();

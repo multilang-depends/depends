@@ -27,7 +27,9 @@ package depends.generator;
 import java.util.Iterator;
 
 import depends.entity.Entity;
+import depends.entity.FileEntity;
 import depends.entity.FunctionEntity;
+import depends.entity.PackageEntity;
 import depends.entity.repo.EntityRepo;
 import depends.matrix.core.DependencyMatrix;
 import depends.relations.Relation;
@@ -39,7 +41,8 @@ public class FunctionDependencyGenerator extends DependencyGenerator {
 		while(iterator.hasNext()) {
 			Entity entity = iterator.next();
 			if (entity instanceof FunctionEntity) {
-				dependencyMatrix.addNode(stripper.stripFilename(entity.getDisplayName()),entity.getId());
+				String name = getFunctionEntityDisplayName((FunctionEntity)entity);
+				dependencyMatrix.addNode(name,entity.getId());
 			}
 			int entityFrom = getFunctionEntityIdNoException(entity);
 			if (entityFrom == -1)
@@ -55,6 +58,20 @@ public class FunctionDependencyGenerator extends DependencyGenerator {
 			}
 		}
 		return dependencyMatrix;
+	}
+
+
+	private String getFunctionEntityDisplayName(FunctionEntity entity) {
+		FileEntity file = (FileEntity) entity.getAncestorOfType(FileEntity.class);
+		String name = stripper.stripFilename(file.getRawName());
+		name = filenameWritter.reWrite(name);
+		PackageEntity pkg = (PackageEntity) entity.getAncestorOfType(PackageEntity.class);
+		String functionName = entity.getQualifiedName();
+		if (pkg!=null) {
+			functionName = functionName.substring(pkg.getQualifiedName().length()+1);
+		}
+		name = name + "("+functionName+")";
+		return name;
 	}
 
 

@@ -47,10 +47,11 @@ public class FileDependencyGenerator extends DependencyGenerator{
 		Iterator<Entity> iterator = entityRepo.getEntities();
 		System.out.println("Start create dependencies matrix....");
 		while(iterator.hasNext()) {
-			System.out.print(".");
 			Entity entity = iterator.next();
 			if (entity instanceof FileEntity){
-        		dependencyMatrix.addNode(stripper.stripFilename(entity.getDisplayName()),entity.getId());
+				String name = stripper.stripFilename(entity.getDisplayName());
+				name = filenameWritter.reWrite(name);
+        		dependencyMatrix.addNode(name,entity.getId());
         	}
         	int fileEntityFrom = getFileEntityIdNoException(entityRepo, entity);
         	if (fileEntityFrom==-1) continue;
