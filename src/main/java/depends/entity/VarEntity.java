@@ -33,7 +33,9 @@ public class VarEntity extends ContainerEntity {
 	private String rawType;
 	private TypeEntity type;
 	private List<FunctionCall> functionCalls;
-	
+	public VarEntity() {
+		
+	}
 	public VarEntity(String simpleName,  String rawType, Entity parent, int id) {
 		super(simpleName,  parent,id);
 		this.rawType = rawType;

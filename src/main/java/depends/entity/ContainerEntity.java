@@ -47,7 +47,14 @@ public abstract class ContainerEntity extends DecoratedEntity {
 	private ArrayList<Expression> expressionList;
 	private Collection<String> mixins;
 	private Collection<ContainerEntity> resolvedMixins;
-
+	public ContainerEntity() {
+		vars = new ArrayList<>();
+		functions = new ArrayList<>();
+		mixins = new ArrayList<>();
+		resolvedMixins = new ArrayList<>();
+		expressions = new HashMap<>();
+		expressionList = new  ArrayList<>();
+	}
 	public ContainerEntity(String rawName, Entity parent, Integer id) {
 		super(rawName, parent, id);
 		vars = new ArrayList<>();

@@ -1,7 +1,7 @@
 package depends.entity.repo;
 
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -51,25 +51,20 @@ public class InMemoryEntityRepo extends SimpleIdGenerator implements EntityRepo 
 			allEntieisByName.put(name, entity);
 		}
 		if (entity.getParent() != null)
-			this.setParent(entity, entity.getParent());
+			Entity.setParent(entity, entity.getParent());
 	}
 
 	@Override
-	public Collection<Entity> getEntities() {
-		return allEntitiesByOrder;
+	public Iterator<Entity> getEntities() {
+		return allEntitiesByOrder.iterator();
 	}
 
 	@Override
-	public void setParent(Entity child, Entity parent) {
-		if (parent == null)
-			return;
-		if (child == null)
-			return;
-		if (parent.equals(child.getParent()))
-			return;
-		child.setParent(parent);
-		parent.addChild(child);
+	public void update(Entity entity) {
+		// TODO Auto-generated method stub
+		
 	}
+
 
 
 }

@@ -40,6 +40,8 @@ public class FileEntity extends TypeEntity {
 	private Collection<Entity> importedTypes = new ArrayList<>();
 	private List<TypeEntity> declaredTypes = new ArrayList<>();
 	private ImportedFileCollector importedFileCollector = null;
+	public FileEntity() {}
+
 	public FileEntity(String fullName, int fileId, boolean isInProjectScope) {
 		super(fullName, null, fileId);
 		setQualifiedName(fullName);

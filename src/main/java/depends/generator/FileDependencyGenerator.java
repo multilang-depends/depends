@@ -24,6 +24,7 @@ SOFTWARE.
 
 package depends.generator;
 
+import java.util.Iterator;
 import java.util.List;
 
 import depends.entity.CandidateTypes;
@@ -43,8 +44,12 @@ public class FileDependencyGenerator extends DependencyGenerator{
 	@Override
 	public DependencyMatrix build(EntityRepo entityRepo) {
 		DependencyMatrix dependencyMatrix = new DependencyMatrix();
-		for (Entity entity:entityRepo.getEntities()) {
-        	if (entity instanceof FileEntity){
+		Iterator<Entity> iterator = entityRepo.getEntities();
+		System.out.println("Start create dependencies matrix....");
+		while(iterator.hasNext()) {
+			System.out.print(".");
+			Entity entity = iterator.next();
+			if (entity instanceof FileEntity){
         		dependencyMatrix.addNode(stripper.stripFilename(entity.getDisplayName()),entity.getId());
         	}
         	int fileEntityFrom = getFileEntityIdNoException(entityRepo, entity);
@@ -72,6 +77,8 @@ public class FileDependencyGenerator extends DependencyGenerator{
         		}
         	}
         }
+		System.out.println("Finish create dependencies matrix....");
+
 		return dependencyMatrix;
 	}
 

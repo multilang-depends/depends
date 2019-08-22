@@ -55,7 +55,7 @@ public abstract class Entity {
     ArrayList<Relation> relations = new ArrayList<>();
 	private Entity actualReferTo = null;
 
-	
+	public Entity() {};
     public Entity(String rawName, Entity parent, Integer id) {
 		this.qualifiedName = null;
 		this.rawName = rawName;
@@ -99,7 +99,7 @@ public abstract class Entity {
 		return rawName;
 	}
 
-	public int getId() {
+	public Integer getId() {
         return id;
     }
 
@@ -201,4 +201,14 @@ public abstract class Entity {
 		this.actualReferTo = actualReferTo;
 	}
 
+	public static void setParent(Entity child, Entity parent) {
+		if (parent == null)
+			return;
+		if (child == null)
+			return;
+		if (parent.equals(child.getParent()))
+			return;
+		child.setParent(parent);
+		parent.addChild(child);
+	}
 }

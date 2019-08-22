@@ -35,7 +35,7 @@ public class TypeEntity extends ContainerEntity {
 	Collection<String> inhertedTypeIdentifiers;
 	Collection<String> implementedIdentifiers;
 	TypeEntity inheritedType;
-
+	public TypeEntity() {}
 	public TypeEntity(String simpleName, Entity parent, Integer id) {
 		super(simpleName, parent, id);
 		inhertedTypeIdentifiers = new ArrayList<>();

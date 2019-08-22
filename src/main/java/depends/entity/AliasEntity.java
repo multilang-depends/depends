@@ -33,7 +33,9 @@ import depends.relations.Inferer;
 public class AliasEntity extends Entity {
 	private Entity referToEntity = new EmptyTypeEntity();
 	private String originName;
-
+	public AliasEntity() {
+		
+	}
 	public AliasEntity(String simpleName, Entity parent, Integer id, String originTypeName) {
 		super(simpleName, parent, id);
 		this.originName = originTypeName;

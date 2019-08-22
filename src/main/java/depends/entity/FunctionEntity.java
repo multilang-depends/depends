@@ -36,6 +36,9 @@ public class FunctionEntity extends ContainerEntity{
     Collection<String> throwTypesIdentifiers = new ArrayList<>(); 
 	private Collection<Entity> returnTypes = new ArrayList<>();
 	private Collection<Entity> throwTypes = new ArrayList<>();
+	public FunctionEntity() {
+		this.parameters = new ArrayList<>();
+	}
     public FunctionEntity(String simpleName, Entity parent, Integer id, String returnType) {
 		super(simpleName, parent,id);
 		this.returnTypes = new ArrayList<>();

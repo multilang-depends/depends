@@ -1,9 +1,12 @@
 package depends.persistent.neo4j.executor;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -11,6 +14,7 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.graphdb.factory.GraphDatabaseSettings;
+import org.neo4j.ogm.model.Result;
 import org.neo4j.ogm.session.Session;
 
 import depends.entity.Entity;
@@ -66,7 +70,7 @@ public class TestNeo4j {
         } );
     }
     
-	@Test
+	@Ignore
 	public void test() {
         try ( Transaction tx = graphDb.beginTx() )
         {
@@ -86,7 +90,7 @@ public class TestNeo4j {
 	}
 
 	
-	@Test
+	@Ignore
 	public void test2() {
 		FileEntity p1 = new FileEntity("f1",1);
 		TypeEntity p2 = new TypeEntity("t2",p1,2);
@@ -104,6 +108,18 @@ public class TestNeo4j {
 		TypeEntity t2 = (TypeEntity)(p3.getChildren().iterator().next());
 		System.out.print(t2.getVars().size());
 		System.out.print(p2.getVars().size());
+		
+		System.out.println("======================");
+    	Result result = session.query("MATCH (n) RETURN n", new HashMap<>());
+    	Iterable<Map<String, Object>> v = result.queryResults();
+		System.out.println("v"+v);
+
+    	v.forEach(t->{
+    		System.out.println("t"+t);
+    		t.values().forEach(m->{
+    			System.out.println(m + m.getClass().getSimpleName());
+    		});
+    	});
 		
 	}
 }

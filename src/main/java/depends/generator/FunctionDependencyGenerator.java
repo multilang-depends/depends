@@ -24,6 +24,8 @@ SOFTWARE.
 
 package depends.generator;
 
+import java.util.Iterator;
+
 import depends.entity.Entity;
 import depends.entity.FunctionEntity;
 import depends.entity.repo.EntityRepo;
@@ -33,7 +35,9 @@ import depends.relations.Relation;
 public class FunctionDependencyGenerator extends DependencyGenerator {
 	public DependencyMatrix build(EntityRepo entityRepo) {
 		DependencyMatrix dependencyMatrix = new DependencyMatrix();
-		for (Entity entity : entityRepo.getEntities()) {
+		Iterator<Entity> iterator = entityRepo.getEntities();
+		while(iterator.hasNext()) {
+			Entity entity = iterator.next();
 			if (entity instanceof FunctionEntity) {
 				dependencyMatrix.addNode(stripper.stripFilename(entity.getDisplayName()),entity.getId());
 			}

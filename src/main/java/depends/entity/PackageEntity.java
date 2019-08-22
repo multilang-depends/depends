@@ -28,6 +28,9 @@ import java.util.HashMap;
 
 public class PackageEntity extends TypeEntity {
 	HashMap<String,Entity> entities	 = new HashMap<>();
+	
+	public PackageEntity() {}
+
 	public PackageEntity(String rawName, Integer id) {
 		super(rawName,  null,id);
 		setQualifiedName(rawName); //in Java, package raw name = full name

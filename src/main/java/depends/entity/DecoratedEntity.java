@@ -35,7 +35,10 @@ public abstract class DecoratedEntity extends Entity{
 	private Collection<String> annotations = new ArrayList<>();
 	private Collection<Entity> resolvedTypeParameters = new ArrayList<>();
 	private Collection<Entity> resolvedAnnotations = new ArrayList<>();
-	
+	public DecoratedEntity() {
+		typeParameters = new ArrayList<>();
+	}
+
 	public DecoratedEntity(String rawName, Entity parent, Integer id) {
 		super(rawName, parent, id);
 		typeParameters = new ArrayList<>();

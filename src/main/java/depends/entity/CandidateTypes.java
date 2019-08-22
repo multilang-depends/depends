@@ -35,6 +35,9 @@ import depends.relations.Relation;
 public class CandidateTypes extends TypeEntity {
 	private List<TypeEntity> candidateTypes;
 
+	public CandidateTypes() {
+		candidateTypes = new ArrayList<>();
+	}
 	public CandidateTypes(List<TypeEntity> candidateTypes) {
 		super("candidateTypes", null, -1);
 		this.candidateTypes = candidateTypes;
@@ -230,7 +233,7 @@ public class CandidateTypes extends TypeEntity {
 	}
 
 	@Override
-	public int getId() {
+	public Integer getId() {
 		System.err.println("error: getId should not been invoked");
 		return super.getId();
 	}

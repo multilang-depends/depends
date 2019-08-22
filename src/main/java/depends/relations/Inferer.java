@@ -27,6 +27,7 @@ package depends.relations;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -83,14 +84,18 @@ public class Inferer {
 	}
 
 	private void resolveTypes() {
-		for (Entity entity:repo.getEntities()) {
+		Iterator<Entity> iterator = repo.getEntities();
+		while(iterator.hasNext()) {
+			Entity entity= iterator.next();
 			if (!(entity instanceof FileEntity)) continue;
 			System.out.println("resolve type of entity " + entity.getDisplayName());
 			entity.inferEntities(this);
 		}
 	}
 	private void resolveExpressoins() {
-		for (Entity entity:repo.getEntities()) {
+		Iterator<Entity> iterator = repo.getEntities();
+		while(iterator.hasNext()) {
+			Entity entity= iterator.next();
 			if ((entity instanceof ContainerEntity)) {
 				System.out.println("resolve expression of entity " + entity.getDisplayName());
 				((ContainerEntity)entity).resolveExpressions(this);
@@ -399,8 +404,9 @@ public class Inferer {
 
 	private List<TypeEntity> searchTypesInRepo(VarEntity fromEntity, List<FunctionCall> functionCalls) {
 		List<TypeEntity> types = new ArrayList<>();
-
-		for(Entity f:repo.getEntities()) {
+		Iterator<Entity> iterator = repo.getEntities();
+		while(iterator.hasNext()) {
+			Entity f = iterator.next();
 			if (f instanceof FileEntity)
 			for (TypeEntity type:((FileEntity)f).getDeclaredTypes()) {
 				FunctionMatcher functionMatcher = new FunctionMatcher(type.getFunctions());

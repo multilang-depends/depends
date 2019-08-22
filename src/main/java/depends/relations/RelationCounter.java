@@ -26,6 +26,7 @@ package depends.relations;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 
 import depends.deptypes.DependencyType;
 import depends.entity.ContainerEntity;
@@ -38,14 +39,16 @@ import depends.entity.VarEntity;
 
 public class RelationCounter {
 
-	private Collection<Entity> entities;
+	private Iterator<Entity> iterator;
 
-	public RelationCounter(Collection<Entity> entities) {
-		this.entities = entities;
+	public RelationCounter(Iterator<Entity> iterator) {
+		this.iterator = iterator;
 	}
 	
 	public void computeRelations() {
-		for (Entity entity:entities) {
+		while(iterator.hasNext()) {
+			Entity entity= iterator.next();
+
 			if (entity instanceof FileEntity) {
 				computeImports((FileEntity)entity);
 			}

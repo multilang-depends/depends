@@ -42,7 +42,7 @@ public class JavaHandlerContext extends HandlerContext {
 			pkgEntity = new PackageEntity(packageName, idGenerator.generateId());
 			entityRepo.add(pkgEntity);
 		}
-		entityRepo.setParent(currentFileEntity,pkgEntity);
+		Entity.setParent(currentFileEntity,pkgEntity);
 		return pkgEntity;
 	}
 }

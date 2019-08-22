@@ -59,7 +59,7 @@ public class Python3CodeListener extends Python3BaseListener {
 		String moduleName = fileEntity.getRawName().substring(packageEntity.getRawName().length()+1);
 		if (moduleName.endsWith(".py"))
 			moduleName= moduleName.substring(0,moduleName.length()-".py".length());
-		entityRepo.setParent(fileEntity,packageEntity);
+		Entity.setParent(fileEntity,packageEntity);
 		packageEntity.addChild(FileUtil.getShortFileName(fileEntity.getRawName()).replace(".py", ""),fileEntity);
 	}
 

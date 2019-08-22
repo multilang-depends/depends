@@ -5,7 +5,7 @@ import org.neo4j.ogm.config.Configuration;
 import org.neo4j.ogm.session.Session;
 import org.neo4j.ogm.session.SessionFactory;
 
-class Neo4jSessionFactory {
+public class Neo4jSessionFactory {
 
     private static ClasspathConfigurationSource configurationSource =
             new ClasspathConfigurationSource("ogm.properties");
@@ -14,14 +14,14 @@ class Neo4jSessionFactory {
     private static SessionFactory sessionFactory = new SessionFactory(configuration, "depends.persistent.neo4j.executor","depends.entity");
     private static Neo4jSessionFactory factory = new Neo4jSessionFactory();
 
-    static Neo4jSessionFactory getInstance() {
+    public static Neo4jSessionFactory getInstance() {
         return factory;
     }
 
     private Neo4jSessionFactory() {
     }
 
-    Session getNeo4jSession() {
+    public Session getNeo4jSession() {
         return sessionFactory.openSession();
     }
 }
