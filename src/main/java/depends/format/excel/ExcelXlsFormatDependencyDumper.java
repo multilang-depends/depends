@@ -38,14 +38,14 @@ import depends.matrix.core.DependencyMatrix;
 import depends.matrix.core.DependencyPair;
 import depends.matrix.core.DependencyValue;
 
-public class ExcelFormatDependencyDumper extends AbstractFormatDependencyDumper {
+public class ExcelXlsFormatDependencyDumper extends AbstractFormatDependencyDumper {
 	private HSSFWorkbook workbook;
 	private HSSFSheet sheet;
 	@Override
 	public String getFormatName() {
-		return "excel";
+		return "xls";
 	}
-	public ExcelFormatDependencyDumper(DependencyMatrix dependencyMatrix, String projectName, String outputDir) {
+	public ExcelXlsFormatDependencyDumper(DependencyMatrix dependencyMatrix, String projectName, String outputDir) {
 		super(dependencyMatrix, projectName,outputDir);
 	}
 

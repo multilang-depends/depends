@@ -28,7 +28,8 @@ import java.util.List;
 
 import depends.format.detail.DetailTextFormatDependencyDumper;
 import depends.format.dot.DotFormatDependencyDumper;
-import depends.format.excel.ExcelFormatDependencyDumper;
+import depends.format.excel.ExcelXlsFormatDependencyDumper;
+import depends.format.excel.ExcelXlsxFormatDependencyDumper;
 import depends.format.json.JsonFormatDependencyDumper;
 import depends.format.plantuml.BriefPlantUmlFormatDependencyDumper;
 import depends.format.plantuml.PlantUmlFormatDependencyDumper;
@@ -55,7 +56,8 @@ public class DependencyDumper {
 		 	new DetailTextFormatDependencyDumper(dependencyMatrix,projectName,outputDir),
 		 	new XmlFormatDependencyDumper(dependencyMatrix,projectName,outputDir),
 		 	new JsonFormatDependencyDumper(dependencyMatrix,projectName,outputDir),
-		 	new ExcelFormatDependencyDumper(dependencyMatrix,projectName,outputDir),
+		 	new ExcelXlsFormatDependencyDumper(dependencyMatrix,projectName,outputDir),
+		 	new ExcelXlsxFormatDependencyDumper(dependencyMatrix,projectName,outputDir),
 		 	new DotFormatDependencyDumper(dependencyMatrix,projectName,outputDir),
 		 	new PlantUmlFormatDependencyDumper(dependencyMatrix,projectName,outputDir),
 		 	new BriefPlantUmlFormatDependencyDumper(dependencyMatrix,projectName,outputDir)
