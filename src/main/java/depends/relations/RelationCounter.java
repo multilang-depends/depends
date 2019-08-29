@@ -36,13 +36,18 @@ import depends.entity.FileEntity;
 import depends.entity.FunctionEntity;
 import depends.entity.TypeEntity;
 import depends.entity.VarEntity;
+import depends.entity.repo.EntityRepo;
 
 public class RelationCounter {
 
 	private Iterator<Entity> iterator;
+	private Inferer inferer;
+	private EntityRepo repo;
 
-	public RelationCounter(Iterator<Entity> iterator) {
+	public RelationCounter(Iterator<Entity> iterator, Inferer inferer, EntityRepo repo) {
 		this.iterator = iterator;
+		this.inferer = inferer;
+		this.repo = repo;
 	}
 	
 	public void computeRelations() {
@@ -65,7 +70,13 @@ public class RelationCounter {
 	}
 
 	
+
 	private void computeContainerRelations(ContainerEntity entity) {
+		System.out.println("resolve expression of entity " + entity.getDisplayName());
+		if (!inferer.isEagerExpressionResolve()) {
+			entity.reloadExpression(repo);
+			entity.resolveExpressions(inferer);
+		}
 		for (VarEntity var:entity.getVars()) {
 			if (var.getType()!=null)
 				entity.addRelation(new Relation(DependencyType.CONTAIN,var.getType()));
@@ -117,6 +128,7 @@ public class RelationCounter {
 		for (Entity usedEntity:usedEntities) {
 			entity.addRelation(new Relation(DependencyType.USE,usedEntity));
 		}
+		entity.clearExpressions();
 	}
 
 	private void computeTypeRelations(TypeEntity type) {

@@ -9,6 +9,7 @@ import depends.extractor.ParserCreator;
 import depends.extractor.ParserTest;
 import depends.relations.Inferer;
 import depends.util.FileUtil;
+import depends.util.TemporaryFile;
 
 public abstract class PythonParserTest extends ParserTest implements ParserCreator {
 
@@ -24,6 +25,8 @@ public abstract class PythonParserTest extends ParserTest implements ParserCreat
 		
 		this.repo = p.getEntityRepo();
 		this.inferer = p.inferer;
+    	TemporaryFile.reset();
+		
     }
 	
 	public PythonFileParser createParser(String src) {

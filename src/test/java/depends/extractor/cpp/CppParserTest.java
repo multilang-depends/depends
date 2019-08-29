@@ -10,6 +10,7 @@ import depends.extractor.ParserTest;
 import depends.extractor.cpp.cdt.CdtCppFileParser;
 import depends.extractor.cpp.cdt.PreprocessorHandler;
 import depends.relations.Inferer;
+import depends.util.TemporaryFile;
 
 public abstract class CppParserTest extends ParserTest{
 	protected EntityRepo repo;
@@ -20,6 +21,7 @@ public abstract class CppParserTest extends ParserTest{
     	repo = new InMemoryEntityRepo();
     	inferer = new Inferer(repo,new CppImportLookupStrategy(),new CppBuiltInType(),false);
     	preprocessorHandler = new PreprocessorHandler(new ArrayList<>());
+    	TemporaryFile.reset();
     }
 	
 	public CppFileParser createParser(String src) {

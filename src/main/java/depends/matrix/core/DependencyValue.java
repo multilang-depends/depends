@@ -36,6 +36,7 @@ public class DependencyValue{
 
 	public void addDependency(int weight, String detail) {
 		this.weight += weight;
+		if (detail==null) return;
 		if (dependencyDetail.length()>0) {
 			dependencyDetail.append("\n");
 		}

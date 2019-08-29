@@ -75,18 +75,11 @@ public class ExpressionUsage {
 		/* create expression and link it with parent*/
 		expression = new Expression(idGenerator.generateId());
 		expression.text = ctx.toString();
-		expression.parent = parent;
+		expression.setParent(parent);
 		if (ctx instanceof NewlineNode) {
 			expression.isStatement = true;
 		}
-		if (expression.parent!=null) {
-			if (expression.parent.deduceTypeBasedId==null) 
-				expression.parent.deduceTypeBasedId = expression.id;
-			/* Set operation always use the 2nd expr's type*/
-			if (expression.parent.isSet) {
-				expression.parent.deduceTypeBasedId = expression.id;
-			}
-		}
+
 		context.lastContainer().addExpression(ctx,expression);
 		if (ctx instanceof ILiteralNode && !(ctx instanceof ListNode)) {
 			expression.identifier = "<literal>";

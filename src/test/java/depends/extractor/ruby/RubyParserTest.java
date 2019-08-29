@@ -12,6 +12,7 @@ import depends.extractor.ParserCreator;
 import depends.extractor.ParserTest;
 import depends.extractor.ruby.jruby.JRubyFileParser;
 import depends.relations.Inferer;
+import depends.util.TemporaryFile;
 public abstract class RubyParserTest extends ParserTest implements ParserCreator{
 	protected  EntityRepo entityRepo ;
 	protected Inferer inferer ;
@@ -19,6 +20,7 @@ public abstract class RubyParserTest extends ParserTest implements ParserCreator
 	public void init() {
 		entityRepo = new InMemoryEntityRepo();
 		inferer = new Inferer(entityRepo,new RubyImportLookupStrategy(),new RubyBuiltInType(),true);
+    	TemporaryFile.reset();
 	}
 	
 	public FileParser createFileParser(String src) {

@@ -76,9 +76,8 @@ public class Inferer {
 	 */
 	public  Set<String> resolveAllBindings() {
 		resolveTypes();
-		resolveExpressoins(); 
 		System.out.println("Dependency analaysing....");
-		new RelationCounter(repo.getEntities()).computeRelations();
+		new RelationCounter(repo.getEntities(),this,repo).computeRelations();
 		System.out.println("Dependency done....");
 		return unsolvedSymbols;		
 	}
@@ -90,16 +89,6 @@ public class Inferer {
 			if (!(entity instanceof FileEntity)) continue;
 			System.out.println("resolve type of entity " + entity.getDisplayName());
 			entity.inferEntities(this);
-		}
-	}
-	private void resolveExpressoins() {
-		Iterator<Entity> iterator = repo.getEntities();
-		while(iterator.hasNext()) {
-			Entity entity= iterator.next();
-			if ((entity instanceof ContainerEntity)) {
-				System.out.println("resolve expression of entity " + entity.getDisplayName());
-				((ContainerEntity)entity).resolveExpressions(this);
-			}
 		}
 	}
 	

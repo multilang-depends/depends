@@ -61,12 +61,8 @@ public class ExpressionUsage {
 		Expression expression = new Expression(idGenerator.generateId());
 		expression.text = ctx.getRawSignature(); //for debug purpose. no actual effect
 		context.lastContainer().addExpression(ctx,expression);
-
-		if (parent!=null) {
-			if (parent.deduceTypeBasedId==null) parent.deduceTypeBasedId = expression.id;
-			expression.parent = parent;
-		}
-		
+		expression.setParent(parent);
+	
 		
 		if (isTerminalExpression(ctx)) {
 			tryFillExpressionTypeAndIdentifier(ctx,expression);

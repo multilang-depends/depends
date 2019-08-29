@@ -42,7 +42,8 @@ public abstract class DependencyGenerator {
 		this.stripper = stripper;
 	}
 	protected String buildDescription(Entity fromEntity, Entity toEntity) {
-		return fromEntity.getQualifiedName()+"->"+toEntity.getQualifiedName();
+		return null;
+		//return fromEntity.getQualifiedName()+"->"+toEntity.getQualifiedName();
 	}
 	public void setFilenameRewritter(FilenameWritter filenameWritter) {
 		this.filenameWritter = filenameWritter;

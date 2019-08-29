@@ -265,7 +265,9 @@ public abstract class HandlerContext {
 		Entity e = entityStack.peek();
 		if (e instanceof ContainerEntity) {
 			ContainerEntity container = (ContainerEntity)e;
-			container.cleanExpression();
+			if (!inferer.isEagerExpressionResolve()) {
+				container.cacheExpressions();
+			}
 		}
 		entityStack.pop();
 	}

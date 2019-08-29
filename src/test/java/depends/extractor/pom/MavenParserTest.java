@@ -5,6 +5,7 @@ import java.util.List;
 
 import depends.entity.repo.EntityRepo;
 import depends.relations.Inferer;
+import depends.util.TemporaryFile;
 
 public abstract class MavenParserTest {
 
@@ -20,6 +21,8 @@ public abstract class MavenParserTest {
 		
 		this.repo = p.getEntityRepo();
 		this.inferer = p.inferer;
+    	TemporaryFile.reset();
+
     }
 	
 	public PomFileParser createParser(String src) {

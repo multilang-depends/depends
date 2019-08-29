@@ -24,18 +24,19 @@ SOFTWARE.
 
 package depends.entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.neo4j.ogm.annotation.Id;
 
+import depends.entity.repo.EntityRepo;
 import depends.relations.Inferer;
 
-public class Expression {
+public class Expression implements Serializable{
+	private static final long serialVersionUID = 1L;
 	@Id
 	public Integer id;
-	public Integer deduceTypeBasedId; //by default, parent expression type determined by most left child
-	public Expression parent;
 	public String text; // for debug purpose
 	public String rawType; //the raw type name
 	public String identifier; // the varName, or method name, etc.
@@ -49,11 +50,19 @@ public class Expression {
 	public boolean isStatement = false; //statement is only used for return type calcuation in some langs such as ruby
 	                                    //they will not be treat as real expressions in case of relation calculation
 	public boolean deriveTypeFromChild = true;
-	private TypeEntity type; // the type we care - for relation calculation. 
+	public Integer deduceTypeBasedId; //by default, parent expression type determined by most left child
+	
+	private Integer parentId = -1; 
+	private List<Integer> deducedTypeVarsId = new ArrayList<>();
+	private List<Integer> deducedTypeFunctionsId = new ArrayList<>();
+	
+	private transient Expression parent;
+	private transient TypeEntity type; // the type we care - for relation calculation. 
 	                         //for leaf, it equals to referredEntity.getType. otherwise, depends on child's type strategy
-	private Entity referredEntity;
-	private List<VarEntity> deducedTypeVars;
-	private List<FunctionEntity> deducedTypeFunctions;
+	private transient Entity referredEntity;
+	
+	private transient List<VarEntity> deducedTypeVars = new ArrayList<>();
+	private transient List<FunctionEntity> deducedTypeFunctions= new ArrayList<>();
 	public TypeEntity getType() {
 		return type;
 	}
@@ -82,6 +91,10 @@ public class Expression {
 			deduceTheParentType(inferer);
 	}
 	
+	public Expression() {
+		deducedTypeVars = new ArrayList<>();
+		deducedTypeFunctions = new ArrayList<>();
+	}
 	public Expression(Integer id) {
 		this.id = id;
 		deducedTypeVars = new ArrayList<>();
@@ -176,9 +189,49 @@ public class Expression {
 
 	public void addDeducedTypeVar(VarEntity var) {
 		this.deducedTypeVars.add(var);
+		this.deducedTypeVarsId.add(var.getId());
 	}
 
 	public void addDeducedTypeFunction(FunctionEntity function) {
 		this.deducedTypeFunctions.add(function);
+		this.deducedTypeFunctionsId.add(function.id);
+	}
+
+	public void setParent(Expression parent) {
+		this.parent = parent;
+		if (parent!=null)
+			this.parentId = parent.id;
+		if (parent!=null) {
+			if (parent.deduceTypeBasedId==null) 
+				parent.deduceTypeBasedId = id;
+			if (parent.isSet) {
+				parent.deduceTypeBasedId = id;
+			}
+		}
+	}
+
+	public void reload(EntityRepo repo, ArrayList<Expression> expressionList) {
+		this.deducedTypeFunctions = new ArrayList<>();
+		this.deducedTypeVars = new ArrayList<>();
+		if (parentId!=-1) {
+			for (Expression expr:expressionList) {
+				if (expr.id==parentId) {
+					parent = expr;
+					break;
+				}
+			}
+		}
+		
+		if (deducedTypeFunctionsId!=null) {
+			for (Integer funcId:this.deducedTypeFunctionsId) {
+				this.deducedTypeFunctions.add((FunctionEntity) repo.getEntity(funcId));
+			}
+		}
+		
+		if (deducedTypeVarsId!=null) {
+			for (Integer varId:this.deducedTypeVarsId) {
+				this.deducedTypeVars.add((VarEntity) repo.getEntity(varId));
+			}
+		}
 	}
 }
