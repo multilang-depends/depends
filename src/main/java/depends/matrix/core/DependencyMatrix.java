@@ -37,7 +37,9 @@ public class DependencyMatrix {
 	private Integer relationCount=0;
     public DependencyMatrix() {
     }
-	
+    public DependencyMatrix(int size) {
+    	dependencyPairs = new HashMap<>();
+    }	
 	public Collection<DependencyPair> getDependencyPairs() {
         return dependencyPairs.values();
     }
