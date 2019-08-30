@@ -117,6 +117,7 @@ abstract public class AbstractLangProcessor {
     private void identifyDependencies(){
 		System.out.println("dependencie data generating...");	
         dependencyMatrix  = dependencyGenerator.build(entityRepo);
+        entityRepo = null;
         dependencyMatrix = new OrderedMatrixGenerator(dependencyMatrix).build();
         System.out.println("dependencie data generating done successfully...");	 	
     }
