@@ -27,12 +27,10 @@ package depends.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.neo4j.ogm.annotation.Id;
 
 import depends.relations.Inferer;
 
 public class Expression {
-	@Id
 	public Integer id;
 	public Integer deduceTypeBasedId; //by default, parent expression type determined by most left child
 	public Expression parent;

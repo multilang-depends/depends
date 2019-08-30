@@ -27,12 +27,8 @@ package depends.entity;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import org.neo4j.ogm.annotation.Id;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import depends.relations.Inferer;
 import depends.relations.Relation;
@@ -45,7 +41,6 @@ import depends.relations.Relation;
  */
 public abstract class Entity {
 	
-    @Id
     Integer id=-1;
 	String qualifiedName = null;
 	String rawName = "";

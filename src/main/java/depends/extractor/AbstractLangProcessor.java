@@ -35,7 +35,6 @@ import org.codehaus.plexus.util.FileUtils;
 import depends.entity.repo.BuiltInType;
 import depends.entity.repo.EntityRepo;
 import depends.entity.repo.InMemoryEntityRepo;
-import depends.entity.repo.Neo4jEntityRepo;
 import depends.generator.DependencyGenerator;
 import depends.matrix.core.DependencyMatrix;
 import depends.matrix.transform.OrderedMatrixGenerator;

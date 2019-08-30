@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import depends.entity.repo.EntityRepo;
 import depends.entity.repo.InMemoryEntityRepo;
-import depends.entity.repo.Neo4jEntityRepo;
 
 import depends.extractor.ParserTest;
 import depends.extractor.cpp.cdt.CdtCppFileParser;

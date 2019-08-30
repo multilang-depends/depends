@@ -34,7 +34,7 @@ public class JsonFormatDependencyDumperTest {
 			}
 			System.out.print("here2"); 
 	 }
-	@Test
+	 @Ignore
 	public void testJson() throws IOException {
 		
 		String projectName = "test";
@@ -46,18 +46,6 @@ public class JsonFormatDependencyDumperTest {
 		
 	}
 
-	@Test
-	public void testGson() throws IOException {
-		
-		String projectName = "test";
-		String outputDir =  folder.getRoot().getAbsolutePath();
-		outputDir = "/tmp/";
-		GsonFormatDependencyDumper dumper = new GsonFormatDependencyDumper(dependencyMatrix, projectName, outputDir);
-		dumper.output();
-		System.out.println(outputDir+File.separator+"test.gson");
-		
-	}
-	
 	@Ignore
 	public void testExcel() throws IOException {
 		String projectName = "test";
