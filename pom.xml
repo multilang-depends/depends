@@ -177,28 +177,7 @@
 			<artifactId>jrubyparser</artifactId>
 			<version>0.5.5-SNAPSHOT</version>
 		</dependency>
-		
-        <dependency>
-            <groupId>com.voodoodyne.jackson.jsog</groupId>
-            <artifactId>jackson-jsog</artifactId>
-            <version>1.1.1</version>
-        </dependency>
-		<dependency>
-			<groupId>org.neo4j</groupId>
-			<artifactId>neo4j</artifactId>
-			<version>${neo4j-ogm.version}</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.neo4j</groupId>
-			<artifactId>neo4j-ogm-embedded-driver</artifactId>
-			<version>${neo4j-ogm.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.neo4j</groupId>
-			<artifactId>neo4j-ogm-bolt-driver</artifactId>
-			<version>${neo4j-ogm.version}</version>
-		</dependency>
+
 
        		
 	</dependencies>

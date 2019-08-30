@@ -87,7 +87,7 @@ public class Inferer {
 		while(iterator.hasNext()) {
 			Entity entity= iterator.next();
 			if (!(entity instanceof FileEntity)) continue;
-			System.out.println("resolve type of entity " + entity.getDisplayName());
+			//System.out.println("resolve type of entity " + entity.getDisplayName());
 			entity.inferEntities(this);
 		}
 	}

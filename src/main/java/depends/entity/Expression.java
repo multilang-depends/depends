@@ -28,14 +28,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.neo4j.ogm.annotation.Id;
 
 import depends.entity.repo.EntityRepo;
 import depends.relations.Inferer;
 
 public class Expression implements Serializable{
 	private static final long serialVersionUID = 1L;
-	@Id
 	public Integer id;
 	public String text; // for debug purpose
 	public String rawType; //the raw type name

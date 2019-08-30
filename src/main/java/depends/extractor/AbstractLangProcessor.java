@@ -35,7 +35,6 @@ import org.codehaus.plexus.util.FileUtils;
 import depends.entity.repo.BuiltInType;
 import depends.entity.repo.EntityRepo;
 import depends.entity.repo.InMemoryEntityRepo;
-import depends.entity.repo.Neo4jEntityRepo;
 import depends.generator.DependencyGenerator;
 import depends.matrix.core.DependencyMatrix;
 import depends.matrix.transform.OrderedMatrixGenerator;
@@ -118,7 +117,9 @@ abstract public class AbstractLangProcessor {
     private void identifyDependencies(){
 		System.out.println("dependencie data generating...");	
         dependencyMatrix  = dependencyGenerator.build(entityRepo);
-        //dependencyMatrix = new OrderedMatrixGenerator(dependencyMatrix).build();
+        entityRepo = null;
+		System.out.println("reorder dependency matrix...");	
+        dependencyMatrix = new OrderedMatrixGenerator(dependencyMatrix).build();
         System.out.println("dependencie data generating done successfully...");	 	
     }
 

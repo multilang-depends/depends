@@ -59,7 +59,9 @@ public class DependsCommand {
     private String[] includes = new String[] {};
 	@Option(names = {"--auto-include"},split=",", description = "auto include all paths under the source path (please notice the potential side effect)")
 	private boolean autoInclude = false;
-    @Option(names = {"-h","--help"}, usageHelp = true, description = "display this help and exit")
+	@Option(names = {"--detail"},split=",", description = "add detail dependency information to output (only applicable for JSON output format)")
+	private boolean detail = false;	
+	@Option(names = {"-h","--help"}, usageHelp = true, description = "display this help and exit")
     boolean help;
 	public DependsCommand() {
 	}
@@ -111,5 +113,8 @@ public class DependsCommand {
 	
 	public boolean isAutoInclude () {
 		return autoInclude;
+	}
+	public boolean isDetail () {
+		return detail;
 	}
 }

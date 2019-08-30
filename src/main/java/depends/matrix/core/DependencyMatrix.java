@@ -27,6 +27,7 @@ package depends.matrix.core;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 import depends.format.path.FilenameWritter;
 
@@ -37,7 +38,9 @@ public class DependencyMatrix {
 	private Integer relationCount=0;
     public DependencyMatrix() {
     }
-	
+    public DependencyMatrix(int size) {
+    	dependencyPairs = new HashMap<>(size);
+    }	
 	public Collection<DependencyPair> getDependencyPairs() {
         return dependencyPairs.values();
     }
@@ -47,7 +50,19 @@ public class DependencyMatrix {
 		this.nodeIdToName.put(id, name);
 	}
 	
-	public void addDependency(String depType, Integer from, Integer to,  int weight,String detail) {
+	public void addDependency(String depType, Integer from, Integer to,  int weight,List<DependencyDetail> details) {
+		if(from.equals(to) || from == -1 || to == -1) {
+		    return;
+		}
+		if (dependencyPairs.get(DependencyPair.key(from,to))==null) {
+			dependencyPairs.put(DependencyPair.key(from,to),new DependencyPair(from,to));
+		}
+		DependencyPair dependencyPair = dependencyPairs.get(DependencyPair.key(from,to));
+		dependencyPair.addDependency(depType,weight,details);
+		relationCount+=weight;		
+	}
+	
+	public void addDependency(String depType, Integer from, Integer to,  int weight,DependencyDetail detail) {
 		if(from.equals(to) || from == -1 || to == -1) {
 		    return;
 		}

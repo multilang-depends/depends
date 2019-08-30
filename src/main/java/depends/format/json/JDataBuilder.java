@@ -27,9 +27,11 @@ package depends.format.json;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import depends.format.FileAttributes;
+import depends.matrix.core.DependencyDetail;
 import depends.matrix.core.DependencyMatrix;
 import depends.matrix.core.DependencyPair;
 import depends.matrix.core.DependencyValue;
@@ -54,13 +56,26 @@ public class JDataBuilder {
 
 		for (DependencyPair dependencyPair : dependencyPairs) {
 			Map<String, Float> valueObject = buildValueObject(dependencyPair.getDependencies());
+			List<DetailItem> details = buildDetails(dependencyPair.getDependencies());
 			JCellObject cellObject = new JCellObject();
 			cellObject.setSrc(dependencyPair.getFrom());
 			cellObject.setDest(dependencyPair.getTo());
 			cellObject.setValues(valueObject);
+			cellObject.setDetails(details);
 			cellObjects.add(cellObject);
 		}
 		return cellObjects;
+	}
+
+	private List<DetailItem> buildDetails(Collection<DependencyValue> dependencies) {
+		List<DetailItem>  r = new ArrayList<>();
+		for (DependencyValue dependency : dependencies) {
+			for (DependencyDetail detail:dependency.getDetails()) {
+				r.add(new DetailItem(detail.getSrc(),detail.getDest(),dependency.getType()));
+			}
+		}
+		if (r.size()==0) return null;
+		return r;
 	}
 
 	private Map<String, Float> buildValueObject(Collection<DependencyValue> dependencies) {

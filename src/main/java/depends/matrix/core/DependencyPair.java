@@ -26,6 +26,7 @@ package depends.matrix.core;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 public class DependencyPair {
 	private Integer from;
@@ -40,11 +41,18 @@ public class DependencyPair {
 		return ""+from+"-->"+to;
 	}
 	
-	public void addDependency(String depType, int weight, String detail) {
+	public void addDependency(String depType, int weight, DependencyDetail detail) {
 		if (dependencies.get(depType)==null)
 			dependencies.put(depType, new DependencyValue(depType));
 		DependencyValue value = dependencies.get(depType);
 		value.addDependency(weight,detail);
+	}
+	
+	public void addDependency(String depType, int weight, List<DependencyDetail> details) {
+		if (dependencies.get(depType)==null)
+			dependencies.put(depType, new DependencyValue(depType));
+		DependencyValue value = dependencies.get(depType);		
+		value.addDependency(weight,details);
 	}
 	
 	public Integer getFrom() {
@@ -60,5 +68,6 @@ public class DependencyPair {
 		this.from = from;
 		this.to = to;
 	}
+
 
 }
