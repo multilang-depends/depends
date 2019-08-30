@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import depends.format.AbstractFormatDependencyDumper;
+import depends.matrix.core.DependencyDetail;
 import depends.matrix.core.DependencyMatrix;
 import depends.matrix.core.DependencyPair;
 import depends.matrix.core.DependencyValue;
@@ -65,7 +66,9 @@ public class DetailTextFormatDependencyDumper extends AbstractFormatDependencyDu
             int dst = dependencyPair.getTo();
         	writer.println("======="+files.get(src) + " -> " + files.get(dst) + "=========");
         	for (DependencyValue dependency:dependencyPair.getDependencies()) {
-        	writer.println("["+dependency.getType()+"]"+dependency.getDetails()+"\n");
+        		for (DependencyDetail item:dependency.getDetails()) {
+                	writer.println("["+dependency.getType()+"]"+item);
+        		}
         	}
         }		
 	}

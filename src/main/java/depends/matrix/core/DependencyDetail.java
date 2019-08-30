@@ -16,5 +16,10 @@ public class DependencyDetail {
 	public String getDest() {
 		return dest;
 	}
+	@Override
+	public String toString() {
+		return src + "->" + dest;
+	}
 
+	
 }
