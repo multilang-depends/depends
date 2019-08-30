@@ -115,7 +115,9 @@ public class Main {
 		if (app.isStripLeadingPath()) {
 			dependencyGenerator.setLeadingStripper(new LeadingNameStripper(inputDir));
 		}
-		
+		if (app.isDetail()) {
+			dependencyGenerator.setGenerateDetail(true);
+		}
 		dependencyGenerator.setFilenameRewritter(filenameWritter);
 		langProcessor.setDependencyGenerator(dependencyGenerator);
 		langProcessor.buildDependencies(inputDir, includeDir);

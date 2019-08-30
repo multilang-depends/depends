@@ -39,16 +39,21 @@ public abstract class DependencyGenerator {
 
 	protected ILeadingNameStrippper stripper = new EmptyLeadingNameStripper();
 	protected FilenameWritter filenameWritter = new EmptyFilenameWritter();
+	private boolean generateDetail = false;
 	
 	public void setLeadingStripper(ILeadingNameStrippper stripper) {
 		this.stripper = stripper;
 	}
 	protected DependencyDetail buildDescription(Entity fromEntity, Entity toEntity) {
+		if (!generateDetail) return null;
 		String srcName = PackageNamePrefixRemover.remove(fromEntity);
 		String destName = PackageNamePrefixRemover.remove(toEntity);
 		return new DependencyDetail(srcName,destName);
 	}
 	public void setFilenameRewritter(FilenameWritter filenameWritter) {
 		this.filenameWritter = filenameWritter;
+	}
+	public void setGenerateDetail(boolean generateDetail) {
+		this.generateDetail = generateDetail;
 	}
 }

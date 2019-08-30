@@ -74,6 +74,7 @@ public class JDataBuilder {
 				r.add(new DetailItem(detail.getSrc(),detail.getDest(),dependency.getType()));
 			}
 		}
+		if (r.size()==0) return null;
 		return r;
 	}
 

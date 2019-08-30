@@ -25,24 +25,23 @@ SOFTWARE.
 package depends.format.json;
 
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import java.util.List;
 import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 public class JCellObject {
     private int src;
     private int dest;
     private Map<String, Float> values;
+    @JsonInclude(Include.NON_NULL)
     private List<DetailItem> details;
 
     public int getSrc() {
         return src;
     }
 
-    @XmlAttribute(name = "src")
     public void setSrc(int src) {
         this.src = src;
     }
@@ -51,7 +50,6 @@ public class JCellObject {
         return dest;
     }
 
-    @XmlAttribute(name = "dest")
     public void setDest(int dest) {
         this.dest = dest;
     }
@@ -60,7 +58,6 @@ public class JCellObject {
         this.values = values;
     }
 
-    @XmlElement
     public Map<String, Float> getValues() {
         return values;
     }
