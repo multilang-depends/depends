@@ -24,22 +24,23 @@ SOFTWARE.
 
 package depends.matrix.core;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DependencyValue{
 	private int weight;
 	private String type;
-	private StringBuffer dependencyDetail;
+	private List<DependencyDetail> dependencyDetail;
 	public DependencyValue(String type) {
 		this.type = type;
 		this.weight=0;
-		dependencyDetail = new StringBuffer();
+		dependencyDetail = new ArrayList<>();
 	}
 
-	public void addDependency(int weight, String detail) {
-		this.weight += weight;
-		if (dependencyDetail.length()>0) {
-			dependencyDetail.append("\n");
-		}
-		dependencyDetail.append(detail);
+	public void addDependency(int weight, DependencyDetail detail) {
+        this.weight += weight;
+        if (detail!=null)
+            dependencyDetail.add(detail);
 	}
 	
 	public int getWeight() {
@@ -50,8 +51,14 @@ public class DependencyValue{
 		return type;
 	}
 
-	public String getDetails() {
-		return dependencyDetail.toString();
+	public List<DependencyDetail> getDetails() {
+		return dependencyDetail;
+	}
+
+	public void addDependency(int weight, List<DependencyDetail> details) {
+        this.weight += weight;
+        if (details!=null)
+        	dependencyDetail.addAll(details);
 	}
 
 }

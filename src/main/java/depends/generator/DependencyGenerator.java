@@ -25,9 +25,11 @@ SOFTWARE.
 package depends.generator;
 
 import depends.entity.Entity;
+import depends.entity.PackageNamePrefixRemover;
 import depends.entity.repo.EntityRepo;
 import depends.format.path.EmptyFilenameWritter;
 import depends.format.path.FilenameWritter;
+import depends.matrix.core.DependencyDetail;
 import depends.matrix.core.DependencyMatrix;
 import depends.matrix.transform.strip.EmptyLeadingNameStripper;
 import depends.matrix.transform.strip.ILeadingNameStrippper;
@@ -41,8 +43,10 @@ public abstract class DependencyGenerator {
 	public void setLeadingStripper(ILeadingNameStrippper stripper) {
 		this.stripper = stripper;
 	}
-	protected String buildDescription(Entity fromEntity, Entity toEntity) {
-		return fromEntity.getQualifiedName()+"->"+toEntity.getQualifiedName();
+	protected DependencyDetail buildDescription(Entity fromEntity, Entity toEntity) {
+		String srcName = PackageNamePrefixRemover.remove(fromEntity);
+		String destName = PackageNamePrefixRemover.remove(toEntity);
+		return new DependencyDetail(srcName,destName);
 	}
 	public void setFilenameRewritter(FilenameWritter filenameWritter) {
 		this.filenameWritter = filenameWritter;

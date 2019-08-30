@@ -28,12 +28,15 @@ package depends.format.json;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import java.util.List;
 import java.util.Map;
 
 public class JCellObject {
     private int src;
     private int dest;
     private Map<String, Float> values;
+    private List<DetailItem> details;
 
     public int getSrc() {
         return src;
@@ -61,4 +64,12 @@ public class JCellObject {
     public Map<String, Float> getValues() {
         return values;
     }
+
+	public List<DetailItem> getDetails() {
+		return details;
+	}
+
+	public void setDetails(List<DetailItem> details) {
+		this.details = details;
+	}
 }

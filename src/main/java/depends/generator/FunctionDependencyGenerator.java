@@ -30,6 +30,7 @@ import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.FunctionEntity;
 import depends.entity.PackageEntity;
+import depends.entity.PackageNamePrefixRemover;
 import depends.entity.repo.EntityRepo;
 import depends.matrix.core.DependencyMatrix;
 import depends.relations.Relation;
@@ -65,14 +66,13 @@ public class FunctionDependencyGenerator extends DependencyGenerator {
 		FileEntity file = (FileEntity) entity.getAncestorOfType(FileEntity.class);
 		String name = stripper.stripFilename(file.getRawName());
 		name = filenameWritter.reWrite(name);
-		PackageEntity pkg = (PackageEntity) entity.getAncestorOfType(PackageEntity.class);
-		String functionName = entity.getQualifiedName();
-		if (pkg!=null) {
-			functionName = functionName.substring(pkg.getQualifiedName().length()+1);
-		}
+		String functionName = PackageNamePrefixRemover.remove(entity);
 		name = name + "("+functionName+")";
 		return name;
 	}
+
+
+
 
 
 	private int getFunctionEntityIdNoException(Entity entity) {
