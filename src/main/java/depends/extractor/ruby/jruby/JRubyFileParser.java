@@ -82,6 +82,7 @@ public class JRubyFileParser implements FileParser {
 			node.accept(new JRubyVisitor(fileFullPath, entityRepo, includesFileLocator,executor,inferer,parserCreator));
 			fileEntity = entityRepo.getEntity(fileFullPath);
 			fileEntity.inferEntities(inferer);
+			((FileEntity)fileEntity).cacheAllExpressions();
 		}catch(Exception e) {
 			System.err.println("parsing error in "+fileFullPath);
 		}

@@ -72,11 +72,8 @@ public class RelationCounter {
 	
 
 	private void computeContainerRelations(ContainerEntity entity) {
-		System.out.println("resolve expression of entity " + entity.getDisplayName());
-		if (!inferer.isEagerExpressionResolve()) {
-			entity.reloadExpression(repo);
-			entity.resolveExpressions(inferer);
-		}
+		entity.reloadExpression(repo);
+		entity.resolveExpressions(inferer);
 		for (VarEntity var:entity.getVars()) {
 			if (var.getType()!=null)
 				entity.addRelation(new Relation(DependencyType.CONTAIN,var.getType()));

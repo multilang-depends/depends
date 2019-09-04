@@ -140,4 +140,16 @@ public class FileEntity extends TypeEntity {
 		return importedNames;
 	}
 
+	public void cacheAllExpressions() {
+		cacheChildExpressions(this);
+	}
+
+	private void cacheChildExpressions(ContainerEntity containerEntity) {
+		this.cacheExpressions();
+		for (Entity child:containerEntity.getChildren()) {
+			if (child instanceof ContainerEntity) {
+				cacheChildExpressions((ContainerEntity)child);
+			}
+		}
+	}
 }

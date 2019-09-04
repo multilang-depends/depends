@@ -49,6 +49,7 @@ public class PythonFileParser implements FileParser {
 	    
 		fileEntity = entityRepo.getEntity(fileFullPath);
 		fileEntity.inferEntities(inferer);
+		((FileEntity)fileEntity).cacheAllExpressions();
 	}
 
 }
