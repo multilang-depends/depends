@@ -42,6 +42,10 @@ public class PythonFileParser implements FileParser {
         CharStream input = CharStreams.fromFileName(fileFullPath);
         Lexer lexer = new Python3Lexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
+        
+//        Python2Parser parser = new Python2Parser(tokens);
+//        Python2BaseListener bridge = new Python2BaseListener();
+        
         Python3Parser parser = new Python3Parser(tokens);
         Python3CodeListener bridge = new Python3CodeListener(fileFullPath, entityRepo,inferer, includeFileLocator, processor);
 	    ParseTreeWalker walker = new ParseTreeWalker();

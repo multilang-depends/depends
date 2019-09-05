@@ -100,6 +100,7 @@ public class PythonParserHelper {
 	}
 	public List<String> getParameterList(ParametersContext parameters) {
 		List<String> r = new ArrayList<String>();
+		if (parameters==null) return r;
 		if (parameters.typedargslist()==null) return r;
 		for (TfpdefContext item:parameters.typedargslist().tfpdef()) {
 			r.add(item.NAME().getText());
