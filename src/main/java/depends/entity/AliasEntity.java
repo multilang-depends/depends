@@ -26,13 +26,14 @@ package depends.entity;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
+import java.util.List;
 
 import depends.relations.Inferer;
 
 public class AliasEntity extends Entity {
 	private Entity referToEntity = new EmptyTypeEntity();
 	private String originName;
+	private List<Entity> referPath = new ArrayList<>();
 	public AliasEntity() {
 		
 	}
@@ -45,6 +46,11 @@ public class AliasEntity extends Entity {
 		Entity entity = inferer.resolveName(this, originName, true);
 		while(entity instanceof AliasEntity) {
 			AliasEntity aliasEntity = (AliasEntity)entity;
+			if (this.referPath.contains(aliasEntity)) {
+				entity = null;
+				break;
+			}
+			this.referPath.add(aliasEntity);
 			entity = inferer.resolveName(aliasEntity, aliasEntity.originName,true);
 			if (entity==null) break;
 			if (entity.equals(this)) {
