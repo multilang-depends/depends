@@ -24,15 +24,31 @@ SOFTWARE.
 
 package depends.matrix.transform.strip;
 
+import java.io.File;
+
+import com.google.common.io.Files;
+
+import depends.util.FileUtil;
+
 public class LeadingNameStripper implements ILeadingNameStrippper {
 	String leadingSrcPath;
-	public LeadingNameStripper(String leadingSrcPath) {
+	private String[] additionalStripPaths;
+	public LeadingNameStripper(String leadingSrcPath, String[] additionalStripPaths) {
 		this.leadingSrcPath = leadingSrcPath;
+		this.additionalStripPaths = additionalStripPaths;
 	}
 	@Override
 	public String stripFilename(String path) {
-		if (path.startsWith(leadingSrcPath))
+		for (String p:additionalStripPaths) {
+			String prefix = leadingSrcPath + File.separator + p;
+			prefix = 	FileUtil.uniqFilePath(prefix);
+			if (path.startsWith(prefix)) {
+				return path.substring(prefix.length());
+			}
+		}
+		if (path.startsWith(leadingSrcPath)) {
 			path = path.substring(leadingSrcPath.length());
+		}
 		return path;
 	}
 }

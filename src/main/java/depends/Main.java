@@ -27,6 +27,8 @@ package depends;
 import java.io.File;
 import java.util.List;
 
+import org.codehaus.plexus.util.StringUtils;
+
 import depends.addons.DV8MappingFileBuilder;
 import depends.extractor.AbstractLangProcessor;
 import depends.extractor.LangProcessorRegistration;
@@ -63,6 +65,8 @@ public class Main {
 		} catch (Exception e) {
 			if (e instanceof PicocliException) {
 				CommandLine.usage(new DependsCommand(), System.out);
+			} else if (e instanceof ParameterException){
+				System.err.println(e.getMessage());
 			}else {
 				System.err.println("Exception encountered. If it is a design error, please report issue to us." );
 				e.printStackTrace();
@@ -72,7 +76,7 @@ public class Main {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static void executeCommand(DependsCommand app) {
+	private static void executeCommand(DependsCommand app) throws ParameterException {
 		String lang = app.getLang();
 		String inputDir = app.getSrc();
 		String[] includeDir = app.getIncludes();
@@ -103,27 +107,44 @@ public class Main {
 		long startTime = System.currentTimeMillis();
 		
 		FilenameWritter filenameWritter = new EmptyFilenameWritter();
-		if (app.getNamePathPattern().equals("dot")) {
-			filenameWritter = new DotPathFilenameWritter();
-		}else if (app.getNamePathPattern().equals("unix")) {
-			filenameWritter = new UnixPathFilenameWritter();
-		}else if (app.getNamePathPattern().equals("windows")) {
-			filenameWritter = new WindowsPathFilenameWritter();
+		if (!StringUtils.isEmpty(app.getNamePathPattern())) {
+			if (app.getNamePathPattern().equals("dot")||
+					app.getNamePathPattern().equals(".")) {
+				filenameWritter = new DotPathFilenameWritter();
+			}else if (app.getNamePathPattern().equals("unix")||
+					app.getNamePathPattern().equals("/")) {
+				filenameWritter = new UnixPathFilenameWritter();
+			}else if (app.getNamePathPattern().equals("windows")||
+					app.getNamePathPattern().equals("\\")) {
+				filenameWritter = new WindowsPathFilenameWritter();
+			}else{
+				throw new ParameterException("Unknown name pattern paremater:" + app.getNamePathPattern());
+			}
 		}
 
 		
 		/* by default use file dependency generator */
 		DependencyGenerator dependencyGenerator = new FileDependencyGenerator();
-		/* method parameter means use method generator */
-		if (app.getGranularity().equals("method"))
-				dependencyGenerator = new FunctionDependencyGenerator();
+		if (!StringUtils.isEmpty(app.getGranularity())) {
+			/* method parameter means use method generator */
+			if (app.getGranularity().equals("method"))
+					dependencyGenerator = new FunctionDependencyGenerator();
+			else if (app.getGranularity().equals("file"))
+				/*no action*/;
+			else if (app.getGranularity().startsWith("L"))
+				/*no action*/;
+			else
+				throw new ParameterException("Unknown granularity parameter:" + app.getGranularity());
+		}
 		
 		if (app.isStripLeadingPath()) {
-			dependencyGenerator.setLeadingStripper(new LeadingNameStripper(inputDir));
+			dependencyGenerator.setLeadingStripper(new LeadingNameStripper(inputDir,app.getAdditionalStrippedPaths()));
 		}
+		
 		if (app.isDetail()) {
 			dependencyGenerator.setGenerateDetail(true);
 		}
+		
 		dependencyGenerator.setFilenameRewritter(filenameWritter);
 		langProcessor.setDependencyGenerator(dependencyGenerator);
 		langProcessor.buildDependencies(inputDir, includeDir);

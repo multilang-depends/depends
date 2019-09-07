@@ -51,10 +51,15 @@ public class DependsCommand {
     private boolean dv8map = true;
 	@Option(names = {"-s", "--strip-leading-path"},  description = "Strip the leading path.")
     private boolean stripLeadingPath = false;
+	@Option(names = {"--additional-strip-paths"}, split=",", description = "(Only valid in case of -s swith parameter)" +
+			"The additional path to be stripped since parameter <src>.  "
+			+ "Depends will strip based on length (no matter the prefix is same as the paraemter).")
+	private String[] additionalStrippedPaths = new String[]{};
+
 	@Option(names = {"-g", "--granularity"},  description = "Granularity of dependency.[file(default),method,L#(the level of folder. e.g. L1=1st level folder)]")
     private String granularity="file";
 	@Option(names = {"-p", "--namepattern"},  description = "The name path pattern.[dot(.), unix(/) or windows(\\)")
-    private String namePathPattern="default";
+    private String namePathPattern="";
 	@Option(names = {"-i","--includes"},split=",", description = "The files of searching path")
     private String[] includes = new String[] {};
 	@Option(names = {"--auto-include"},split=",", description = "auto include all paths under the source path (please notice the potential side effect)")
@@ -116,5 +121,11 @@ public class DependsCommand {
 	}
 	public boolean isDetail () {
 		return detail;
+	}
+	public String[] getAdditionalStrippedPaths() {
+		return additionalStrippedPaths;
+	}
+	public void setAdditionalStrippedPaths(String[] additionalStrippedPaths) {
+		this.additionalStrippedPaths = additionalStrippedPaths;
 	}
 }
