@@ -97,7 +97,7 @@ public class Main {
 
 		if ( app.isDv8map()) {
 			DV8MappingFileBuilder dv8MapfileBuilder = new DV8MappingFileBuilder(langProcessor.supportedRelations());
-			dv8MapfileBuilder.create(outputDir+File.separator+"depends-dv8map.json");
+			dv8MapfileBuilder.create(outputDir+File.separator+"depends-dv8map.mapping");
 		}
 		
 		long startTime = System.currentTimeMillis();
