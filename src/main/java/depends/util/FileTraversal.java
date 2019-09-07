@@ -62,7 +62,6 @@ public class FileTraversal {
 
 	public void travers(File root) {
 		File[] files = root.listFiles();
-
 		if (files == null)
 			return;
 		for (int i = 0; i < files.length; i++) {

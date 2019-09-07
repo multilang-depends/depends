@@ -130,6 +130,9 @@ abstract public class AbstractLangProcessor {
 			public void visit(File file) {
 				String fileFullPath = file.getAbsolutePath();
 				fileFullPath = FileUtil.uniqFilePath(fileFullPath);
+				if (!fileFullPath.startsWith(inputSrcPath)) {
+					return;
+				}
 	            FileParser fileParser = createFileParser(fileFullPath);
 	            try {
 	                System.out.println("parsing " + fileFullPath 
