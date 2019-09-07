@@ -34,6 +34,8 @@ import depends.format.DependencyDumper;
 import depends.format.path.DotPathFilenameWritter;
 import depends.format.path.EmptyFilenameWritter;
 import depends.format.path.FilenameWritter;
+import depends.format.path.UnixPathFilenameWritter;
+import depends.format.path.WindowsPathFilenameWritter;
 import depends.generator.DependencyGenerator;
 import depends.generator.FileDependencyGenerator;
 import depends.generator.FunctionDependencyGenerator;
@@ -103,6 +105,10 @@ public class Main {
 		FilenameWritter filenameWritter = new EmptyFilenameWritter();
 		if (app.getNamePathPattern().equals("dot")) {
 			filenameWritter = new DotPathFilenameWritter();
+		}else if (app.getNamePathPattern().equals("unix")) {
+			filenameWritter = new UnixPathFilenameWritter();
+		}else if (app.getNamePathPattern().equals("windows")) {
+			filenameWritter = new WindowsPathFilenameWritter();
 		}
 
 		
