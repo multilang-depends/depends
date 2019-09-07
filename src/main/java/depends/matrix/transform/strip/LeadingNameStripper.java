@@ -32,7 +32,7 @@ public class LeadingNameStripper implements ILeadingNameStrippper {
 	@Override
 	public String stripFilename(String path) {
 		if (path.startsWith(leadingSrcPath))
-			path = "."+path.substring(leadingSrcPath.length());
+			path = path.substring(leadingSrcPath.length());
 		return path;
 	}
 }
