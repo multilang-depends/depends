@@ -52,10 +52,8 @@ public class DependsCommand {
 	@Option(names = {"-s", "--strip-leading-path"},  description = "Strip the leading path.")
     private boolean stripLeadingPath = false;
 	@Option(names = {"--additional-strip-paths"}, split=",", description = "(Only valid in case of -s swith parameter)" +
-			"The additional path to be stripped since parameter <src>.  "
-			+ "Depends will strip based on length (no matter the prefix is same as the paraemter).")
+			"The additional path to be stripped since parameter <src>.  ")
 	private String[] additionalStrippedPaths = new String[]{};
-
 	@Option(names = {"-g", "--granularity"},  description = "Granularity of dependency.[file(default),method,L#(the level of folder. e.g. L1=1st level folder)]")
     private String granularity="file";
 	@Option(names = {"-p", "--namepattern"},  description = "The name path pattern.[dot(.), unix(/) or windows(\\)")
