@@ -137,8 +137,9 @@ public class Main {
 				throw new ParameterException("Unknown granularity parameter:" + app.getGranularity());
 		}
 		
-		if (app.isStripLeadingPath()) {
-			dependencyGenerator.setLeadingStripper(new LeadingNameStripper(inputDir,app.getAdditionalStrippedPaths()));
+		if (app.isStripLeadingPath() ||
+				app.getStrippedPaths().length>0) {
+			dependencyGenerator.setLeadingStripper(new LeadingNameStripper(app.isStripLeadingPath(),inputDir,app.getStrippedPaths()));
 		}
 		
 		if (app.isDetail()) {
