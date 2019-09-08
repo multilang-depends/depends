@@ -52,10 +52,7 @@ public class JavaImportLookupStrategy implements ImportLookupStrategy{
 			Entity imported = repo.getEntity(importedItem.getContent());
 			if (imported==null) continue;
 			if (imported instanceof PackageEntity) { 
-				//expand import of package to all classes under the package due to we dis-courage the behavior
-				for (Entity child:imported.getChildren()) {
-					result.add(child);
-				}
+				//ignore wildcard import relation
 			}else {
 				result.add(imported);
 			}
@@ -65,7 +62,20 @@ public class JavaImportLookupStrategy implements ImportLookupStrategy{
 
 	@Override
 	public List<Entity> getImportedTypes(List<Import> importedList, EntityRepo repo) {
-		return getImportedRelationEntities(importedList,repo);
+		ArrayList<Entity> result = new ArrayList<>();
+		for (Import importedItem:importedList) {
+			Entity imported = repo.getEntity(importedItem.getContent());
+			if (imported==null) continue;
+			if (imported instanceof PackageEntity) { 
+				//expand import of package to all classes under the package due to we dis-courage the behavior
+				for (Entity child:imported.getChildren()) {
+					result.add(child);
+				}
+			}else {
+				result.add(imported);
+			}
+		}
+		return result;
 	}
 
 	@Override
