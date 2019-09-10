@@ -24,6 +24,10 @@ SOFTWARE.
 
 package depends.extractor.java.context;
 
+import java.util.List;
+
+import org.antlr.v4.runtime.tree.TerminalNode;
+
 import depends.extractor.java.JavaParser.CreatorContext;
 
 public class CreatorContextHelper {
@@ -34,7 +38,18 @@ public class CreatorContextHelper {
 		if (creator.createdName().IDENTIFIER()==null)
 			return creator.createdName().getText();
 		if (creator.createdName().IDENTIFIER().size()>0)
-			return creator.createdName().IDENTIFIER(0).getText();
+			return buildName(creator.createdName().IDENTIFIER());
 		return null;
+	}
+
+	private static String buildName(List<TerminalNode> identifiers) {
+		StringBuffer sb = new StringBuffer();
+		for(TerminalNode id:identifiers) {
+			if (sb.length()>0)
+				sb.append(".");
+			sb.append(id);
+		}
+		return sb.toString();
+		
 	}
 }

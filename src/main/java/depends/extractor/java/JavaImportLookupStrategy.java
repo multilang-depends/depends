@@ -69,7 +69,11 @@ public class JavaImportLookupStrategy implements ImportLookupStrategy{
 			if (imported instanceof PackageEntity) { 
 				//expand import of package to all classes under the package due to we dis-courage the behavior
 				for (Entity child:imported.getChildren()) {
-					result.add(child);
+					if (child instanceof FileEntity) {
+						child.getChildren().forEach(item->result.add(item));
+					}else {
+						result.add(child);
+					}
 				}
 			}else {
 				result.add(imported);

@@ -139,6 +139,7 @@ public abstract class ContainerEntity extends DecoratedEntity {
 	 * @param inferer
 	 */
 	public void resolveExpressions(Inferer inferer) {
+
 		for (Expression expression : expressionList) {
 			// 1. if expression's type existed, break;
 			if (expression.getType() != null)
