@@ -26,10 +26,12 @@ package depends.relations;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.repo.EntityRepo;
+import depends.extractor.UnsolvedBindings;
 import depends.importtypes.Import;
 
 public interface ImportLookupStrategy {
@@ -60,7 +62,7 @@ public interface ImportLookupStrategy {
 	 * @param repo
 	 * @return
 	 */
-	Collection<Entity> getImportedTypes(List<Import> importedNames, EntityRepo repo);
+	Collection<Entity> getImportedTypes(List<Import> importedNames, EntityRepo repo, Set<UnsolvedBindings> unsolvedSymbols);
 	
 	/**
 	 * The files been imported

@@ -13,6 +13,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.repo.EntityRepo;
+import depends.extractor.UnsolvedBindings;
 import depends.importtypes.Import;
 import depends.relations.ImportLookupStrategy;
 import depends.relations.Inferer;
@@ -38,7 +39,7 @@ public class PythonImportLookupStrategy implements ImportLookupStrategy {
 	@Override
 	public Collection<Entity> getImportedRelationEntities(List<Import> importedNames, EntityRepo repo) {
 		Collection<Entity> files = getImportedFiles(importedNames,repo);
-		Collection<Entity> filescontainsTypes = 	this.getImportedTypes(importedNames, repo).stream().map(e->{
+		Collection<Entity> filescontainsTypes = 	this.getImportedTypes(importedNames, repo,new HashSet<>()).stream().map(e->{
 			return e.getAncestorOfType(FileEntity.class);
 		}).filter(new Predicate<Entity>() {
 
@@ -53,13 +54,16 @@ public class PythonImportLookupStrategy implements ImportLookupStrategy {
 	}
 
 	@Override
-	public Collection<Entity> getImportedTypes(List<Import> importedNames, EntityRepo repo) {
+	public Collection<Entity> getImportedTypes(List<Import> importedNames, EntityRepo repo, Set<UnsolvedBindings> unsolvedBindings) {
 		ArrayList<Entity> result = new ArrayList<>();
 		for (Import importedItem:importedNames) {
 			if (importedItem instanceof NameAliasImport) {
 				NameAliasImport nameAliasImport = (NameAliasImport)importedItem;
 				Entity imported = nameAliasImport.getEntity();
-				if (imported==null) continue;
+				if (imported==null) {
+					unsolvedBindings.add(new UnsolvedBindings(importedItem.getContent(),null));
+					continue;
+				}				
 				result.add(imported);
 			}
 		}
@@ -69,7 +73,7 @@ public class PythonImportLookupStrategy implements ImportLookupStrategy {
 	@Override
 	public Collection<Entity> getImportedFiles(List<Import> importedNames, EntityRepo repo) {
 		Set<Entity> files = new HashSet<>();
-		Collection<Entity> entities = getImportedTypes(importedNames,repo);
+		Collection<Entity> entities = getImportedTypes(importedNames,repo,new HashSet<>());
 		for (Entity entity:entities) {
 			if (entity instanceof FileEntity)
 				files.add(entity);

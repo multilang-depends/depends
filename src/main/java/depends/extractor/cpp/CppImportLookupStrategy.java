@@ -28,10 +28,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.repo.EntityRepo;
+import depends.extractor.UnsolvedBindings;
 import depends.importtypes.FileImport;
 import depends.importtypes.Import;
 import depends.relations.ImportLookupStrategy;
@@ -92,12 +94,15 @@ public class CppImportLookupStrategy implements ImportLookupStrategy {
 	}
 
 	@Override
-	public List<Entity> getImportedTypes(List<Import> importedList, EntityRepo repo) {
+	public List<Entity> getImportedTypes(List<Import> importedList, EntityRepo repo, Set<UnsolvedBindings> unsolvedBindings) {
 		ArrayList<Entity> result = new ArrayList<>();
 		for (Import importedItem:importedList) {
 			if (!(importedItem instanceof FileImport)) {
 				Entity imported = repo.getEntity(importedItem.getContent());
-				if (imported==null) continue;
+				if (imported==null) {
+					unsolvedBindings.add(new UnsolvedBindings(importedItem.getContent(),null));
+					continue;
+				}
 				result.add(imported);
 			}
 		}

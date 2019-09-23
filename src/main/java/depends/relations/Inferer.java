@@ -34,8 +34,9 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.ibm.icu.impl.Pair;
+
 import depends.entity.CandidateTypes;
-import depends.entity.ContainerEntity;
 import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.FunctionCall;
@@ -46,6 +47,8 @@ import depends.entity.VarEntity;
 import depends.entity.repo.BuiltInType;
 import depends.entity.repo.EntityRepo;
 import depends.entity.repo.NullBuiltInType;
+import depends.extractor.UnsolvedBindings;
+import depends.importtypes.FileImport;
 import depends.importtypes.Import;
 
 public class Inferer {
@@ -56,7 +59,7 @@ public class Inferer {
 	static final public TypeEntity genericParameterType = new TypeEntity("T", null, -1);
 	private BuiltInType buildInTypeManager = new NullBuiltInType();
 	private ImportLookupStrategy importLookupStrategy;
-	private HashSet<String> unsolvedSymbols;
+	private Set<UnsolvedBindings> unsolvedSymbols = new HashSet<>();
 	private EntityRepo repo;
 
 	private boolean eagerExpressionResolve = false;
@@ -74,7 +77,7 @@ public class Inferer {
 	 * - Firstly, we resolve all types from there names.
 	 * - Secondly, we resolve all expressions (expression will use type infomation of previous step
 	 */
-	public  Set<String> resolveAllBindings() {
+	public  Set<UnsolvedBindings> resolveAllBindings() {
 		resolveTypes();
 		System.out.println("Dependency analaysing....");
 		new RelationCounter(repo.getEntities(),this,repo).computeRelations();
@@ -113,7 +116,7 @@ public class Inferer {
 	}
 
 	public Collection<Entity> getImportedTypes(List<Import> importedNames) {
-		return importLookupStrategy.getImportedTypes(importedNames, repo);
+		return importLookupStrategy.getImportedTypes(importedNames, repo,this.unsolvedSymbols);
 	}
 
 	public Collection<Entity> getImportedFiles(List<Import> importedNames) {
@@ -150,6 +153,12 @@ public class Inferer {
 		if (logger.isDebugEnabled()) {
 			logger.debug("resolve name " + rawName + " from " + fromEntity.getQualifiedName() +" ==> "
 						+ (entity==null?"null":entity.getQualifiedName()));
+		}
+		if (entity==null ||
+				entity.equals(externalType)) {
+			if (!this.buildInTypeManager.isBuiltInType(rawName)) {
+				this.unsolvedSymbols.add(new UnsolvedBindings(rawName, fromEntity));
+			}
 		}
 		return entity;
 	}

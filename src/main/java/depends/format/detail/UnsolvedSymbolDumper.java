@@ -22,43 +22,43 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-package depends.extractor.empty;
+package depends.format.detail;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.Set;
 
-import depends.entity.Entity;
-import depends.entity.FileEntity;
-import depends.entity.repo.EntityRepo;
 import depends.extractor.UnsolvedBindings;
-import depends.importtypes.Import;
-import depends.relations.ImportLookupStrategy;
-import depends.relations.Inferer;
+import depends.matrix.transform.strip.LeadingNameStripper;
 
-public class EmptyImportLookupStategy implements ImportLookupStrategy {
+public class UnsolvedSymbolDumper{
+	private Set<UnsolvedBindings> unsolved;
+	private String name;
+	private String outputDir;
+	private LeadingNameStripper leadingNameStripper;
 
-	@Override
-	public Entity lookupImportedType(String name, FileEntity fileEntity, EntityRepo repo, Inferer inferer) {
-		return null;
+	public UnsolvedSymbolDumper(Set<UnsolvedBindings> unsolved, String name, String outputDir, LeadingNameStripper leadingNameStripper) {
+		this.unsolved = unsolved;
+		this.name = name;
+		this.outputDir = outputDir;
+		this.leadingNameStripper = leadingNameStripper;
 	}
 
-	@Override
-	public List<Entity> getImportedRelationEntities(List<Import> importedNames, EntityRepo repo) {
-		return new ArrayList<Entity>();
+	public boolean output() {
+		PrintWriter writer;
+		try {
+			writer = new PrintWriter(outputDir + File.separator + name +"-unsolved.txt");
+			for (UnsolvedBindings symbol: unsolved) {
+				String source = leadingNameStripper.stripFilename(symbol.getSourceDisplay());
+            	writer.println(""+symbol.getRawName()+", "+source);
+			}
+			writer.close();
+			return true;
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
-	@Override
-	public List<Entity> getImportedTypes(List<Import> importedNames, EntityRepo repo, Set<UnsolvedBindings> unsolvedBindings) {
-		return new ArrayList<Entity>();
-	}
-
-	@Override
-	public List<Entity> getImportedFiles(List<Import> importedNames, EntityRepo repo) {
-		return new ArrayList<Entity>();
-	}
-	@Override
-	public boolean supportGlobalNameLookup() {
-		return false;
-	}
 }

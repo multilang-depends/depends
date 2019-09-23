@@ -26,13 +26,16 @@ package depends;
 
 import java.io.File;
 import java.util.List;
+import java.util.Set;
 
 import org.codehaus.plexus.util.StringUtils;
 
 import depends.addons.DV8MappingFileBuilder;
 import depends.extractor.AbstractLangProcessor;
 import depends.extractor.LangProcessorRegistration;
+import depends.extractor.UnsolvedBindings;
 import depends.format.DependencyDumper;
+import depends.format.detail.UnsolvedSymbolDumper;
 import depends.format.path.DotPathFilenameWritter;
 import depends.format.path.EmptyFilenameWritter;
 import depends.format.path.FilenameWritter;
@@ -158,6 +161,10 @@ public class Main {
 		}
 		DependencyDumper output = new DependencyDumper(matrix);
 		output.outputResult(outputName,outputDir,outputFormat);
+		Set<UnsolvedBindings> unsolved = langProcessor.getUnsolved();
+    	UnsolvedSymbolDumper unsolvedSymbolDumper = new UnsolvedSymbolDumper(unsolved,app.getOutputName(),app.getOutputDir(),
+    			new LeadingNameStripper(app.isStripLeadingPath(),inputDir,app.getStrippedPaths()));
+    	unsolvedSymbolDumper.output();
 		long endTime = System.currentTimeMillis();
 		System.out.println("Consumed time: " + (float) ((endTime - startTime) / 1000.00) + " s,  or "
 				+ (float) ((endTime - startTime) / 60000.00) + " min.");

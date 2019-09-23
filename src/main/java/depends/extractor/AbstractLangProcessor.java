@@ -35,6 +35,7 @@ import org.codehaus.plexus.util.FileUtils;
 import depends.entity.repo.BuiltInType;
 import depends.entity.repo.EntityRepo;
 import depends.entity.repo.InMemoryEntityRepo;
+import depends.format.detail.UnsolvedSymbolDumper;
 import depends.generator.DependencyGenerator;
 import depends.matrix.core.DependencyMatrix;
 import depends.matrix.transform.OrderedMatrixGenerator;
@@ -77,6 +78,7 @@ abstract public class AbstractLangProcessor {
 	private String inputSrcPath;
 	public String[] includeDirs;
 	private DependencyGenerator dependencyGenerator;
+	private Set<UnsolvedBindings> unsolved;
 
 	public AbstractLangProcessor(boolean eagerExpressionResolve) {
 		entityRepo = new InMemoryEntityRepo();
@@ -108,9 +110,10 @@ abstract public class AbstractLangProcessor {
  	 */
     private void resolveBindings() {
 		System.out.println("Resolve types and bindings of variables, methods and expressions....");
-        Set<String> unsolved = inferer.resolveAllBindings();
-        if (unsolved.size()>0)
-        	System.err.println("The following items are unsolved." + unsolved);
+        this.unsolved =inferer.resolveAllBindings();
+        if (getUnsolved().size()>0) {
+        	System.err.println("There are " + getUnsolved().size() + " items are unsolved." );
+        }
         System.out.println("types and bindings resolved successfully...");
     }
     
@@ -178,5 +181,8 @@ abstract public class AbstractLangProcessor {
 		this.dependencyGenerator = dependencyGenerator;
 	}
 	public abstract List<String> supportedRelations();
+	public Set<UnsolvedBindings> getUnsolved() {
+		return unsolved;
+	}
 
 }
