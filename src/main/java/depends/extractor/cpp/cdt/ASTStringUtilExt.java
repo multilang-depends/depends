@@ -27,7 +27,12 @@ import depends.relations.Inferer;
 public class ASTStringUtilExt extends ASTStringUtil {
 	public static String getName(IASTDeclSpecifier decl) {
 		StringBuilder buffer = new StringBuilder();
-		return appendBareDeclSpecifierString(buffer, decl).toString();
+		String name = appendBareDeclSpecifierString(buffer, decl).toString();
+		return removeTemplateParameter(name);
+	}
+
+	public static String removeTemplateParameter(String name) {
+		return name.replaceAll("<.*>", "");
 	}
 
 	public static String getTypeIdString(IASTTypeId typeId) {

@@ -1,6 +1,7 @@
 package depends.extractor;
 
 import depends.entity.Entity;
+import depends.entity.FileEntity;
 
 public class UnsolvedBindings {
 
@@ -53,6 +54,10 @@ public class UnsolvedBindings {
 		} else if (!rawName.equals(other.rawName))
 			return false;
 		return true;
+	}
+
+	public void setFromEntity(Entity fromEntity) {
+		this.fromEntity = fromEntity;
 	}
 	
 

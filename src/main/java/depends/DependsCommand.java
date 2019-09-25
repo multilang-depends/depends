@@ -64,6 +64,8 @@ public class DependsCommand {
 	private boolean autoInclude = false;
 	@Option(names = {"--detail"},split=",", description = "add detail dependency information to output (only applicable for JSON output format)")
 	private boolean detail = false;	
+	@Option(names = {"--auto-stub"},split=",", description = "create stub files for unsolved symbols (exprimental feature, only for java)")
+	private boolean autoStub = false;	
 	@Option(names = {"-h","--help"}, usageHelp = true, description = "display this help and exit")
     boolean help;
 	public DependsCommand() {
@@ -125,5 +127,8 @@ public class DependsCommand {
 	}
 	public void setStrippedPaths(String[] strippedPaths) {
 		this.strippedPaths = strippedPaths;
+	}
+	public boolean isAutoStub() {
+		return autoStub;
 	}
 }

@@ -34,8 +34,6 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ibm.icu.impl.Pair;
-
 import depends.entity.CandidateTypes;
 import depends.entity.Entity;
 import depends.entity.FileEntity;
@@ -48,7 +46,6 @@ import depends.entity.repo.BuiltInType;
 import depends.entity.repo.EntityRepo;
 import depends.entity.repo.NullBuiltInType;
 import depends.extractor.UnsolvedBindings;
-import depends.importtypes.FileImport;
 import depends.importtypes.Import;
 
 public class Inferer {
@@ -115,8 +112,14 @@ public class Inferer {
 		return importLookupStrategy.getImportedRelationEntities(importedNames, repo);
 	}
 
-	public Collection<Entity> getImportedTypes(List<Import> importedNames) {
-		return importLookupStrategy.getImportedTypes(importedNames, repo,this.unsolvedSymbols);
+	public Collection<Entity> getImportedTypes(List<Import> importedNames, FileEntity fileEntity) {
+		HashSet<UnsolvedBindings> unsolved = new HashSet<UnsolvedBindings>();
+		Collection<Entity> result = importLookupStrategy.getImportedTypes(importedNames, repo,unsolved);
+		for (UnsolvedBindings item:unsolved) {
+			item.setFromEntity(fileEntity);
+			this.unsolvedSymbols.add(item);
+		}
+		return result;
 	}
 
 	public Collection<Entity> getImportedFiles(List<Import> importedNames) {
@@ -245,10 +248,13 @@ public class Inferer {
 		if (nameIndex >= names.length) {
 			return precendenceEntity;
 		}
+		if (nameIndex == -1) {
+			System.err.println("error");
+		}
 		//If it is not an entity with types (not a type, var, function), fall back to itself
 		if (precendenceEntity.getType()==null) 
 			return precendenceEntity;
-		
+			
 		for (Entity child : precendenceEntity.getType().getChildren()) {
 			if (child.getRawName().equals(names[nameIndex])) {
 				return findEntitySince(child, names, nameIndex + 1);
@@ -414,35 +420,6 @@ public class Inferer {
 			}
 		}
 		return types;
-	}
-
-	/**
-	 * Only refer to the candidate types with import relations. 
-	 * @param fromEntity
-	 * @param functionCalls
-	 * @return
-	 */
-	private List<TypeEntity> searchTypesWithImportedRelations(VarEntity fromEntity, List<FunctionCall> functionCalls) {
-		List<TypeEntity> types = new ArrayList<>();
-		FileEntity file = (FileEntity) fromEntity.getAncestorOfType(FileEntity.class);
-		searchAllTypesUnder(types,file, functionCalls);
-		return types;
-	}
-
-	private void searchAllTypesUnder(List<TypeEntity> types, FileEntity file, List<FunctionCall> functionCalls) {
-		if (file==null) {
-			System.err.println("file  should not been null");
-			return;
-		}
-		Set<FileEntity> files = file.getImportedFilesInAllLevel();
-		for(FileEntity f:files) {
-			for (TypeEntity type:f.getDeclaredTypes()) {
-				FunctionMatcher functionMatcher = new FunctionMatcher(type.getFunctions());
-				if (functionMatcher.containsAll(functionCalls)) {
-					types.add(type);
-				}
-			}
-		}
 	}
 
 	public boolean isEagerExpressionResolve() {

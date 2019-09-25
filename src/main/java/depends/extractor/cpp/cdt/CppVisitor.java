@@ -48,6 +48,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLinkageSpecification;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTProblemDeclaration;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplateDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTVisibilityLabel;
 
 import depends.entity.FunctionEntity;
@@ -261,10 +262,12 @@ public class CppVisitor  extends ASTVisitor {
 			//we ignore the visibility in dependency check
 		}else if (declaration instanceof CPPASTLinkageSpecification){
 			
+		}else if (declaration instanceof CPPASTTemplateDeclaration){
+			
 		}else if (declaration instanceof CPPASTProblemDeclaration){
 			System.err.println("parsing error \n" + declaration.getRawSignature());
 		}else {
-			System.out.println(declaration.getClass().getName());
+			System.out.println("not handled type: " + declaration.getClass().getName());
 			System.out.println(declaration.getRawSignature());
 		}
 		return super.visit(declaration);

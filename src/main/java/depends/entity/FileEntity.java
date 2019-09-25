@@ -95,7 +95,7 @@ public class FileEntity extends TypeEntity {
 	@Override
 	public void inferLocalLevelEntities(Inferer inferer) {
 		this.importedRelationEntities = inferer.getImportedRelationEntities(importedNames);
-		this.importedTypes = inferer.getImportedTypes(importedNames);
+		this.importedTypes = inferer.getImportedTypes(importedNames,this);
 		this.importedFiles = inferer.getImportedFiles(importedNames);
 
 		super.inferLocalLevelEntities(inferer);
