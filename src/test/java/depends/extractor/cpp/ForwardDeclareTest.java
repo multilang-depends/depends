@@ -26,7 +26,7 @@ public class ForwardDeclareTest extends CppParserTest{
 	    }
 	    inferer.resolveAllBindings();
         FileDependencyGenerator dependencyGenerator= new FileDependencyGenerator();
-        dependencyGenerator.build(repo);
+        //TODO: to be complete
 	}
 	
 }

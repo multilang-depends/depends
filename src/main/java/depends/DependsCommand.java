@@ -25,7 +25,11 @@ SOFTWARE.
 package depends;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import depends.deptypes.DependencyType;
 import depends.extractor.LangProcessorRegistration;
+import edu.emory.mathcs.backport.java.util.Arrays;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
@@ -35,6 +39,11 @@ public class DependsCommand {
 	public static class SupportedLangs extends ArrayList<String> {
 		private static final long serialVersionUID = 1L;
 		public SupportedLangs() { super( LangProcessorRegistration.getRegistry().getLangs()); }
+	}
+	
+	public static class SupportedTypes extends ArrayList<String> {
+		private static final long serialVersionUID = 1L;
+		public SupportedTypes() { super( DependencyType.allDependencies()); }
 	}
 	
 	@Parameters(index = "0", completionCandidates = DependsCommand.SupportedLangs.class, description = "The lanauge of project files: [${COMPLETION-CANDIDATES}]")
@@ -66,7 +75,9 @@ public class DependsCommand {
 	private boolean detail = false;	
 	@Option(names = {"--auto-stub"},split=",", description = "create stub files for unsolved symbols (exprimental feature, only for java)")
 	private boolean autoStub = false;	
-	@Option(names = {"-h","--help"}, usageHelp = true, description = "display this help and exit")
+    @Option(names = {"--type-filter"},split=",",  completionCandidates = DependsCommand.SupportedTypes.class, description = "only filter the listed dependency types[${COMPLETION-CANDIDATES}]")
+    private String[] typeFilter=new String[]{};
+    @Option(names = {"-h","--help"}, usageHelp = true, description = "display this help and exit")
     boolean help;
 	public DependsCommand() {
 	}
@@ -130,5 +141,11 @@ public class DependsCommand {
 	}
 	public boolean isAutoStub() {
 		return autoStub;
+	}
+	public List<String> getTypeFilter() {
+		if (typeFilter.length==0) {
+			return DependencyType.allDependencies();
+		}
+		return java.util.Arrays.asList(typeFilter);
 	}
 }

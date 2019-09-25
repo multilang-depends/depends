@@ -36,11 +36,15 @@ public class DependencyMatrix {
     private ArrayList<String> nodes = new ArrayList<>();
     private HashMap<Integer,String> nodeIdToName = new HashMap<>();
 	private Integer relationCount=0;
+	private List<String> typeFilter;
     public DependencyMatrix() {
     }
     public DependencyMatrix(int size) {
     	dependencyPairs = new HashMap<>(size);
     }	
+	public DependencyMatrix(List<String> typeFilter) {
+		this.typeFilter = typeFilter;
+	}
 	public Collection<DependencyPair> getDependencyPairs() {
         return dependencyPairs.values();
     }
@@ -51,6 +55,8 @@ public class DependencyMatrix {
 	}
 	
 	public void addDependency(String depType, Integer from, Integer to,  int weight,List<DependencyDetail> details) {
+		if (typeFilter!=null && (!typeFilter.contains(depType)))
+			return;
 		if(from.equals(to) || from == -1 || to == -1) {
 		    return;
 		}
@@ -63,6 +69,8 @@ public class DependencyMatrix {
 	}
 	
 	public void addDependency(String depType, Integer from, Integer to,  int weight,DependencyDetail detail) {
+		if (typeFilter!=null && (!typeFilter.contains(depType)))
+			return;
 		if(from.equals(to) || from == -1 || to == -1) {
 		    return;
 		}

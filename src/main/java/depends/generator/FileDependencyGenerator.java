@@ -42,8 +42,8 @@ public class FileDependencyGenerator extends DependencyGenerator{
 	 * @return the generated dependency matrix
 	 */
 	@Override
-	public DependencyMatrix build(EntityRepo entityRepo) {
-		DependencyMatrix dependencyMatrix = new DependencyMatrix();
+	public DependencyMatrix build(EntityRepo entityRepo,List<String> typeFilter) {
+		DependencyMatrix dependencyMatrix = new DependencyMatrix(typeFilter);
 		Iterator<Entity> iterator = entityRepo.getEntities();
 		System.out.println("Start create dependencies matrix....");
 		while(iterator.hasNext()) {

@@ -25,19 +25,19 @@ SOFTWARE.
 package depends.generator;
 
 import java.util.Iterator;
+import java.util.List;
 
 import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.FunctionEntity;
-import depends.entity.PackageEntity;
 import depends.entity.PackageNamePrefixRemover;
 import depends.entity.repo.EntityRepo;
 import depends.matrix.core.DependencyMatrix;
 import depends.relations.Relation;
 
 public class FunctionDependencyGenerator extends DependencyGenerator {
-	public DependencyMatrix build(EntityRepo entityRepo) {
-		DependencyMatrix dependencyMatrix = new DependencyMatrix();
+	public DependencyMatrix build(EntityRepo entityRepo,List<String> typeFilter) {
+		DependencyMatrix dependencyMatrix = new DependencyMatrix(typeFilter);
 		Iterator<Entity> iterator = entityRepo.getEntities();
 		while(iterator.hasNext()) {
 			Entity entity = iterator.next();

@@ -79,6 +79,7 @@ abstract public class AbstractLangProcessor {
 	public String[] includeDirs;
 	private DependencyGenerator dependencyGenerator;
 	private Set<UnsolvedBindings> unsolved;
+	private List<String> typeFilter;
 
 	public AbstractLangProcessor(boolean eagerExpressionResolve) {
 		entityRepo = new InMemoryEntityRepo();
@@ -95,9 +96,10 @@ abstract public class AbstractLangProcessor {
      * @param includeDir 
      * @param inputDir 
      */
-	public void buildDependencies(String inputDir, String[] includeDir) {
+	public void buildDependencies(String inputDir, String[] includeDir,List<String> typeFilter) {
 		this.inputSrcPath = inputDir;
 		this.includeDirs = includeDir;
+		this.typeFilter = typeFilter;
         parseAllFiles();
         resolveBindings();
         identifyDependencies();
@@ -119,7 +121,7 @@ abstract public class AbstractLangProcessor {
     
     private void identifyDependencies(){
 		System.out.println("dependencie data generating...");	
-        dependencyMatrix  = dependencyGenerator.build(entityRepo);
+        dependencyMatrix  = dependencyGenerator.build(entityRepo,typeFilter);
         entityRepo = null;
 		System.out.println("reorder dependency matrix...");	
         dependencyMatrix = new OrderedMatrixGenerator(dependencyMatrix).build();

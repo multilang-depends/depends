@@ -24,6 +24,8 @@ SOFTWARE.
 
 package depends.generator;
 
+import java.util.List;
+
 import depends.entity.Entity;
 import depends.entity.PackageNamePrefixRemover;
 import depends.entity.repo.EntityRepo;
@@ -35,7 +37,7 @@ import depends.matrix.transform.strip.EmptyLeadingNameStripper;
 import depends.matrix.transform.strip.ILeadingNameStrippper;
 
 public abstract class DependencyGenerator {
-	public abstract DependencyMatrix build(EntityRepo entityRepo);
+	public abstract DependencyMatrix build(EntityRepo entityRepo,List<String> typeFilter);
 
 	protected ILeadingNameStrippper stripper = new EmptyLeadingNameStripper();
 	protected FilenameWritter filenameWritter = new EmptyFilenameWritter();
