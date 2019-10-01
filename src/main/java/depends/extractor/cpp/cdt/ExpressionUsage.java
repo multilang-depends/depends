@@ -141,7 +141,7 @@ public class ExpressionUsage {
 	private String getMethodCallIdentifier(IASTFunctionCallExpression methodCall) {
 		IASTExpression f = methodCall.getFunctionNameExpression();
 		if (f instanceof IASTIdExpression) {
-			return ((IASTIdExpression)f).getName().toString();
+			return ((IASTIdExpression)f).getName().toString().replace("::", ".");
 		}
 		return null;
 	}

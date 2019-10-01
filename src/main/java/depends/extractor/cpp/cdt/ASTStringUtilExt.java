@@ -30,7 +30,7 @@ import depends.relations.Inferer;
 public class ASTStringUtilExt extends ASTStringUtil {
 	public static String getName(IASTDeclSpecifier decl) {
 		StringBuilder buffer = new StringBuilder();
-		String name = appendBareDeclSpecifierString(buffer, decl).toString();
+		String name = appendBareDeclSpecifierString(buffer, decl).toString().replace("::", ".");
 		return removeTemplateParameter(name);
 	}
 
@@ -40,7 +40,7 @@ public class ASTStringUtilExt extends ASTStringUtil {
 
 	public static String getTypeIdString(IASTTypeId typeId) {
 		StringBuilder sb = new StringBuilder();
-		return appendBareTypeIdString(sb, typeId).toString();
+		return appendBareTypeIdString(sb, typeId).toString().replace("::", ".");
 	}
 	
 	/**

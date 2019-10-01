@@ -37,15 +37,19 @@ import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAliasDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTAliasDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLinkageSpecification;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTProblemDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplateDeclaration;
@@ -266,6 +270,12 @@ public class CppVisitor  extends ASTVisitor {
 			
 		}else if (declaration instanceof CPPASTProblemDeclaration){
 			System.err.println("parsing error \n" + declaration.getRawSignature());
+		}else if (declaration instanceof ICPPASTAliasDeclaration){
+			IASTName name = ((ICPPASTAliasDeclaration)declaration).getAlias();
+			String alias = ASTStringUtilExt.getSimpleName(name).replace("::", ".");
+			ICPPASTTypeId mapped = ((ICPPASTAliasDeclaration)declaration).getMappingTypeId();
+			String originalName = ASTStringUtilExt.getTypeIdString(mapped);
+			context.foundNewTypeAlias(alias, originalName);
 		}else {
 			System.out.println("not handled type: " + declaration.getClass().getName());
 			System.out.println(declaration.getRawSignature());
