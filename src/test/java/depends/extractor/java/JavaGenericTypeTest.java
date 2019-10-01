@@ -6,6 +6,8 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
+import depends.deptypes.DependencyType;
+
 public class JavaGenericTypeTest extends JavaParserTest{
 	@Before
 	public void setUp() {
@@ -18,6 +20,7 @@ public class JavaGenericTypeTest extends JavaParserTest{
         JavaFileParser parser = createParser(src);
         parser.parse();
         inferer.resolveAllBindings();
-        assertEquals(2,entityRepo.getEntity("x.GenericTypeTest").getRelations().size());
+        this.assertContainsRelation(entityRepo.getEntity("x.GenericTypeTest.v"),
+        		DependencyType.PARAMETER, "x.Parent2.Enum");
 	}
 }

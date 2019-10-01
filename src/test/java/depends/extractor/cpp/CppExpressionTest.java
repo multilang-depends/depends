@@ -21,7 +21,6 @@ public class CppExpressionTest extends CppParserTest{
         inferer.resolveAllBindings();
         Entity e = repo.getEntity("foo");
         this.assertContainsRelation(e, DependencyType.PARAMETER,"ClassA");
-        this.assertContainsRelation(e, DependencyType.CONTAIN,"ClassA");
         this.assertContainsRelation(e, DependencyType.CAST,"ClassA");
         this.assertContainsRelation(e, DependencyType.CALL,"ClassA");
         this.assertContainsRelation(e, DependencyType.CREATE,"ClassA");
@@ -29,6 +28,7 @@ public class CppExpressionTest extends CppParserTest{
         this.assertContainsRelation(e, DependencyType.USE,"foo.a2");
         this.assertContainsRelation(e, DependencyType.USE,"foo.a3");
         this.assertContainsRelation(e, DependencyType.USE,"foo.a");        
+        this.assertContainsRelation(e, DependencyType.CONTAIN,"ClassA");
 	}
 
 }

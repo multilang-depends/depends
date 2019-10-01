@@ -249,7 +249,7 @@ public class CppVisitor  extends ASTVisitor {
 					String varType = ASTStringUtilExt.getName(declSpecifier);
 					String varName = declarator.getName().toString();
 					if (!StringUtils.isEmpty(varType)) {
-						context.foundVarDefinition(varName, varType,new ArrayList<>());
+						context.foundVarDefinition(varName, varType,ASTStringUtilExt.getTemplateParameters(declSpecifier));
 					}else {
 						expressionUsage.foundCallExpressionOfFunctionStyle(varName,declarator);
 					}
@@ -271,10 +271,7 @@ public class CppVisitor  extends ASTVisitor {
 			System.out.println(declaration.getRawSignature());
 		}
 		return super.visit(declaration);
-	}
-	
-	
-	
+	}	
 	
 	@Override
 	public int visit(IASTEnumerator enumerator) {

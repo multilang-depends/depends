@@ -1,4 +1,6 @@
 
+class X{};
+
 template <class T>
 class Stack { 
 

@@ -78,7 +78,7 @@ public class RelationCounter {
 			if (var.getType()!=null)
 				entity.addRelation(new Relation(DependencyType.CONTAIN,var.getType()));
 			for (Entity type:var.getResolvedTypeParameters()) {
-				entity.addRelation(new Relation(DependencyType.USE,type));
+				var.addRelation(new Relation(DependencyType.PARAMETER,type));
 			}
 		}
 		for (Entity type:entity.getResolvedAnnotations()) {

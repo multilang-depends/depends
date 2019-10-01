@@ -86,7 +86,7 @@ public class JavaVarResolveTest extends JavaParserTest{
         JavaFileParser parser = createParser(src);
         parser.parse();
         inferer.resolveAllBindings();
-        assertEquals(16,entityRepo.getEntity("ValidateAll.validate").getRelations().size());
+        assertEquals(15,entityRepo.getEntity("ValidateAll.validate").getRelations().size());
 	}
 	
 	@Test
@@ -95,7 +95,7 @@ public class JavaVarResolveTest extends JavaParserTest{
         JavaFileParser parser = createParser(src);
         parser.parse();
         inferer.resolveAllBindings();
-        assertEquals(2,entityRepo.getEntity("JDepObject").getRelations().size());
+        this.assertContainsRelation(entityRepo.getEntity("JDepObject.cells"),DependencyType.PARAMETER, "JCellObject");
 	}
 	
 }

@@ -2,6 +2,8 @@ package depends.extractor.cpp.cdt;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -9,6 +11,7 @@ import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
@@ -38,6 +41,29 @@ public class ASTStringUtilExt extends ASTStringUtil {
 	public static String getTypeIdString(IASTTypeId typeId) {
 		StringBuilder sb = new StringBuilder();
 		return appendBareTypeIdString(sb, typeId).toString();
+	}
+	
+	/**
+	 *  retrieve template parameters from declSpecifier 
+	 */
+	public static List<String> getTemplateParameters(IASTDeclSpecifier declSpecifier) {
+		List<String> parameters = new ArrayList<>();
+		if (declSpecifier instanceof IASTNamedTypeSpecifier) {
+			final IASTNamedTypeSpecifier namedTypeSpec = (IASTNamedTypeSpecifier) declSpecifier;
+			if (namedTypeSpec.getName() instanceof ICPPASTTemplateId) {
+				final ICPPASTTemplateId templateId = (ICPPASTTemplateId) namedTypeSpec.getName();
+				for (IASTNode argument:templateId.getTemplateArguments()) {
+					if (argument instanceof IASTTypeId) {
+						IASTDeclSpecifier decl = ((IASTTypeId) argument).getDeclSpecifier();
+						String parameterName = ASTStringUtilExt.getName(decl);
+						parameters.add(parameterName);
+					}else {
+						System.err.println ("TODO: unknown template arguments");
+					}
+				}
+			} 
+		}
+		return parameters;
 	}
 
 	private static StringBuilder appendBareDeclSpecifierString(StringBuilder buffer, IASTDeclSpecifier declSpecifier) {
