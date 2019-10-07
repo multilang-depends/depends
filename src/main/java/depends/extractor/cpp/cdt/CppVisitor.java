@@ -25,6 +25,7 @@ SOFTWARE.
 package depends.extractor.cpp.cdt;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.codehaus.plexus.util.StringUtils;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -51,8 +52,11 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTAliasDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLinkageSpecification;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamespaceAlias;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTProblemDeclaration;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTStaticAssertionDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplateDeclaration;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplateSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTVisibilityLabel;
 
 import depends.entity.FunctionEntity;
@@ -130,18 +134,19 @@ public class CppVisitor  extends ASTVisitor {
 	public int visit(IASTDeclSpecifier declSpec) {
 		if (declSpec instanceof IASTCompositeTypeSpecifier) {
 			IASTCompositeTypeSpecifier type = (IASTCompositeTypeSpecifier)declSpec;
-			context.foundNewType(type.getName().toString());
+			String name = ASTStringUtilExt.getName(type);
+			List<String> param = ASTStringUtilExt.getTemplateParameters(type);
+			context.foundNewType(name);
 			if (declSpec instanceof ICPPASTCompositeTypeSpecifier) {
 				ICPPASTBaseSpecifier[] baseSpecififers = ((ICPPASTCompositeTypeSpecifier)declSpec).getBaseSpecifiers();
 				for (ICPPASTBaseSpecifier baseSpecififer:baseSpecififers) {
-					String extendName = new String(baseSpecififer.getNameSpecifier().toCharArray());
+					String extendName = ASTStringUtilExt.getName(baseSpecififer.getNameSpecifier());
 					context.foundExtends(extendName);
 				}
 			}
 		}
 		else if (declSpec instanceof  IASTEnumerationSpecifier) {
-			IASTEnumerationSpecifier type = (IASTEnumerationSpecifier)declSpec;
-			context.foundNewType(type.getName().toString());
+			context.foundNewType(ASTStringUtilExt.getName(declSpec));
 		}else {
 			//we do not care other types
 		}
@@ -169,7 +174,7 @@ public class CppVisitor  extends ASTVisitor {
 			if ( declarator.getParent() instanceof IASTSimpleDeclaration) {
 				IASTSimpleDeclaration decl = (IASTSimpleDeclaration)(declarator.getParent());
 				returnType = ASTStringUtilExt.getName(decl.getDeclSpecifier());
-				String rawName = declarator.getName().toString();
+				String rawName = ASTStringUtilExt.getName(declarator);
 				FunctionEntity namedEntity = context.currentFile().lookupFunctionInVisibleScope(rawName);
 				if (namedEntity!=null) {
 					rawName = namedEntity.getQualifiedName();
@@ -180,7 +185,7 @@ public class CppVisitor  extends ASTVisitor {
 			else if ( declarator.getParent() instanceof IASTFunctionDefinition) {
 				IASTFunctionDefinition decl = (IASTFunctionDefinition)declarator.getParent();
 				returnType= ASTStringUtilExt.getReturnTypeString(decl.getDeclSpecifier(), decl.getDeclarator());
-				String rawName = declarator.getName().toString();
+				String rawName = ASTStringUtilExt.getName(declarator);
 				FunctionEntity namedEntity = context.currentFile().lookupFunctionInVisibleScope(rawName);
 				if (namedEntity!=null) {
 					rawName = namedEntity.getQualifiedName();
@@ -211,7 +216,7 @@ public class CppVisitor  extends ASTVisitor {
 	public int leave(IASTDeclarator declarator) {
 		if (declarator instanceof IASTFunctionDeclarator){
 			if ( declarator.getParent() instanceof IASTSimpleDeclaration) {
-				String rawName = declarator.getName().toString();
+				String rawName = ASTStringUtilExt.getName(declarator);
 				if (rawName.equals(context.lastContainer().getRawName())) {
 					context.exitLastedEntity();
 				}else {
@@ -235,7 +240,7 @@ public class CppVisitor  extends ASTVisitor {
 	public int visit(IASTDeclaration declaration) {
 		
 		if (declaration instanceof ICPPASTUsingDeclaration) {
-			String ns = ((ICPPASTUsingDeclaration)declaration).getName().toString().replace("::", ".");
+			String ns = ASTStringUtilExt.getName((ICPPASTUsingDeclaration)declaration);
 			context.foundNewImport(new PackageWildCardImport(ns));
 		}
 		else if (declaration instanceof ICPPASTUsingDirective) {
@@ -243,15 +248,14 @@ public class CppVisitor  extends ASTVisitor {
 			context.foundNewImport(new ExactMatchImport(ns));
 		}
 		else if (declaration instanceof IASTSimpleDeclaration ) {
-
 			for (IASTDeclarator declarator:((IASTSimpleDeclaration) declaration).getDeclarators()) {
 				IASTDeclSpecifier declSpecifier = ((IASTSimpleDeclaration) declaration).getDeclSpecifier();
 				//Found new typedef definition
 				if (declSpecifier.getStorageClass()==IASTDeclSpecifier.sc_typedef) {
-					context.foundNewTypeAlias(declarator.getName().toString(),ASTStringUtilExt.getName(declSpecifier));
+					context.foundNewTypeAlias(ASTStringUtilExt.getName(declarator),ASTStringUtilExt.getName(declSpecifier));
 				}else if (!(declarator instanceof IASTFunctionDeclarator)) {
 					String varType = ASTStringUtilExt.getName(declSpecifier);
-					String varName = declarator.getName().toString();
+					String varName = ASTStringUtilExt.getName(declarator);
 					if (!StringUtils.isEmpty(varType)) {
 						context.foundVarDefinition(varName, varType,ASTStringUtilExt.getTemplateParameters(declSpecifier));
 					}else {
@@ -274,9 +278,21 @@ public class CppVisitor  extends ASTVisitor {
 			IASTName name = ((ICPPASTAliasDeclaration)declaration).getAlias();
 			String alias = ASTStringUtilExt.getSimpleName(name).replace("::", ".");
 			ICPPASTTypeId mapped = ((ICPPASTAliasDeclaration)declaration).getMappingTypeId();
-			String originalName = ASTStringUtilExt.getTypeIdString(mapped);
+			String originalName1 = ASTStringUtilExt.getTypeIdString(mapped);
+			context.foundNewTypeAlias(alias, originalName1);
+		}else if (declaration instanceof CPPASTNamespaceAlias){
+			IASTName name = ((CPPASTNamespaceAlias)declaration).getAlias();
+			String alias = ASTStringUtilExt.getSimpleName(name).replace("::", ".");
+			IASTName mapped = ((CPPASTNamespaceAlias)declaration).getMappingName();
+			String originalName = ASTStringUtilExt.getName(mapped);
 			context.foundNewTypeAlias(alias, originalName);
-		}else {
+		}
+		else if(declaration instanceof CPPASTStaticAssertionDeclaration)
+		{
+			
+		}else if (declaration instanceof CPPASTTemplateSpecialization) {
+		}
+		else{
 			System.out.println("not handled type: " + declaration.getClass().getName());
 			System.out.println(declaration.getRawSignature());
 		}
@@ -297,8 +313,9 @@ public class CppVisitor  extends ASTVisitor {
 
 	@Override
 	public int visit(IASTParameterDeclaration parameterDeclaration) {
-		String parameterName = parameterDeclaration.getDeclarator().getName().toString();
+		String parameterName = ASTStringUtilExt.getName(parameterDeclaration.getDeclarator());
 		String parameterType = ASTStringUtilExt.getName(parameterDeclaration.getDeclSpecifier());
+		IASTDeclSpecifier d1 = parameterDeclaration.getDeclSpecifier();
 		if (context.currentFunction()!=null) {
 			VarEntity var = new VarEntity(parameterName,parameterType,context.currentFunction(),idGenerator.generateId());
 			context.currentFunction().addParameter(var );

@@ -1,4 +1,6 @@
 package depends.extractor.cpp;
+import static org.junit.Assert.assertNotNull;
+
 import java.io.IOException;
 
 import org.junit.Before;
@@ -13,12 +15,33 @@ public class GenericTypeTest extends CppParserTest{
     }
 	
 	@Test
-	public void test_genericTypes() throws IOException {
+	public void test_templateSpecializationOfStruct() throws IOException {
+	    String src = "./src/test/resources/cpp-code-examples/GenericTypes.cpp";
+	    CppFileParser parser = createParser(src);
+        parser.parse();
+        inferer.resolveAllBindings();
+        assertNotNull(repo.getEntity("hash"));
+	}
+
+    @Test
+	public void test_genericTypesVarDefinition() throws IOException {
 	    String src = "./src/test/resources/cpp-code-examples/GenericTypes.cpp";
 	    CppFileParser parser = createParser(src);
         parser.parse();
         inferer.resolveAllBindings();
         this.assertContainsRelation(repo.getEntity("xStack"), DependencyType.PARAMETER, "X");
 	}
+	
+    @Test
+	public void test_extendGenericTypes() throws IOException {
+	    String src = "./src/test/resources/cpp-code-examples/GenericTypes.cpp";
+	    CppFileParser parser = createParser(src);
+        parser.parse();
+        inferer.resolveAllBindings();
+        this.assertContainsRelation(repo.getEntity("XStack"), DependencyType.INHERIT, "Stack");
+	}
+	
+	
+	
 
 }

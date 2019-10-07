@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -16,7 +17,8 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplateId;
 import org.eclipse.cdt.internal.core.model.ASTStringUtil;
 
 import depends.relations.Inferer;
@@ -30,13 +32,10 @@ import depends.relations.Inferer;
 public class ASTStringUtilExt extends ASTStringUtil {
 	public static String getName(IASTDeclSpecifier decl) {
 		StringBuilder buffer = new StringBuilder();
-		String name = appendBareDeclSpecifierString(buffer, decl).toString().replace("::", ".");
-		return removeTemplateParameter(name);
+		String name = appendBareDeclSpecifierString(buffer, decl).toString().replace("::", ".").replace("...", "");
+		return name;
 	}
 
-	public static String removeTemplateParameter(String name) {
-		return name.replaceAll("<.*>", "");
-	}
 
 	public static String getTypeIdString(IASTTypeId typeId) {
 		StringBuilder sb = new StringBuilder();
@@ -50,8 +49,8 @@ public class ASTStringUtilExt extends ASTStringUtil {
 		List<String> parameters = new ArrayList<>();
 		if (declSpecifier instanceof IASTNamedTypeSpecifier) {
 			final IASTNamedTypeSpecifier namedTypeSpec = (IASTNamedTypeSpecifier) declSpecifier;
-			if (namedTypeSpec.getName() instanceof ICPPASTTemplateId) {
-				final ICPPASTTemplateId templateId = (ICPPASTTemplateId) namedTypeSpec.getName();
+			if (namedTypeSpec.getName() instanceof CPPASTTemplateId) {
+				final CPPASTTemplateId templateId = (CPPASTTemplateId) namedTypeSpec.getName();
 				for (IASTNode argument:templateId.getTemplateArguments()) {
 					if (argument instanceof IASTTypeId) {
 						IASTDeclSpecifier decl = ((IASTTypeId) argument).getDeclSpecifier();
@@ -95,9 +94,8 @@ public class ASTStringUtilExt extends ASTStringUtil {
 				}
 				appendQualifiedNameStringWithReflection(buffer, segments[i]);
 			}
-		} else if (name instanceof ICPPASTTemplateId) {
-			final ICPPASTTemplateId templateId = (ICPPASTTemplateId) name;
-			appendQualifiedNameStringWithReflection(buffer, templateId.getTemplateName());
+		} else if (name instanceof CPPASTTemplateId) {
+			appendQualifiedNameStringWithReflection(buffer,(CPPASTTemplateId)name);
 		} else if (name != null) {
 			buffer.append(name.getSimpleID());
 		}
@@ -117,7 +115,16 @@ public class ASTStringUtilExt extends ASTStringUtil {
 	}
 
 	private static void appendQualifiedNameStringWithReflection(StringBuilder buffer,
+			CPPASTTemplateId templateId) {
+		appendQualifiedNameStringWithReflection(buffer,templateId.getTemplateName());
+	}
+	
+	private static void appendQualifiedNameStringWithReflection(StringBuilder buffer,
 			ICPPASTNameSpecifier nameSpecifier) {
+		if (nameSpecifier instanceof CPPASTTemplateId) {
+			appendQualifiedNameStringWithReflection(buffer,(CPPASTTemplateId)nameSpecifier);
+			return;
+		}
 		try {
 			Method m = ASTStringUtil.class.getDeclaredMethod("appendQualifiedNameString", StringBuilder.class,
 					ICPPASTNameSpecifier.class);
@@ -131,6 +138,46 @@ public class ASTStringUtilExt extends ASTStringUtil {
 
 	private static StringBuilder appendBareTypeIdString(StringBuilder buffer, IASTTypeId typeId) {
 		return appendBareDeclSpecifierString(buffer, typeId.getDeclSpecifier());
+	}
+
+
+	public static String getName(IASTDeclarator declarator) {
+		return declarator.getName().toString().replace("::", ".");
+	}
+
+
+	public static String getName(ICPPASTUsingDeclaration declaration) {
+		return declaration.getName().toString().replace("::", ".");
+	}
+
+
+	public static String getName(IASTName name) {
+		return name.getRawSignature().toString().replace("::", ".");
+	}
+
+
+	private static StringBuilder appendBareNameString(StringBuilder buffer, ICPPASTNameSpecifier name) {
+		if (name instanceof ICPPASTQualifiedName) {
+			final ICPPASTQualifiedName qualifiedName = (ICPPASTQualifiedName) name;
+			final ICPPASTNameSpecifier[] segments = qualifiedName.getAllSegments();
+			for (int i = 0; i < segments.length; i++) {
+				if (i > 0) {
+					buffer.append(".");
+				}
+				appendQualifiedNameStringWithReflection(buffer, segments[i]);
+			}
+		} else if (name instanceof CPPASTTemplateId) {
+			appendQualifiedNameStringWithReflection(buffer,(CPPASTTemplateId)name);
+		} else if (name != null) {
+			buffer.append(name.getRawSignature());
+		}
+		return buffer;
+	}
+	
+	public static String getName(ICPPASTNameSpecifier nameSpecifier) {
+		StringBuilder buffer = new StringBuilder();
+		String name = appendBareNameString(buffer, nameSpecifier).toString().replace("::", ".").replace("...", "");
+		return name;
 	}
 
 }
