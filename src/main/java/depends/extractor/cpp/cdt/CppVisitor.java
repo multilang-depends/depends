@@ -50,7 +50,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTAliasDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLinkageSpecification;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamespaceAlias;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTProblemDeclaration;
@@ -58,7 +57,10 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTStaticAssertionDeclara
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplateDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplateSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTVisibilityLabel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import depends.entity.ContainerEntity;
 import depends.entity.FunctionEntity;
 import depends.entity.VarEntity;
 import depends.entity.repo.EntityRepo;
@@ -70,6 +72,7 @@ import depends.importtypes.PackageWildCardImport;
 import depends.relations.Inferer;
 
 public class CppVisitor  extends ASTVisitor {
+	private static final Logger logger = LoggerFactory.getLogger(CppVisitor.class);
 	private CppHandlerContext context;
 	private IdGenerator idGenerator;
 	private PreprocessorHandler preprocessorHandler;
@@ -85,6 +88,8 @@ public class CppVisitor  extends ASTVisitor {
 		context.startFile(fileFullPath);
 		this.preprocessorHandler = preprocessorHandler;
 		expressionUsage = new ExpressionUsage(context,entityRepo);
+		logger.info("enter file " + fileFullPath);
+		
 	}
 
 	@Override
@@ -109,7 +114,8 @@ public class CppVisitor  extends ASTVisitor {
 	
 	@Override
 	public int visit(IASTProblem problem) {
-		System.out.println("warning: parse error" + problem.getOriginalNode() + problem.getMessageWithLocation());
+		logger.info("warning: parse error " + problem.getOriginalNode() + problem.getMessageWithLocation());
+		System.out.println("warning: parse error " + problem.getOriginalNode() + problem.getMessageWithLocation());
 		return super.visit(problem);
 	}
 
@@ -117,6 +123,7 @@ public class CppVisitor  extends ASTVisitor {
 	@Override
 	public int visit(ICPPASTNamespaceDefinition namespaceDefinition) {
 		String ns = namespaceDefinition.getName().toString().replace("::", ".");
+		logger.info("enter ICPPASTNamespaceDefinition  " + ns);
 		context.foundNamespace(ns);
 		context.foundNewImport(new PackageWildCardImport(ns));
 		return super.visit(namespaceDefinition);
@@ -132,6 +139,7 @@ public class CppVisitor  extends ASTVisitor {
 	// Types
 	@Override
 	public int visit(IASTDeclSpecifier declSpec) {
+		logger.info("enter IASTDeclSpecifier  " + declSpec.getClass().getSimpleName());
 		if (declSpec instanceof IASTCompositeTypeSpecifier) {
 			IASTCompositeTypeSpecifier type = (IASTCompositeTypeSpecifier)declSpec;
 			String name = ASTStringUtilExt.getName(type);
@@ -169,6 +177,7 @@ public class CppVisitor  extends ASTVisitor {
 	//Function or Methods
 	@Override
 	public int visit(IASTDeclarator declarator) {
+		logger.info("enter IASTDeclarator  " + declarator.getClass().getSimpleName());
 		if (declarator instanceof IASTFunctionDeclarator){
 			String returnType = null;
 			if ( declarator.getParent() instanceof IASTSimpleDeclaration) {
@@ -238,6 +247,7 @@ public class CppVisitor  extends ASTVisitor {
 	// Variables
 	@Override
 	public int visit(IASTDeclaration declaration) {
+		logger.info("enter IASTDeclaration  " + declaration.getClass().getSimpleName());
 		
 		if (declaration instanceof ICPPASTUsingDeclaration) {
 			String ns = ASTStringUtilExt.getName((ICPPASTUsingDeclaration)declaration);
@@ -301,6 +311,7 @@ public class CppVisitor  extends ASTVisitor {
 	
 	@Override
 	public int visit(IASTEnumerator enumerator) {
+		logger.info("enter IASTEnumerator  " + enumerator.getClass().getSimpleName());
 		context.foundVarDefinition(enumerator.getName().toString(), context.currentType().getRawName(),new ArrayList<>());
 		return super.visit(enumerator);
 	}
@@ -313,6 +324,7 @@ public class CppVisitor  extends ASTVisitor {
 
 	@Override
 	public int visit(IASTParameterDeclaration parameterDeclaration) {
+		logger.info("enter IASTParameterDeclaration  " + parameterDeclaration.getClass().getSimpleName());
 		String parameterName = ASTStringUtilExt.getName(parameterDeclaration.getDeclarator());
 		String parameterType = ASTStringUtilExt.getName(parameterDeclaration.getDeclSpecifier());
 		IASTDeclSpecifier d1 = parameterDeclaration.getDeclSpecifier();

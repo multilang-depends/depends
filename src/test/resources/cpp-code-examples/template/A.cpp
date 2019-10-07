@@ -1,32 +1,11 @@
 
-class X{};
 
-template <class T>
-class Stack { 
-
-};
-
-Stack<X>   xStack; 
-
-
-template <>
-struct hash<DexFieldSpec> {
-  size_t operator()(const DexFieldSpec& r) const {
-    size_t seed = boost::hash<DexType*>()(r.cls);
-    boost::hash_combine(seed, r.name);
-    boost::hash_combine(seed, r.type);
-    return seed;
-  }
-};
-
-class XStack: public Stack<X> {
-};
 
 template <size_t Index>
-  const typename std::tuple_element<Index, std::tuple<Domains...>>::type& get()
-      const {
-    return std::get<Index>(m_product);
-  }
+const typename std::tuple_element<Index, std::tuple<Domains...>>::type& get()
+  const {
+return std::get<Index>(m_product);
+}
 
 
 

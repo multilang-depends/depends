@@ -16,7 +16,7 @@ public class GenericTypeTest extends CppParserTest{
 	
 	@Test
 	public void test_templateSpecializationOfStruct() throws IOException {
-	    String src = "./src/test/resources/cpp-code-examples/GenericTypes.cpp";
+	    String src = "./src/test/resources/cpp-code-examples/template/TempateStructure.cpp";
 	    CppFileParser parser = createParser(src);
         parser.parse();
         inferer.resolveAllBindings();
@@ -24,8 +24,8 @@ public class GenericTypeTest extends CppParserTest{
 	}
 
     @Test
-	public void test_genericTypesVarDefinition() throws IOException {
-	    String src = "./src/test/resources/cpp-code-examples/GenericTypes.cpp";
+	public void test_genericTypesVarParameterReference() throws IOException {
+	    String src = "./src/test/resources/cpp-code-examples/template/GenericTypes.cpp";
 	    CppFileParser parser = createParser(src);
         parser.parse();
         inferer.resolveAllBindings();
@@ -33,8 +33,8 @@ public class GenericTypeTest extends CppParserTest{
 	}
 	
     @Test
-	public void test_extendGenericTypes() throws IOException {
-	    String src = "./src/test/resources/cpp-code-examples/GenericTypes.cpp";
+	public void test_genericTypesExtends() throws IOException {
+	    String src = "./src/test/resources/cpp-code-examples/template/GenericTypes.cpp";
 	    CppFileParser parser = createParser(src);
         parser.parse();
         inferer.resolveAllBindings();
