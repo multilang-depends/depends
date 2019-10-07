@@ -185,7 +185,7 @@ public class CandidateTypes extends TypeEntity {
 	}
 
 	@Override
-	public void addTypeParameter(List<String> typeArguments) {
+	public void addTypeParameter(List<GenericTypeArgument> typeArguments) {
 		System.err.println("error: addTypeParameter should not been invoked");
 		super.addTypeParameter(typeArguments);
 	}
@@ -197,7 +197,7 @@ public class CandidateTypes extends TypeEntity {
 	}
 
 	@Override
-	public void addTypeParameter(String typeName) {
+	public void addTypeParameter(GenericTypeArgument typeName) {
 		System.err.println("error: addTypeParameter should not been invoked");
 		super.addTypeParameter(typeName);
 	}

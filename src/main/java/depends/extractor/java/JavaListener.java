@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import depends.entity.FunctionEntity;
+import depends.entity.GenericTypeArgument;
 import depends.entity.VarEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.java.JavaParser.AnnotationConstantRestContext;
@@ -192,7 +193,7 @@ public class JavaListener extends JavaParserBaseListener {
 		FunctionEntity method = context.foundMethodDeclarator(methodName, returnedType, throwedType);
 		new FormalParameterListContextHelper(ctx.formalParameters(), method, entityRepo);
 		if (ctx.typeParameters() != null) {
-			List<String> parameters = TypeParameterContextHelper.getTypeParameters(ctx.typeParameters());
+			List<GenericTypeArgument> parameters = TypeParameterContextHelper.getTypeParameters(ctx.typeParameters());
 			method.addTypeParameter(parameters);
 		}
 		annotationProcessor.processAnnotationModifier(ctx, ClassBodyDeclarationContext.class,"modifier.classOrInterfaceModifier.annotation",context.lastContainer());
@@ -255,7 +256,7 @@ public class JavaListener extends JavaParserBaseListener {
 	public void enterFieldDeclaration(FieldDeclarationContext ctx) {
 		List<String> varNames = VariableDeclaratorsContextHelper.getVariables(ctx.variableDeclarators());
 		String type = ClassTypeContextHelper.getClassName(ctx.typeType());
-		List<String> typeArguments = ClassTypeContextHelper.getTypeArguments(ctx.typeType());
+		List<GenericTypeArgument> typeArguments = ClassTypeContextHelper.getTypeArguments(ctx.typeType());
 		List<VarEntity> vars = context.foundVarDefinitions(varNames, type,typeArguments);
 		annotationProcessor.processAnnotationModifier(ctx, ClassBodyDeclarationContext.class,"modifier.classOrInterfaceModifier.annotation",vars);
 		super.enterFieldDeclaration(ctx);
@@ -265,7 +266,7 @@ public class JavaListener extends JavaParserBaseListener {
 
 	@Override
 	public void enterConstDeclaration(ConstDeclarationContext ctx) {
-		List<String> typeArguments = ClassTypeContextHelper.getTypeArguments(ctx.typeType());
+		List<GenericTypeArgument> typeArguments = ClassTypeContextHelper.getTypeArguments(ctx.typeType());
 		List<VarEntity> vars = context.foundVarDefinitions(VariableDeclaratorsContextHelper.getVariables(ctx.constantDeclarator()),
 				ClassTypeContextHelper.getClassName(ctx.typeType()),typeArguments);
 		annotationProcessor.processAnnotationModifier(ctx, InterfaceBodyDeclarationContext.class,"modifier.classOrInterfaceModifier.annotation",vars);
@@ -304,14 +305,14 @@ public class JavaListener extends JavaParserBaseListener {
 	// TODO: all modifier have not processed yet.
 	@Override
 	public void enterLocalVariableDeclaration(LocalVariableDeclarationContext ctx) {
-		List<String> typeArguments = ClassTypeContextHelper.getTypeArguments(ctx.typeType());
+		List<GenericTypeArgument> typeArguments = ClassTypeContextHelper.getTypeArguments(ctx.typeType());
 		context.foundVarDefinitions(VariableDeclaratorsContextHelper.getVariables((ctx.variableDeclarators())),
 				ClassTypeContextHelper.getClassName(ctx.typeType()),typeArguments);
 		super.enterLocalVariableDeclaration(ctx);
 	}
 
 	public void enterEnhancedForControl(EnhancedForControlContext ctx) {
-		List<String> typeArguments = ClassTypeContextHelper.getTypeArguments(ctx.typeType());
+		List<GenericTypeArgument> typeArguments = ClassTypeContextHelper.getTypeArguments(ctx.typeType());
 		context.foundVarDefinitions(VariableDeclaratorsContextHelper.getVariable((ctx.variableDeclaratorId())),
 				ClassTypeContextHelper.getClassName(ctx.typeType()),typeArguments);
 		super.enterEnhancedForControl(ctx);
@@ -322,7 +323,7 @@ public class JavaListener extends JavaParserBaseListener {
 //    ;
 	@Override
 	public void enterResource(ResourceContext ctx) {
-		List<String> typeArguments = ClassTypeContextHelper.getTypeArguments(ctx.classOrInterfaceType());
+		List<GenericTypeArgument> typeArguments = ClassTypeContextHelper.getTypeArguments(ctx.classOrInterfaceType());
 		context.foundVarDefinition(ctx.variableDeclaratorId().IDENTIFIER().getText(),
 				IdentifierContextHelper.getName(ctx.classOrInterfaceType().IDENTIFIER()),typeArguments);
 		super.enterResource(ctx);
@@ -354,10 +355,10 @@ public class JavaListener extends JavaParserBaseListener {
 			TypeParameterContext typeParam = typeParameters.typeParameter(i);
 			if (typeParam.typeBound() != null) {
 				for (int j = 0; j < typeParam.typeBound().typeType().size(); j++) {
-					context.foundTypeParametes(ClassTypeContextHelper.getClassName(typeParam.typeBound().typeType(j)));
+					context.foundTypeParametes(new GenericTypeArgument(ClassTypeContextHelper.getClassName(typeParam.typeBound().typeType(j))));
 				}
 			}
-			context.currentType().addTypeParameter(typeParam.IDENTIFIER().getText());
+			context.currentType().addTypeParameter(new GenericTypeArgument(typeParam.IDENTIFIER().getText()));
 		}
 	}
 	

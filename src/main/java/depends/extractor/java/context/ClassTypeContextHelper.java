@@ -27,6 +27,7 @@ package depends.extractor.java.context;
 import java.util.ArrayList;
 import java.util.List;
 
+import depends.entity.GenericTypeArgument;
 import depends.extractor.java.JavaParser.ClassOrInterfaceTypeContext;
 import depends.extractor.java.JavaParser.TypeArgumentContext;
 import depends.extractor.java.JavaParser.TypeArgumentsContext;
@@ -65,19 +66,19 @@ public class ClassTypeContextHelper {
 		return "void";
 	}
 	
-	public static List<String> getTypeArguments(TypeTypeContext ctx){
+	public static List<GenericTypeArgument> getTypeArguments(TypeTypeContext ctx){
 		if (ctx.classOrInterfaceType()==null) return new ArrayList<>();
 		return getTypeArguments(ctx.classOrInterfaceType());
 	}
 
-	public static List<String> getTypeArguments(ClassOrInterfaceTypeContext type) {
-		List<String> typeArguments = new ArrayList<>();
+	public static List<GenericTypeArgument> getTypeArguments(ClassOrInterfaceTypeContext type) {
+		List<GenericTypeArgument> typeArguments = new ArrayList<>();
 		for(TypeArgumentsContext args:type.typeArguments()) {
 			for (TypeArgumentContext arg:args.typeArgument()) {
 				if (arg.typeType()==null) continue;
 				String argumentType = getClassName(arg.typeType());
 				if (argumentType!=null)
-					typeArguments.add(argumentType);
+					typeArguments.add(new GenericTypeArgument(argumentType));
 			}
 		}
 		return typeArguments;

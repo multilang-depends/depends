@@ -29,12 +29,13 @@ import java.util.List;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
+import depends.entity.AliasEntity;
 import depends.entity.ContainerEntity;
 import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.FunctionEntity;
 import depends.entity.PackageEntity;
-import depends.entity.AliasEntity;
+import depends.entity.GenericTypeArgument;
 import depends.entity.TypeEntity;
 import depends.entity.VarEntity;
 import depends.entity.repo.EntityRepo;
@@ -208,12 +209,12 @@ public abstract class HandlerContext {
 		
 	}
 
-	public void foundTypeParametes(String typeName) {
+	public void foundTypeParametes(GenericTypeArgument typeName) {
 		lastContainer().addTypeParameter(typeName);
 	}
 
 
-	public List<VarEntity> foundVarDefinitions(List<String> varNames, String type, List<String> typeArguments) {
+	public List<VarEntity> foundVarDefinitions(List<String> varNames, String type, List<GenericTypeArgument> typeArguments) {
 		return varNames.stream().map(item->foundVarDefinition(item,type,typeArguments)).collect(Collectors.toList());
 	}
 	
@@ -234,7 +235,7 @@ public abstract class HandlerContext {
 	
 
 
-	public VarEntity foundVarDefinition(String varName, String type, List<String> typeArguments) {
+	public VarEntity foundVarDefinition(String varName, String type, List<GenericTypeArgument> typeArguments) {
 		VarEntity var = new VarEntity(varName, type, lastContainer(), idGenerator.generateId());
 		var.addTypeParameter(typeArguments);
 		lastContainer().addVar(var);	
