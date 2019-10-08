@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import depends.entity.CandidateTypes;
+import depends.entity.ContainerEntity;
 import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.FunctionCall;
@@ -425,4 +426,6 @@ public class Inferer {
 	public boolean isEagerExpressionResolve() {
 		return eagerExpressionResolve;
 	}
+
+
 }

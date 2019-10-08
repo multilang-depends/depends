@@ -23,4 +23,18 @@ public class JavaGenericTypeTest extends JavaParserTest{
         this.assertContainsRelation(entityRepo.getEntity("x.GenericTypeTest.v"),
         		DependencyType.PARAMETER, "x.Parent2.Enum");
 	}
+	
+	@Test
+	public void test_GenericTypeEmbededShouldBeIdentified() throws IOException {
+        String src = "./src/test/resources/java-code-examples/GenericTypeEmbededTest.java";
+        JavaFileParser parser = createParser(src);
+        parser.parse();
+        inferer.resolveAllBindings();
+        this.assertContainsRelation(entityRepo.getEntity("GenericTypeEmbededTest"),
+        		DependencyType.CONTAIN, "MyHashMap");
+        this.assertContainsRelation(entityRepo.getEntity("GenericTypeEmbededTest.data"),
+        		DependencyType.PARAMETER, "MyList");
+        this.assertContainsRelation(entityRepo.getEntity("GenericTypeEmbededTest.data"),
+        		DependencyType.PARAMETER, "MyArray");
+	}
 }

@@ -67,11 +67,18 @@ public abstract class DecoratedEntity extends Entity{
 	private Collection<Entity> typeParametersToEntities(Inferer inferer) {
 		ArrayList<Entity> r = new ArrayList<>();
 		for (GenericTypeArgument typeParameter:typeParameters) {
-			Entity entity = resolveEntity(inferer, typeParameter.getName());
-			if (entity != null)
-				r.add(entity);
+			toEntityList(inferer, r,typeParameter);
 		}
 		return r;
+	}
+
+	private void toEntityList(Inferer inferer, ArrayList<Entity> r, GenericTypeArgument typeParameter) {
+		Entity entity = resolveEntity(inferer, typeParameter.getName());
+		if (entity != null)
+			r.add(entity);
+		for (GenericTypeArgument arg: typeParameter.getArguments()) {
+			toEntityList(inferer,r,arg);
+		}
 	}
 
 	public Collection<Entity> getResolvedTypeParameters() {

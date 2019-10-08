@@ -46,9 +46,9 @@ public class ClassTypeContextHelper {
      */
 	public static String getClassName(TypeTypeContext ctx) {
 		if (ctx.primitiveType()!=null)
-			return sureDotStartName(ctx.primitiveType().getText());
+			return ctx.primitiveType().getText();
 		if (ctx.classOrInterfaceType()!=null)
-			return sureDotStartName(getType(ctx.classOrInterfaceType()));
+			return getType(ctx.classOrInterfaceType());
 		return null;
 	}
 
@@ -77,19 +77,12 @@ public class ClassTypeContextHelper {
 			for (TypeArgumentContext arg:args.typeArgument()) {
 				if (arg.typeType()==null) continue;
 				String argumentType = getClassName(arg.typeType());
+				List<GenericTypeArgument> subTypes = getTypeArguments(arg.typeType());
 				if (argumentType!=null)
-					typeArguments.add(new GenericTypeArgument(argumentType));
+					typeArguments.add(new GenericTypeArgument(argumentType,subTypes));
 			}
 		}
 		return typeArguments;
-	}
-	
-	private static String sureDotStartName(String name) {
-//		if (name==null) return null;
-//		if (name.contains(".") && !name.startsWith(".")) {
-//			name = "." + name;
-//		}
-		return name;
 	}
 
 }
