@@ -60,7 +60,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTVisibilityLabel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import depends.entity.ContainerEntity;
 import depends.entity.FunctionEntity;
 import depends.entity.GenericTypeArgument;
 import depends.entity.VarEntity;

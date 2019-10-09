@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import depends.deptypes.DependencyType;
+import depends.extractor.java.JavaFileParser;
 
 public class GenericTypeTest extends CppParserTest{
     @Before
@@ -41,6 +42,20 @@ public class GenericTypeTest extends CppParserTest{
         this.assertContainsRelation(repo.getEntity("XStack"), DependencyType.INHERIT, "Stack");
 	}
 	
+    
+    @Test
+	public void test_GenericTypeEmbededShouldBeIdentified() throws IOException {
+        String src = "./src/test/resources/cpp-code-examples/template/EmbededTemplates.cpp";
+	    CppFileParser parser = createParser(src);
+        parser.parse();
+        inferer.resolveAllBindings();
+        this.assertContainsRelation(repo.getEntity("GenericTypeEmbededTest"),
+        		DependencyType.CONTAIN, "MyHashMap");
+        this.assertContainsRelation(repo.getEntity("GenericTypeEmbededTest.data"),
+        		DependencyType.PARAMETER, "MyList");
+        this.assertContainsRelation(repo.getEntity("GenericTypeEmbededTest.data"),
+        		DependencyType.PARAMETER, "MyArray");
+	}
 	
 	
 

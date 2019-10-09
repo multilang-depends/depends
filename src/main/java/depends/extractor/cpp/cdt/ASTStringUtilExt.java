@@ -56,7 +56,8 @@ public class ASTStringUtilExt extends ASTStringUtil {
 					if (argument instanceof IASTTypeId) {
 						IASTDeclSpecifier decl = ((IASTTypeId) argument).getDeclSpecifier();
 						String parameterName = ASTStringUtilExt.getName(decl);
-						parameters.add(new GenericTypeArgument(parameterName));
+						List<GenericTypeArgument> subTypes = getTemplateParameters(decl);
+						parameters.add(new GenericTypeArgument(parameterName,subTypes));
 					}else {
 						System.err.println ("TODO: unknown template arguments");
 					}
@@ -65,6 +66,8 @@ public class ASTStringUtilExt extends ASTStringUtil {
 		}
 		return parameters;
 	}
+	
+	
 
 	private static StringBuilder appendBareDeclSpecifierString(StringBuilder buffer, IASTDeclSpecifier declSpecifier) {
 		if (declSpecifier instanceof IASTCompositeTypeSpecifier) {
