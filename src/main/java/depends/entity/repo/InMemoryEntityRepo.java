@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import depends.entity.Entity;
+import depends.entity.GenericName;
 import depends.entity.MultiDeclareEntities;
 
 public class InMemoryEntityRepo extends SimpleIdGenerator implements EntityRepo {
@@ -34,7 +35,7 @@ public class InMemoryEntityRepo extends SimpleIdGenerator implements EntityRepo 
 	public void add(Entity entity) {
 		allEntitiesByOrder.add(entity);
 		allEntitiesById.put(entity.getId(), entity);
-		String name = entity.getRawName();
+		String name = entity.getRawName().getUniqueName();
 		if (entity.getQualifiedName() != null && !(entity.getQualifiedName().isEmpty())) {
 			name = entity.getQualifiedName();
 		}
@@ -61,10 +62,11 @@ public class InMemoryEntityRepo extends SimpleIdGenerator implements EntityRepo 
 
 	@Override
 	public void update(Entity entity) {
-		// TODO Auto-generated method stub
-		
 	}
 
-
+	@Override
+	public Entity getEntity(GenericName rawName) {
+		return this.getEntity(rawName.getUniqueName());
+	}
 
 }

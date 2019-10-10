@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplateId;
 import org.eclipse.cdt.internal.core.model.ASTStringUtil;
 
-import depends.entity.GenericTypeArgument;
+import depends.entity.GenericName;
 import depends.relations.Inferer;
 
 /**
@@ -46,8 +46,8 @@ public class ASTStringUtilExt extends ASTStringUtil {
 	/**
 	 *  retrieve template parameters from declSpecifier 
 	 */
-	public static List<GenericTypeArgument> getTemplateParameters(IASTDeclSpecifier declSpecifier) {
-		List<GenericTypeArgument> parameters = new ArrayList<>();
+	public static List<GenericName> getTemplateParameters(IASTDeclSpecifier declSpecifier) {
+		List<GenericName> parameters = new ArrayList<>();
 		if (declSpecifier instanceof IASTNamedTypeSpecifier) {
 			final IASTNamedTypeSpecifier namedTypeSpec = (IASTNamedTypeSpecifier) declSpecifier;
 			if (namedTypeSpec.getName() instanceof CPPASTTemplateId) {
@@ -57,8 +57,8 @@ public class ASTStringUtilExt extends ASTStringUtil {
 						IASTDeclSpecifier decl = ((IASTTypeId) argument).getDeclSpecifier();
 						String parameterName = ASTStringUtilExt.getName(decl);
 						parameterName = parameterName.replace("...", "");
-						List<GenericTypeArgument> subTypes = getTemplateParameters(decl);
-						parameters.add(new GenericTypeArgument(parameterName,subTypes));
+						List<GenericName> subTypes = getTemplateParameters(decl);
+						parameters.add(new GenericName(parameterName,subTypes));
 					}else {
 						System.err.println ("TODO: unknown template arguments");
 					}

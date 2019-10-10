@@ -27,16 +27,16 @@ package depends.extractor.java.context;
 import java.util.ArrayList;
 import java.util.List;
 
-import depends.entity.GenericTypeArgument;
+import depends.entity.GenericName;
 import depends.extractor.java.JavaParser.TypeParameterContext;
 import depends.extractor.java.JavaParser.TypeParametersContext;
 
 public class TypeParameterContextHelper {
 
-	public static List<GenericTypeArgument> getTypeParameters(TypeParametersContext typeParameters) {
-		ArrayList<GenericTypeArgument> r = new ArrayList<>();
+	public static List<GenericName> getTypeParameters(TypeParametersContext typeParameters) {
+		ArrayList<GenericName> r = new ArrayList<>();
 		for(TypeParameterContext param:typeParameters.typeParameter()) {
-			r.add(new GenericTypeArgument(param.IDENTIFIER().getText()));
+			r.add(new GenericName(param.IDENTIFIER().getText()));
 		}
 		return r;
 	}

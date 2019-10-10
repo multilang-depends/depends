@@ -32,12 +32,12 @@ import depends.relations.Inferer;
 
 public class AliasEntity extends Entity {
 	private Entity referToEntity = new EmptyTypeEntity();
-	private String originName;
+	private GenericName originName;
 	private List<Entity> referPath = new ArrayList<>();
 	public AliasEntity() {
 		
 	}
-	public AliasEntity(String simpleName, Entity parent, Integer id, String originTypeName) {
+	public AliasEntity(GenericName simpleName, Entity parent, Integer id, GenericName originTypeName) {
 		super(simpleName, parent, id);
 		this.originName = originTypeName;
 	}
@@ -90,21 +90,21 @@ public class AliasEntity extends Entity {
 		return origin.getFunctions();
 	}
 
-	protected FunctionEntity lookupFunctionLocally(String functionName) {
+	protected FunctionEntity lookupFunctionLocally(GenericName functionName) {
 		if (!(referToEntity instanceof ContainerEntity))
 			return null;
 		ContainerEntity origin = (ContainerEntity) referToEntity;
 		return origin.lookupFunctionLocally(functionName);
 	}
 
-	public FunctionEntity lookupFunctionInVisibleScope(String functionName) {
+	public FunctionEntity lookupFunctionInVisibleScope(GenericName functionName) {
 		if (!(referToEntity instanceof ContainerEntity))
 			return null;
 		ContainerEntity origin = (ContainerEntity) referToEntity;
 		return origin.lookupFunctionInVisibleScope(functionName);
 	}
 
-	public VarEntity lookupVarsInVisibleScope(String varName) {
+	public VarEntity lookupVarsInVisibleScope(GenericName varName) {
 		if (!(referToEntity instanceof ContainerEntity))
 			return null;
 		ContainerEntity origin = (ContainerEntity) referToEntity;

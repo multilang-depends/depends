@@ -27,6 +27,7 @@ package depends.entity.repo;
 import java.util.Iterator;
 
 import depends.entity.Entity;
+import depends.entity.GenericName;
 
 public interface EntityRepo extends IdGenerator {
 	public static final String GLOBAL_SCOPE_NAME = "::GLOBAL::";
@@ -35,11 +36,14 @@ public interface EntityRepo extends IdGenerator {
 
 	Entity getEntity(Integer entityId);
 
+	Entity getEntity(GenericName rawName);
+
 	void add(Entity entity);
 
 	Iterator<Entity> getEntities();
 
 	void update(Entity entity);
+
 
 
 }

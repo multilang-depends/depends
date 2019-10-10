@@ -35,7 +35,7 @@ import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.FunctionEntity;
 import depends.entity.PackageEntity;
-import depends.entity.GenericTypeArgument;
+import depends.entity.GenericName;
 import depends.entity.TypeEntity;
 import depends.entity.VarEntity;
 import depends.entity.repo.EntityRepo;
@@ -72,7 +72,7 @@ public abstract class HandlerContext {
 	 * @return
 	 */
 	public TypeEntity foundNewType(String classOrInterfaceName) {
-		TypeEntity currentTypeEntity = new TypeEntity(classOrInterfaceName, this.latestValidContainer(),
+		TypeEntity currentTypeEntity = new TypeEntity(new GenericName(classOrInterfaceName), this.latestValidContainer(),
 			idGenerator.generateId());
 		pushToStack(currentTypeEntity);
 	 	entityRepo.add(currentTypeEntity);
@@ -83,8 +83,8 @@ public abstract class HandlerContext {
 	public void foundNewTypeAlias(String aliasName, String originalName) {
 		if (aliasName.equals(originalName)) return; //it is a tricky, we treat same name no different. 
 		//indeed it is not perfect -> the right match should depends on no-bare format like "struct a" instead of "a"
-		AliasEntity currentTypeEntity = new AliasEntity(aliasName, this.latestValidContainer(),
-				idGenerator.generateId(),originalName );
+		AliasEntity currentTypeEntity = new AliasEntity(new GenericName(aliasName), this.latestValidContainer(),
+				idGenerator.generateId(),new GenericName(originalName) );
 	 	entityRepo.add(currentTypeEntity);
 		return ;		
 	}
@@ -99,8 +99,8 @@ public abstract class HandlerContext {
 	 * @return the new function enity
 	 */
 	public FunctionEntity foundMethodDeclarator(String methodName, String returnType, List<String> throwedType) {
-		FunctionEntity functionEntity = new FunctionEntity(methodName, this.latestValidContainer(),
-				idGenerator.generateId(),returnType);
+		FunctionEntity functionEntity = new FunctionEntity(new GenericName(methodName), this.latestValidContainer(),
+				idGenerator.generateId(),new GenericName(returnType));
 		entityRepo.add(functionEntity);
 		this.typeOrFileContainer().addFunction(functionEntity);
 		pushToStack(functionEntity);
@@ -209,12 +209,12 @@ public abstract class HandlerContext {
 		
 	}
 
-	public void foundTypeParametes(GenericTypeArgument typeName) {
+	public void foundTypeParametes(GenericName typeName) {
 		lastContainer().addTypeParameter(typeName);
 	}
 
 
-	public List<VarEntity> foundVarDefinitions(List<String> varNames, String type, List<GenericTypeArgument> typeArguments) {
+	public List<VarEntity> foundVarDefinitions(List<String> varNames, String type, List<GenericName> typeArguments) {
 		return varNames.stream().map(item->foundVarDefinition(item,type,typeArguments)).collect(Collectors.toList());
 	}
 	
@@ -235,7 +235,7 @@ public abstract class HandlerContext {
 	
 
 
-	public VarEntity foundVarDefinition(String varName, String type, List<GenericTypeArgument> typeArguments) {
+	public VarEntity foundVarDefinition(String varName, String type, List<GenericName> typeArguments) {
 		VarEntity var = new VarEntity(varName, type, lastContainer(), idGenerator.generateId());
 		var.addTypeParameter(typeArguments);
 		lastContainer().addVar(var);	

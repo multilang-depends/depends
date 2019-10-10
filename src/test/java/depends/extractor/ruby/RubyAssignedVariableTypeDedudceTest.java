@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import depends.entity.ContainerEntity;
+import depends.entity.FunctionEntity;
 import depends.entity.VarEntity;
 import depends.extractor.FileParser;
 import depends.relations.Inferer;
@@ -29,7 +30,7 @@ public class RubyAssignedVariableTypeDedudceTest extends RubyParserTest {
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
-	    ContainerEntity function = (ContainerEntity)(entityRepo.getEntity("Class.test"));
+	    FunctionEntity function = (FunctionEntity)(entityRepo.getEntity("Class.test"));
 	    VarEntity var = function.lookupVarLocally("var_int");
 	    assertEquals(Inferer.buildInType.getRawName(),var.getType().getRawName());
 
@@ -37,7 +38,7 @@ public class RubyAssignedVariableTypeDedudceTest extends RubyParserTest {
 	    assertEquals("Class",var.getType().getRawName());
 	    
 
-	    function = (ContainerEntity)(entityRepo.getEntity("Class"));
+	    function = (FunctionEntity)(entityRepo.getEntity("Class"));
 	    var = function.lookupVarLocally("inst_var");
 	    assertEquals("Class",var.getType().getRawName());
 	    
@@ -56,7 +57,7 @@ public class RubyAssignedVariableTypeDedudceTest extends RubyParserTest {
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
-	    ContainerEntity function = (ContainerEntity)(entityRepo.getEntity("Class.operator_is_call"));
+	    FunctionEntity function = (FunctionEntity)(entityRepo.getEntity("Class.operator_is_call"));
 	    VarEntity var = function.lookupVarLocally("var_compose");
 	    assertEquals(Inferer.buildInType.getRawName(),var.getType().getRawName());
 	    

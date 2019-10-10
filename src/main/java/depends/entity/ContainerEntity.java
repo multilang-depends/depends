@@ -52,7 +52,7 @@ public abstract class ContainerEntity extends DecoratedEntity {
 	private ArrayList<FunctionEntity> functions;
 	private HashMap<Object, Expression> expressions;
 	private ArrayList<Expression> expressionList;
-	private Collection<String> mixins;
+	private Collection<GenericName> mixins;
 	private Collection<ContainerEntity> resolvedMixins;
 
 	public ContainerEntity() {
@@ -64,7 +64,7 @@ public abstract class ContainerEntity extends DecoratedEntity {
 		expressionList = new ArrayList<>();
 	}
 
-	public ContainerEntity(String rawName, Entity parent, Integer id) {
+	public ContainerEntity(GenericName rawName, Entity parent, Integer id) {
 		super(rawName, parent, id);
 		vars = new ArrayList<>();
 		functions = new ArrayList<>();
@@ -120,9 +120,9 @@ public abstract class ContainerEntity extends DecoratedEntity {
 		}
 	}
 
-	private Collection<ContainerEntity> identiferToContainerEntity(Inferer inferer, Collection<String> identifiers) {
+	private Collection<ContainerEntity> identiferToContainerEntity(Inferer inferer, Collection<GenericName> identifiers) {
 		ArrayList<ContainerEntity> r = new ArrayList<>();
-		for (String identifier : identifiers) {
+		for (GenericName identifier : identifiers) {
 			Entity entity = inferer.resolveName(this, identifier, true);
 			if (entity == null) {
 				continue;
@@ -223,22 +223,6 @@ public abstract class ContainerEntity extends DecoratedEntity {
 	}
 	
 	public TypeEntity getLastExpressionType() {
-		//TODO: 
-		/*
-    java.lang.NullPointerException
-	at depends.entity.ContainerEntity.getLastExpressionType(ContainerEntity.java:228)
-	at depends.entity.FunctionEntity.inferLocalLevelEntities(FunctionEntity.java:92)
-	at depends.entity.ContainerEntity.inferLocalLevelEntities(ContainerEntity.java:118)
-	at depends.entity.TypeEntity.inferLocalLevelEntities(TypeEntity.java:69)
-	at depends.entity.Entity.inferEntities(Entity.java:171)
-	at depends.entity.Entity.inferEntities(Entity.java:173)
-	at depends.relations.Inferer.resolveTypes(Inferer.java:91)
-	at depends.relations.Inferer.resolveAllBindings(Inferer.java:78)
-	at depends.extractor.AbstractLangProcessor.resolveBindings(AbstractLangProcessor.java:112)
-	at depends.extractor.AbstractLangProcessor.buildDependencies(AbstractLangProcessor.java:101)
-	at depends.Main.executeCommand(Main.java:121)
-	at depends.Main.main(Main.java:60) 
-		 * */
 		for (int i = this.expressionList.size() - 1; i >= 0; i--) {
 			Expression expr = this.expressionList.get(i);
 			if (expr.isStatement)
@@ -274,7 +258,7 @@ public abstract class ContainerEntity extends DecoratedEntity {
 	 * @param functionName
 	 * @return
 	 */
-	public FunctionEntity lookupFunctionInVisibleScope(String functionName) {
+	public FunctionEntity lookupFunctionInVisibleScope(GenericName functionName) {
 		if (this.getMutliDeclare() != null) {
 			for (ContainerEntity fromEntity : this.getMutliDeclare().getEntities()) {
 				FunctionEntity f = lookupFunctionBottomUpTillTopContainer(functionName, fromEntity);
@@ -295,7 +279,7 @@ public abstract class ContainerEntity extends DecoratedEntity {
 	 * @param fromEntity
 	 * @return
 	 */
-	private FunctionEntity lookupFunctionBottomUpTillTopContainer(String functionName, ContainerEntity fromEntity) {
+	private FunctionEntity lookupFunctionBottomUpTillTopContainer(GenericName functionName, ContainerEntity fromEntity) {
 		while (fromEntity != null) {
 			if (fromEntity instanceof ContainerEntity) {
 				FunctionEntity func = ((ContainerEntity) fromEntity).lookupFunctionLocally(functionName);
@@ -314,7 +298,7 @@ public abstract class ContainerEntity extends DecoratedEntity {
 	 * @param functionName
 	 * @return
 	 */
-	public FunctionEntity lookupFunctionLocally(String functionName) {
+	public FunctionEntity lookupFunctionLocally(GenericName functionName) {
 		for (FunctionEntity func : getFunctions()) {
 			if (func.getRawName().equals(functionName))
 				return func;
@@ -331,7 +315,7 @@ public abstract class ContainerEntity extends DecoratedEntity {
 	 * @param varName
 	 * @return
 	 */
-	public VarEntity lookupVarInVisibleScope(String varName) {
+	public VarEntity lookupVarInVisibleScope(GenericName varName) {
 		ContainerEntity fromEntity = this;
 		return lookupVarBottomUpTillTopContainer(varName, fromEntity);
 	}
@@ -343,7 +327,7 @@ public abstract class ContainerEntity extends DecoratedEntity {
 	 * @param varName
 	 * @return
 	 */
-	private VarEntity lookupVarBottomUpTillTopContainer(String varName, ContainerEntity fromEntity) {
+	private VarEntity lookupVarBottomUpTillTopContainer(GenericName varName, ContainerEntity fromEntity) {
 		while (fromEntity != null) {
 			if (fromEntity instanceof ContainerEntity) {
 				VarEntity var = ((ContainerEntity) fromEntity).lookupVarLocally(varName);
@@ -355,15 +339,19 @@ public abstract class ContainerEntity extends DecoratedEntity {
 		return null;
 	}
 
-	public VarEntity lookupVarLocally(String varName) {
+	public VarEntity lookupVarLocally(GenericName varName) {
 		for (VarEntity var : getVars()) {
 			if (var.getRawName().equals(varName))
 				return var;
 		}
 		return null;
 	}
+	
+	public VarEntity lookupVarLocally(String varName) {
+		return this.lookupVarLocally(new GenericName(varName));
+	}
 
-	public void addMixin(String moduleName) {
+	public void addMixin(GenericName moduleName) {
 		mixins.add(moduleName);
 	}
 

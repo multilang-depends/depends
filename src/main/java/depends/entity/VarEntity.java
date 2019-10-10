@@ -30,23 +30,23 @@ import java.util.List;
 import depends.relations.Inferer;
 
 public class VarEntity extends ContainerEntity {
-	private String rawType;
+	private GenericName rawType;
 	private TypeEntity type;
 	private List<FunctionCall> functionCalls;
 	public VarEntity() {
 		
 	}
-	public VarEntity(String simpleName,  String rawType, Entity parent, int id) {
+	public VarEntity(GenericName simpleName,  GenericName rawType, Entity parent, int id) {
 		super(simpleName,  parent,id);
 		this.rawType = rawType;
 		functionCalls = new ArrayList<>();
 	}
 
-	public void setRawType(String rawType) {
+	public void setRawType(GenericName rawType) {
 		this.rawType =rawType;
 	}
 	
-	public String getRawType() {
+	public GenericName getRawType() {
 		return rawType;
 	}
 
@@ -80,7 +80,7 @@ public class VarEntity extends ContainerEntity {
 		return functionCalls;
 	}
 
-	public void addFunctionCall(String fname) {
+	public void addFunctionCall(GenericName fname) {
 		this.functionCalls.add(new FunctionCall(fname));
 	}
 

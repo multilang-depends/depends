@@ -25,11 +25,11 @@ SOFTWARE.
 package depends.entity;
 
 public class FunctionCall {
-	private String rawName;
-	public FunctionCall(String rawName){
+	private GenericName rawName;
+	public FunctionCall(GenericName rawName){
 		this.rawName = rawName;
 	}
-	public String getRawName() {
+	public GenericName getRawName() {
 		return rawName;
 	}
 }

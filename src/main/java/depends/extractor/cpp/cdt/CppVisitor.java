@@ -61,7 +61,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import depends.entity.FunctionEntity;
-import depends.entity.GenericTypeArgument;
+import depends.entity.GenericName;
 import depends.entity.VarEntity;
 import depends.entity.repo.EntityRepo;
 import depends.entity.repo.IdGenerator;
@@ -143,7 +143,7 @@ public class CppVisitor  extends ASTVisitor {
 		if (declSpec instanceof IASTCompositeTypeSpecifier) {
 			IASTCompositeTypeSpecifier type = (IASTCompositeTypeSpecifier)declSpec;
 			String name = ASTStringUtilExt.getName(type);
-			List<GenericTypeArgument> param = ASTStringUtilExt.getTemplateParameters(type);
+			List<GenericName> param = ASTStringUtilExt.getTemplateParameters(type);
 			context.foundNewType(name);
 			if (declSpec instanceof ICPPASTCompositeTypeSpecifier) {
 				ICPPASTBaseSpecifier[] baseSpecififers = ((ICPPASTCompositeTypeSpecifier)declSpec).getBaseSpecifiers();
@@ -194,7 +194,7 @@ public class CppVisitor  extends ASTVisitor {
 			else if ( declarator.getParent() instanceof IASTFunctionDefinition) {
 				IASTFunctionDefinition decl = (IASTFunctionDefinition)declarator.getParent();
 				returnType = ASTStringUtilExt.getName(decl.getDeclSpecifier());
-				List<GenericTypeArgument> templateParams = ASTStringUtilExt.getTemplateParameters(decl.getDeclSpecifier());
+				List<GenericName> templateParams = ASTStringUtilExt.getTemplateParameters(decl.getDeclSpecifier());
 				String rawName = ASTStringUtilExt.getName(declarator);
 				FunctionEntity namedEntity = context.currentFile().lookupFunctionInVisibleScope(rawName);
 				if (namedEntity!=null) {

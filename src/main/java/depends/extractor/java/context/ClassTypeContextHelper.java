@@ -27,7 +27,7 @@ package depends.extractor.java.context;
 import java.util.ArrayList;
 import java.util.List;
 
-import depends.entity.GenericTypeArgument;
+import depends.entity.GenericName;
 import depends.extractor.java.JavaParser.ClassOrInterfaceTypeContext;
 import depends.extractor.java.JavaParser.TypeArgumentContext;
 import depends.extractor.java.JavaParser.TypeArgumentsContext;
@@ -66,20 +66,20 @@ public class ClassTypeContextHelper {
 		return "void";
 	}
 	
-	public static List<GenericTypeArgument> getTypeArguments(TypeTypeContext ctx){
+	public static List<GenericName> getTypeArguments(TypeTypeContext ctx){
 		if (ctx.classOrInterfaceType()==null) return new ArrayList<>();
 		return getTypeArguments(ctx.classOrInterfaceType());
 	}
 
-	public static List<GenericTypeArgument> getTypeArguments(ClassOrInterfaceTypeContext type) {
-		List<GenericTypeArgument> typeArguments = new ArrayList<>();
+	public static List<GenericName> getTypeArguments(ClassOrInterfaceTypeContext type) {
+		List<GenericName> typeArguments = new ArrayList<>();
 		for(TypeArgumentsContext args:type.typeArguments()) {
 			for (TypeArgumentContext arg:args.typeArgument()) {
 				if (arg.typeType()==null) continue;
 				String argumentType = getClassName(arg.typeType());
-				List<GenericTypeArgument> subTypes = getTypeArguments(arg.typeType());
+				List<GenericName> subTypes = getTypeArguments(arg.typeType());
 				if (argumentType!=null)
-					typeArguments.add(new GenericTypeArgument(argumentType,subTypes));
+					typeArguments.add(new GenericName(argumentType,subTypes));
 			}
 		}
 		return typeArguments;

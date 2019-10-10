@@ -36,8 +36,8 @@ public class Expression implements Serializable{
 	private static final long serialVersionUID = 1L;
 	public Integer id;
 	public String text; // for debug purpose
-	public String rawType; //the raw type name
-	public String identifier; // the varName, or method name, etc.
+	public GenericName rawType; //the raw type name
+	public GenericName identifier; // the varName, or method name, etc.
 	public boolean isSet = false; // is a set relation from right to leftHand
 	public boolean isDot = false; // is a dot expression, will decuce variable tfype left to right
 	public boolean isCall = false;

@@ -30,10 +30,11 @@ import java.util.List;
 
 import depends.entity.FunctionCall;
 import depends.entity.FunctionEntity;
+import depends.entity.GenericName;
 
 public class FunctionMatcher {
 
-	private HashSet<String> fnames;
+	private HashSet<GenericName> fnames;
 	public FunctionMatcher(ArrayList<FunctionEntity> functions) {
 		fnames = new HashSet<>();
 		for (FunctionEntity f:functions) {

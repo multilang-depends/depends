@@ -31,15 +31,15 @@ import java.util.List;
 import depends.relations.Inferer;
 
 public class FunctionEntity extends ContainerEntity{
-	private List<String> returnTypeIdentifiers = new ArrayList<>();
+	private List<GenericName> returnTypeIdentifiers = new ArrayList<>();
 	Collection<VarEntity> parameters;
-    Collection<String> throwTypesIdentifiers = new ArrayList<>(); 
+    Collection<GenericName> throwTypesIdentifiers = new ArrayList<>(); 
 	private Collection<Entity> returnTypes = new ArrayList<>();
 	private Collection<Entity> throwTypes = new ArrayList<>();
 	public FunctionEntity() {
 		this.parameters = new ArrayList<>();
 	}
-    public FunctionEntity(String simpleName, Entity parent, Integer id, String returnType) {
+    public FunctionEntity(GenericName simpleName, Entity parent, Integer id, GenericName returnType) {
 		super(simpleName, parent,id);
 		this.returnTypes = new ArrayList<>();
 		returnTypeIdentifiers = new ArrayList<>();
@@ -61,7 +61,7 @@ public class FunctionEntity extends ContainerEntity{
 		return null;
 	}
 
-	public void addReturnType(String returnType) {
+	public void addReturnType(GenericName returnType) {
 		if (returnType==null) return;
 		this.returnTypeIdentifiers.add(returnType);
 	}
@@ -74,7 +74,7 @@ public class FunctionEntity extends ContainerEntity{
 		}
 	}
 
-	public void addThrowTypes(List<String> throwedType) {
+	public void addThrowTypes(List<GenericName> throwedType) {
 		throwTypesIdentifiers.addAll(throwedType);
 	}
 	
@@ -100,7 +100,7 @@ public class FunctionEntity extends ContainerEntity{
 		return throwTypes;
 	}
 	@Override
-	public VarEntity lookupVarInVisibleScope(String varName) {
+	public VarEntity lookupVarInVisibleScope(GenericName varName) {
 		for (VarEntity param:parameters) {
 			if (varName.equals(param.getRawName())) {
 				return param;
@@ -117,11 +117,12 @@ public class FunctionEntity extends ContainerEntity{
 		return f.getRawName()+"("+this.getQualifiedName()+")";
 	}
 	@Override
-	public VarEntity lookupVarLocally(String varName) {
+	public VarEntity lookupVarLocally(GenericName varName) {
 		for (VarEntity var:this.parameters) {
 			if (var.getRawName().equals(varName))
 				return var;
 		}
 		return super.lookupVarLocally(varName);
 	}
+
 }

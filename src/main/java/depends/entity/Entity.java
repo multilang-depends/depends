@@ -43,7 +43,7 @@ public abstract class Entity {
 	
     Integer id=-1;
 	String qualifiedName = null;
-	String rawName = "";
+	GenericName rawName = new GenericName("");
 	Entity parent;
 	private MultiDeclareEntities mutliDeclare = null;
 	private Set<Entity> children = new HashSet<>();
@@ -51,7 +51,7 @@ public abstract class Entity {
 	private Entity actualReferTo = null;
 
 	public Entity() {};
-    public Entity(String rawName, Entity parent, Integer id) {
+    public Entity(GenericName rawName, Entity parent, Integer id) {
 		this.qualifiedName = null;
 		this.rawName = rawName;
 		this.parent = parent;
@@ -71,26 +71,26 @@ public abstract class Entity {
 	private void deduceQualifiedName() {
 		rawName = rawName.replace("::","." );
 		if (this.rawName.startsWith(".")) {
-			this.qualifiedName = this.rawName.substring(1);
+			this.qualifiedName = this.rawName.getUniqueName().substring(1);
 			return; //already qualified
 		}
 		if (parent==null) {
-			this.qualifiedName = this.rawName;
+			this.qualifiedName = this.rawName.getUniqueName();
 			return;
 		}
 		if (parent.getQualifiedName(true)==null) {
-			this.qualifiedName = this.rawName;
+			this.qualifiedName = this.rawName.getUniqueName();
 			return;
 		}
 		if (parent.getQualifiedName(true).isEmpty()) {
-			this.qualifiedName = rawName;
+			this.qualifiedName = rawName.getUniqueName();
 			return;
 		}
-		this.qualifiedName= parent.getQualifiedName(true)+"." + rawName;
+		this.qualifiedName= parent.getQualifiedName(true)+"." + rawName.getUniqueName();
 	}
 
 
-	public String getRawName() {
+	public GenericName getRawName() {
 		return rawName;
 	}
 
@@ -126,7 +126,7 @@ public abstract class Entity {
 		this.qualifiedName = qualifiedName;
 	}
 
-	public void setRawName(String rawName) {
+	public void setRawName(GenericName rawName) {
 		this.rawName = rawName;
 	}
 	
@@ -175,7 +175,7 @@ public abstract class Entity {
 	}
 
 	public String getDisplayName() {
-		return getRawName();
+		return getRawName().getUniqueName();
 	}
 
 	public MultiDeclareEntities getMutliDeclare() {

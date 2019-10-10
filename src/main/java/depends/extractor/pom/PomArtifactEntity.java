@@ -31,12 +31,13 @@ import java.util.regex.Pattern;
 
 import depends.entity.Entity;
 import depends.entity.FileEntity;
+import depends.entity.GenericName;
 import depends.entity.TypeEntity;
 
 public class PomArtifactEntity extends TypeEntity {
 	HashMap<String,String> properties;
 	public PomArtifactEntity(String simpleName, Entity parent, Integer id) {
-		super(simpleName, parent, id);
+		super(new GenericName(simpleName), parent, id);
 		properties = new HashMap<>();
 	}
 

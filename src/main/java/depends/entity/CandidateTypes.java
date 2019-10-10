@@ -39,7 +39,7 @@ public class CandidateTypes extends TypeEntity {
 		candidateTypes = new ArrayList<>();
 	}
 	public CandidateTypes(List<TypeEntity> candidateTypes) {
-		super("candidateTypes", null, -1);
+		super(new GenericName("candidateTypes"), null, -1);
 		this.candidateTypes = candidateTypes;
 	}
 
@@ -79,7 +79,7 @@ public class CandidateTypes extends TypeEntity {
 		return inheritedType;
 	}
  	@Override
- 	public FunctionEntity lookupFunctionInVisibleScope(String functionName) {
+ 	public FunctionEntity lookupFunctionInVisibleScope(GenericName functionName) {
  		for (TypeEntity type:candidateTypes) {
 			FunctionEntity f = type.lookupFunctionInVisibleScope(functionName);
 			if (f!=null) return f;
@@ -88,7 +88,7 @@ public class CandidateTypes extends TypeEntity {
 	}
  	
 	@Override
-	public VarEntity lookupVarInVisibleScope(String varName) {
+	public VarEntity lookupVarInVisibleScope(GenericName varName) {
 		for (TypeEntity type:candidateTypes) {
 			VarEntity v = type.lookupVarInVisibleScope(varName);
 			if (v!=null) return v;
@@ -119,13 +119,13 @@ public class CandidateTypes extends TypeEntity {
 	}
 
 	@Override
-	public void addImplements(String typeName) {
+	public void addImplements(GenericName typeName) {
 		System.err.println("error: addImplements should not been invoked");
 		super.addImplements(typeName);
 	}
 
 	@Override
-	public void addExtends(String typeName) {
+	public void addExtends(GenericName typeName) {
 		System.err.println("error: addExtends should not been invoked");
 		super.addExtends(typeName);
 	}
@@ -173,7 +173,7 @@ public class CandidateTypes extends TypeEntity {
 	}
 
 	@Override
-	public void addMixin(String moduleName) {
+	public void addMixin(GenericName moduleName) {
 		System.err.println("error: addMixin should not been invoked");
 		super.addMixin(moduleName);
 	}
@@ -185,19 +185,19 @@ public class CandidateTypes extends TypeEntity {
 	}
 
 	@Override
-	public void addTypeParameter(List<GenericTypeArgument> typeArguments) {
+	public void addTypeParameter(List<GenericName> typeArguments) {
 		System.err.println("error: addTypeParameter should not been invoked");
 		super.addTypeParameter(typeArguments);
 	}
 
 	@Override
-	public void addAnnotation(String name) {
+	public void addAnnotation(GenericName name) {
 		System.err.println("error: addAnnotation should not been invoked");
 		super.addAnnotation(name);
 	}
 
 	@Override
-	public void addTypeParameter(GenericTypeArgument typeName) {
+	public void addTypeParameter(GenericName typeName) {
 		System.err.println("error: addTypeParameter should not been invoked");
 		super.addTypeParameter(typeName);
 	}
@@ -215,19 +215,19 @@ public class CandidateTypes extends TypeEntity {
 	}
 
 	@Override
-	public boolean isGenericTypeParameter(String rawType) {
+	public boolean isGenericTypeParameter(GenericName rawType) {
 		System.err.println("error: isGenericTypeParameter should not been invoked");
 		return super.isGenericTypeParameter(rawType);
 	}
 
 	@Override
-	protected Collection<Entity> identiferToEntities(Inferer inferer, Collection<String> identifiers) {
+	protected Collection<Entity> identiferToEntities(Inferer inferer, Collection<GenericName> identifiers) {
 		System.err.println("error: identiferToTypes should not been invoked");
 		return super.identiferToEntities(inferer, identifiers);
 	}
 
 	@Override
-	public String getRawName() {
+	public GenericName getRawName() {
 		System.err.println("error: getRawName should not been invoked");
 		return super.getRawName();
 	}
@@ -284,7 +284,7 @@ public class CandidateTypes extends TypeEntity {
 	}
 
 	@Override
-	public void setRawName(String rawName) {
+	public void setRawName(GenericName rawName) {
 		System.err.println("error: setRawName should not been invoked");
 		super.setRawName(rawName);
 	}

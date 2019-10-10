@@ -31,25 +31,25 @@ import java.util.List;
 import depends.relations.Inferer;
 
 public abstract class DecoratedEntity extends Entity{
-	private Collection<GenericTypeArgument> typeParameters  = new ArrayList<>();; // Generic type parameters like <T>, <String>, <? extends Object>
-	private Collection<String> annotations = new ArrayList<>();
+	private Collection<GenericName> typeParameters  = new ArrayList<>();; // Generic type parameters like <T>, <String>, <? extends Object>
+	private Collection<GenericName> annotations = new ArrayList<>();
 	private Collection<Entity> resolvedTypeParameters = new ArrayList<>();
 	private Collection<Entity> resolvedAnnotations = new ArrayList<>();
 	public DecoratedEntity() {
 	}
 
-	public DecoratedEntity(String rawName, Entity parent, Integer id) {
+	public DecoratedEntity(GenericName rawName, Entity parent, Integer id) {
 		super(rawName, parent, id);
 	}
 	
-	public void addTypeParameter(List<GenericTypeArgument> typeArguments) {
+	public void addTypeParameter(List<GenericName> typeArguments) {
 		typeParameters.addAll(typeArguments);
 	}
-	public void addAnnotation(String name) {
+	public void addAnnotation(GenericName name) {
 		this.annotations.add(name);
 	}
 	
-	public void addTypeParameter(GenericTypeArgument typeName) {
+	public void addTypeParameter(GenericName typeName) {
 		this.typeParameters.add(typeName);
 	}
 	
@@ -66,17 +66,17 @@ public abstract class DecoratedEntity extends Entity{
 
 	private Collection<Entity> typeParametersToEntities(Inferer inferer) {
 		ArrayList<Entity> r = new ArrayList<>();
-		for (GenericTypeArgument typeParameter:typeParameters) {
+		for (GenericName typeParameter:typeParameters) {
 			toEntityList(inferer, r,typeParameter);
 		}
 		return r;
 	}
 
-	private void toEntityList(Inferer inferer, ArrayList<Entity> r, GenericTypeArgument typeParameter) {
-		Entity entity = resolveEntity(inferer, typeParameter.getName());
+	private void toEntityList(Inferer inferer, ArrayList<Entity> r, GenericName typeParameter) {
+		Entity entity = resolveEntity(inferer, typeParameter);
 		if (entity != null)
 			r.add(entity);
-		for (GenericTypeArgument arg: typeParameter.getArguments()) {
+		for (GenericName arg: typeParameter.getArguments()) {
 			toEntityList(inferer,r,arg);
 		}
 	}
@@ -90,9 +90,9 @@ public abstract class DecoratedEntity extends Entity{
 		return resolvedAnnotations;
 	}
 
-	public boolean isGenericTypeParameter(String rawType) {
-		for (GenericTypeArgument typeParam:typeParameters) {
-			if (typeParam.contains(rawType)) {
+	public boolean isGenericTypeParameter(GenericName rawType) {
+		for (GenericName typeParam:typeParameters) {
+			if (typeParam.equals(rawType)) {
 				return true;
 			}
 		}
@@ -107,9 +107,9 @@ public abstract class DecoratedEntity extends Entity{
 	 * @param identifiers - the identifiers will be translated
 	 * @return The translated Types
 	 */
-	protected Collection<Entity> identiferToEntities(Inferer inferer, Collection<String> identifiers) {
+	protected Collection<Entity> identiferToEntities(Inferer inferer, Collection<GenericName> identifiers) {
 		ArrayList<Entity> r = new ArrayList<>();
-		for (String name : identifiers) {
+		for (GenericName name : identifiers) {
 			Entity entity = resolveEntity(inferer, name);
 			if (entity != null)
 				r.add(entity);
@@ -117,7 +117,7 @@ public abstract class DecoratedEntity extends Entity{
 		return r;
 	}
 
-	private Entity resolveEntity(Inferer inferer, String name) {
+	private Entity resolveEntity(Inferer inferer, GenericName name) {
 		Entity entity = inferer.resolveName(this, name, true);
 		if (entity==null) {
 			if (((ContainerEntity)getParent()).isGenericTypeParameter(name)) {

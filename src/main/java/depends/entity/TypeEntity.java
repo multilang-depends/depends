@@ -32,11 +32,11 @@ import depends.relations.Inferer;
 public class TypeEntity extends ContainerEntity {
 	Collection<TypeEntity> inheritedTypes = new ArrayList<>();
 	Collection<TypeEntity> implementedTypes = new ArrayList<>();
-	Collection<String> inhertedTypeIdentifiers;
-	Collection<String> implementedIdentifiers;
+	Collection<GenericName> inhertedTypeIdentifiers;
+	Collection<GenericName> implementedIdentifiers;
 	TypeEntity inheritedType;
 	public TypeEntity() {}
-	public TypeEntity(String simpleName, Entity parent, Integer id) {
+	public TypeEntity(GenericName simpleName, Entity parent, Integer id) {
 		super(simpleName, parent, id);
 		inhertedTypeIdentifiers = new ArrayList<>();
 		implementedIdentifiers = new ArrayList<>();
@@ -69,7 +69,7 @@ public class TypeEntity extends ContainerEntity {
 		super.inferLocalLevelEntities(inferer);
 	}
 
-	public void addImplements(String typeName) {
+	public void addImplements(GenericName typeName) {
 		if (typeName==null) {
 			return;
 		}
@@ -82,7 +82,7 @@ public class TypeEntity extends ContainerEntity {
 		this.implementedIdentifiers.add(typeName);
 	}
 
-	public void addExtends(String typeName) {
+	public void addExtends(GenericName typeName) {
 		if (typeName==null) {
 			return;
 		}
@@ -108,12 +108,12 @@ public class TypeEntity extends ContainerEntity {
 	}
 
 	@Override
-	public FunctionEntity lookupFunctionLocally(String functionName) {
+	public FunctionEntity lookupFunctionLocally(GenericName functionName) {
 		Collection<TypeEntity> searchedTypes = new ArrayList<>();
 		return lookupFunctionLocally(functionName,searchedTypes);
 	}
 
-	private FunctionEntity lookupFunctionLocally(String functionName, Collection<TypeEntity> searched) {
+	private FunctionEntity lookupFunctionLocally(GenericName functionName, Collection<TypeEntity> searched) {
 		if (searched.contains(this)) return null;
 		searched.add(this);
 		FunctionEntity func = super.lookupFunctionLocally(functionName);
@@ -135,12 +135,12 @@ public class TypeEntity extends ContainerEntity {
 	}
 	
 	@Override
-	public VarEntity lookupVarLocally(String varName) {
+	public VarEntity lookupVarLocally(GenericName varName) {
 		Collection<TypeEntity> searchedTypes = new ArrayList<>();
 		return lookupVarLocally(varName,searchedTypes);
 	}
 	
-	private VarEntity lookupVarLocally(String varName, Collection<TypeEntity> searched) {
+	private VarEntity lookupVarLocally(GenericName varName, Collection<TypeEntity> searched) {
 		if (searched.contains(this)) return null;
 		searched.add(this);
 		VarEntity var = super.lookupVarLocally(varName);

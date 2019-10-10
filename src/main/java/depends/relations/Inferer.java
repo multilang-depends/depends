@@ -39,6 +39,7 @@ import depends.entity.ContainerEntity;
 import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.FunctionCall;
+import depends.entity.GenericName;
 import depends.entity.MultiDeclareEntities;
 import depends.entity.PackageEntity;
 import depends.entity.TypeEntity;
@@ -52,9 +53,9 @@ import depends.importtypes.Import;
 public class Inferer {
 	private static final Logger logger = LoggerFactory.getLogger(Inferer.class);
 
-	static final public TypeEntity buildInType = new TypeEntity("built-in", null, -1);
-	static final public TypeEntity externalType = new TypeEntity("external", null, -1);
-	static final public TypeEntity genericParameterType = new TypeEntity("T", null, -1);
+	static final public TypeEntity buildInType = new TypeEntity(new GenericName("built-in"), null, -1);
+	static final public TypeEntity externalType = new TypeEntity(new GenericName("external"), null, -1);
+	static final public TypeEntity genericParameterType = new TypeEntity(new GenericName("T"), null, -1);
 	private BuiltInType buildInTypeManager = new NullBuiltInType();
 	private ImportLookupStrategy importLookupStrategy;
 	private Set<UnsolvedBindings> unsolvedSymbols = new HashSet<>();
@@ -138,7 +139,7 @@ public class Inferer {
 	 * @param rawName
 	 * @return
 	 */
-	public TypeEntity inferTypeFromName(Entity fromEntity, String rawName) {
+	public TypeEntity inferTypeFromName(Entity fromEntity, GenericName rawName) {
 		Entity data = resolveName(fromEntity, rawName, true);
 		if (data == null)
 			return null;
@@ -152,7 +153,7 @@ public class Inferer {
 	 * @param searchImport
 	 * @return
 	 */
-	public Entity resolveName(Entity fromEntity, String rawName, boolean searchImport) {
+	public Entity resolveName(Entity fromEntity, GenericName rawName, boolean searchImport) {
 		Entity entity = resolveNameInternal(fromEntity,rawName,searchImport);
 		if (logger.isDebugEnabled()) {
 			logger.debug("resolve name " + rawName + " from " + fromEntity.getQualifiedName() +" ==> "
@@ -160,20 +161,20 @@ public class Inferer {
 		}
 		if (entity==null ||
 				entity.equals(externalType)) {
-			if (!this.buildInTypeManager.isBuiltInType(rawName)) {
-				this.unsolvedSymbols.add(new UnsolvedBindings(rawName, fromEntity));
+			if (!this.buildInTypeManager.isBuiltInType(rawName.getUniqueName())) {
+				this.unsolvedSymbols.add(new UnsolvedBindings(rawName.getUniqueName(), fromEntity));
 			}
 		}
 		return entity;
 	}
 
-	private Entity resolveNameInternal(Entity fromEntity, String rawName, boolean searchImport) {
+	private Entity resolveNameInternal(Entity fromEntity, GenericName rawName, boolean searchImport) {
 		if (rawName == null)
 			return null;
-		if (buildInTypeManager.isBuiltInType(rawName)) {
+		if (buildInTypeManager.isBuiltInType(rawName.getUniqueName())) {
 			return buildInType;
 		}
-		if (buildInTypeManager.isBuiltInTypePrefix(rawName)) {
+		if (buildInTypeManager.isBuiltInTypePrefix(rawName.getUniqueName())) {
 			return buildInType;
 		}
 		// qualified name will first try global name directly
@@ -184,7 +185,7 @@ public class Inferer {
 		}
 		Entity entity = null;
 		int indexCount = 0;
-		String name = rawName;
+		String name = rawName.getUniqueName();
 		if (fromEntity==null) return null;
 		do {
 			entity = lookupEntity(fromEntity, name, searchImport);
@@ -207,7 +208,7 @@ public class Inferer {
 		if (entity == null) {
 			return null;
 		}
-		String[] names = rawName.split("\\.");
+		String[] names = rawName.getUniqueName().split("\\.");
 		if (names.length == 0)
 			return null;
 		if (names.length == 1) {
@@ -257,7 +258,7 @@ public class Inferer {
 			return precendenceEntity;
 			
 		for (Entity child : precendenceEntity.getType().getChildren()) {
-			if (child.getRawName().equals(names[nameIndex])) {
+			if (child.getRawName().getUniqueName().equals(names[nameIndex])) {
 				return findEntitySince(child, names, nameIndex + 1);
 			}
 		}
@@ -317,7 +318,7 @@ public class Inferer {
 			if (fromEntity instanceof FileEntity) {
 				FileEntity file = (FileEntity)fromEntity;
 				for (TypeEntity type:file.getDeclaredTypes()) {
-					if (type.getRawName().equals(name)||
+					if (type.getRawName().getUniqueName().equals(name)||
 						suffixMatch(name,type.getQualifiedName())) {
 						return type;
 					}
@@ -384,11 +385,11 @@ public class Inferer {
 	}
 	
 	private Entity tryToFindEntityWithNameSureSingleEntity(Entity fromEntity, String name) {
-		if (!fromEntity.getRawName().equals(name))
+		if (!fromEntity.getRawName().getUniqueName().equals(name))
 			return null;
 		if (fromEntity instanceof MultiDeclareEntities) {
 			for (Entity declaredEntitiy : ((MultiDeclareEntities) fromEntity).getEntities()) {
-				if (declaredEntitiy.getRawName().equals(name) && declaredEntitiy instanceof TypeEntity) {
+				if (declaredEntitiy.getRawName().getUniqueName().equals(name) && declaredEntitiy instanceof TypeEntity) {
 					return declaredEntitiy;
 				}
 			}

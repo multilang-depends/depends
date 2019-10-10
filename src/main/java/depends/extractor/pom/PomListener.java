@@ -30,6 +30,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 
 import depends.entity.Entity;
 import depends.entity.Expression;
+import depends.entity.GenericName;
 import depends.entity.VarEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.xml.XMLParser.ElementContext;
@@ -67,9 +68,9 @@ public class PomListener extends XMLParserBaseListener{
 			currentEntity = new PomArtifactEntity(elementNamePattern,context.currentFile(),entityRepo.generateId());
 		}else if (name.equals("plugin")) {
 			currentExpression = new Expression(entityRepo.generateId());
-			currentExpression.rawType  = elementNamePattern;
+			currentExpression.rawType  = new GenericName(elementNamePattern);
 		}else if (name.equals("dependency")) {
-			currentVar = new VarEntity(elementNamePattern,elementNamePattern,currentEntity,entityRepo.generateId());
+			currentVar = new VarEntity(new GenericName(elementNamePattern),new GenericName(elementNamePattern),currentEntity,entityRepo.generateId());
 		}else if (name.equals("parent")) {
 			pomParent = new PomParent(elementNamePattern);
 		}
@@ -106,7 +107,7 @@ public class PomListener extends XMLParserBaseListener{
 				currentEntity.setRawName(currentEntity.getRawName().replace(groupIdPattern, pomParent.groupId));
 				currentEntity.setRawName(currentEntity.getRawName().replace(versionPattern, pomParent.version));
 			}
-			currentEntity.setQualifiedName(currentEntity.getRawName());
+			currentEntity.setQualifiedName(currentEntity.getRawName().getUniqueName());
 			entityRepo.add(currentEntity);
 		}else if (name.equals("plugin")) {
 			currentEntity.addExpression(ctx, currentExpression);
