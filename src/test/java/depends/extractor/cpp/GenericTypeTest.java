@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import depends.deptypes.DependencyType;
+import depends.entity.FunctionEntity;
 import depends.extractor.java.JavaFileParser;
 
 public class GenericTypeTest extends CppParserTest{
@@ -55,6 +56,25 @@ public class GenericTypeTest extends CppParserTest{
         		DependencyType.PARAMETER, "MyList");
         this.assertContainsRelation(repo.getEntity("GenericTypeEmbededTest.data"),
         		DependencyType.PARAMETER, "MyArray");
+	}
+	
+    @Test
+	public void test_TemplateWithDots() throws IOException {
+        String src = "./src/test/resources/cpp-code-examples/template/TemplateWithDots.cpp";
+	    CppFileParser parser = createParser(src);
+        parser.parse();
+        inferer.resolveAllBindings();
+        assertNotNull(repo.getEntity("foo.t2"));
+	}
+	
+    @Test
+	public void test_TemplateInReturn() throws IOException {
+        String src = "./src/test/resources/cpp-code-examples/template/TemplateInReturnValue.cpp";
+	    CppFileParser parser = createParser(src);
+        parser.parse();
+        inferer.resolveAllBindings();
+        FunctionEntity func = (FunctionEntity)repo.getEntity("get");
+      	this.assertContainsRelation(func, DependencyType.RETURN, "std.tuple_element.type");
 	}
 	
 	

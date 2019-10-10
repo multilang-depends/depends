@@ -193,7 +193,8 @@ public class CppVisitor  extends ASTVisitor {
 			}
 			else if ( declarator.getParent() instanceof IASTFunctionDefinition) {
 				IASTFunctionDefinition decl = (IASTFunctionDefinition)declarator.getParent();
-				returnType= ASTStringUtilExt.getReturnTypeString(decl.getDeclSpecifier(), decl.getDeclarator());
+				returnType = ASTStringUtilExt.getName(decl.getDeclSpecifier());
+				List<GenericTypeArgument> templateParams = ASTStringUtilExt.getTemplateParameters(decl.getDeclSpecifier());
 				String rawName = ASTStringUtilExt.getName(declarator);
 				FunctionEntity namedEntity = context.currentFile().lookupFunctionInVisibleScope(rawName);
 				if (namedEntity!=null) {

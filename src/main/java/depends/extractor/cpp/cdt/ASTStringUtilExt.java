@@ -56,6 +56,7 @@ public class ASTStringUtilExt extends ASTStringUtil {
 					if (argument instanceof IASTTypeId) {
 						IASTDeclSpecifier decl = ((IASTTypeId) argument).getDeclSpecifier();
 						String parameterName = ASTStringUtilExt.getName(decl);
+						parameterName = parameterName.replace("...", "");
 						List<GenericTypeArgument> subTypes = getTemplateParameters(decl);
 						parameters.add(new GenericTypeArgument(parameterName,subTypes));
 					}else {
