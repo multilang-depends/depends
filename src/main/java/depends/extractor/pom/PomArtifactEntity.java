@@ -37,7 +37,7 @@ import depends.entity.TypeEntity;
 public class PomArtifactEntity extends TypeEntity {
 	HashMap<String,String> properties;
 	public PomArtifactEntity(String simpleName, Entity parent, Integer id) {
-		super(new GenericName(simpleName), parent, id);
+		super(GenericName.build(simpleName), parent, id);
 		properties = new HashMap<>();
 	}
 

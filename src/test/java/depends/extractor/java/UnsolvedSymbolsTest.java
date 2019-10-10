@@ -8,7 +8,6 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
-import depends.entity.ContainerEntity;
 import depends.extractor.UnsolvedBindings;
 
 public class UnsolvedSymbolsTest extends JavaParserTest {

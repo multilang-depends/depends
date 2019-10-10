@@ -7,7 +7,6 @@ import org.junit.Test;
 
 import depends.deptypes.DependencyType;
 import depends.entity.Entity;
-import depends.entity.TypeEntity;
 import depends.extractor.FileParser;
 
 public class JavaExpressionCreatorTest extends JavaParserTest{

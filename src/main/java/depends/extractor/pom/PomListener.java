@@ -68,9 +68,9 @@ public class PomListener extends XMLParserBaseListener{
 			currentEntity = new PomArtifactEntity(elementNamePattern,context.currentFile(),entityRepo.generateId());
 		}else if (name.equals("plugin")) {
 			currentExpression = new Expression(entityRepo.generateId());
-			currentExpression.rawType  = new GenericName(elementNamePattern);
+			currentExpression.rawType  = GenericName.build(elementNamePattern);
 		}else if (name.equals("dependency")) {
-			currentVar = new VarEntity(new GenericName(elementNamePattern),new GenericName(elementNamePattern),currentEntity,entityRepo.generateId());
+			currentVar = new VarEntity(GenericName.build(elementNamePattern),GenericName.build(elementNamePattern),currentEntity,entityRepo.generateId());
 		}else if (name.equals("parent")) {
 			pomParent = new PomParent(elementNamePattern);
 		}
@@ -107,7 +107,7 @@ public class PomListener extends XMLParserBaseListener{
 				currentEntity.setRawName(currentEntity.getRawName().replace(groupIdPattern, pomParent.groupId));
 				currentEntity.setRawName(currentEntity.getRawName().replace(versionPattern, pomParent.version));
 			}
-			currentEntity.setQualifiedName(currentEntity.getRawName().getUniqueName());
+			currentEntity.setQualifiedName(currentEntity.getRawName().uniqName());
 			entityRepo.add(currentEntity);
 		}else if (name.equals("plugin")) {
 			currentEntity.addExpression(ctx, currentExpression);

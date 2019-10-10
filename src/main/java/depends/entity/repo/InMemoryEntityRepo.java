@@ -35,7 +35,7 @@ public class InMemoryEntityRepo extends SimpleIdGenerator implements EntityRepo 
 	public void add(Entity entity) {
 		allEntitiesByOrder.add(entity);
 		allEntitiesById.put(entity.getId(), entity);
-		String name = entity.getRawName().getUniqueName();
+		String name = entity.getRawName().uniqName();
 		if (entity.getQualifiedName() != null && !(entity.getQualifiedName().isEmpty())) {
 			name = entity.getQualifiedName();
 		}
@@ -66,7 +66,7 @@ public class InMemoryEntityRepo extends SimpleIdGenerator implements EntityRepo 
 
 	@Override
 	public Entity getEntity(GenericName rawName) {
-		return this.getEntity(rawName.getUniqueName());
+		return this.getEntity(rawName.uniqName());
 	}
 
 }

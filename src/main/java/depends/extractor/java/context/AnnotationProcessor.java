@@ -36,6 +36,7 @@ import org.antlr.v4.runtime.RuleContext;
 import org.codehaus.plexus.util.StringUtils;
 
 import depends.entity.ContainerEntity;
+import depends.entity.GenericName;
 import depends.extractor.java.JavaParser.AnnotationContext;
 
 public class AnnotationProcessor {
@@ -43,7 +44,7 @@ public class AnnotationProcessor {
 	public AnnotationProcessor() {
 	}
 
-	public void processAnnotationModifier(RuleContext ctx, Class rootClass,
+	public void processAnnotationModifier(RuleContext ctx, @SuppressWarnings("rawtypes") Class rootClass,
 		String toAnnotationPath,ContainerEntity container) {
 		List<ContainerEntity> list  = new ArrayList<>() ;
 		list.add(container);
@@ -51,7 +52,7 @@ public class AnnotationProcessor {
 				toAnnotationPath, list);
 	}
 	
-	public void processAnnotationModifier(RuleContext ctx, Class rootClass,
+	public void processAnnotationModifier(RuleContext ctx, @SuppressWarnings("rawtypes") Class rootClass,
 			String toAnnotationPath, List<?> containers) {
 
 		while (true) {
@@ -78,7 +79,7 @@ public class AnnotationProcessor {
 			for (Object item : contexts) {
 				AnnotationContext annotation = (AnnotationContext) item;
 				String name = QualitiedNameContextHelper.getName(annotation.qualifiedName());
-				containers.stream().forEach(container->((ContainerEntity)container).addAnnotation(name));
+				containers.stream().forEach(container->((ContainerEntity)container).addAnnotation(GenericName.build(name)));
 			}
 		} catch (Exception e) {
 			return;

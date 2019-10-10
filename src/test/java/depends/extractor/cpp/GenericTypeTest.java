@@ -8,7 +8,6 @@ import org.junit.Test;
 
 import depends.deptypes.DependencyType;
 import depends.entity.FunctionEntity;
-import depends.extractor.java.JavaFileParser;
 
 public class GenericTypeTest extends CppParserTest{
     @Before

@@ -36,7 +36,7 @@ public class TypeParameterContextHelper {
 	public static List<GenericName> getTypeParameters(TypeParametersContext typeParameters) {
 		ArrayList<GenericName> r = new ArrayList<>();
 		for(TypeParameterContext param:typeParameters.typeParameter()) {
-			r.add(new GenericName(param.IDENTIFIER().getText()));
+			r.add(GenericName.build(param.IDENTIFIER().getText()));
 		}
 		return r;
 	}

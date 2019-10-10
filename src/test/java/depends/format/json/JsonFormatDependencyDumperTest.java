@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
-import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import depends.format.excel.ExcelXlsxFormatDependencyDumper;

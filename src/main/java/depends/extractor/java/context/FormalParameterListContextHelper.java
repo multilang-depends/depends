@@ -30,6 +30,7 @@ import java.util.List;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import depends.entity.FunctionEntity;
+import depends.entity.GenericName;
 import depends.entity.VarEntity;
 import depends.entity.repo.IdGenerator;
 import depends.extractor.java.JavaParser.FormalParameterContext;
@@ -77,8 +78,8 @@ public class FormalParameterListContextHelper {
 	}
 
 	private void foundParameterDefintion(TypeTypeContext typeType, TerminalNode identifier, List<VariableModifierContext> variableModifier) {
-		String type = ClassTypeContextHelper.getClassName(typeType);
-		String varName = identifier.getText();
+		GenericName type = GenericName.build(ClassTypeContextHelper.getClassName(typeType));
+		GenericName varName = GenericName.build(identifier.getText());
 		VarEntity varEntity = new VarEntity(varName,type,container,idGenerator.generateId());
 		container.addParameter(varEntity);
 		

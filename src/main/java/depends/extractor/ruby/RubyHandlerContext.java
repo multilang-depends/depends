@@ -66,7 +66,7 @@ public class RubyHandlerContext extends HandlerContext {
 		if(methodName.equals("require") || methodName.equals("require_relative")) { 
 			for (String importedFilename:params) {
 				if (!importedFilename.endsWith(".rb")) importedFilename = importedFilename + ".rb";
-				String dir = FileUtil.getLocatedDir(currentFile().getRawName());
+				String dir = FileUtil.getLocatedDir(currentFile().getRawName().uniqName());
 				String inclFileName = includedFileLocator.uniqFileName(dir,importedFilename);
 				if (inclFileName==null) {
 					System.err.println("Warning: cannot found included file " + importedFilename );
@@ -102,5 +102,7 @@ public class RubyHandlerContext extends HandlerContext {
 			}
 		} 
 	}
+
+
 
 }

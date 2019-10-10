@@ -43,7 +43,7 @@ public abstract class Entity {
 	
     Integer id=-1;
 	String qualifiedName = null;
-	GenericName rawName = new GenericName("");
+	GenericName rawName = GenericName.build("");
 	Entity parent;
 	private MultiDeclareEntities mutliDeclare = null;
 	private Set<Entity> children = new HashSet<>();
@@ -71,22 +71,22 @@ public abstract class Entity {
 	private void deduceQualifiedName() {
 		rawName = rawName.replace("::","." );
 		if (this.rawName.startsWith(".")) {
-			this.qualifiedName = this.rawName.getUniqueName().substring(1);
+			this.qualifiedName = this.rawName.uniqName().substring(1);
 			return; //already qualified
 		}
 		if (parent==null) {
-			this.qualifiedName = this.rawName.getUniqueName();
+			this.qualifiedName = this.rawName.uniqName();
 			return;
 		}
 		if (parent.getQualifiedName(true)==null) {
-			this.qualifiedName = this.rawName.getUniqueName();
+			this.qualifiedName = this.rawName.uniqName();
 			return;
 		}
 		if (parent.getQualifiedName(true).isEmpty()) {
-			this.qualifiedName = rawName.getUniqueName();
+			this.qualifiedName = rawName.uniqName();
 			return;
 		}
-		this.qualifiedName= parent.getQualifiedName(true)+"." + rawName.getUniqueName();
+		this.qualifiedName= parent.getQualifiedName(true)+"." + rawName.uniqName();
 	}
 
 
@@ -175,7 +175,7 @@ public abstract class Entity {
 	}
 
 	public String getDisplayName() {
-		return getRawName().getUniqueName();
+		return getRawName().uniqName();
 	}
 
 	public MultiDeclareEntities getMutliDeclare() {

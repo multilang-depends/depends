@@ -5,10 +5,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 
-import depends.deptypes.DependencyType;
 import depends.format.AbstractFormatDependencyDumper;
 import depends.matrix.core.DependencyMatrix;
 import depends.matrix.core.DependencyPair;

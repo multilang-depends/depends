@@ -53,7 +53,7 @@ public abstract class BuiltInType {
 	private Set<String> builtInMethod = new HashSet<>();
 
 	public boolean isBuiltInType(String type) {
-		if (Inferer.buildInType.getRawName().equals(type)) return true;
+		if (Inferer.buildInType.getRawName().uniqName().equals(type)) return true;
 		return builtInType.contains(type); 
 	}
 

@@ -5,8 +5,6 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
-import depends.entity.Entity;
-
 public class JavaParseErrorFileTest extends JavaParserTest{
 	@Before
 	public void setUp() {
@@ -19,7 +17,6 @@ public class JavaParseErrorFileTest extends JavaParserTest{
         JavaFileParser parser = createParser(src);
         parser.parse();
         inferer.resolveAllBindings();
-        Entity classEntity = entityRepo.getEntity("FieldVar");
 	}
 	
 	@Test
@@ -28,7 +25,6 @@ public class JavaParseErrorFileTest extends JavaParserTest{
         JavaFileParser parser = createParser(src);
         parser.parse();
         inferer.resolveAllBindings();
-        Entity classEntity = entityRepo.getEntity("FieldVar");
 	}
 	
 	

@@ -29,7 +29,6 @@ import java.util.List;
 
 import depends.deptypes.DependencyType;
 import depends.extractor.LangProcessorRegistration;
-import edu.emory.mathcs.backport.java.util.Arrays;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;

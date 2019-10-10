@@ -1,7 +1,6 @@
 package depends.extractor;
 
 import depends.entity.Entity;
-import depends.entity.FileEntity;
 
 public class UnsolvedBindings {
 

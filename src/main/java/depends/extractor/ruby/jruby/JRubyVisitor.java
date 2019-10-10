@@ -64,6 +64,7 @@ import org.jrubyparser.util.NoopVisitor;
 
 import depends.entity.ContainerEntity;
 import depends.entity.Entity;
+import depends.entity.GenericName;
 import depends.entity.VarEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.ParserCreator;
@@ -164,12 +165,12 @@ public class JRubyVisitor extends NoopVisitor {
 		if (helper.isCommonOperator(fname))return;
 		Node varNode = node.getReceiver();
 		
-		String varName = helper.getName(varNode);
+		GenericName varName = GenericName.build(helper.getName(varNode));
 		if (varName==null) return;
 		Entity var = context.foundEntityWithName(varName);
 		if (var != null && var instanceof VarEntity) {
 			VarEntity varEntity = (VarEntity) var;
-			varEntity.addFunctionCall(fname);
+			varEntity.addFunctionCall(GenericName.build(fname));
 		}
 	}
 
@@ -205,7 +206,7 @@ public class JRubyVisitor extends NoopVisitor {
 			//will be handled by context.foundMethodDeclarator(node.getName(), null, new ArrayList<>());
 		} else if (varNode instanceof ConstNode) {
 			String className = ((INameNode) varNode).getName();
-			Entity entity = context.foundEntityWithName(className);
+			Entity entity = context.foundEntityWithName(GenericName.build(className));
 			if (entity != null && entity instanceof ContainerEntity) {
 				context.foundMethodDeclarator(((ContainerEntity) entity), node.getName());
 				handled = true;
@@ -213,7 +214,7 @@ public class JRubyVisitor extends NoopVisitor {
 
 		} else if (varNode instanceof INameNode) {
 			String varName = ((INameNode) varNode).getName();
-			Entity var = context.foundEntityWithName(varName);
+			Entity var = context.foundEntityWithName(GenericName.build(varName));
 			if (var != null && var instanceof ContainerEntity) {
 				context.foundMethodDeclarator(((ContainerEntity) var), node.getName());
 				handled = true;

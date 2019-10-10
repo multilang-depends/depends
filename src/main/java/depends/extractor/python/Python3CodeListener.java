@@ -12,6 +12,7 @@ import depends.entity.DecoratedEntity;
 import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.FunctionEntity;
+import depends.entity.GenericName;
 import depends.entity.PackageEntity;
 import depends.entity.TypeEntity;
 import depends.entity.VarEntity;
@@ -57,11 +58,11 @@ public class Python3CodeListener extends Python3BaseListener {
 		}
 
 		PackageEntity packageEntity = (PackageEntity) entityRepo.getEntity(dir);
-		String moduleName = fileEntity.getRawName().substring(packageEntity.getRawName().length() + 1);
+		String moduleName = fileEntity.getRawName().uniqName().substring(packageEntity.getRawName().uniqName().length() + 1);
 		if (moduleName.endsWith(".py"))
 			moduleName = moduleName.substring(0, moduleName.length() - ".py".length());
 		Entity.setParent(fileEntity, packageEntity);
-		packageEntity.addChild(FileUtil.getShortFileName(fileEntity.getRawName()).replace(".py", ""), fileEntity);
+		packageEntity.addChild(FileUtil.getShortFileName(fileEntity.getRawName().uniqName()).replace(".py", ""), fileEntity);
 	}
 
 	@Override
@@ -81,15 +82,15 @@ public class Python3CodeListener extends Python3BaseListener {
 				ContainerEntity moduleEntity = (ContainerEntity) (entityRepo.getEntity(fullName));
 				if (moduleEntity != null) {
 					for (FunctionEntity func : moduleEntity.getFunctions()) {
-						context.foundNewImport(new NameAliasImport(fullName, func, func.getRawName()));
+						context.foundNewImport(new NameAliasImport(fullName, func, func.getRawName().uniqName()));
 					}
 					for (VarEntity var : moduleEntity.getVars()) {
-						context.foundNewImport(new NameAliasImport(fullName, var, var.getRawName()));
+						context.foundNewImport(new NameAliasImport(fullName, var, var.getRawName().uniqName()));
 					}
 					if (moduleEntity instanceof PackageEntity) {
 						for (Entity file : moduleEntity.getChildren()) {
-							String fileName = file.getRawName().substring(fullName.length());
-							context.foundNewImport(new NameAliasImport(file.getRawName(), file, fileName));
+							String fileName = file.getRawName().uniqName().substring(fullName.length());
+							context.foundNewImport(new NameAliasImport(file.getRawName().uniqName(), file, fileName));
 						}
 					}
 				}
@@ -99,7 +100,7 @@ public class Python3CodeListener extends Python3BaseListener {
 					String alias = name;
 					if (item.NAME().size() > 1)
 						alias = item.NAME(1).getText();
-					Entity itemEntity = inferer.resolveName(entityRepo.getEntity(fullName), name, true);
+					Entity itemEntity = inferer.resolveName(entityRepo.getEntity(fullName), GenericName.build(name), true);
 					if (itemEntity != null)
 						context.foundNewImport(new NameAliasImport(itemEntity.getQualifiedName(), itemEntity, alias));
 				}
@@ -122,7 +123,7 @@ public class Python3CodeListener extends Python3BaseListener {
 	}
 
 	private String foundImportedModuleOrPackage(int prefixDotCount, String originalName) {
-		String dir = FileUtil.getLocatedDir(context.currentFile().getRawName());
+		String dir = FileUtil.getLocatedDir(context.currentFile().getRawName().uniqName());
 		String preFix = "";
 		for (int i = 0; i < prefixDotCount - 1; i++) {
 			preFix = preFix + ".." + File.separator;
@@ -197,7 +198,7 @@ public class Python3CodeListener extends Python3BaseListener {
 		String name = ctx.NAME().getText();
 		TypeEntity type = context.foundNewType(name);
 		ArrayList<String> baseClasses = this.helper.getArgList(ctx.arglist());
-		baseClasses.forEach(base -> type.addExtends(base));
+		baseClasses.forEach(base -> type.addExtends(GenericName.build(base)));
 
 		super.enterClassdef(ctx);
 	}
@@ -229,10 +230,10 @@ public class Python3CodeListener extends Python3BaseListener {
 			super.exitDecorated(ctx);
 			return;
 		}
-		Entity entity = context.foundEntityWithName(name);
+		Entity entity = context.foundEntityWithName(GenericName.build(name));
 		if (entity instanceof DecoratedEntity) {
 			for (DecoratorContext decorator : ctx.decorators().decorator()) {
-				((DecoratedEntity) entity).addAnnotation(decorator.dotted_name().getText());
+				((DecoratedEntity) entity).addAnnotation(GenericName.build(decorator.dotted_name().getText()));
 				// TODO: Annotation parameters helper.getArgList(decorator.arglist()));
 			}
 		}

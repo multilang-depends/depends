@@ -1,18 +1,12 @@
 package depends.extractor.python;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import depends.deptypes.DependencyType;
-import depends.entity.CandidateTypes;
 import depends.entity.FunctionEntity;
-import depends.entity.TypeEntity;
-import depends.entity.VarEntity;
 import depends.extractor.FileParser;
 
 public class ShouldGetRelationInSamePackageTest extends PythonParserTest {

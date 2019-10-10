@@ -69,7 +69,7 @@ public class IncludeRelationTest extends CppParserTest{
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
-        assertEquals("abc",((AliasEntity)repo.getEntity("abc_t")).getOriginType().getRawName());
+        assertEquals("abc",((AliasEntity)repo.getEntity("abc_t")).getOriginType().getRawName().uniqName());
         
 	}
 	

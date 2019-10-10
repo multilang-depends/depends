@@ -348,7 +348,7 @@ public abstract class ContainerEntity extends DecoratedEntity {
 	}
 	
 	public VarEntity lookupVarLocally(String varName) {
-		return this.lookupVarLocally(new GenericName(varName));
+		return this.lookupVarLocally(GenericName.build(varName));
 	}
 
 	public void addMixin(GenericName moduleName) {

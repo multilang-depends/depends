@@ -105,7 +105,7 @@ public class CppVisitor  extends ASTVisitor {
 		}
 		
 		for (String var:macroExtractor.getMacroFuncs()) {
-			context.foundMethodDeclarator(var, Inferer.buildInType.getRawName(), new ArrayList<>());
+			context.foundMethodDeclarator(var, Inferer.buildInType.getRawName().uniqName(), new ArrayList<>());
 			context.exitLastedEntity();
 		}
 		return super.visit(tu);
@@ -184,7 +184,7 @@ public class CppVisitor  extends ASTVisitor {
 				IASTSimpleDeclaration decl = (IASTSimpleDeclaration)(declarator.getParent());
 				returnType = ASTStringUtilExt.getName(decl.getDeclSpecifier());
 				String rawName = ASTStringUtilExt.getName(declarator);
-				FunctionEntity namedEntity = context.currentFile().lookupFunctionInVisibleScope(rawName);
+				FunctionEntity namedEntity = context.currentFile().lookupFunctionInVisibleScope(GenericName.build(rawName));
 				if (namedEntity!=null) {
 					rawName = namedEntity.getQualifiedName();
 				}
@@ -196,7 +196,7 @@ public class CppVisitor  extends ASTVisitor {
 				returnType = ASTStringUtilExt.getName(decl.getDeclSpecifier());
 				List<GenericName> templateParams = ASTStringUtilExt.getTemplateParameters(decl.getDeclSpecifier());
 				String rawName = ASTStringUtilExt.getName(declarator);
-				FunctionEntity namedEntity = context.currentFile().lookupFunctionInVisibleScope(rawName);
+				FunctionEntity namedEntity = context.currentFile().lookupFunctionInVisibleScope(GenericName.build(rawName));
 				if (namedEntity!=null) {
 					rawName = namedEntity.getQualifiedName();
 				}
@@ -227,7 +227,7 @@ public class CppVisitor  extends ASTVisitor {
 		if (declarator instanceof IASTFunctionDeclarator){
 			if ( declarator.getParent() instanceof IASTSimpleDeclaration) {
 				String rawName = ASTStringUtilExt.getName(declarator);
-				if (rawName.equals(context.lastContainer().getRawName())) {
+				if (rawName.equals(context.lastContainer().getRawName().getName())) {
 					context.exitLastedEntity();
 				}else {
 					System.err.println("unexpected symbol");
@@ -268,7 +268,7 @@ public class CppVisitor  extends ASTVisitor {
 					String varType = ASTStringUtilExt.getName(declSpecifier);
 					String varName = ASTStringUtilExt.getName(declarator);
 					if (!StringUtils.isEmpty(varType)) {
-						context.foundVarDefinition(varName, varType,ASTStringUtilExt.getTemplateParameters(declSpecifier));
+						context.foundVarDefinition(varName, GenericName.build(varType),ASTStringUtilExt.getTemplateParameters(declSpecifier));
 					}else {
 						expressionUsage.foundCallExpressionOfFunctionStyle(varName,declarator);
 					}
@@ -328,9 +328,8 @@ public class CppVisitor  extends ASTVisitor {
 		logger.info("enter IASTParameterDeclaration  " + parameterDeclaration.getClass().getSimpleName());
 		String parameterName = ASTStringUtilExt.getName(parameterDeclaration.getDeclarator());
 		String parameterType = ASTStringUtilExt.getName(parameterDeclaration.getDeclSpecifier());
-		IASTDeclSpecifier d1 = parameterDeclaration.getDeclSpecifier();
 		if (context.currentFunction()!=null) {
-			VarEntity var = new VarEntity(parameterName,parameterType,context.currentFunction(),idGenerator.generateId());
+			VarEntity var = new VarEntity(GenericName.build(parameterName),GenericName.build(parameterType),context.currentFunction(),idGenerator.generateId());
 			context.currentFunction().addParameter(var );
 		}else {
 			//System.out.println("** parameterDeclaration = " + parameter);

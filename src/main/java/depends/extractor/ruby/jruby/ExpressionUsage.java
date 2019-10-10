@@ -50,6 +50,7 @@ import org.jrubyparser.ast.VCallNode;
 import depends.entity.ContainerEntity;
 import depends.entity.Expression;
 import depends.entity.FunctionEntity;
+import depends.entity.GenericName;
 import depends.entity.VarEntity;
 import depends.entity.repo.IdGenerator;
 import depends.extractor.ruby.RubyHandlerContext;
@@ -82,23 +83,23 @@ public class ExpressionUsage {
 
 		context.lastContainer().addExpression(ctx,expression);
 		if (ctx instanceof ILiteralNode && !(ctx instanceof ListNode)) {
-			expression.identifier = "<literal>";
-			expression.rawType = Inferer.buildInType.getQualifiedName();
+			expression.identifier = GenericName.build("<literal>");
+			expression.rawType = GenericName.build(Inferer.buildInType.getQualifiedName());
 		} else if (ctx instanceof TrueNode || ctx instanceof FalseNode) {
-			expression.identifier = "<boolean>";
-			expression.rawType = Inferer.buildInType.getQualifiedName();
+			expression.identifier = GenericName.build("<boolean>");
+			expression.rawType = GenericName.build(Inferer.buildInType.getQualifiedName());
 		}else if (ctx instanceof AndNode || ctx instanceof OrNode) {
-			expression.identifier = "<logical>";
-			expression.rawType = Inferer.buildInType.getQualifiedName();
+			expression.identifier = GenericName.build("<logical>");
+			expression.rawType = GenericName.build(Inferer.buildInType.getQualifiedName());
 		}else if (ctx instanceof ConstNode)  {
-			expression.rawType = helper.getName(ctx);
-			expression.identifier = helper.getName(ctx);
+			expression.rawType = GenericName.build(helper.getName(ctx));
+			expression.identifier = GenericName.build(helper.getName(ctx));
 		} else if (ctx instanceof LocalVarNode ||
 				ctx instanceof GlobalVarNode ||
 				ctx instanceof ClassVarNode||
 				ctx instanceof InstVarNode ||
 				ctx instanceof Colon3Node)  {
-			expression.identifier = helper.getName(ctx);
+			expression.identifier = GenericName.build(helper.getName(ctx));
 		} 
 		if (ctx instanceof AssignableNode) {
 			expression.isSet = true;
@@ -109,7 +110,7 @@ public class ExpressionUsage {
 				expression.isCreate = true;
 				List<Node> childNodes = ctx.childNodes();
 				if (childNodes.size()>0) {
-					expression.identifier = helper.getName(ctx.childNodes().get(0));
+					expression.identifier = GenericName.build(helper.getName(ctx.childNodes().get(0)));
 				}else {
 					expression.identifier = context.currentType().getRawName();
 				}
@@ -119,11 +120,11 @@ public class ExpressionUsage {
 				expression.isThrow = true;
 				expression.deriveTypeFromChild = true;
 			} else if (helper.isArithMeticOperator(name)) {
-				expression.identifier = "<operator>";
-				expression.rawType = Inferer.buildInType.getQualifiedName();
+				expression.identifier = GenericName.build("<operator>");
+				expression.rawType = GenericName.build(Inferer.buildInType.getQualifiedName());
 			}else {
-				expression.identifier = name;
-				expression.rawType = helper.getReciever(ctx);
+				expression.identifier = GenericName.build(name);
+				expression.rawType = GenericName.build(helper.getReciever(ctx));
 				if (expression.rawType!=null) {
 					expression.isDot = true;
 				}

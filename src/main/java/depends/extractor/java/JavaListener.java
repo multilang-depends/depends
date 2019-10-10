@@ -84,7 +84,7 @@ public class JavaListener extends JavaParserBaseListener {
 	// Package
 	@Override
 	public void enterPackageDeclaration(PackageDeclarationContext ctx) {
-		context.foundNewPackage(sureDotStartName(QualitiedNameContextHelper.getName(ctx.qualifiedName())));
+		context.foundNewPackage(QualitiedNameContextHelper.getName(ctx.qualifiedName()));
 		super.enterPackageDeclaration(ctx);
 	}
 
@@ -103,16 +103,16 @@ public class JavaListener extends JavaParserBaseListener {
 	@Override
 	public void enterClassDeclaration(ClassDeclarationContext ctx) {
 		if (ctx.IDENTIFIER()==null) return;
-		context.foundNewType(sureDotStartName(ctx.IDENTIFIER().getText()));
+		context.foundNewType(GenericName.build(ctx.IDENTIFIER().getText()));
 		// implements
 		if (ctx.typeList() != null) {
 			for (int i = 0; i < ctx.typeList().typeType().size(); i++) {
-				context.foundImplements(sureDotStartName(ClassTypeContextHelper.getClassName(ctx.typeList().typeType().get(i))));
+				context.foundImplements(GenericName.build(ClassTypeContextHelper.getClassName(ctx.typeList().typeType().get(i))));
 			}
 		}
 		// extends relation
 		if (ctx.typeType() != null) {
-			context.foundExtends(sureDotStartName(ClassTypeContextHelper.getClassName(ctx.typeType())));
+			context.foundExtends(GenericName.build(ClassTypeContextHelper.getClassName(ctx.typeType())));
 		}
 
 		if (ctx.typeParameters() != null) {
@@ -130,14 +130,14 @@ public class JavaListener extends JavaParserBaseListener {
 
 	@Override
 	public void enterEnumDeclaration(EnumDeclarationContext ctx) {
-		context.foundNewType(sureDotStartName(ctx.IDENTIFIER().getText()));
+		context.foundNewType(GenericName.build(ctx.IDENTIFIER().getText()));
 		annotationProcessor.processAnnotationModifier(ctx, TypeDeclarationContext.class ,"classOrInterfaceModifier.annotation",context.lastContainer());
 		super.enterEnumDeclaration(ctx);
 	}
 
 	@Override
 	public void enterAnnotationTypeDeclaration(AnnotationTypeDeclarationContext ctx) {
-		context.foundNewType(sureDotStartName(ctx.IDENTIFIER().getText()));
+		context.foundNewType(GenericName.build(ctx.IDENTIFIER().getText()));
 		annotationProcessor.processAnnotationModifier(ctx, TypeDeclarationContext.class ,"classOrInterfaceModifier.annotation",context.lastContainer());
 		super.enterAnnotationTypeDeclaration(ctx);
 	}
@@ -154,7 +154,7 @@ public class JavaListener extends JavaParserBaseListener {
 	 */
 	@Override
 	public void enterInterfaceDeclaration(InterfaceDeclarationContext ctx) {
-		context.foundNewType(sureDotStartName(ctx.IDENTIFIER().getText()));
+		context.foundNewType(GenericName.build(ctx.IDENTIFIER().getText()));
 		// type parameters
 		if (ctx.typeParameters() != null) {
 			foundTypeParametersUse(ctx.typeParameters());
@@ -325,7 +325,7 @@ public class JavaListener extends JavaParserBaseListener {
 	public void enterResource(ResourceContext ctx) {
 		List<GenericName> typeArguments = ClassTypeContextHelper.getTypeArguments(ctx.classOrInterfaceType());
 		context.foundVarDefinition(ctx.variableDeclaratorId().IDENTIFIER().getText(),
-				IdentifierContextHelper.getName(ctx.classOrInterfaceType().IDENTIFIER()),typeArguments);
+				GenericName.build(IdentifierContextHelper.getName(ctx.classOrInterfaceType().IDENTIFIER())),typeArguments);
 		super.enterResource(ctx);
 	}
 
@@ -355,18 +355,12 @@ public class JavaListener extends JavaParserBaseListener {
 			TypeParameterContext typeParam = typeParameters.typeParameter(i);
 			if (typeParam.typeBound() != null) {
 				for (int j = 0; j < typeParam.typeBound().typeType().size(); j++) {
-					context.foundTypeParametes(new GenericName(ClassTypeContextHelper.getClassName(typeParam.typeBound().typeType(j))));
+					context.foundTypeParametes(GenericName.build(ClassTypeContextHelper.getClassName(typeParam.typeBound().typeType(j))));
 				}
 			}
-			context.currentType().addTypeParameter(new GenericName(typeParam.IDENTIFIER().getText()));
+			context.currentType().addTypeParameter(GenericName.build(typeParam.IDENTIFIER().getText()));
 		}
 	}
 	
-	private String sureDotStartName(String name) {
-//		if (name==null) return null;
-//		if (name.contains(".") && !name.startsWith(".")) {
-//			name = "." + name;
-//		}
-		return name;
-	}
+
 }

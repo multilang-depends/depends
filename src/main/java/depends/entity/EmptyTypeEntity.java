@@ -27,7 +27,7 @@ package depends.entity;
 public class EmptyTypeEntity extends TypeEntity {
 
 	public EmptyTypeEntity() {
-		super(new GenericName(""), null, -1);
+		super(GenericName.build(""), null, -1);
 	}
 
 }

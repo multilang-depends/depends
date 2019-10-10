@@ -7,8 +7,8 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
-import depends.entity.ContainerEntity;
 import depends.entity.FunctionEntity;
+import depends.entity.TypeEntity;
 import depends.entity.VarEntity;
 import depends.extractor.FileParser;
 import depends.relations.Inferer;
@@ -35,15 +35,15 @@ public class RubyAssignedVariableTypeDedudceTest extends RubyParserTest {
 	    assertEquals(Inferer.buildInType.getRawName(),var.getType().getRawName());
 
 	    var = function.lookupVarLocally("var_c");
-	    assertEquals("Class",var.getType().getRawName());
+	    assertEquals("Class",var.getType().getRawName().uniqName());
 	    
 
-	    function = (FunctionEntity)(entityRepo.getEntity("Class"));
-	    var = function.lookupVarLocally("inst_var");
-	    assertEquals("Class",var.getType().getRawName());
+	    TypeEntity classEntity = (TypeEntity)(entityRepo.getEntity("Class"));
+	    var = classEntity.lookupVarLocally("inst_var");
+	    assertEquals("Class",var.getType().getRawName().uniqName());
 	    
-	    var = function.lookupVarLocally("class_var");
-	    assertEquals("Class",var.getType().getRawName());
+	    var = classEntity.lookupVarLocally("class_var");
+	    assertEquals("Class",var.getType().getRawName().uniqName());
 	}
 	
 	@Test

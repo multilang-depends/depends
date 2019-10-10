@@ -5,8 +5,6 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
-import depends.entity.Entity;
-
 public class JavaCylicInheritTest extends JavaParserTest{
 	@Before
 	public void setUp() {

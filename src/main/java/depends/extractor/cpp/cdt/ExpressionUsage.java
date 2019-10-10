@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 
 import depends.entity.Expression;
+import depends.entity.GenericName;
 import depends.entity.repo.IdGenerator;
 import depends.extractor.HandlerContext;
 
@@ -52,7 +53,7 @@ public class ExpressionUsage {
 		Expression expression = new Expression(idGenerator.generateId());
 		context.lastContainer().addExpression(declarator,expression);
 		expression.isCall = true;
-		expression.identifier = functionName;
+		expression.identifier = GenericName.build(functionName);
 	}
 	
 	public void foundExpression(IASTExpression ctx) {
@@ -90,23 +91,23 @@ public class ExpressionUsage {
 			expression.isCall = true;
 		}
 		if (ctx instanceof ICPPASTNewExpression) {
-			expression.rawType = ASTStringUtilExt.getTypeIdString(((ICPPASTNewExpression)ctx).getTypeId());
+			expression.rawType = GenericName.build(ASTStringUtilExt.getTypeIdString(((ICPPASTNewExpression)ctx).getTypeId()));
 			expression.isCall = true;
 			expression.deriveTypeFromChild = false;
 		}
 
 		if (ctx instanceof IASTCastExpression) {
 			expression.isCast=true;
-			expression.rawType = ASTStringUtilExt.getTypeIdString(((IASTCastExpression)ctx).getTypeId());
+			expression.rawType = GenericName.build(ASTStringUtilExt.getTypeIdString(((IASTCastExpression)ctx).getTypeId()));
 			expression.deriveTypeFromChild = false;
 
 		}
 		if (expression.isDot) {
 			IASTExpression op2 = ((IASTBinaryExpression)ctx).getOperand2();
 			if (op2 instanceof IASTIdExpression)
-				expression.identifier = ((IASTIdExpression)op2).getName().toString();
+				expression.identifier = GenericName.build(((IASTIdExpression)op2).getName().toString());
 			else if (op2 instanceof IASTLiteralExpression)
-				expression.identifier = ((IASTLiteralExpression)op2).getRawSignature();
+				expression.identifier = GenericName.build(((IASTLiteralExpression)op2).getRawSignature());
 			else if (op2 instanceof IASTFunctionCallExpression)
 				expression.identifier = getMethodCallIdentifier((IASTFunctionCallExpression)op2);
 			return;
@@ -126,22 +127,22 @@ public class ExpressionUsage {
 		//1. we only handle leaf node. if there is still expression,
 		//   the type will be determined by child node in the expression
 		if (ctx instanceof IASTIdExpression){
-			expression.identifier = ((IASTIdExpression) ctx).getName().toString();
+			expression.identifier = GenericName.build(((IASTIdExpression) ctx).getName().toString());
 		}else if (ctx instanceof IASTLiteralExpression) {
 		//2. if it is a var name, dertermine the type based on context.
-			expression.identifier = "<Literal>";
-			expression.rawType =  "<Built-in>";
+			expression.identifier = GenericName.build("<Literal>");
+			expression.rawType =  GenericName.build("<Built-in>");
 		}else if (ctx instanceof IASTTypeIdExpression) {
 		//3. if given type directly
-			expression.rawType = ASTStringUtilExt.getTypeIdString(((IASTTypeIdExpression)ctx).getTypeId());
+			expression.rawType = GenericName.build(ASTStringUtilExt.getTypeIdString(((IASTTypeIdExpression)ctx).getTypeId()));
 			//TODO: check
 		}
 	}
 
-	private String getMethodCallIdentifier(IASTFunctionCallExpression methodCall) {
+	private GenericName getMethodCallIdentifier(IASTFunctionCallExpression methodCall) {
 		IASTExpression f = methodCall.getFunctionNameExpression();
 		if (f instanceof IASTIdExpression) {
-			return ((IASTIdExpression)f).getName().toString().replace("::", ".");
+			return GenericName.build(((IASTIdExpression)f).getName().toString().replace("::", "."));
 		}
 		return null;
 	}

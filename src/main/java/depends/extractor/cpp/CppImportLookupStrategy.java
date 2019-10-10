@@ -32,6 +32,7 @@ import java.util.Set;
 
 import depends.entity.Entity;
 import depends.entity.FileEntity;
+import depends.entity.GenericName;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.UnsolvedBindings;
 import depends.importtypes.FileImport;
@@ -56,12 +57,12 @@ public class CppImportLookupStrategy implements ImportLookupStrategy {
 			if (importedItem instanceof FileEntity) {
 				FileEntity importedFile = (FileEntity) repo.getEntity(file);
 				if (importedFile==null) continue;
-				 Entity entity = inferer.resolveName(importedFile,name, false);
+				 Entity entity = inferer.resolveName(importedFile,GenericName.build(name), false);
 				if (entity!=null) return entity;
 				Collection<Entity> namespaces = fileEntity.getImportedTypes();
 				for (Entity ns:namespaces) {
 					String nameWithPrefix = ns.getQualifiedName() + "." + name;
-					entity = inferer.resolveName(importedFile,nameWithPrefix, false);
+					entity = inferer.resolveName(importedFile,GenericName.build(nameWithPrefix), false);
 					if (entity!=null) return entity;				
 				}
 			}	
@@ -73,8 +74,8 @@ public class CppImportLookupStrategy implements ImportLookupStrategy {
 		for (Entity file:importedFiles) {
 			if (file==null ) continue;
 			if (!(file instanceof FileEntity)) continue;
-			if (fileSet.contains(file.getRawName())) continue;
-			fileSet.add(file.getRawName());
+			if (fileSet.contains(file.getRawName().uniqName())) continue;
+			fileSet.add(file.getRawName().uniqName());
 			foundIncludedFiles(fileSet,((FileEntity)file).getImportedFiles(),repo);
 		}
 	}

@@ -64,7 +64,7 @@ public class FunctionDependencyGenerator extends DependencyGenerator {
 
 	private String getFunctionEntityDisplayName(FunctionEntity entity) {
 		FileEntity file = (FileEntity) entity.getAncestorOfType(FileEntity.class);
-		String name = stripper.stripFilename(file.getRawName().getUniqueName());
+		String name = stripper.stripFilename(file.getRawName().uniqName());
 		name = filenameWritter.reWrite(name);
 		String functionName = PackageNamePrefixRemover.remove(entity);
 		name = name + "("+functionName+")";

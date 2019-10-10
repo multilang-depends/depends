@@ -27,6 +27,7 @@ package depends.extractor.java.context;
 import org.antlr.v4.runtime.RuleContext;
 
 import depends.entity.Expression;
+import depends.entity.GenericName;
 import depends.entity.repo.IdGenerator;
 import depends.extractor.HandlerContext;
 import depends.extractor.java.JavaParser.ExpressionContext;
@@ -79,20 +80,20 @@ public class ExpressionUsage {
 		}
 		//new 
 		if (ctx.NEW()!=null && ctx.creator()!=null) {
-			expression.rawType = CreatorContextHelper.getCreatorType(ctx.creator());
+			expression.rawType = GenericName.build(CreatorContextHelper.getCreatorType(ctx.creator()));
 			expression.isCall = true;
 			expression.deriveTypeFromChild = false;
 		}
 		
 		if (ctx.typeCast()!=null) {
 			expression.isCast=true;
-			expression.rawType = ctx.typeCast().typeType().getText();
+			expression.rawType = GenericName.build(ctx.typeCast().typeType().getText());
 			expression.deriveTypeFromChild = false;
 		}
 		
 		if (ctx.bop!=null && ctx.bop.getText().equals("instanceof")) {
 			expression.isCast=true;
-			expression.rawType = ctx.typeType().getText();
+			expression.rawType = GenericName.build(ctx.typeType().getText());
 			expression.deriveTypeFromChild = false;
 		}
 		
@@ -102,26 +103,26 @@ public class ExpressionUsage {
 		
 		if (expression.isDot) {
 			if (ctx.IDENTIFIER()!=null)
-				expression.identifier = ctx.IDENTIFIER().getText();
+				expression.identifier = GenericName.build(ctx.IDENTIFIER().getText());
 			else if (ctx.methodCall()!=null)
 				expression.identifier = getMethodCallIdentifier(ctx.methodCall());
 			else if (ctx.THIS()!=null)
-				expression.identifier = "this";
+				expression.identifier = GenericName.build("this");
 			else if (ctx.innerCreator()!=null) //innner creator like new List(){}
-				expression.identifier =  ctx.innerCreator().IDENTIFIER().getText();
+				expression.identifier =  GenericName.build(ctx.innerCreator().IDENTIFIER().getText());
 			else if (ctx.SUPER()!=null)
-				expression.identifier = "super";
+				expression.identifier = GenericName.build("super");
 			return;
 		}
 	}
 
-	private String getMethodCallIdentifier(MethodCallContext methodCall) {
+	private GenericName getMethodCallIdentifier(MethodCallContext methodCall) {
 		if (methodCall.THIS()!=null) {
-			return "this";
+			return GenericName.build("this");
 		}else if (methodCall.SUPER()!=null) {
-			return "super";
+			return GenericName.build("super");
 		}else {
-			return methodCall.IDENTIFIER().getText();
+			return GenericName.build(methodCall.IDENTIFIER().getText());
 		}
 	}
 
@@ -175,18 +176,18 @@ public class ExpressionUsage {
 		//   the type will be determined by child node in the expression
 		if (ctx.literal()!=null) {
 		//2. if it is a build-in type like "hello"(string), 10(integer), etc.
-			expression.rawType = "<Built-in>";
-			expression.identifier = "<Literal>";
+			expression.rawType = GenericName.build("<Built-in>");
+			expression.identifier = GenericName.build("<Literal>");
 		}else if (ctx.IDENTIFIER()!=null) {
 		//2. if it is a var name, dertermine the type based on context.
-			expression.identifier = ctx.IDENTIFIER().getText();
+			expression.identifier = GenericName.build(ctx.IDENTIFIER().getText());
 		}else if (ctx.typeTypeOrVoid()!=null) {
 		//3. if given type directly
-			expression.rawType = ClassTypeContextHelper.getClassName(ctx.typeTypeOrVoid());
+			expression.rawType = GenericName.build(ClassTypeContextHelper.getClassName(ctx.typeTypeOrVoid()));
 		}else if (ctx.THIS()!=null){
-			expression.identifier = "this";
+			expression.identifier = GenericName.build("this");
 		}else if (ctx.SUPER()!=null){
-			expression.identifier = "super";
+			expression.identifier = GenericName.build("super");
 		}
 	}
 

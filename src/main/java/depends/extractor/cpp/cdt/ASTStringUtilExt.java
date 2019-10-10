@@ -58,7 +58,7 @@ public class ASTStringUtilExt extends ASTStringUtil {
 						String parameterName = ASTStringUtilExt.getName(decl);
 						parameterName = parameterName.replace("...", "");
 						List<GenericName> subTypes = getTemplateParameters(decl);
-						parameters.add(new GenericName(parameterName,subTypes));
+						parameters.add(GenericName.build(parameterName,subTypes));
 					}else {
 						System.err.println ("TODO: unknown template arguments");
 					}

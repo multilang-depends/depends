@@ -42,7 +42,7 @@ public abstract class ParserTest {
 	    ContainerEntity container = (ContainerEntity)entity;
 		ArrayList<VarEntity> vars = container.getVars();
 	    for (VarEntity var:vars) {
-	    	if (var.getRawName().equals(name)) {
+	    	if (var.getRawName().uniqName().equals(name)) {
 	    		return;
 	    	}
 	    }
@@ -52,7 +52,7 @@ public abstract class ParserTest {
 	protected void assertContainsParametersWithRawName(FunctionEntity function, String name) {
 		Collection<VarEntity> vars = function.getParameters();
 	    for (VarEntity var:vars) {
-	    	if (var.getRawName().equals(name)) {
+	    	if (var.getRawName().uniqName().equals(name)) {
 	    		return;
 	    	}
 	    }
@@ -62,7 +62,7 @@ public abstract class ParserTest {
 	protected void assertContainReturnType(FunctionEntity function, String name) {
 		Collection<Entity> types = function.getReturnTypes();
 	    for (Entity type:types) {
-	    	if (type.getRawName().equals(name)) {
+	    	if (type.getRawName().uniqName().equals(name)) {
 	    		return;
 	    	}
 	    }

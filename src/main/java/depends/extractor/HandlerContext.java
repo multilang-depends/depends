@@ -66,25 +66,30 @@ public abstract class HandlerContext {
 	}
 
 	
+
+	public TypeEntity foundNewType(GenericName name) {
+		TypeEntity currentTypeEntity = new TypeEntity(name, this.latestValidContainer(),
+				idGenerator.generateId());
+			pushToStack(currentTypeEntity);
+		 	entityRepo.add(currentTypeEntity);
+		 	currentFileEntity.addType(currentTypeEntity);
+			return currentTypeEntity;		
+	}
+	
 	/**
 	 * Tell the context object that a new type founded.
-	 * @param classOrInterfaceName
+	 * @param name
 	 * @return
 	 */
-	public TypeEntity foundNewType(String classOrInterfaceName) {
-		TypeEntity currentTypeEntity = new TypeEntity(new GenericName(classOrInterfaceName), this.latestValidContainer(),
-			idGenerator.generateId());
-		pushToStack(currentTypeEntity);
-	 	entityRepo.add(currentTypeEntity);
-	 	currentFileEntity.addType(currentTypeEntity);
-		return currentTypeEntity;
+	public TypeEntity foundNewType(String name) {
+		return foundNewType(GenericName.build(name));
 	}
 
 	public void foundNewTypeAlias(String aliasName, String originalName) {
 		if (aliasName.equals(originalName)) return; //it is a tricky, we treat same name no different. 
 		//indeed it is not perfect -> the right match should depends on no-bare format like "struct a" instead of "a"
-		AliasEntity currentTypeEntity = new AliasEntity(new GenericName(aliasName), this.latestValidContainer(),
-				idGenerator.generateId(),new GenericName(originalName) );
+		AliasEntity currentTypeEntity = new AliasEntity(GenericName.build(aliasName), this.latestValidContainer(),
+				idGenerator.generateId(),GenericName.build(originalName) );
 	 	entityRepo.add(currentTypeEntity);
 		return ;		
 	}
@@ -99,17 +104,17 @@ public abstract class HandlerContext {
 	 * @return the new function enity
 	 */
 	public FunctionEntity foundMethodDeclarator(String methodName, String returnType, List<String> throwedType) {
-		FunctionEntity functionEntity = new FunctionEntity(new GenericName(methodName), this.latestValidContainer(),
-				idGenerator.generateId(),new GenericName(returnType));
+		FunctionEntity functionEntity = new FunctionEntity(GenericName.build(methodName), this.latestValidContainer(),
+				idGenerator.generateId(),GenericName.build(returnType));
 		entityRepo.add(functionEntity);
 		this.typeOrFileContainer().addFunction(functionEntity);
 		pushToStack(functionEntity);
-		functionEntity.addThrowTypes(throwedType);
+		functionEntity.addThrowTypes(throwedType.stream().map(item->GenericName.build(item)).collect(Collectors.toList()));
 		return functionEntity;
 	}
 	
 	public FunctionEntity foundMethodDeclarator(ContainerEntity containerEntity, String methodName) {
-		FunctionEntity functionEntity = new FunctionEntity(methodName, containerEntity,
+		FunctionEntity functionEntity = new FunctionEntity(GenericName.build(methodName), containerEntity,
 				idGenerator.generateId(),null);
 		entityRepo.add(functionEntity);
 		containerEntity.addFunction(functionEntity);
@@ -189,14 +194,18 @@ public abstract class HandlerContext {
 	}
 
 	public void foundAnnotation(String name) {
-		lastContainer().addAnnotation(name);
+		lastContainer().addAnnotation(GenericName.build(name));
 	}
 
-	public void foundImplements(String typeName) {
+	public void foundImplements(GenericName typeName) {
 		currentType().addImplements(typeName);
 	}
 
-	public void foundExtends(String typeName) {
+	public void foundExtends(String className) {
+		foundExtends(GenericName.build(className));
+	}
+	
+	public void foundExtends(GenericName typeName) {
 		if (currentType()==null) {
 			System.out.println("error: type do not exist");
 			return ;
@@ -204,8 +213,13 @@ public abstract class HandlerContext {
 		currentType().addExtends(typeName);
 	}
 
-	public void foundMixin(String moduleName) {
-		lastContainer().addMixin(moduleName);
+	public void foundMixin(String name) {
+		foundMixin(GenericName.build(name));
+		
+	}
+	
+	public void foundMixin(GenericName name) {
+		lastContainer().addMixin(name);
 		
 	}
 
@@ -215,7 +229,7 @@ public abstract class HandlerContext {
 
 
 	public List<VarEntity> foundVarDefinitions(List<String> varNames, String type, List<GenericName> typeArguments) {
-		return varNames.stream().map(item->foundVarDefinition(item,type,typeArguments)).collect(Collectors.toList());
+		return varNames.stream().map(item->foundVarDefinition(item,GenericName.build(type),typeArguments)).collect(Collectors.toList());
 	}
 	
 	public VarEntity foundVarDefinition(ContainerEntity container,String varName) {
@@ -224,9 +238,9 @@ public abstract class HandlerContext {
 			container = currentFile();
 		}
 		
-		VarEntity var = getVar(container,varName);
+		VarEntity var = getVar(container,GenericName.build(varName));
 		if (var!=null) return var;
-		var = new VarEntity(varName, null, container, idGenerator.generateId());
+		var = new VarEntity(GenericName.build(varName), null, container, idGenerator.generateId());
 		container.addVar(var);
 		entityRepo.add(var);
 
@@ -235,8 +249,8 @@ public abstract class HandlerContext {
 	
 
 
-	public VarEntity foundVarDefinition(String varName, String type, List<GenericName> typeArguments) {
-		VarEntity var = new VarEntity(varName, type, lastContainer(), idGenerator.generateId());
+	public VarEntity foundVarDefinition(String varName, GenericName type, List<GenericName> typeArguments) {
+		VarEntity var = new VarEntity(GenericName.build(varName), type, lastContainer(), idGenerator.generateId());
 		var.addTypeParameter(typeArguments);
 		lastContainer().addVar(var);	
 		entityRepo.add(var);
@@ -245,13 +259,13 @@ public abstract class HandlerContext {
 	
 	public VarEntity addMethodParameter(String paramName) {
 		if (currentFunction()==null) return null;
-		VarEntity varEntity = new VarEntity(paramName,null,currentFunction(),idGenerator.generateId());
+		VarEntity varEntity = new VarEntity(GenericName.build(paramName),null,currentFunction(),idGenerator.generateId());
 		currentFunction().addParameter(varEntity);
 		return varEntity;
 	}
 
 	public void foundEnumConstDefinition(String varName) {
-		String type = lastContainer().getRawName();
+		GenericName type = lastContainer().getRawName();
 		foundVarDefinition(varName,type,new ArrayList<>());
 	}
 	
@@ -273,14 +287,14 @@ public abstract class HandlerContext {
 		entityStack.pop();
 	}
 	
-	private VarEntity getVar(ContainerEntity container, String varName) {
+	private VarEntity getVar(ContainerEntity container, GenericName varName) {
 		Entity entity = inferer.resolveName(container, varName, true); //TODO: should be check based on local/class/global
 		if (entity ==null ) return null;
 		if (entity instanceof VarEntity) return (VarEntity)entity;
 		return null;
 	}
 
-	public Entity foundEntityWithName(String rawName) {
+	public Entity foundEntityWithName(GenericName rawName) {
 		return inferer.resolveName(lastContainer(), rawName, true);
 	}
 }

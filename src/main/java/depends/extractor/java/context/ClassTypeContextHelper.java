@@ -79,7 +79,7 @@ public class ClassTypeContextHelper {
 				String argumentType = getClassName(arg.typeType());
 				List<GenericName> subTypes = getTypeArguments(arg.typeType());
 				if (argumentType!=null)
-					typeArguments.add(new GenericName(argumentType,subTypes));
+					typeArguments.add(GenericName.build(argumentType,subTypes));
 			}
 		}
 		return typeArguments;

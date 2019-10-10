@@ -8,6 +8,7 @@ import depends.entity.ContainerEntity;
 import depends.entity.Entity;
 import depends.entity.Expression;
 import depends.entity.FunctionEntity;
+import depends.entity.GenericName;
 import depends.entity.TypeEntity;
 import depends.entity.VarEntity;
 import depends.entity.repo.IdGenerator;
@@ -52,17 +53,17 @@ public class ExpressionUsage {
 			if (atom.NUMBER()!=null ||
 					atom.STRING()!=null &&
 					atom.STRING().size()>0) {
-				expression.identifier = "<literal>";
-				expression.rawType = Inferer.buildInType.getQualifiedName();
+				expression.identifier = GenericName.build("<literal>");
+				expression.rawType = GenericName.build(Inferer.buildInType.getQualifiedName());
 			}else if (atom.getText().equals("True")||
 					atom.getText().equals("False")) {
-				expression.identifier = "<boolean>";
-				expression.rawType = Inferer.buildInType.getQualifiedName();
+				expression.identifier = GenericName.build("<boolean>");
+				expression.rawType = GenericName.build(Inferer.buildInType.getQualifiedName());
 			}else if (atom.getText().equals("None")) {
-				expression.identifier = "<null>";
-				expression.rawType = Inferer.buildInType.getQualifiedName();
+				expression.identifier = GenericName.build("<null>");
+				expression.rawType = GenericName.build(Inferer.buildInType.getQualifiedName());
 			}else if (atom.NAME()!=null) {
-				expression.identifier = atom.NAME().getText();
+				expression.identifier = GenericName.build(atom.NAME().getText());
 			}
 		}
 		
@@ -79,13 +80,13 @@ public class ExpressionUsage {
 			Atom_exprContext expr = ((Atom_exprContext)ctx);
 			if (expr.func_call()!=null) {
 				//TODO: should be refined later. Currently only a.b.c could be solved.
-				expression.identifier = expr.atom_expr().getText();
+				expression.identifier = GenericName.build(expr.atom_expr().getText());
 				String callPrefix = expr.atom_expr().getText();
 				//call with variables
 				if (callPrefix.contains(".")) {
 					int pos = callPrefix.lastIndexOf('.');
-					String functionName = callPrefix.substring(pos+1);
-					String preFix = callPrefix.substring(0,pos);
+					GenericName functionName = GenericName.build(callPrefix.substring(pos+1));
+					GenericName preFix = GenericName.build(callPrefix.substring(0,pos));
 					Entity prefixEntity = context.foundEntityWithName(preFix);
 					if (prefixEntity instanceof VarEntity) {
 						((VarEntity)prefixEntity).addFunctionCall(functionName);
@@ -104,7 +105,7 @@ public class ExpressionUsage {
 			}
 			else if (expr.member_access()!=null) {
 				expression.isDot = true;
-				expression.identifier = expr.member_access().NAME().getText();
+				expression.identifier = GenericName.build(expr.member_access().NAME().getText());
 			}
 			//TODO: member access in python should be handled seperately. they could be different types;
 		}else if (ctx instanceof Return_stmtContext) {
