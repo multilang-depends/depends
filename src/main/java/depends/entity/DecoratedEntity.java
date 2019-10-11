@@ -31,7 +31,6 @@ import java.util.List;
 import depends.relations.Inferer;
 
 public abstract class DecoratedEntity extends Entity{
-	private Collection<GenericName> typeParameters  = new ArrayList<>();; // Generic type parameters like <T>, <String>, <? extends Object>
 	private Collection<GenericName> annotations = new ArrayList<>();
 	private Collection<Entity> resolvedTypeParameters = new ArrayList<>();
 	private Collection<Entity> resolvedAnnotations = new ArrayList<>();
@@ -42,17 +41,18 @@ public abstract class DecoratedEntity extends Entity{
 		super(rawName, parent, id);
 	}
 	
-	public void addTypeParameter(List<GenericName> typeArguments) {
-		typeParameters.addAll(typeArguments);
-	}
 	public void addAnnotation(GenericName name) {
 		this.annotations.add(name);
 	}
 	
-	public void addTypeParameter(GenericName typeName) {
-		this.typeParameters.add(typeName);
+	public void addTypeParameter(List<GenericName> parameters) {
+		this.getRawName().appendArguments(parameters);
 	}
 	
+
+	public void addTypeParameter(GenericName parameter) {
+		this.getRawName().appendArguments(parameter);
+	}
 	/**
 	 * For all data in the class, infer their types.
 	 * Should be override in sub-classes 
@@ -62,11 +62,10 @@ public abstract class DecoratedEntity extends Entity{
 		resolvedAnnotations = identiferToEntities(inferer, annotations);
 	}
 	
-	
 
 	private Collection<Entity> typeParametersToEntities(Inferer inferer) {
 		ArrayList<Entity> r = new ArrayList<>();
-		for (GenericName typeParameter:typeParameters) {
+		for (GenericName typeParameter:this.getRawName().getArguments()) {
 			toEntityList(inferer, r,typeParameter);
 		}
 		return r;
@@ -91,11 +90,8 @@ public abstract class DecoratedEntity extends Entity{
 	}
 
 	public boolean isGenericTypeParameter(GenericName rawType) {
-		for (GenericName typeParam:typeParameters) {
-			if (typeParam.equals(rawType)) {
-				return true;
-			}
-		}
+		boolean foundInCurrentLevel =  rawType.find(rawType);
+		if (foundInCurrentLevel) return true;
 		if (this.getParent()==null || !(this.getParent() instanceof ContainerEntity))
 			return false;
 		return ((ContainerEntity)getParent()).isGenericTypeParameter(rawType);

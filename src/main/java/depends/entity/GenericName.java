@@ -95,4 +95,18 @@ public class GenericName implements Serializable{
 	public static GenericName build(String name, List<GenericName> arguments) {
 		return new GenericName(name,arguments);
 	}
+	public boolean find(GenericName rawType) {
+		if (this.equals(rawType)) return true;
+		for (GenericName subType:this.getArguments()) {
+			boolean found = subType.find(rawType);
+			if (found) return true;
+		}
+		return false;
+	}
+	public void appendArguments(List<GenericName> parameters) {
+		this.arguments.addAll(parameters);
+	}
+	public void appendArguments(GenericName parameter) {
+		this.arguments.add(parameter);
+	}	
 }

@@ -185,22 +185,11 @@ public class CandidateTypes extends TypeEntity {
 	}
 
 	@Override
-	public void addTypeParameter(List<GenericName> typeArguments) {
-		System.err.println("error: addTypeParameter should not been invoked");
-		super.addTypeParameter(typeArguments);
-	}
-
-	@Override
 	public void addAnnotation(GenericName name) {
 		System.err.println("error: addAnnotation should not been invoked");
 		super.addAnnotation(name);
 	}
 
-	@Override
-	public void addTypeParameter(GenericName typeName) {
-		System.err.println("error: addTypeParameter should not been invoked");
-		super.addTypeParameter(typeName);
-	}
 
 	@Override
 	public Collection<Entity> getResolvedTypeParameters() {
