@@ -113,6 +113,26 @@ public abstract class HandlerContext {
 		return functionEntity;
 	}
 	
+	public FunctionEntity foundMethodDeclarator(String methodName, GenericName returnType, List<String> throwedType) {
+		FunctionEntity functionEntity = new FunctionEntity(GenericName.build(methodName), this.latestValidContainer(),
+				idGenerator.generateId(),returnType);
+		entityRepo.add(functionEntity);
+		this.typeOrFileContainer().addFunction(functionEntity);
+		pushToStack(functionEntity);
+		functionEntity.addThrowTypes(throwedType.stream().map(item->GenericName.build(item)).collect(Collectors.toList()));
+		return functionEntity;
+	}
+	
+	public FunctionEntity foundMethodDeclarator(String methodName) {
+		FunctionEntity functionEntity = new FunctionEntity(GenericName.build(methodName), this.latestValidContainer(),
+				idGenerator.generateId(),null);
+		entityRepo.add(functionEntity);
+		this.typeOrFileContainer().addFunction(functionEntity);
+		pushToStack(functionEntity);
+		return functionEntity;		
+	}
+
+	
 	public FunctionEntity foundMethodDeclarator(ContainerEntity containerEntity, String methodName) {
 		FunctionEntity functionEntity = new FunctionEntity(GenericName.build(methodName), containerEntity,
 				idGenerator.generateId(),null);

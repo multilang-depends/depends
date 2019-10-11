@@ -148,6 +148,9 @@ public class RelationCounter {
 		for (Entity throwType:func.getThrowTypes()) {
 			func.addRelation(new Relation(DependencyType.THROW,throwType));
 		}
+		for (Entity type:func.getResolvedTypeParameters()) {
+			func.addRelation(new Relation(DependencyType.PARAMETER,type));
+		}
 	}
 
 	private void computeImports(FileEntity file) {

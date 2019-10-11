@@ -179,10 +179,10 @@ public class CppVisitor  extends ASTVisitor {
 	public int visit(IASTDeclarator declarator) {
 		logger.info("enter IASTDeclarator  " + declarator.getClass().getSimpleName());
 		if (declarator instanceof IASTFunctionDeclarator){
-			String returnType = null;
+			GenericName returnType = null;
 			if ( declarator.getParent() instanceof IASTSimpleDeclaration) {
 				IASTSimpleDeclaration decl = (IASTSimpleDeclaration)(declarator.getParent());
-				returnType = ASTStringUtilExt.getName(decl.getDeclSpecifier());
+				returnType = buildGenericNameFromDeclSpecifier(decl.getDeclSpecifier());
 				String rawName = ASTStringUtilExt.getName(declarator);
 				FunctionEntity namedEntity = context.currentFile().lookupFunctionInVisibleScope(GenericName.build(rawName));
 				if (namedEntity!=null) {
@@ -193,8 +193,7 @@ public class CppVisitor  extends ASTVisitor {
 			}
 			else if ( declarator.getParent() instanceof IASTFunctionDefinition) {
 				IASTFunctionDefinition decl = (IASTFunctionDefinition)declarator.getParent();
-				returnType = ASTStringUtilExt.getName(decl.getDeclSpecifier());
-				List<GenericName> templateParams = ASTStringUtilExt.getTemplateParameters(decl.getDeclSpecifier());
+				returnType = buildGenericNameFromDeclSpecifier(decl.getDeclSpecifier());
 				String rawName = ASTStringUtilExt.getName(declarator);
 				FunctionEntity namedEntity = context.currentFile().lookupFunctionInVisibleScope(GenericName.build(rawName));
 				if (namedEntity!=null) {
@@ -207,18 +206,27 @@ public class CppVisitor  extends ASTVisitor {
 		return super.visit(declarator);
 	}
 	
+	private GenericName buildGenericNameFromDeclSpecifier(IASTDeclSpecifier decl) {
+		String name = ASTStringUtilExt.getName(decl);
+		List<GenericName> templateParams = ASTStringUtilExt.getTemplateParameters(decl);
+		if (name==null)
+			return null;
+		return new GenericName(name,templateParams);
+	}
+
 	/**
 	 * In case of return type is empty, it maybe a construct/deconstruct function
 	 * @param functionname
 	 * @param returnType
 	 * @return
 	 */
-	private String reMapIfConstructDeconstruct(String functionname, String returnType) {
-		if (returnType.length()>0) return returnType;
+	private GenericName reMapIfConstructDeconstruct(String functionname, GenericName returnType) {
+		if (returnType!=null && returnType.uniqName().length()>0)
+			return returnType;
 		if (functionname.contains("::")) {
-			return functionname.substring(0, functionname.indexOf("::"));
+			return new GenericName(functionname.substring(0, functionname.indexOf("::")));
 		}else {
-			return functionname;
+			return new GenericName(functionname);
 		}
 	}
 

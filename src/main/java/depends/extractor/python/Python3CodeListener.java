@@ -176,7 +176,7 @@ public class Python3CodeListener extends Python3BaseListener {
 			functionName = ctx.NAME().getText();
 		}
 		
-		context.foundMethodDeclarator(functionName, null, new ArrayList<>());
+		context.foundMethodDeclarator(functionName);
 		List<String> parameters = helper.getParameterList(ctx.parameters());
 		for (String param : parameters) {
 			VarEntity paramEntity = context.addMethodParameter(param);

@@ -50,17 +50,26 @@ public abstract class DecoratedEntity extends Entity{
 	}
 	
 
+	
 	public void addTypeParameter(GenericName parameter) {
 		this.getRawName().appendArguments(parameter);
 	}
+	
+	protected void appendTypeParameters(Collection<Entity> typeParameterEntities) {
+		resolvedTypeParameters.addAll(typeParameterEntities);
+	}
+	
 	/**
 	 * For all data in the class, infer their types.
 	 * Should be override in sub-classes 
 	 */
 	public void inferLocalLevelEntities(Inferer inferer) {
-		resolvedTypeParameters = typeParametersToEntities(inferer);
+		Collection<Entity> typeParameterEntities = typeParametersToEntities(inferer);
+		appendTypeParameters(typeParameterEntities);
 		resolvedAnnotations = identiferToEntities(inferer, annotations);
 	}
+
+
 	
 
 	private Collection<Entity> typeParametersToEntities(Inferer inferer) {
@@ -71,7 +80,7 @@ public abstract class DecoratedEntity extends Entity{
 		return r;
 	}
 
-	private void toEntityList(Inferer inferer, ArrayList<Entity> r, GenericName typeParameter) {
+	protected void toEntityList(Inferer inferer, ArrayList<Entity> r, GenericName typeParameter) {
 		Entity entity = resolveEntity(inferer, typeParameter);
 		if (entity != null)
 			r.add(entity);

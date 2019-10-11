@@ -84,8 +84,13 @@ public class FunctionEntity extends ContainerEntity{
 			param.fillCandidateTypes(inferer);
 			param.inferLocalLevelEntities(inferer);
 		}
-		if (returnTypes.size()<returnTypeIdentifiers.size())
+		if (returnTypes.size()<returnTypeIdentifiers.size()) {
 			returnTypes = identiferToEntities(inferer,this.returnTypeIdentifiers);
+			for ( GenericName returnTypeName: returnTypeIdentifiers) {
+				Collection<Entity> typeEntities = typeParametersToEntities(inferer, returnTypeName);
+				this.appendTypeParameters(typeEntities);
+			}
+		}
 		if (throwTypes.size()<throwTypesIdentifiers.size())
 			throwTypes = identiferToEntities(inferer,this.throwTypesIdentifiers);
 		super.inferLocalLevelEntities(inferer);
@@ -93,6 +98,17 @@ public class FunctionEntity extends ContainerEntity{
 			this.returnTypes.add(this.getLastExpressionType());
 		}
 	}
+	
+
+	private Collection<Entity> typeParametersToEntities(Inferer inferer,GenericName name) {
+		ArrayList<Entity> r = new ArrayList<>();
+		for (GenericName typeParameter:name.getArguments()) {
+			toEntityList(inferer, r,typeParameter);
+		}
+		return r;
+	}
+
+	
 	public Collection<VarEntity> getParameters() {
 		return parameters;
 	}

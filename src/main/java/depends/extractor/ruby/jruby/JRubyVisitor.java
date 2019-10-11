@@ -192,7 +192,7 @@ public class JRubyVisitor extends NoopVisitor {
 
 	@Override
 	public Object visitDefnNode(DefnNode node) {
-		context.foundMethodDeclarator(node.getName(), null, new ArrayList<>());
+		context.foundMethodDeclarator(node.getName());
 		super.visitDefnNode(node);
 		context.exitLastedEntity();
 		return null;
@@ -223,7 +223,7 @@ public class JRubyVisitor extends NoopVisitor {
 
 		if (!handled) {
 			// fallback to add it to last container
-			context.foundMethodDeclarator(node.getName(), null, new ArrayList<>());
+			context.foundMethodDeclarator(node.getName());
 		}
 		super.visitDefsNode(node);
 		context.exitLastedEntity();

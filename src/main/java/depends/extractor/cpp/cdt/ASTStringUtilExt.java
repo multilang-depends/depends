@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -17,7 +18,9 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplateId;
 import org.eclipse.cdt.internal.core.model.ASTStringUtil;
 
@@ -43,10 +46,22 @@ public class ASTStringUtilExt extends ASTStringUtil {
 		return appendBareTypeIdString(sb, typeId).toString().replace("::", ".");
 	}
 	
+
+
 	/**
 	 *  retrieve template parameters from declSpecifier 
 	 */
 	public static List<GenericName> getTemplateParameters(IASTDeclSpecifier declSpecifier) {
+		List<GenericName> parameters = new ArrayList<>();
+		declSpecifier.accept(new TemplateParameterASTVisitor(parameters));
+		return parameters;
+	}
+
+	
+	/**
+	 *  retrieve template parameters from declSpecifier 
+	 */
+	public static List<GenericName> getTemplateParameters1(IASTDeclSpecifier declSpecifier) {
 		List<GenericName> parameters = new ArrayList<>();
 		if (declSpecifier instanceof IASTNamedTypeSpecifier) {
 			final IASTNamedTypeSpecifier namedTypeSpec = (IASTNamedTypeSpecifier) declSpecifier;
@@ -67,7 +82,6 @@ public class ASTStringUtilExt extends ASTStringUtil {
 		}
 		return parameters;
 	}
-	
 	
 
 	private static StringBuilder appendBareDeclSpecifierString(StringBuilder buffer, IASTDeclSpecifier declSpecifier) {

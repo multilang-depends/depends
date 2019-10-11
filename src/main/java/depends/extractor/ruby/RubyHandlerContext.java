@@ -98,7 +98,7 @@ public class RubyHandlerContext extends HandlerContext {
 		else if (methodName.equals("attr_accessor")||methodName.equals("attr_writer")||methodName.equals("attr_reader")) {
 			for (String name:params) {
 				name = name.replace(":", ""); //remove symbol
-				foundMethodDeclarator(name, null, new ArrayList<>());
+				foundMethodDeclarator(name);
 			}
 		} 
 	}
