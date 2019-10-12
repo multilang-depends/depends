@@ -51,7 +51,6 @@ public class PomLocator {
 		sb.append("-");
 		sb.append(pomParent.version);
 		sb.append(".pom");
-		System.out.println(sb.toString());
 		for (String includePath:includePaths) {
 			String path = includePath+File.separator+sb.toString();
 			if (FileUtil.existFile(path)) {

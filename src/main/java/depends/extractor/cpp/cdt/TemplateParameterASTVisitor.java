@@ -49,7 +49,6 @@ class TemplateParameterASTVisitor extends ASTVisitor{
 
 	@Override
 	public int visit(ICPPASTTemplateParameter templateParameter) {
-		System.out.println(templateParameter.getRawSignature());
 		return super.visit(templateParameter);
 	}
 
