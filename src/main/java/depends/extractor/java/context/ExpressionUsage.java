@@ -75,25 +75,25 @@ public class ExpressionUsage {
  */
 		//method call
 		if (ctx.methodCall()!=null) {
-			expression.identifier = getMethodCallIdentifier(ctx.methodCall());
+			expression.setIdentifier(getMethodCallIdentifier(ctx.methodCall()));
 			expression.isCall = true;
 		}
 		//new 
 		if (ctx.NEW()!=null && ctx.creator()!=null) {
-			expression.rawType = GenericName.build(CreatorContextHelper.getCreatorType(ctx.creator()));
+			expression.setRawType(CreatorContextHelper.getCreatorType(ctx.creator()));
 			expression.isCall = true;
 			expression.deriveTypeFromChild = false;
 		}
 		
 		if (ctx.typeCast()!=null) {
 			expression.isCast=true;
-			expression.rawType = GenericName.build(ctx.typeCast().typeType().getText());
+			expression.setRawType(ctx.typeCast().typeType().getText());
 			expression.deriveTypeFromChild = false;
 		}
 		
 		if (ctx.bop!=null && ctx.bop.getText().equals("instanceof")) {
 			expression.isCast=true;
-			expression.rawType = GenericName.build(ctx.typeType().getText());
+			expression.setRawType(ctx.typeType().getText());
 			expression.deriveTypeFromChild = false;
 		}
 		
@@ -103,15 +103,15 @@ public class ExpressionUsage {
 		
 		if (expression.isDot) {
 			if (ctx.IDENTIFIER()!=null)
-				expression.identifier = GenericName.build(ctx.IDENTIFIER().getText());
+				expression.setIdentifier(ctx.IDENTIFIER().getText());
 			else if (ctx.methodCall()!=null)
-				expression.identifier = getMethodCallIdentifier(ctx.methodCall());
+				expression.setIdentifier(getMethodCallIdentifier(ctx.methodCall()));
 			else if (ctx.THIS()!=null)
-				expression.identifier = GenericName.build("this");
+				expression.setIdentifier("this");
 			else if (ctx.innerCreator()!=null) //innner creator like new List(){}
-				expression.identifier =  GenericName.build(ctx.innerCreator().IDENTIFIER().getText());
+				expression.setIdentifier(ctx.innerCreator().IDENTIFIER().getText());
 			else if (ctx.SUPER()!=null)
-				expression.identifier = GenericName.build("super");
+				expression.setIdentifier("super");
 			return;
 		}
 	}
@@ -176,18 +176,18 @@ public class ExpressionUsage {
 		//   the type will be determined by child node in the expression
 		if (ctx.literal()!=null) {
 		//2. if it is a build-in type like "hello"(string), 10(integer), etc.
-			expression.rawType = GenericName.build("<Built-in>");
-			expression.identifier = GenericName.build("<Literal>");
+			expression.setRawType("<Built-in>");
+			expression.setIdentifier("<Literal>");
 		}else if (ctx.IDENTIFIER()!=null) {
 		//2. if it is a var name, dertermine the type based on context.
-			expression.identifier = GenericName.build(ctx.IDENTIFIER().getText());
+			expression.setIdentifier(ctx.IDENTIFIER().getText());
 		}else if (ctx.typeTypeOrVoid()!=null) {
 		//3. if given type directly
-			expression.rawType = GenericName.build(ClassTypeContextHelper.getClassName(ctx.typeTypeOrVoid()));
+			expression.setRawType(ClassTypeContextHelper.getClassName(ctx.typeTypeOrVoid()));
 		}else if (ctx.THIS()!=null){
-			expression.identifier = GenericName.build("this");
+			expression.setIdentifier("this");
 		}else if (ctx.SUPER()!=null){
-			expression.identifier = GenericName.build("super");
+			expression.setIdentifier("super");
 		}
 	}
 

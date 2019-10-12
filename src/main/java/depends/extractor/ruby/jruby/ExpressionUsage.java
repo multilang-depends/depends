@@ -61,19 +61,25 @@ public class ExpressionUsage {
 	IdGenerator idGenerator;
 	Inferer inferer;
 	private RubyParserHelper helper;
-	public ExpressionUsage(RubyHandlerContext context,IdGenerator idGenerator, RubyParserHelper helper, Inferer inferer) {
+
+	public ExpressionUsage(RubyHandlerContext context, IdGenerator idGenerator, RubyParserHelper helper,
+			Inferer inferer) {
 		this.context = context;
 		this.idGenerator = idGenerator;
 		this.inferer = inferer;
 		this.helper = helper;
 	}
+
 	public Expression foundExpression(Node ctx) {
-		if (ctx instanceof RootNode) return null;
-		if (ctx instanceof BlockNode) return null;
+		if (ctx instanceof RootNode)
+			return null;
+		if (ctx instanceof BlockNode)
+			return null;
 		Expression expression = findExpression(ctx);
-		if (expression!=null) return expression;
+		if (expression != null)
+			return expression;
 		Expression parent = findParentInStack(ctx);
-		/* create expression and link it with parent*/
+		/* create expression and link it with parent */
 		expression = new Expression(idGenerator.generateId());
 		expression.text = ctx.toString();
 		expression.setParent(parent);
@@ -81,56 +87,52 @@ public class ExpressionUsage {
 			expression.isStatement = true;
 		}
 
-		context.lastContainer().addExpression(ctx,expression);
+		context.lastContainer().addExpression(ctx, expression);
 		if (ctx instanceof ILiteralNode && !(ctx instanceof ListNode)) {
-			expression.identifier = GenericName.build("<literal>");
-			expression.rawType = GenericName.build(Inferer.buildInType.getQualifiedName());
+			expression.setIdentifier("<literal>");
+			expression.setRawType(Inferer.buildInType.getQualifiedName());
 		} else if (ctx instanceof TrueNode || ctx instanceof FalseNode) {
-			expression.identifier = GenericName.build("<boolean>");
-			expression.rawType = GenericName.build(Inferer.buildInType.getQualifiedName());
-		}else if (ctx instanceof AndNode || ctx instanceof OrNode) {
-			expression.identifier = GenericName.build("<logical>");
-			expression.rawType = GenericName.build(Inferer.buildInType.getQualifiedName());
-		}else if (ctx instanceof ConstNode)  {
-			expression.rawType = GenericName.build(helper.getName(ctx));
-			expression.identifier = GenericName.build(helper.getName(ctx));
-		} else if (ctx instanceof LocalVarNode ||
-				ctx instanceof GlobalVarNode ||
-				ctx instanceof ClassVarNode||
-				ctx instanceof InstVarNode ||
-				ctx instanceof Colon3Node)  {
-			expression.identifier = GenericName.build(helper.getName(ctx));
-		} 
+			expression.setIdentifier("<boolean>");
+			expression.setRawType(Inferer.buildInType.getQualifiedName());
+		} else if (ctx instanceof AndNode || ctx instanceof OrNode) {
+			expression.setIdentifier("<logical>");
+			expression.setRawType(Inferer.buildInType.getQualifiedName());
+		} else if (ctx instanceof ConstNode) {
+			expression.setRawType(helper.getName(ctx));
+			expression.setIdentifier(helper.getName(ctx));
+		} else if (ctx instanceof LocalVarNode || ctx instanceof GlobalVarNode || ctx instanceof ClassVarNode
+				|| ctx instanceof InstVarNode || ctx instanceof Colon3Node) {
+			expression.setIdentifier(helper.getName(ctx));
+		}
 		if (ctx instanceof AssignableNode) {
 			expression.isSet = true;
-		}else if (helper.isFunctionCall(ctx)) {
+		} else if (helper.isFunctionCall(ctx)) {
 			String name = helper.getName(ctx);
 			expression.isCall = true;
 			if (name.equals("new")) {
 				expression.isCreate = true;
 				List<Node> childNodes = ctx.childNodes();
-				if (childNodes.size()>0) {
-					expression.identifier = GenericName.build(helper.getName(ctx.childNodes().get(0)));
-				}else {
-					expression.identifier = context.currentType().getRawName();
+				if (childNodes.size() > 0) {
+					expression.setIdentifier(helper.getName(ctx.childNodes().get(0)));
+				} else {
+					expression.setIdentifier(context.currentType().getRawName());
 				}
-				expression.rawType = expression.identifier ;
+				expression.setRawType(expression.getIdentifier());
 				expression.deriveTypeFromChild = false;
 			} else if (name.equals("raise")) {
 				expression.isThrow = true;
 				expression.deriveTypeFromChild = true;
 			} else if (helper.isArithMeticOperator(name)) {
-				expression.identifier = GenericName.build("<operator>");
-				expression.rawType = GenericName.build(Inferer.buildInType.getQualifiedName());
-			}else {
-				expression.identifier = GenericName.build(name);
-				expression.rawType = GenericName.build(helper.getReciever(ctx));
-				if (expression.rawType!=null) {
+				expression.setIdentifier("<operator>");
+				expression.setRawType(Inferer.buildInType.getQualifiedName());
+			} else {
+				expression.setIdentifier(name);
+				expression.setRawType(helper.getReciever(ctx));
+				if (expression.getRawType() != null) {
 					expression.isDot = true;
 				}
-				
-				if (ctx instanceof VCallNode ||
-						ctx instanceof FCallNode) {
+
+				if (ctx instanceof VCallNode || ctx instanceof FCallNode) {
 					expression.deriveTypeFromChild = false;
 				}
 			}
@@ -140,46 +142,52 @@ public class ExpressionUsage {
 		return expression;
 	}
 
-
 	/**
-	 * Auto deduce variable type from assignment.
-	 * for example:
-	 *       c = C.new  then c is type of C
+	 * Auto deduce variable type from assignment. for example: c = C.new then c is
+	 * type of C
+	 * 
 	 * @param node
 	 * @param expression
 	 */
 	private void deduceVarTypeInCaseOfAssignment(Node node, Expression expression) {
 		Node parentNode = node.getParent();
 		if (parentNode instanceof AssignableNode) {
-			ContainerEntity scope = helper.getScopeOfVar((AssignableNode)parentNode, this.context);
+			ContainerEntity scope = helper.getScopeOfVar((AssignableNode) parentNode, this.context);
 			VarEntity var = scope.lookupVarLocally(helper.getName(parentNode));
-			if (var!=null) {
+			if (var != null) {
 				expression.addDeducedTypeVar(var);
 			}
 		}
 	}
+
 	private void deduceReturnTypeInCaseOfReturn(Node ctx, Expression expression) {
 		FunctionEntity currentFunction = context.currentFunction();
-		if (currentFunction ==null) return;
+		if (currentFunction == null)
+			return;
 		if (ctx instanceof ReturnNode) {
 			expression.addDeducedTypeFunction(currentFunction);
 		}
 	}
-	
+
 	private Expression findParentInStack(Node ctx) {
-		if (ctx==null) return null;
-		if (ctx.getParent()==null) return null;
-		if (context.lastContainer()==null) {
+		if (ctx == null)
+			return null;
+		if (ctx.getParent() == null)
+			return null;
+		if (context.lastContainer() == null) {
 			return null;
 		}
-		if (context.lastContainer().expressions().containsKey(ctx.getParent())) return context.lastContainer().expressions().get(ctx.getParent());
+		if (context.lastContainer().expressions().containsKey(ctx.getParent()))
+			return context.lastContainer().expressions().get(ctx.getParent());
 		return findParentInStack(ctx.getParent());
 	}
-	
+
 	private Expression findExpression(Node ctx) {
-		if (ctx==null) return null;
-		if (ctx.getParent()==null) return null;
-		if (context.lastContainer()==null) {
+		if (ctx == null)
+			return null;
+		if (ctx.getParent() == null)
+			return null;
+		if (context.lastContainer() == null) {
 			return null;
 		}
 		return context.lastContainer().expressions().get(ctx);

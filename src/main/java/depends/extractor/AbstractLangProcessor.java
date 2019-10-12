@@ -82,8 +82,6 @@ abstract public class AbstractLangProcessor {
 
 	public AbstractLangProcessor(boolean eagerExpressionResolve) {
 		entityRepo = new InMemoryEntityRepo();
-
-		//entityRepo = new Neo4jEntityRepo();
 		inferer = new Inferer(entityRepo,getImportLookupStrategy(),getBuiltInType(),eagerExpressionResolve);
 	}
 	

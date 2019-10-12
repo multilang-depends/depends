@@ -36,8 +36,8 @@ public class Expression implements Serializable{
 	private static final long serialVersionUID = 1L;
 	public Integer id;
 	public String text; // for debug purpose
-	public GenericName rawType; //the raw type name
-	public GenericName identifier; // the varName, or method name, etc.
+	private GenericName rawType; //the raw type name
+	private GenericName identifier; // the varName, or method name, etc.
 	public boolean isSet = false; // is a set relation from right to leftHand
 	public boolean isDot = false; // is a dot expression, will decuce variable tfype left to right
 	public boolean isCall = false;
@@ -232,4 +232,55 @@ public class Expression implements Serializable{
 			}
 		}
 	}
+
+	public GenericName getIdentifier() {
+		return this.identifier;
+	}
+
+	public GenericName getRawType() {
+		return this.rawType;
+	}
+
+	public void setIdentifier(String name) {
+		if (!validName(name)){
+			return;
+		}
+		this.identifier = GenericName.build(name);
+	}
+
+	private boolean validName(String name) {
+		if (name==null) return false;
+		if (name.equals("<Literal>")) return true;
+		if (name.equals("<Built-In>")) return true;
+		if (name.equals("<built-in>")) return true;
+		if (name.equals("built-in")) return true;
+		return name.matches("([a-zA-Z0-9_]|(\\.))*");
+	}
+
+	public void setIdentifier(GenericName name) {
+		if (name==null) return;
+		if (!validName(name.getName())){
+			return;
+		}
+		this.identifier = name;
+	}
+
+	public void setRawType(GenericName name) {
+		if (name==null) return;
+		if (!validName(name.getName())){
+			return;
+		}
+		this.rawType = name;
+		
+	}
+
+	public void setRawType(String name) {
+		if (name==null) return;
+		if (!validName(name)){
+			return;
+		}
+		this.rawType = GenericName.build(name);
+	}
+	
+	
 }

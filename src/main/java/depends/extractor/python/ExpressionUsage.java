@@ -26,91 +26,86 @@ public class ExpressionUsage {
 	Inferer inferer;
 	private PythonHandlerContext context;
 	private PythonParserHelper helper;
-	public ExpressionUsage(PythonHandlerContext context,IdGenerator idGenerator, PythonParserHelper helper, Inferer inferer) {
+
+	public ExpressionUsage(PythonHandlerContext context, IdGenerator idGenerator, PythonParserHelper helper,
+			Inferer inferer) {
 		this.context = context;
 		this.idGenerator = idGenerator;
 		this.inferer = inferer;
 		this.helper = helper;
 	}
-	
+
 	public Expression foundExpression(ParserRuleContext ctx) {
-		if (!context.lastContainer().containsExpression()){
+		if (!context.lastContainer().containsExpression()) {
 			if (!isStartOfContainerRule(ctx)) {
 				return null;
 			}
 		}
 		Expression expression = findExpression(ctx);
-		if (expression!=null) return expression;
+		if (expression != null)
+			return expression;
 		Expression parent = findParentInStack(ctx);
-		/* create expression and link it with parent*/
+		/* create expression and link it with parent */
 		expression = new Expression(idGenerator.generateId());
 		expression.text = ctx.getText();
 		expression.setParent(parent);
 
-		context.lastContainer().addExpression(ctx,expression);
+		context.lastContainer().addExpression(ctx, expression);
 		if (ctx instanceof AtomContext) {
-			AtomContext atom = (AtomContext)ctx;
-			if (atom.NUMBER()!=null ||
-					atom.STRING()!=null &&
-					atom.STRING().size()>0) {
-				expression.identifier = GenericName.build("<literal>");
-				expression.rawType = GenericName.build(Inferer.buildInType.getQualifiedName());
-			}else if (atom.getText().equals("True")||
-					atom.getText().equals("False")) {
-				expression.identifier = GenericName.build("<boolean>");
-				expression.rawType = GenericName.build(Inferer.buildInType.getQualifiedName());
-			}else if (atom.getText().equals("None")) {
-				expression.identifier = GenericName.build("<null>");
-				expression.rawType = GenericName.build(Inferer.buildInType.getQualifiedName());
-			}else if (atom.NAME()!=null) {
-				expression.identifier = GenericName.build(atom.NAME().getText());
+			AtomContext atom = (AtomContext) ctx;
+			if (atom.NUMBER() != null || atom.STRING() != null && atom.STRING().size() > 0) {
+				expression.setIdentifier("<literal>");
+				expression.setRawType(Inferer.buildInType.getQualifiedName());
+			} else if (atom.getText().equals("True") || atom.getText().equals("False")) {
+				expression.setIdentifier("<boolean>");
+				expression.setRawType(Inferer.buildInType.getQualifiedName());
+			} else if (atom.getText().equals("None")) {
+				expression.setIdentifier("<null>");
+				expression.setRawType(Inferer.buildInType.getQualifiedName());
+			} else if (atom.NAME() != null) {
+				expression.setIdentifier(atom.NAME().getText());
 			}
 		}
-		
-		
+
 		if (ctx instanceof Expr_stmtContext) {
-			Expr_stmtContext expr = ((Expr_stmtContext)ctx);
-			if ((expr.expr_stmt_rhs()!=null)||
-					(expr.augassign()!=null)||
-					(expr.annassign()!=null))
-			{
+			Expr_stmtContext expr = ((Expr_stmtContext) ctx);
+			if ((expr.expr_stmt_rhs() != null) || (expr.augassign() != null) || (expr.annassign() != null)) {
 				expression.isSet = true;
 			}
-		}else if (ctx instanceof Atom_exprContext) {
-			Atom_exprContext expr = ((Atom_exprContext)ctx);
-			if (expr.func_call()!=null) {
-				//TODO: should be refined later. Currently only a.b.c could be solved.
-				expression.identifier = GenericName.build(expr.atom_expr().getText());
+		} else if (ctx instanceof Atom_exprContext) {
+			Atom_exprContext expr = ((Atom_exprContext) ctx);
+			if (expr.func_call() != null) {
+				// TODO: should be refined later. Currently only a.b.c could be solved.
+				expression.setIdentifier(expr.atom_expr().getText());
 				String callPrefix = expr.atom_expr().getText();
-				//call with variables
+				// call with variables
 				if (callPrefix.contains(".")) {
 					int pos = callPrefix.lastIndexOf('.');
-					GenericName functionName = GenericName.build(callPrefix.substring(pos+1));
-					GenericName preFix = GenericName.build(callPrefix.substring(0,pos));
+					GenericName functionName = GenericName.build(callPrefix.substring(pos + 1));
+					GenericName preFix = GenericName.build(callPrefix.substring(0, pos));
 					Entity prefixEntity = context.foundEntityWithName(preFix);
 					if (prefixEntity instanceof VarEntity) {
-						((VarEntity)prefixEntity).addFunctionCall(functionName);
+						((VarEntity) prefixEntity).addFunctionCall(functionName);
 						expression.isCall = true;
 					}
 				}
 				if (!expression.isCall) {
-					Entity typeEntity = context.foundEntityWithName(expression.identifier);
-					if (typeEntity instanceof TypeEntity &&
-							typeEntity.getId()>0) {
+					Entity typeEntity = context.foundEntityWithName(expression.getIdentifier());
+					if (typeEntity instanceof TypeEntity && typeEntity.getId() > 0) {
 						expression.isCreate = true;
-					}else {
+					} else {
 						expression.isCall = true;
 					}
 				}
-			}
-			else if (expr.member_access()!=null) {
+			} else if (expr.member_access() != null) {
 				expression.isDot = true;
-				expression.identifier = GenericName.build(expr.member_access().NAME().getText());
+				expression.setIdentifier(expr.member_access().NAME().getText());
 			}
-			//TODO: member access in python should be handled seperately. they could be different types;
-		}else if (ctx instanceof Return_stmtContext) {
-			deduceReturnTypeInCaseOfReturn(ctx,expression);
-		}else if (ctx instanceof Raise_stmtContext) {
+			// TODO: member access in python should be handled seperately. they could be
+			// different types;
+		} else if (ctx instanceof Return_stmtContext) {
+			deduceReturnTypeInCaseOfReturn(ctx, expression);
+		} else if (ctx instanceof Raise_stmtContext) {
 			expression.isThrow = true;
 			expression.deriveTypeFromChild = true;
 		}
@@ -119,67 +114,73 @@ public class ExpressionUsage {
 	}
 
 	/**
-	 * To judge whether is an 'real' expression 
+	 * To judge whether is an 'real' expression
+	 * 
 	 * @param ctx
 	 * @return
 	 */
 	private boolean isStartOfContainerRule(ParserRuleContext ctx) {
-		return ctx instanceof SuiteContext ||
-				ctx instanceof TestContext ||
-				ctx instanceof Expr_stmtContext;
+		return ctx instanceof SuiteContext || ctx instanceof TestContext || ctx instanceof Expr_stmtContext;
 	}
 
-
 	/**
-	 * Auto deduce variable type from assignment.
-	 * for example:
-	 *       c = C.new  then c is type of C
+	 * Auto deduce variable type from assignment. for example: c = C.new then c is
+	 * type of C
+	 * 
 	 * @param node
 	 * @param expression
 	 */
 	private void deduceVarTypeInCaseOfAssignment(ParserRuleContext node, Expression expression) {
 		ParserRuleContext parentNode = node.getParent();
 		if (parentNode instanceof Expr_stmtContext) {
-			Expr_stmtContext expr = (Expr_stmtContext)parentNode;
-			if (expr.expr_stmt_rhs()!=null) {
+			Expr_stmtContext expr = (Expr_stmtContext) parentNode;
+			if (expr.expr_stmt_rhs() != null) {
 				ContainerEntity scope = helper.getScopeOfVar(expr, this.context);
-				if (scope==null) return;
+				if (scope == null)
+					return;
 				String varName = null;
-				//TODO: should handle list properly;
+				// TODO: should handle list properly;
 				List<String> names = helper.getName(expr.testlist_star_expr());
-				if (names.size()==1)
+				if (names.size() == 1)
 					varName = names.get(0);
-				if (varName==null) return;
-				VarEntity var = scope.lookupVarLocally(varName );
-				if (var!=null) {
+				if (varName == null)
+					return;
+				VarEntity var = scope.lookupVarLocally(varName);
+				if (var != null) {
 					expression.addDeducedTypeVar(var);
 				}
 			}
 		}
 	}
-	
+
 	private void deduceReturnTypeInCaseOfReturn(ParserRuleContext ctx, Expression expression) {
 		FunctionEntity currentFunction = context.currentFunction();
-		if (currentFunction ==null) return;
+		if (currentFunction == null)
+			return;
 		if (ctx instanceof Return_stmtContext) {
 			expression.addDeducedTypeFunction(currentFunction);
 		}
 	}
-	
+
 	private Expression findParentInStack(ParserRuleContext ctx) {
-		if (ctx==null) return null;
-		if (ctx.getParent()==null) return null;
-		if (context.lastContainer()==null) {
+		if (ctx == null)
+			return null;
+		if (ctx.getParent() == null)
+			return null;
+		if (context.lastContainer() == null) {
 			return null;
 		}
-		if (context.lastContainer().expressions().containsKey(ctx.getParent())) return context.lastContainer().expressions().get(ctx.getParent());
+		if (context.lastContainer().expressions().containsKey(ctx.getParent()))
+			return context.lastContainer().expressions().get(ctx.getParent());
 		return findParentInStack(ctx.getParent());
 	}
-	
+
 	private Expression findExpression(ParserRuleContext ctx) {
-		if (ctx==null) return null;
-		if (ctx.getParent()==null) return null;
-		if (context.lastContainer()==null) {
+		if (ctx == null)
+			return null;
+		if (ctx.getParent() == null)
+			return null;
+		if (context.lastContainer() == null) {
 			return null;
 		}
 		return context.lastContainer().expressions().get(ctx);

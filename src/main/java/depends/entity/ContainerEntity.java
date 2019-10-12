@@ -147,31 +147,31 @@ public abstract class ContainerEntity extends DecoratedEntity {
 			if (expression.isDot) { // wait for previous
 				continue;
 			}
-			if (expression.rawType == null && expression.identifier == null)
+			if (expression.getRawType() == null && expression.getIdentifier() == null)
 				continue;
 
 			// 2. if expression's rawType existed, directly infer type by rawType
 			// if expression's rawType does not existed, infer type based on identifiers
-			if (expression.rawType != null) {
-				expression.setType(inferer.inferTypeFromName(this, expression.rawType), null, inferer);
+			if (expression.getRawType() != null) {
+				expression.setType(inferer.inferTypeFromName(this, expression.getRawType()), null, inferer);
 				if (expression.getType() != null) {
 					continue;
 				}
 			}
-			if (expression.identifier != null) {
-				Entity entity = inferer.resolveName(this, expression.identifier, true);
+			if (expression.getIdentifier() != null) {
+				Entity entity = inferer.resolveName(this, expression.getIdentifier(), true);
 				if (entity != null) {
 					expression.setType(entity.getType(), entity, inferer);
 					continue;
 				}
 				if (expression.isCall) {
-					FunctionEntity func = this.lookupFunctionInVisibleScope(expression.identifier);
+					FunctionEntity func = this.lookupFunctionInVisibleScope(expression.getIdentifier());
 					if (func != null) {
 						expression.setType(func.getType(), func, inferer);
 					}
 				} else {
 
-					VarEntity varEntity = this.lookupVarInVisibleScope(expression.identifier);
+					VarEntity varEntity = this.lookupVarInVisibleScope(expression.getIdentifier());
 					if (varEntity != null) {
 						expression.setType(varEntity.getType(), varEntity, inferer);
 					}
