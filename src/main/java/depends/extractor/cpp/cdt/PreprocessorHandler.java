@@ -29,8 +29,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+import org.codehaus.plexus.util.StringUtils;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
+import org.eclipse.cdt.internal.core.parser.scanner.ScannerUtility;
 
 import depends.util.FileUtil;
 
@@ -50,7 +53,7 @@ public class PreprocessorHandler {
 			if (statements[statementIndex] instanceof IASTPreprocessorIncludeStatement)
 			{
 				IASTPreprocessorIncludeStatement incl = (IASTPreprocessorIncludeStatement)(statements[statementIndex]);
-				String path = FileUtil.uniqFilePath(incl.getPath());
+				String path = resolveInclude(incl);
 				if (!FileUtil.existFile(path)) {
 					if (!notExistedIncludedFiles.containsKey(path)) {
 						notExistedIncludedFiles.put(path,"Error: " + path + " does not exist in include path!");
@@ -65,7 +68,31 @@ public class PreprocessorHandler {
 		}
 		return includedFullPathNames;
 	}
-	
+	private String resolveInclude(IASTPreprocessorIncludeStatement incl) {
+		if (incl.isResolved() && !StringUtils.isEmpty(incl.getPath())) 
+			return FileUtil.uniqFilePath(incl.getPath());
+		//try to find path by our self
+		String path = incl.toString();
+		int pos = path.indexOf(' ');
+		path = path.substring(pos+1).trim();
+		if (path.startsWith("\"") || path.startsWith("<")){
+			path = path.substring(1);
+			path = path.substring(0,path.length()-1);
+		}
+		//First search in local directory
+		IASTFileLocation location = incl.getFileLocation();
+		String locationDir = FileUtil.getLocatedDir(location.getFileName());
+		ArrayList<String> searchPath = new ArrayList<>();
+		searchPath.add(locationDir);
+		searchPath.addAll(includePaths);
+		for (String includePath:searchPath) {
+			path = ScannerUtility.createReconciledPath(includePath,path);
+			if (FileUtil.existFile(path)) {
+				return FileUtil.uniqFilePath(path);
+			}
+		}
+		return "";
+	}
 	
 	public List<String> getIncludePaths() {
 		return includePaths;

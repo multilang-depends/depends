@@ -6,12 +6,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
 
 import depends.deptypes.DependencyType;
 import depends.entity.AliasEntity;
 import depends.extractor.cpp.CppFileParser;
+import depends.util.FileUtil;
 
 public class IncludeRelationTest extends CppParserTest{
     @Before
@@ -89,4 +91,21 @@ public class IncludeRelationTest extends CppParserTest{
 	    this.assertContainsRelation(this.repo.getEntity("foo"), DependencyType.CALL, "bar");
 	    this.assertNotContainsRelation(this.repo.getEntity("foo2"), DependencyType.CALL, "bar");
 	}
+	
+	@Test
+	public void should_find_include_relation_in_conditional_macro_block() throws IOException {
+		String[] srcs = new String[] {
+	    		"./src/test/resources/cpp-code-examples/includeTest3/inc_macro_test.c",
+	    		"./src/test/resources/cpp-code-examples/includeTest3/fx.h",
+	    		"./src/test/resources/cpp-code-examples/includeTest3/fy.h",
+	    	    };
+	    
+	    for (String src:srcs) {
+		    CppFileParser parser = createParser(src);
+		    parser.parse();
+	    }
+	    inferer.resolveAllBindings();
+	    this.assertContainsRelation(this.repo.getEntity(FileUtil.uniqFilePath(srcs[0])), DependencyType.IMPORT, FileUtil.uniqFilePath(srcs[1]));
+	    this.assertContainsRelation(this.repo.getEntity(FileUtil.uniqFilePath(srcs[0])), DependencyType.IMPORT, FileUtil.uniqFilePath(srcs[2]));
+	} 
 }
