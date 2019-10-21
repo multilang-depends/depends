@@ -291,7 +291,7 @@ public abstract class HandlerContext {
 	
 	protected Stack<Entity> entityStack = new Stack<Entity>();
 
-	private void pushToStack(Entity entity) {
+	protected void pushToStack(Entity entity) {
 		entityStack.push(entity);
 	}
 	

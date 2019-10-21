@@ -200,7 +200,7 @@ public class CppVisitor  extends ASTVisitor {
 					rawName = namedEntity.getQualifiedName();
 				}
 				returnType = reMapIfConstructDeconstruct(rawName,returnType);
-				context.foundMethodDeclarator(rawName, returnType, new ArrayList<>());
+				context.foundMethodDeclaratorImplementation(rawName, returnType);
 			}
 		}
 		return super.visit(declarator);

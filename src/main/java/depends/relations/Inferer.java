@@ -265,7 +265,7 @@ public class Inferer {
 		return null;
 	}
 
-	private Entity lookupTypeInImported(FileEntity fileEntity, String name) {
+	public Entity lookupTypeInImported(FileEntity fileEntity, String name) {
 		if (fileEntity == null)
 			return null;
 		Entity type = importLookupStrategy.lookupImportedType(name, fileEntity, repo,this);

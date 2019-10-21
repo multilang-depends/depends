@@ -24,7 +24,14 @@ SOFTWARE.
 
 package depends.extractor.cpp;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import depends.entity.Entity;
+import depends.entity.FunctionEntity;
+import depends.entity.FunctionEntityImpl;
+import depends.entity.GenericName;
 import depends.entity.PackageEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.HandlerContext;
@@ -41,5 +48,14 @@ public class CppHandlerContext extends HandlerContext {
 		entityRepo.add(pkgEntity);
 		entityStack.push(pkgEntity);
 		return pkgEntity;
+	}
+
+	public FunctionEntity foundMethodDeclaratorImplementation(String methodName, GenericName returnType){
+		FunctionEntity functionEntity = new FunctionEntityImpl(GenericName.build(methodName), this.latestValidContainer(),
+				idGenerator.generateId(),returnType);
+		entityRepo.add(functionEntity);
+		this.typeOrFileContainer().addFunction(functionEntity);
+		super.pushToStack(functionEntity);
+		return functionEntity;
 	}
 }

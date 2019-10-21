@@ -34,6 +34,7 @@ import depends.entity.Entity;
 import depends.entity.Expression;
 import depends.entity.FileEntity;
 import depends.entity.FunctionEntity;
+import depends.entity.FunctionEntityImpl;
 import depends.entity.TypeEntity;
 import depends.entity.VarEntity;
 import depends.entity.repo.EntityRepo;
@@ -150,6 +151,12 @@ public class RelationCounter {
 		}
 		for (Entity type:func.getResolvedTypeParameters()) {
 			func.addRelation(new Relation(DependencyType.PARAMETER,type));
+		}
+		if (func instanceof FunctionEntityImpl) {
+			FunctionEntityImpl funcImpl = (FunctionEntityImpl)func;
+			if(funcImpl.getImplemented()!=null) {
+				func.addRelation(new Relation(DependencyType.IMPLEMENT,funcImpl.getImplemented()));
+			}
 		}
 	}
 
