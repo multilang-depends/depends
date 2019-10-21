@@ -26,7 +26,7 @@ public class UsingTest extends CppParserTest{
 	    }
 	    inferer.resolveAllBindings();
         Entity e = repo.getEntity("foo");
-        assertEquals(3,e.getRelations().size());
+        assertEquals(4,e.getRelations().size());
 	}
 	
 	@Test
@@ -41,6 +41,6 @@ public class UsingTest extends CppParserTest{
 	    }
 	    inferer.resolveAllBindings();
         Entity e = repo.getEntity("bar");
-        assertEquals(3,e.getRelations().size());
+        assertEquals(4,e.getRelations().size());
 	}
 }
