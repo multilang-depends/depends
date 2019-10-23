@@ -79,7 +79,6 @@ abstract public class AbstractLangProcessor {
 	private DependencyGenerator dependencyGenerator;
 	private Set<UnsolvedBindings> unsolved;
 	private List<String> typeFilter;
-
 	public AbstractLangProcessor(boolean eagerExpressionResolve) {
 		entityRepo = new InMemoryEntityRepo();
 		inferer = new Inferer(entityRepo,getImportLookupStrategy(),getBuiltInType(),eagerExpressionResolve);
@@ -93,23 +92,24 @@ abstract public class AbstractLangProcessor {
      * @param includeDir 
      * @param inputDir 
      */
-	public void buildDependencies(String inputDir, String[] includeDir,List<String> typeFilter) {
+	public void buildDependencies(String inputDir, String[] includeDir,List<String> typeFilter,boolean callAsImpl) {
 		this.inputSrcPath = inputDir;
 		this.includeDirs = includeDir;
 		this.typeFilter = typeFilter;
         parseAllFiles();
-        resolveBindings();
+        resolveBindings(callAsImpl);
         identifyDependencies();
 	}
 
 
 	/**
 	 * 
+	 * @param callAsImpl 
 	 * @return unsolved bindings
  	 */
-    private void resolveBindings() {
+    private void resolveBindings(boolean callAsImpl) {
 		System.out.println("Resolve types and bindings of variables, methods and expressions....");
-        this.unsolved =inferer.resolveAllBindings();
+        this.unsolved =inferer.resolveAllBindings(callAsImpl);
         if (getUnsolved().size()>0) {
         	System.err.println("There are " + getUnsolved().size() + " items are unsolved." );
         }

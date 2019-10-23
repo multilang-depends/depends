@@ -151,7 +151,7 @@ public class Main {
 		
 		dependencyGenerator.setFilenameRewritter(filenameWritter);
 		langProcessor.setDependencyGenerator(dependencyGenerator);
-		langProcessor.buildDependencies(inputDir, includeDir,app.getTypeFilter());
+		langProcessor.buildDependencies(inputDir, includeDir,app.getTypeFilter(),app.isCallAsImpl());
 		
 		
 		DependencyMatrix matrix = langProcessor.getDependencies();

@@ -189,7 +189,7 @@ public class CppVisitor  extends ASTVisitor {
 					rawName = namedEntity.getQualifiedName();
 				}
 				returnType = reMapIfConstructDeconstruct(rawName,returnType);
-				context.foundMethodDeclarator(rawName, returnType, new ArrayList<>());
+				context.foundMethodDeclaratorProto(rawName, returnType);
 			}
 			else if ( declarator.getParent() instanceof IASTFunctionDefinition) {
 				IASTFunctionDefinition decl = (IASTFunctionDefinition)declarator.getParent();

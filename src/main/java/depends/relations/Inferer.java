@@ -75,14 +75,18 @@ public class Inferer {
 	 * - Firstly, we resolve all types from there names.
 	 * - Secondly, we resolve all expressions (expression will use type infomation of previous step
 	 */
-	public  Set<UnsolvedBindings> resolveAllBindings() {
+	public  Set<UnsolvedBindings> resolveAllBindings(boolean callAsImpl) {
 		resolveTypes();
 		System.out.println("Dependency analaysing....");
-		new RelationCounter(repo.getEntities(),this,repo).computeRelations();
+		new RelationCounter(repo.getEntities(),this,repo,callAsImpl).computeRelations();
 		System.out.println("Dependency done....");
 		return unsolvedSymbols;		
 	}
 
+	public  Set<UnsolvedBindings> resolveAllBindings() {
+		return resolveAllBindings(false);		
+	}
+	
 	private void resolveTypes() {
 		Iterator<Entity> iterator = repo.getEntities();
 		while(iterator.hasNext()) {

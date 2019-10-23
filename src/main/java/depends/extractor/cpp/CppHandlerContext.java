@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 
 import depends.entity.Entity;
 import depends.entity.FunctionEntity;
+import depends.entity.FunctionEntityProto;
 import depends.entity.FunctionEntityImpl;
 import depends.entity.GenericName;
 import depends.entity.PackageEntity;
@@ -57,5 +58,14 @@ public class CppHandlerContext extends HandlerContext {
 		this.typeOrFileContainer().addFunction(functionEntity);
 		super.pushToStack(functionEntity);
 		return functionEntity;
+	}
+
+	public FunctionEntity foundMethodDeclaratorProto(String methodName, GenericName returnType){
+		FunctionEntity functionEntity = new FunctionEntityProto(GenericName.build(methodName), this.latestValidContainer(),
+				idGenerator.generateId(),returnType);
+		entityRepo.add(functionEntity);
+		this.typeOrFileContainer().addFunction(functionEntity);
+		super.pushToStack(functionEntity);
+		return functionEntity;		
 	}
 }

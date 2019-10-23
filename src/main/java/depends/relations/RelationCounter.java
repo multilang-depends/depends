@@ -27,6 +27,8 @@ package depends.relations;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import depends.deptypes.DependencyType;
 import depends.entity.ContainerEntity;
@@ -35,6 +37,8 @@ import depends.entity.Expression;
 import depends.entity.FileEntity;
 import depends.entity.FunctionEntity;
 import depends.entity.FunctionEntityImpl;
+import depends.entity.FunctionEntityProto;
+import depends.entity.MultiDeclareEntities;
 import depends.entity.TypeEntity;
 import depends.entity.VarEntity;
 import depends.entity.repo.EntityRepo;
@@ -44,11 +48,13 @@ public class RelationCounter {
 	private Iterator<Entity> iterator;
 	private Inferer inferer;
 	private EntityRepo repo;
+	private boolean callAsImpl;
 
-	public RelationCounter(Iterator<Entity> iterator, Inferer inferer, EntityRepo repo) {
+	public RelationCounter(Iterator<Entity> iterator, Inferer inferer, EntityRepo repo, boolean callAsImpl) {
 		this.iterator = iterator;
 		this.inferer = inferer;
 		this.repo = repo;
+		this.callAsImpl = callAsImpl;
 	}
 	
 	public void computeRelations() {
@@ -103,8 +109,23 @@ public class RelationCounter {
 			}
 			boolean matched = false;
 			if (expression.isCall) {
-				entity.addRelation(new Relation(DependencyType.CALL,referredEntity));
-				matched = true;
+				if (callAsImpl && referredEntity instanceof FunctionEntityProto) {
+					Entity multiDeclare = repo.getEntity(referredEntity.getQualifiedName());
+					if (multiDeclare instanceof MultiDeclareEntities) {
+						MultiDeclareEntities m = (MultiDeclareEntities)multiDeclare;
+						List<ContainerEntity> entities = m.getEntities().stream().filter(item->(item instanceof FunctionEntityImpl))
+						.collect(Collectors.toList());
+						for (Entity e:entities) {
+							entity.addRelation(new Relation(DependencyType.CALL,e));
+							matched = true;
+						}
+					}
+				}
+				if (!matched) {
+					entity.addRelation(new Relation(DependencyType.CALL,referredEntity));
+					matched = true;
+				}
+
 			}
 			if (expression.isCreate) {
 				entity.addRelation(new Relation(DependencyType.CREATE,referredEntity));
