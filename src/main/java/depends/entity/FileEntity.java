@@ -53,7 +53,8 @@ public class FileEntity extends TypeEntity {
 	}
 
 	public void addImport(Import imported) {
-		importedNames.add(imported);
+		if (!importedNames.contains(imported))
+			importedNames.add(imported);
 	}
 	
 	/**

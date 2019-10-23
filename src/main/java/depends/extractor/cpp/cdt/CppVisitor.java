@@ -81,6 +81,11 @@ public class CppVisitor  extends ASTVisitor {
 	private ExpressionUsage expressionUsage;
 	public CppVisitor(String fileFullPath, EntityRepo entityRepo, PreprocessorHandler preprocessorHandler,Inferer inferer) {
 		super(true);
+		this.shouldVisitAmbiguousNodes = true;
+		this.shouldVisitImplicitNames = true;
+		this.includeInactiveNodes = true;
+		this.shouldVisitTokens = true;
+		
 		this.context = new CppHandlerContext(entityRepo,inferer);
 		idGenerator = entityRepo;
 		this.entityRepo = entityRepo;

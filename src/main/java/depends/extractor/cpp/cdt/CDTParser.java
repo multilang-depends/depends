@@ -32,19 +32,31 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.GPPScannerExtensionConfiguration;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.FileContent;
+import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
+import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.NullLogService;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
+import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
 import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
+import org.eclipse.cdt.internal.core.index.CIndex;
+import org.eclipse.cdt.internal.core.index.IIndexFragment;
+import org.eclipse.cdt.internal.core.parser.IMacroDictionary;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
+import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
+import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;
 
 @SuppressWarnings("deprecation")
 public class CDTParser {
@@ -80,13 +92,30 @@ public class CDTParser {
 
 	
 	private IASTTranslationUnit getTranslationUnitofCPP(String file, String content) {
+		IScannerInfo scannerInfo = new ScannerInfo(new HashMap<>(), sysIncludePath.toArray(new String[] {}));
 		IScannerExtensionConfiguration configuration = GPPScannerExtensionConfiguration
-				.getInstance();
+				.getInstance(scannerInfo);
+		InternalFileContentProvider ifcp = new InternalFileContentProvider() {
+			@Override
+			public InternalFileContent getContentForInclusion(String filePath, IMacroDictionary macroDictionary) {
+				return (InternalFileContent) FileContent.createForExternalFileLocation(filePath);
+			}
+
+			@Override
+			public InternalFileContent getContentForInclusion(IIndexFileLocation ifl, String astPath) {
+				return (InternalFileContent) FileContent.create(ifl);
+			}
+		};
+
+
+		IParserLogService log = new NullLogService();
 		IScanner scanner = new CPreprocessor(FileContent.create(file,
-				content.toCharArray()), new ScannerInfo(new HashMap<>(),sysIncludePath.toArray(new String[] {})), ParserLanguage.CPP,
-				new NullLogService(), configuration, null);
+				content.toCharArray()),scannerInfo, ParserLanguage.CPP,
+				log, configuration, ifcp);
+		scanner.setProcessInactiveCode(true);
+		scanner.setComputeImageLocations(true);
 		AbstractGNUSourceCodeParser sourceCodeParser = new GNUCPPSourceParser(
-				scanner, ParserMode.COMPLETE_PARSE, new NullLogService(),
+				scanner, ParserMode.COMPLETE_PARSE, log,
 				new GPPParserExtensionConfigurationExtension(), null);
 		IASTTranslationUnit astTranslationUnit =  sourceCodeParser.parse();
 		return astTranslationUnit;
