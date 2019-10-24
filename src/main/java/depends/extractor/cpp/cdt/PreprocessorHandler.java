@@ -47,12 +47,14 @@ public class PreprocessorHandler {
 		notExistedIncludedFiles = new HashMap<>();
 		this.setIncludePaths(includePaths);
 	}
-	public List<String> getDirectIncludedFiles(IASTPreprocessorStatement[] statements) {
+	public List<String> getDirectIncludedFiles(IASTPreprocessorStatement[] statements, String fileLocation) {
 		ArrayList<String> includedFullPathNames = new ArrayList<>();
 		for (int statementIndex=0;statementIndex<statements.length;statementIndex++) {
 			if (statements[statementIndex] instanceof IASTPreprocessorIncludeStatement)
 			{
 				IASTPreprocessorIncludeStatement incl = (IASTPreprocessorIncludeStatement)(statements[statementIndex]);
+				if (!incl.getFileLocation().getFileName().equals(fileLocation))
+					continue;
 				String path = resolveInclude(incl);
 				if (!FileUtil.existFile(path)) {
 					if (!notExistedIncludedFiles.containsKey(path)) {

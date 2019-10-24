@@ -99,12 +99,12 @@ public class CppVisitor  extends ASTVisitor {
 
 	@Override
 	public int visit(IASTTranslationUnit tu) {
-		for (String incl:preprocessorHandler.getDirectIncludedFiles(tu.getAllPreprocessorStatements())) {
+		for (String incl:preprocessorHandler.getDirectIncludedFiles(tu.getAllPreprocessorStatements(),context.currentFile().getQualifiedName())) {
 			context.foundNewImport(new FileImport(incl));
 			CdtCppFileParser importedParser = new CdtCppFileParser(incl, entityRepo, preprocessorHandler,inferer);
 			importedParser.parse(false);
 		}
-		MacroExtractor macroExtractor = new MacroExtractor(tu.getAllPreprocessorStatements());
+		MacroExtractor macroExtractor = new MacroExtractor(tu.getAllPreprocessorStatements(),context.currentFile().getQualifiedName());
 		for (String var:macroExtractor.getMacroVars()) {
 			context.foundVarDefinition(var,Inferer.buildInType.getRawName(),new ArrayList<>());
 		}

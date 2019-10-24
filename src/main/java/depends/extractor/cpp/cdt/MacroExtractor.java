@@ -35,13 +35,17 @@ public class MacroExtractor {
 	ArrayList<String> macroVars = new ArrayList<>();
 	ArrayList<String> macroFuncs = new ArrayList<>();
 
-	public MacroExtractor(IASTPreprocessorStatement[] statements) {
+	public MacroExtractor(IASTPreprocessorStatement[] statements, String fileLocation) {
 		for (int statementIndex=0;statementIndex<statements.length;statementIndex++) {
 			if (statements[statementIndex] instanceof IASTPreprocessorFunctionStyleMacroDefinition) {
 				IASTPreprocessorFunctionStyleMacroDefinition funcMacro = (IASTPreprocessorFunctionStyleMacroDefinition)statements[statementIndex];
+				if (!funcMacro.getFileLocation().getFileName().equals(fileLocation))
+					continue;
 				macroFuncs.add(funcMacro.getName().getRawSignature());
 			}else if (statements[statementIndex] instanceof IASTPreprocessorObjectStyleMacroDefinition) {
 				IASTPreprocessorObjectStyleMacroDefinition varMacro = (IASTPreprocessorObjectStyleMacroDefinition)statements[statementIndex];
+				if (!varMacro.getFileLocation().getFileName().equals(fileLocation))
+					continue;
 				macroVars.add(varMacro.getName().getRawSignature());
 			}
 		}

@@ -35,9 +35,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.GPPScannerExtensionConfiguration;
-import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
-import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IParserLogService;
@@ -47,16 +45,15 @@ import org.eclipse.cdt.core.parser.NullLogService;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
-import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
 import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
-import org.eclipse.cdt.internal.core.index.CIndex;
-import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.parser.IMacroDictionary;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;
+
+import depends.util.FileUtil;
 
 @SuppressWarnings("deprecation")
 public class CDTParser {
@@ -81,18 +78,44 @@ public class CDTParser {
 	NullLogService NULL_LOG = new NullLogService();
 	Map<String, String> macroMap = new HashMap<>();
 	public IASTTranslationUnit parse(String file   ) {
-		CodeReader cr;
 		try {
-			cr = new CodeReader(file);
-			return getTranslationUnitofCPP(file,new String(cr.buffer));
+			return getTranslationUnitofCPP(file);
 		} catch (IOException e) {
 		}
 		return new CASTTranslationUnit();
 	}
 
 	
-	private IASTTranslationUnit getTranslationUnitofCPP(String file, String content) {
-		IScannerInfo scannerInfo = new ScannerInfo(new HashMap<>(), sysIncludePath.toArray(new String[] {}));
+	private IASTTranslationUnit getTranslationUnitofCPP(String file) throws IOException {
+		for (String p:sysIncludePath) {
+			if (!FileUtil.isDirectory(p)) {
+				IScanner scanner = buildScanner(p);
+				AbstractGNUSourceCodeParser sourceCodeParser = new GNUCPPSourceParser(
+						scanner, ParserMode.COMPLETE_PARSE,  new NullLogService(),
+						new GPPParserExtensionConfigurationExtension(), null);
+				sourceCodeParser.parse();
+				Map<String, IMacroBinding> macros = scanner.getMacroDefinitions();
+				for (String key:macros.keySet()) {
+					 String exp = new String(macros.get(key).getExpansion());
+					 if (exp.length()>0) {
+						 macroMap.put(key, exp);
+					 }
+					
+				}
+			}
+		}
+		IScanner scanner = buildScanner(file);
+		AbstractGNUSourceCodeParser sourceCodeParser = new GNUCPPSourceParser(
+				scanner, ParserMode.COMPLETE_PARSE,  new NullLogService(),
+				new GPPParserExtensionConfigurationExtension(), null);
+		IASTTranslationUnit astTranslationUnit =  sourceCodeParser.parse();
+		return astTranslationUnit;
+	}
+
+	private IScanner buildScanner(String file) throws IOException {
+		CodeReader cr = new CodeReader(file);
+		String content = new String(cr.buffer);
+		IScannerInfo scannerInfo = new ScannerInfo(macroMap, sysIncludePath.toArray(new String[] {}));
 		IScannerExtensionConfiguration configuration = GPPScannerExtensionConfiguration
 				.getInstance(scannerInfo);
 		InternalFileContentProvider ifcp = new InternalFileContentProvider() {
@@ -106,19 +129,14 @@ public class CDTParser {
 				return (InternalFileContent) FileContent.create(ifl);
 			}
 		};
-
-
-		IParserLogService log = new NullLogService();
+		ParserLanguage lang = ParserLanguage.CPP;
+		if (file.endsWith(".c"))
+			lang = ParserLanguage.C;
 		IScanner scanner = new CPreprocessor(FileContent.create(file,
-				content.toCharArray()),scannerInfo, ParserLanguage.CPP,
-				log, configuration, ifcp);
+				content.toCharArray()),scannerInfo, lang,
+				 new NullLogService(), configuration, ifcp);
 		scanner.setProcessInactiveCode(true);
-		scanner.setComputeImageLocations(true);
-		AbstractGNUSourceCodeParser sourceCodeParser = new GNUCPPSourceParser(
-				scanner, ParserMode.COMPLETE_PARSE, log,
-				new GPPParserExtensionConfigurationExtension(), null);
-		IASTTranslationUnit astTranslationUnit =  sourceCodeParser.parse();
-		return astTranslationUnit;
+		return scanner;
 	}
 
 }

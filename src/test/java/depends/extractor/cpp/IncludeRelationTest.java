@@ -37,7 +37,7 @@ public class IncludeRelationTest extends CppParserTest{
 	    }
 	    inferer.resolveAllBindings();
         File f = new File(srcs[0]);
-        assertEquals(4,repo.getEntity(f.getCanonicalPath()).getRelations().size());
+        assertEquals(3,repo.getEntity(f.getCanonicalPath()).getRelations().size());
 	}
 	
 	
