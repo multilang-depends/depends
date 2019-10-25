@@ -120,12 +120,22 @@ public class CDTParser {
 		InternalFileContentProvider ifcp = new InternalFileContentProvider() {
 			@Override
 			public InternalFileContent getContentForInclusion(String filePath, IMacroDictionary macroDictionary) {
-				return (InternalFileContent) FileContent.createForExternalFileLocation(filePath);
+				InternalFileContent c = FileCache.getInstance().get(filePath);
+				if (c==null) { 
+					c = (InternalFileContent) FileContent.createForExternalFileLocation(filePath);
+					FileCache.getInstance().put(filePath,c);
+				}
+				return c;
 			}
 
 			@Override
 			public InternalFileContent getContentForInclusion(IIndexFileLocation ifl, String astPath) {
-				return (InternalFileContent) FileContent.create(ifl);
+				InternalFileContent c = FileCache.getInstance().get(ifl);
+				if (c==null) { 
+					c = (InternalFileContent) FileContent.create(ifl);
+					FileCache.getInstance().put(ifl,c);
+				}
+				return c;
 			}
 		};
 		ParserLanguage lang = ParserLanguage.CPP;

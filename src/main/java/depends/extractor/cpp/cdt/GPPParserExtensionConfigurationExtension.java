@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.parser.cpp.GPPParserExtensionConfiguration;
 
 public class GPPParserExtensionConfigurationExtension extends GPPParserExtensionConfiguration {
 
+	
 	@Override
 	public boolean supportKnRC() {
 		return false;

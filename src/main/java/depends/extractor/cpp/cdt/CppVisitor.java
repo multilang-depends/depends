@@ -25,6 +25,7 @@ SOFTWARE.
 package depends.extractor.cpp.cdt;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.codehaus.plexus.util.StringUtils;
@@ -39,6 +40,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
@@ -79,6 +81,7 @@ public class CppVisitor  extends ASTVisitor {
 	private EntityRepo entityRepo;
 	Inferer inferer;
 	private ExpressionUsage expressionUsage;
+	HashSet<String> file;
 	public CppVisitor(String fileFullPath, EntityRepo entityRepo, PreprocessorHandler preprocessorHandler,Inferer inferer) {
 		super(true);
 		this.shouldVisitAmbiguousNodes = true;
@@ -94,6 +97,8 @@ public class CppVisitor  extends ASTVisitor {
 		this.preprocessorHandler = preprocessorHandler;
 		expressionUsage = new ExpressionUsage(context,entityRepo);
 		logger.info("enter file " + fileFullPath);
+		file = new HashSet<>();
+		file.add(this.context.currentFile().getQualifiedName());
 		
 	}
 
@@ -113,20 +118,31 @@ public class CppVisitor  extends ASTVisitor {
 			context.foundMethodDeclarator(var, Inferer.buildInType.getRawName().uniqName(), new ArrayList<>());
 			context.exitLastedEntity();
 		}
-		return super.visit(tu);
+		for (IASTNode child:tu.getChildren()) {
+			if (notLocalFile(child)) continue;
+			child.accept(this);
+		}
+		return ASTVisitor.PROCESS_SKIP;
+//		return super.visit(tu);
 	}
 	
 	
 	@Override
 	public int visit(IASTProblem problem) {
-		logger.info("warning: parse error " + problem.getOriginalNode() + problem.getMessageWithLocation());
-		System.out.println("warning: parse error " + problem.getOriginalNode() + problem.getMessageWithLocation());
+		if (notLocalFile(problem)) return ASTVisitor.PROCESS_SKIP;
+		System.out.println("warning: parse error " + problem.getOriginalNode().getRawSignature() + problem.getMessageWithLocation());
 		return super.visit(problem);
+	}
+
+	private boolean notLocalFile(IASTNode node) {
+		if (file.contains(node.getFileLocation().getFileName())) return false;
+		return true;
 	}
 
 	// PACKAGES
 	@Override
 	public int visit(ICPPASTNamespaceDefinition namespaceDefinition) {
+		if (notLocalFile(namespaceDefinition)) return ASTVisitor.PROCESS_SKIP;
 		String ns = namespaceDefinition.getName().toString().replace("::", ".");
 		logger.info("enter ICPPASTNamespaceDefinition  " + ns);
 		context.foundNamespace(ns);
@@ -137,6 +153,7 @@ public class CppVisitor  extends ASTVisitor {
 	
 	@Override
 	public int leave(ICPPASTNamespaceDefinition namespaceDefinition) {
+		if (notLocalFile(namespaceDefinition)) return ASTVisitor.PROCESS_SKIP;
 		context.exitLastedEntity();
 		return super.leave(namespaceDefinition);
 	}
@@ -144,6 +161,7 @@ public class CppVisitor  extends ASTVisitor {
 	// Types
 	@Override
 	public int visit(IASTDeclSpecifier declSpec) {
+		if (notLocalFile(declSpec)) return ASTVisitor.PROCESS_SKIP;
 		logger.info("enter IASTDeclSpecifier  " + declSpec.getClass().getSimpleName());
 		if (declSpec instanceof IASTCompositeTypeSpecifier) {
 			IASTCompositeTypeSpecifier type = (IASTCompositeTypeSpecifier)declSpec;
@@ -168,6 +186,7 @@ public class CppVisitor  extends ASTVisitor {
 	
 	@Override
 	public int leave(IASTDeclSpecifier declSpec) {
+		if (notLocalFile(declSpec)) return ASTVisitor.PROCESS_SKIP;
 		if (declSpec instanceof IASTCompositeTypeSpecifier) {
 			context.exitLastedEntity();
 		}
@@ -182,6 +201,7 @@ public class CppVisitor  extends ASTVisitor {
 	//Function or Methods
 	@Override
 	public int visit(IASTDeclarator declarator) {
+		if (notLocalFile(declarator)) return ASTVisitor.PROCESS_SKIP;
 		logger.info("enter IASTDeclarator  " + declarator.getClass().getSimpleName());
 		if (declarator instanceof IASTFunctionDeclarator){
 			GenericName returnType = null;
@@ -237,6 +257,7 @@ public class CppVisitor  extends ASTVisitor {
 
 	@Override
 	public int leave(IASTDeclarator declarator) {
+		if (notLocalFile(declarator)) return ASTVisitor.PROCESS_SKIP;
 		if (declarator instanceof IASTFunctionDeclarator){
 			if ( declarator.getParent() instanceof IASTSimpleDeclaration) {
 				String rawName = ASTStringUtilExt.getName(declarator);
@@ -252,6 +273,7 @@ public class CppVisitor  extends ASTVisitor {
 	
 	@Override
 	public int leave(IASTDeclaration declaration) {
+		if (notLocalFile(declaration)) return ASTVisitor.PROCESS_SKIP;
 		if ( declaration instanceof IASTFunctionDefinition) {
 			context.exitLastedEntity();
 		}
@@ -261,6 +283,7 @@ public class CppVisitor  extends ASTVisitor {
 	// Variables
 	@Override
 	public int visit(IASTDeclaration declaration) {
+		if (notLocalFile(declaration)) return ASTVisitor.PROCESS_SKIP;
 		logger.info("enter IASTDeclaration  " + declaration.getClass().getSimpleName());
 		
 		if (declaration instanceof ICPPASTUsingDeclaration) {
@@ -325,6 +348,7 @@ public class CppVisitor  extends ASTVisitor {
 	
 	@Override
 	public int visit(IASTEnumerator enumerator) {
+		if (notLocalFile(enumerator)) return ASTVisitor.PROCESS_SKIP;
 		logger.info("enter IASTEnumerator  " + enumerator.getClass().getSimpleName());
 		context.foundVarDefinition(enumerator.getName().toString(), context.currentType().getRawName(),new ArrayList<>());
 		return super.visit(enumerator);
@@ -332,12 +356,15 @@ public class CppVisitor  extends ASTVisitor {
 	
 	@Override
 	public int visit(IASTExpression expression) {
+		if (notLocalFile(expression)) return ASTVisitor.PROCESS_SKIP;
 		expressionUsage.foundExpression(expression);
 		return super.visit(expression);
 	}
 
 	@Override
 	public int visit(IASTParameterDeclaration parameterDeclaration) {
+		if (notLocalFile(parameterDeclaration)) return ASTVisitor.PROCESS_SKIP;
+
 		logger.info("enter IASTParameterDeclaration  " + parameterDeclaration.getClass().getSimpleName());
 		String parameterName = ASTStringUtilExt.getName(parameterDeclaration.getDeclarator());
 		String parameterType = ASTStringUtilExt.getName(parameterDeclaration.getDeclSpecifier());
