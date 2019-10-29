@@ -13,3 +13,6 @@ mvn install:install-file -DgroupId=eclipse-photon -DartifactId=org.eclipse.osgi 
 mvn install:install-file -DgroupId=eclipse-photon -DartifactId=org.eclipse.equinox.preferences -Dversion=3.7.100.v20180510-1129 -Dpackaging=jar -Dfile=./jars/org.eclipse.equinox.preferences-3.7.100.v20180510-1129.jar -DgeneratePom=true
 
 mvn install:install-file -DgroupId=eclipse-photon -DartifactId=org.eclipse.core.jobs -Dversion=3.10.0.v20180427-1454 -Dpackaging=jar -Dfile=./jars/org.eclipse.core.jobs-3.10.0.v20180427-1454.jar -DgeneratePom=true
+
+mvn install:install-file -DgroupId=eclipse-photon -DartifactId=org.eclipse.core.resources -Dversion=3.13.0.v20180512-1138 -Dpackaging=jar -Dfile=./jars/org.eclipse.core.resources_3.13.0.v20180512-1138.jar -DgeneratePom=true
+

@@ -81,6 +81,11 @@
 	</build>
 
 	<dependencies>
+<dependency>
+  <groupId>eclipse-photon</groupId>
+  <artifactId>org.eclipse.core.resources</artifactId>
+  <version>3.13.0.v20180512-1138</version>
+</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
