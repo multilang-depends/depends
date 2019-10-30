@@ -88,9 +88,9 @@ public class PreprocessorHandler {
 		searchPath.add(locationDir);
 		searchPath.addAll(includePaths);
 		for (String includePath:searchPath) {
-			path = ScannerUtility.createReconciledPath(includePath,path);
-			if (FileUtil.existFile(path)) {
-				return FileUtil.uniqFilePath(path);
+			String checkPath = ScannerUtility.createReconciledPath(includePath,path);
+			if (FileUtil.existFile(checkPath)) {
+				return FileUtil.uniqFilePath(checkPath);
 			}
 		}
 		return "";
