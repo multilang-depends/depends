@@ -36,15 +36,15 @@ import depends.extractor.cpp.cdt.PreprocessorHandler;
 import depends.relations.ImportLookupStrategy;
 
 public class CppProcessor extends AbstractLangProcessor {
-    private static final String LANG = "cpp";
-    private static final String[] SUFFIX = new String[] {".cpp",".cc",".c",".h",".hpp",".hh", ".cxx",".hxx"};
-    PreprocessorHandler preprocessorHandler;
-    
-    MacroRepo macroRepo = null;
-    public CppProcessor() {
-    	super(false);
-    }
+	private static final String LANG = "cpp";
+	private static final String[] SUFFIX = new String[] { ".cpp", ".cc", ".c", ".h", ".hpp", ".hh", ".cxx", ".hxx" };
+	PreprocessorHandler preprocessorHandler;
 
+	MacroRepo macroRepo = null;
+
+	public CppProcessor() {
+		super(false);
+	}
 
 	@Override
 	public String supportedLanguage() {
@@ -56,15 +56,14 @@ public class CppProcessor extends AbstractLangProcessor {
 		return SUFFIX;
 	}
 
-
 	@Override
 	protected FileParser createFileParser(String fileFullPath) {
-		if (macroRepo==null) {
-	    	macroRepo = new MacroRepo();
-	    	macroRepo.buildDefaultMap(super.includePaths());
+		if (macroRepo == null) {
+			macroRepo = new MacroRepo();
+			macroRepo.buildDefaultMap(super.includePaths());
 		}
-    	preprocessorHandler = new PreprocessorHandler(super.includePaths());
-		return new CdtCppFileParser(fileFullPath,entityRepo,preprocessorHandler,inferer,macroRepo);
+		preprocessorHandler = new PreprocessorHandler(super.includePaths());
+		return new CdtCppFileParser(fileFullPath, entityRepo, preprocessorHandler, inferer, macroRepo);
 	}
 
 	@Override
@@ -72,12 +71,11 @@ public class CppProcessor extends AbstractLangProcessor {
 		return new CppImportLookupStrategy();
 	}
 
-
 	@Override
 	public BuiltInType getBuiltInType() {
 		return new CppBuiltInType();
 	}
-	
+
 	@Override
 	public List<String> supportedRelations() {
 		ArrayList<String> depedencyTypes = new ArrayList<>();
@@ -94,5 +92,14 @@ public class CppProcessor extends AbstractLangProcessor {
 		depedencyTypes.add(CAST);
 		depedencyTypes.add(THROW);
 		return depedencyTypes;
-	}	
+	}
+
+	@Override
+	protected boolean isPhase2Files(String fileFullPath) {
+		if (fileFullPath.endsWith(".h") || fileFullPath.endsWith(".hh") || fileFullPath.endsWith(".hpp")
+				|| fileFullPath.endsWith(".hxx"))
+			return true;
+		return false;
+	}
+
 }

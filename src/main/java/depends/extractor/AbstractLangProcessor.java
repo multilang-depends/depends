@@ -27,6 +27,7 @@ package depends.extractor;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -127,6 +128,7 @@ abstract public class AbstractLangProcessor {
 
     private final void parseAllFiles() {
         System.out.println("start parsing files...");		
+        Set<String> phase2Files = new HashSet<>();
     	FileTraversal fileTransversal = new FileTraversal(new FileTraversal.IFileVisitor(){
 			@Override
 			public void visit(File file) {
@@ -135,24 +137,39 @@ abstract public class AbstractLangProcessor {
 				if (!fileFullPath.startsWith(inputSrcPath)) {
 					return;
 				}
-	            FileParser fileParser = createFileParser(fileFullPath);
-	            try {
-	                System.out.println("parsing " + fileFullPath 
-	                		+ "...");		
-	                fileParser.parse();
-	            } catch (IOException e) {
-	                e.printStackTrace();
-	            }	
+				if (isPhase2Files(fileFullPath)) {
+					
+				}else {
+					parseFile(fileFullPath);
+				}
 			}
     		
     	});
     	fileTransversal.extensionFilter(this.fileSuffixes());
 		fileTransversal.travers(this.inputSrcPath);
+		for (String f:phase2Files) {
+			parseFile(f);
+		}
         System.out.println("all files procceed successfully...");		
 
 	}
     
 
+	protected void parseFile(String fileFullPath) {
+        FileParser fileParser = createFileParser(fileFullPath);
+        try {
+            System.out.println("parsing " + fileFullPath 
+            		+ "...");		
+            fileParser.parse();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }	
+	}
+	
+	protected boolean isPhase2Files(String fileFullPath) {
+		return false;
+	}
+	
 	public List<String> includePaths() {
 		ArrayList<String> r = new ArrayList<String>();
 		for (String path:includeDirs) {

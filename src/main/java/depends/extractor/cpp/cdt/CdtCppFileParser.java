@@ -53,7 +53,6 @@ public class CdtCppFileParser extends CppFileParser {
 		}
 	@Override
 	public void parse() throws IOException {
-		if (this.fileFullPath.endsWith(".h")) return;
 		Map<String, String> macroMap = new HashMap<>(macroRepo.getDefaultMap());
 		parse(true,macroMap);
 	}
