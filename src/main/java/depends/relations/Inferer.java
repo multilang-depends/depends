@@ -78,7 +78,7 @@ public class Inferer {
 	public  Set<UnsolvedBindings> resolveAllBindings(boolean callAsImpl) {
 		resolveTypes();
 		System.out.println("Dependency analaysing....");
-		new RelationCounter(repo.getEntities(),this,repo,callAsImpl).computeRelations();
+		new RelationCounter(repo.entityIterator(),this,repo,callAsImpl).computeRelations();
 		System.out.println("Dependency done....");
 		return unsolvedSymbols;		
 	}
@@ -88,10 +88,11 @@ public class Inferer {
 	}
 	
 	private void resolveTypes() {
-		Iterator<Entity> iterator = repo.getEntities();
+		Iterator<Entity> iterator = repo.entityIterator();
 		while(iterator.hasNext()) {
 			Entity entity= iterator.next();
 			if (!(entity instanceof FileEntity)) continue;
+			if (!entity.inScope()) continue;
 			//System.out.println("resolve type of entity " + entity.getDisplayName());
 			entity.inferEntities(this);
 		}
@@ -414,7 +415,7 @@ public class Inferer {
 
 	private List<TypeEntity> searchTypesInRepo(VarEntity fromEntity, List<FunctionCall> functionCalls) {
 		List<TypeEntity> types = new ArrayList<>();
-		Iterator<Entity> iterator = repo.getEntities();
+		Iterator<Entity> iterator = repo.entityIterator();
 		while(iterator.hasNext()) {
 			Entity f = iterator.next();
 			if (f instanceof FileEntity)

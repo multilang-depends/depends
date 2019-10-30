@@ -60,7 +60,7 @@ public class RelationCounter {
 	public void computeRelations() {
 		while(iterator.hasNext()) {
 			Entity entity= iterator.next();
-
+			if (!entity.inScope()) continue;
 			if (entity instanceof FileEntity) {
 				computeImports((FileEntity)entity);
 			}

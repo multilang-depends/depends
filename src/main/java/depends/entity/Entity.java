@@ -49,6 +49,7 @@ public abstract class Entity {
 	private Set<Entity> children = new HashSet<>();
     ArrayList<Relation> relations = new ArrayList<>();
 	private Entity actualReferTo = null;
+	private boolean inScope = true;
 
 	public Entity() {};
     public Entity(GenericName rawName, Entity parent, Integer id) {
@@ -229,6 +230,12 @@ public abstract class Entity {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+	public void setInScope(boolean value) {
+		this.inScope  = value;
+	}
+	public boolean inScope() {
+		return inScope;
 	}
 	
 }

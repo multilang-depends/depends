@@ -33,6 +33,8 @@ import java.util.Set;
 
 import org.codehaus.plexus.util.FileUtils;
 
+import depends.entity.Entity;
+import depends.entity.FileEntity;
 import depends.entity.repo.BuiltInType;
 import depends.entity.repo.EntityRepo;
 import depends.entity.repo.InMemoryEntityRepo;
@@ -98,11 +100,20 @@ abstract public class AbstractLangProcessor {
 		this.includeDirs = includeDir;
 		this.typeFilter = typeFilter;
         parseAllFiles();
+        markAllEntitiesScope();
         resolveBindings(callAsImpl);
         identifyDependencies();
 	}
 
 
+	private void markAllEntitiesScope() {
+		entityRepo.getEntities().stream().forEach(entity->{
+			Entity file = entity.getAncestorOfType(FileEntity.class);
+			if (!file.getQualifiedName().startsWith(this.inputSrcPath)) {
+				entity.setInScope(false);
+			}
+		});
+	}
 	/**
 	 * 
 	 * @param callAsImpl 

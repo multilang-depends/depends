@@ -38,9 +38,10 @@ import depends.relations.Relation;
 public class FunctionDependencyGenerator extends DependencyGenerator {
 	public DependencyMatrix build(EntityRepo entityRepo,List<String> typeFilter) {
 		DependencyMatrix dependencyMatrix = new DependencyMatrix(typeFilter);
-		Iterator<Entity> iterator = entityRepo.getEntities();
+		Iterator<Entity> iterator = entityRepo.entityIterator();
 		while(iterator.hasNext()) {
 			Entity entity = iterator.next();
+			if (!entity.inScope()) continue;
 			if (entity instanceof FunctionEntity) {
 				String name = getFunctionEntityDisplayName((FunctionEntity)entity);
 				dependencyMatrix.addNode(name,entity.getId());

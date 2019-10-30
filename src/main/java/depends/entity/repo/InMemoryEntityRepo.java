@@ -1,5 +1,6 @@
 package depends.entity.repo;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -56,10 +57,11 @@ public class InMemoryEntityRepo extends SimpleIdGenerator implements EntityRepo 
 	}
 
 	@Override
-	public Iterator<Entity> getEntities() {
+	public Iterator<Entity> entityIterator() {
 		return allEntitiesByOrder.iterator();
 	}
 
+	
 	@Override
 	public void update(Entity entity) {
 	}
@@ -67,6 +69,11 @@ public class InMemoryEntityRepo extends SimpleIdGenerator implements EntityRepo 
 	@Override
 	public Entity getEntity(GenericName rawName) {
 		return this.getEntity(rawName.uniqName());
+	}
+
+	@Override
+	public Collection<Entity> getEntities() {
+		return allEntitiesByOrder;
 	}
 
 }

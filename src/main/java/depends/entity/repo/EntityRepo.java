@@ -24,6 +24,7 @@ SOFTWARE.
 
 package depends.entity.repo;
 
+import java.util.Collection;
 import java.util.Iterator;
 
 import depends.entity.Entity;
@@ -40,9 +41,11 @@ public interface EntityRepo extends IdGenerator {
 
 	void add(Entity entity);
 
-	Iterator<Entity> getEntities();
+	Iterator<Entity> entityIterator();
 
 	void update(Entity entity);
+
+	Collection<Entity> getEntities();
 
 
 
