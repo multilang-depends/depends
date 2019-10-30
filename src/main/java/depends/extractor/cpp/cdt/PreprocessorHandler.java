@@ -56,7 +56,6 @@ public class PreprocessorHandler {
 				if (!incl.getFileLocation().getFileName().equals(fileLocation))
 					continue;
 				String path = resolveInclude(incl);
-				System.out.print(path);
 				if (!FileUtil.existFile(path)) {
 					if (!notExistedIncludedFiles.containsKey(path)) {
 						notExistedIncludedFiles.put(path,"Error: " + path + " does not exist in include path!");
