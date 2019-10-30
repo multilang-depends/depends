@@ -39,6 +39,8 @@ public class CppProcessor extends AbstractLangProcessor {
     private static final String LANG = "cpp";
     private static final String[] SUFFIX = new String[] {".cpp",".cc",".c",".h",".hpp",".hh", ".cxx",".hxx"};
     PreprocessorHandler preprocessorHandler;
+    
+    MacroRepo macroRepo = null;
     public CppProcessor() {
     	super(false);
     }
@@ -57,8 +59,12 @@ public class CppProcessor extends AbstractLangProcessor {
 
 	@Override
 	protected FileParser createFileParser(String fileFullPath) {
+		if (macroRepo==null) {
+	    	macroRepo = new MacroRepo();
+	    	macroRepo.buildDefaultMap(super.includePaths());
+		}
     	preprocessorHandler = new PreprocessorHandler(super.includePaths());
-		return new CdtCppFileParser(fileFullPath,entityRepo,preprocessorHandler,inferer);
+		return new CdtCppFileParser(fileFullPath,entityRepo,preprocessorHandler,inferer,macroRepo);
 	}
 
 	@Override

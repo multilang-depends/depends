@@ -48,5 +48,23 @@ public class MacroTest extends CppParserTest{
 	    
         assertFalse(repo.getEntity("foo") instanceof MultiDeclareEntities);
 	}
+	
+	
+	@Test
+	public void intermediate_file_include_should_work() throws IOException {
+	    String[] srcs = new String[] {
+	    		 "./src/test/resources/cpp-code-examples/macros/Macro3.cpp",
+	    	    };
+	    
+	    for (String src:srcs) {
+		    CppFileParser parser = createParser(src);
+		    parser.parse();
+	    }
+	    inferer.resolveAllBindings();
+	    
+        assertNotNull(repo.getEntity("Macro3.bar"));
+	}
+	
+	
 
 }

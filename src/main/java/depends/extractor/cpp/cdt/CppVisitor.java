@@ -42,6 +42,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -78,7 +79,6 @@ public class CppVisitor  extends ASTVisitor {
 	private CppHandlerContext context;
 	private IdGenerator idGenerator;
 	private PreprocessorHandler preprocessorHandler;
-	private EntityRepo entityRepo;
 	Inferer inferer;
 	private ExpressionUsage expressionUsage;
 	HashSet<String> file;
@@ -91,7 +91,6 @@ public class CppVisitor  extends ASTVisitor {
 		
 		this.context = new CppHandlerContext(entityRepo,inferer);
 		idGenerator = entityRepo;
-		this.entityRepo = entityRepo;
 		this.inferer = inferer;
 		context.startFile(fileFullPath);
 		this.preprocessorHandler = preprocessorHandler;
@@ -106,8 +105,6 @@ public class CppVisitor  extends ASTVisitor {
 	public int visit(IASTTranslationUnit tu) {
 		for (String incl:preprocessorHandler.getDirectIncludedFiles(tu.getAllPreprocessorStatements(),context.currentFile().getQualifiedName())) {
 			context.foundNewImport(new FileImport(incl));
-			CdtCppFileParser importedParser = new CdtCppFileParser(incl, entityRepo, preprocessorHandler,inferer);
-			importedParser.parse(false);
 		}
 		MacroExtractor macroExtractor = new MacroExtractor(tu.getAllPreprocessorStatements(),context.currentFile().getQualifiedName());
 		for (String var:macroExtractor.getMacroVars()) {

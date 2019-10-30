@@ -27,36 +27,22 @@ package depends.extractor.cpp.cdt;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.IMacroBinding;
-import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
-import org.eclipse.cdt.core.dom.parser.cpp.GPPScannerExtensionConfiguration;
-import org.eclipse.cdt.core.index.IIndexFileLocation;
-import org.eclipse.cdt.core.parser.CodeReader;
-import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IScanner;
-import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.NullLogService;
-import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
-import org.eclipse.cdt.internal.core.parser.IMacroDictionary;
-import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
-import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
-import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;
 
-import depends.util.FileUtil;
+import depends.extractor.cpp.Scanner;
 
 @SuppressWarnings("deprecation")
 public class CDTParser {
-	List<String> sysIncludePath = new ArrayList<>();
+	protected List<String> sysIncludePath = new ArrayList<>();
 
 	public CDTParser() {
 	}
@@ -75,9 +61,10 @@ public class CDTParser {
 		}
 	}
 	NullLogService NULL_LOG = new NullLogService();
-	Map<String, String> macroMap = new HashMap<>();
-	public IASTTranslationUnit parse(String file   ) {
+	protected Map<String, String> macroMap ;
+	public IASTTranslationUnit parse(String file, Map<String, String> macroMap   ) {
 		try {
+			this.macroMap = macroMap;
 			return getTranslationUnitofCPP(file);
 		} catch (IOException e) {
 		}
@@ -85,67 +72,18 @@ public class CDTParser {
 	}
 
 	
-	private IASTTranslationUnit getTranslationUnitofCPP(String file) throws IOException {
-		for (String p:sysIncludePath) {
-			if (!FileUtil.isDirectory(p)) {
-				IScanner scanner = buildScanner(p);
-				AbstractGNUSourceCodeParser sourceCodeParser = new GNUCPPSourceParser(
-						scanner, ParserMode.COMPLETE_PARSE,  new NullLogService(),
-						new GPPParserExtensionConfigurationExtension(), null);
-				sourceCodeParser.parse();
-				Map<String, IMacroBinding> macros = scanner.getMacroDefinitions();
-				for (String key:macros.keySet()) {
-					 String exp = new String(macros.get(key).getExpansion());
-					 if (exp.length()>0) {
-						 macroMap.put(key, exp);
-					 }
-					
-				}
-			}
-		}
-		IScanner scanner = buildScanner(file);
+	public IASTTranslationUnit getTranslationUnitofCPP(String file) throws IOException {
+		
+		IScanner scanner = Scanner.buildScanner(file,macroMap);
+		if (scanner==null) return null;
+
 		AbstractGNUSourceCodeParser sourceCodeParser = new GNUCPPSourceParser(
 				scanner, ParserMode.COMPLETE_PARSE,  new NullLogService(),
 				new GPPParserExtensionConfigurationExtension(), null);
-		IASTTranslationUnit astTranslationUnit =  sourceCodeParser.parse();
-		return astTranslationUnit;
+		IASTTranslationUnit tu =  sourceCodeParser.parse();
+		return tu;
 	}
 
-	private IScanner buildScanner(String file) throws IOException {
-		CodeReader cr = new CodeReader(file);
-		String content = new String(cr.buffer);
-		IScannerInfo scannerInfo = new ScannerInfo(macroMap, sysIncludePath.toArray(new String[] {}));
-		IScannerExtensionConfiguration configuration = GPPScannerExtensionConfiguration
-				.getInstance(scannerInfo);
-		InternalFileContentProvider ifcp = new InternalFileContentProvider() {
-			@Override
-			public InternalFileContent getContentForInclusion(String filePath, IMacroDictionary macroDictionary) {
-				InternalFileContent c = FileCache.getInstance().get(filePath);
-				if (c==null) { 
-					c = (InternalFileContent) FileContent.createForExternalFileLocation(filePath);
-					FileCache.getInstance().put(filePath,c);
-				}
-				return c;
-			}
 
-			@Override
-			public InternalFileContent getContentForInclusion(IIndexFileLocation ifl, String astPath) {
-				InternalFileContent c = FileCache.getInstance().get(ifl);
-				if (c==null) { 
-					c = (InternalFileContent) FileContent.create(ifl);
-					FileCache.getInstance().put(ifl,c);
-				}
-				return c;
-			}
-		};
-		ParserLanguage lang = ParserLanguage.CPP;
-		if (file.endsWith(".c"))
-			lang = ParserLanguage.C;
-		IScanner scanner = new CPreprocessor(FileContent.create(file,
-				content.toCharArray()),scannerInfo, lang,
-				 new NullLogService(), configuration, ifcp);
-		scanner.setProcessInactiveCode(true);
-		return scanner;
-	}
 
 }

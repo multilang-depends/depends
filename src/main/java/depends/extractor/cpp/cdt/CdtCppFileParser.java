@@ -25,6 +25,8 @@ SOFTWARE.
 package depends.extractor.cpp.cdt;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 
@@ -32,6 +34,7 @@ import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.cpp.CppFileParser;
+import depends.extractor.cpp.MacroRepo;
 import depends.relations.Inferer;
 import depends.util.FileUtil;
 
@@ -39,24 +42,28 @@ public class CdtCppFileParser extends CppFileParser {
 
 	private PreprocessorHandler preprocessorHandler ;
 	private Inferer inferer;
+	private MacroRepo macroRepo;
 
-	public CdtCppFileParser(String fileFullPath, EntityRepo entityRepo,PreprocessorHandler preprocessorHandler, Inferer inferer) {
+	public CdtCppFileParser(String fileFullPath, EntityRepo entityRepo,PreprocessorHandler preprocessorHandler, Inferer inferer, MacroRepo macroRepo) {
 		super(fileFullPath, entityRepo,inferer);
 		this.preprocessorHandler = preprocessorHandler;
 		this.fileFullPath = FileUtil.uniqFilePath(fileFullPath);
 		this.inferer = inferer;
-
-	}
+		this.macroRepo= macroRepo;
+		}
 	@Override
 	public void parse() throws IOException {
-		parse(true);
+		if (this.fileFullPath.endsWith(".h")) return;
+		Map<String, String> macroMap = new HashMap<>(macroRepo.getDefaultMap());
+		parse(true,macroMap);
 	}
 	
 	/**
 	 * 
 	 * @param isInScope whether the parse is invoked by project file or an 'indirect' included file
+	 * @return 
 	 */
-	public void parse(boolean isInScope) {
+	public void parse(boolean isInScope,Map<String, String> macroMap) {
 		/** If file already exist, skip it */
 		Entity fileEntity = entityRepo.getEntity(fileFullPath);
 		if (fileEntity!=null && fileEntity instanceof FileEntity) {
@@ -67,8 +74,23 @@ public class CdtCppFileParser extends CppFileParser {
 		}
 		
 		CppVisitor bridge = new CppVisitor(fileFullPath, entityRepo, preprocessorHandler,inferer);
-		IASTTranslationUnit translationUnit = (new CDTParser(preprocessorHandler.getIncludePaths())).parse(fileFullPath);
-		translationUnit.accept(bridge);
+		IASTTranslationUnit tu = (new CDTParser(preprocessorHandler.getIncludePaths())).parse(fileFullPath,macroMap);
+		boolean containsIncludes = false;
+		for (String incl:preprocessorHandler.getDirectIncludedFiles(tu.getAllPreprocessorStatements(),fileFullPath)) {
+			CdtCppFileParser importedParser = new CdtCppFileParser(incl, entityRepo, preprocessorHandler,inferer,macroRepo);
+			importedParser.parse(false,macroMap);
+			Map<String, String> macros = macroRepo.get(incl);
+			if (macros!=null)
+				macroMap.putAll(macros);
+			containsIncludes = true;
+		}
+		if (containsIncludes) {
+			tu = (new CDTParser(preprocessorHandler.getIncludePaths())).parse(fileFullPath,macroMap);
+		}
+		macroRepo.put(this.fileFullPath,macroMap);
+		macroRepo.put(this.fileFullPath,tu.getMacroDefinitions());
+		tu.accept(bridge);
+		return;
 	}
 	
 }

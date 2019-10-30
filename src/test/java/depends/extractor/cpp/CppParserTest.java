@@ -15,15 +15,17 @@ public abstract class CppParserTest extends ParserTest{
 	protected EntityRepo repo;
 	protected Inferer inferer;
     protected PreprocessorHandler preprocessorHandler;
+	private MacroRepo macroRepo;
 
 	public void init() {
     	repo = new InMemoryEntityRepo();
     	inferer = new Inferer(repo,new CppImportLookupStrategy(),new CppBuiltInType(),false);
     	preprocessorHandler = new PreprocessorHandler(new ArrayList<>());
     	TemporaryFile.reset();
+    	macroRepo = new MacroRepo();
     }
 	
 	public CppFileParser createParser(String src) {
-		return new  CdtCppFileParser(src,repo, preprocessorHandler,inferer );
+		return new  CdtCppFileParser(src,repo, preprocessorHandler,inferer,macroRepo );
 	}
 }
