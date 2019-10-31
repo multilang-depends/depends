@@ -59,7 +59,6 @@ public class FileDependencyGenerator extends DependencyGenerator{
         	for (Relation relation:entity.getRelations()) {
         		Entity relatedEntity = relation.getEntity();
         		if (relatedEntity==null) continue;
-        		if (!relatedEntity.inScope()) continue;
         		if (relatedEntity instanceof CandidateTypes) {
         			List<TypeEntity> candidateTypes = ((CandidateTypes)relatedEntity).getCandidateTypes();
         			for (TypeEntity candidateType:candidateTypes) {
@@ -89,6 +88,7 @@ public class FileDependencyGenerator extends DependencyGenerator{
 		Entity ancestor = entity.getAncestorOfType(FileEntity.class);
 		if (ancestor==null)
 			return -1;
+		if (!ancestor.inScope()) return -1;
 		return ancestor.getId();
 	}
 

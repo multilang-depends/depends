@@ -52,7 +52,6 @@ public class FunctionDependencyGenerator extends DependencyGenerator {
 			for (Relation relation : entity.getRelations()) {
 				Entity relatedEntity = relation.getEntity();
         		if (relatedEntity==null) continue;
-        		if (!relatedEntity.inScope()) continue;
 				if (relatedEntity.getId() >= 0) {
 					int entityTo = getFunctionEntityIdNoException(relation.getEntity());
 					if (entityTo == -1)
@@ -76,13 +75,11 @@ public class FunctionDependencyGenerator extends DependencyGenerator {
 	}
 
 
-
-
-
 	private int getFunctionEntityIdNoException(Entity entity) {
 		Entity ancestor = entity.getAncestorOfType(FunctionEntity.class);
 		if (ancestor == null)
 			return -1;
+		if (!ancestor.inScope()) return -1;
 		return ancestor.getId();
 	}
 
