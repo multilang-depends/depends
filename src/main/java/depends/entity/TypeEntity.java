@@ -46,8 +46,9 @@ public class TypeEntity extends ContainerEntity {
 	public void inferLocalLevelEntities(Inferer inferer) {
 		inheritedTypes = new ArrayList<>();
 		identiferToEntities(inferer, this.inhertedTypeIdentifiers).forEach(item -> {
-			if (item instanceof TypeEntity) {
-				inheritedTypes.add((TypeEntity) item);
+			Entity typeItem = getTypeEntity(item);
+			if (typeItem !=null) {
+				inheritedTypes.add((TypeEntity) typeItem);
 			}else {
 				System.err.println(item.getRawName() + " expected a type, but actually it is "+ item.getClass().getSimpleName());
 			}
@@ -57,8 +58,9 @@ public class TypeEntity extends ContainerEntity {
 		implementedTypes = new ArrayList<>();
 		identiferToEntities(inferer, this.implementedIdentifiers)
 				.forEach(item -> {
-					if (item instanceof TypeEntity) {
-						implementedTypes.add((TypeEntity) item);
+					Entity typeItem = getTypeEntity(item);
+					if (typeItem !=null) {
+						implementedTypes.add((TypeEntity) typeItem);
 					}else {
 						System.err.println(item.getRawName() + " expected a type, but actually it is "+ item.getClass().getSimpleName());
 					}
@@ -69,6 +71,13 @@ public class TypeEntity extends ContainerEntity {
 		super.inferLocalLevelEntities(inferer);
 	}
 
+	private Entity getTypeEntity(Entity item) {
+		if (item==null) return null;
+		if (item instanceof TypeEntity) return item;
+		if (item instanceof MultiDeclareEntities) return ((MultiDeclareEntities)item).getType();
+		if (item instanceof AliasEntity) return item.getType();
+		return null;
+	}
 	public void addImplements(GenericName typeName) {
 		if (typeName==null) {
 			return;
