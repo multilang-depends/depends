@@ -66,6 +66,10 @@ public class Expression implements Serializable{
 	}
 
 	public void setType(TypeEntity type, Entity referredEntity, Inferer inferer) {
+		if (this.referredEntity==null && referredEntity!=null) {
+			this.referredEntity  = referredEntity;
+		}
+		
 		if (type instanceof CandidateTypes) {
 			return ;
 		}
@@ -80,11 +84,9 @@ public class Expression implements Serializable{
 			}
 			changedType = true;
 		}
-		if (this.referredEntity==null && referredEntity!=null) {
-			this.referredEntity  = referredEntity;
-		}
 		if (this.referredEntity==null)
 			this.referredEntity = this.type;
+
 		if (changedType)
 			deduceTheParentType(inferer);
 	}

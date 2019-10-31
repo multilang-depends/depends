@@ -1,4 +1,6 @@
 package depends.extractor.cpp;
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 
 import org.junit.Before;
@@ -20,5 +22,7 @@ public class AliasTest extends CppParserTest{
         inferer.resolveAllBindings();
         this.assertContainsRelation(repo.getEntity("bar"), DependencyType.CALL, "F.foo");
 	}
+	
+
 
 }

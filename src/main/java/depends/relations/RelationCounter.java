@@ -98,56 +98,65 @@ public class RelationCounter {
 			entity.addRelation(new Relation(DependencyType.MIXIN,mixin));
 		}
 		
-		HashSet<Entity> usedEntities = new HashSet<>();
 		for (Expression expression:entity.expressionList()){
 			if (expression.isStatement) {
 				continue;
 			}
 			Entity referredEntity = expression.getReferredEntity();
-			if (referredEntity==null) {
-				continue;
-			}
-			boolean matched = false;
-			if (expression.isCall) {
-				if (callAsImpl && referredEntity instanceof FunctionEntityProto) {
-					Entity multiDeclare = repo.getEntity(referredEntity.getQualifiedName());
-					if (multiDeclare instanceof MultiDeclareEntities) {
-						MultiDeclareEntities m = (MultiDeclareEntities)multiDeclare;
-						List<ContainerEntity> entities = m.getEntities().stream().filter(item->(item instanceof FunctionEntityImpl))
-						.collect(Collectors.toList());
-						for (Entity e:entities) {
-							entity.addRelation(new Relation(DependencyType.CALL,e));
-							matched = true;
-						}
-					}
-				}
-				if (!matched) {
-					entity.addRelation(new Relation(DependencyType.CALL,referredEntity));
-					matched = true;
-				}
-
-			}
-			if (expression.isCreate) {
-				entity.addRelation(new Relation(DependencyType.CREATE,referredEntity));
-				matched = true;
-			}
-			if (expression.isThrow) {
-				entity.addRelation(new Relation(DependencyType.THROW,referredEntity));
-				matched = true;
-			}
-			if (expression.isCast) { 
-				entity.addRelation(new Relation(DependencyType.CAST,referredEntity));
-				matched = true;
-			}
-			if (!matched)  {
-				usedEntities.add(expression.getReferredEntity());
-			}
+			addRelationFromExpression(entity, expression, referredEntity);
 		}
 		
-		for (Entity usedEntity:usedEntities) {
-			entity.addRelation(new Relation(DependencyType.USE,usedEntity));
-		}
+
 		entity.clearExpressions();
+	}
+
+	private void addRelationFromExpression(ContainerEntity entity, Expression expression, Entity referredEntity) {
+		
+		if (referredEntity==null) {
+			return;
+		}
+
+		if (referredEntity instanceof MultiDeclareEntities) {
+			for (ContainerEntity e:((MultiDeclareEntities)referredEntity).getEntities()) {
+				addRelationFromExpression(entity,expression,e);
+			}
+			return;
+		}
+		boolean matched = false;
+		if (expression.isCall) {
+			if (callAsImpl && referredEntity instanceof FunctionEntityProto) {
+				Entity multiDeclare = repo.getEntity(referredEntity.getQualifiedName());
+				if (multiDeclare instanceof MultiDeclareEntities) {
+					MultiDeclareEntities m = (MultiDeclareEntities)multiDeclare;
+					List<ContainerEntity> entities = m.getEntities().stream().filter(item->(item instanceof FunctionEntityImpl))
+					.collect(Collectors.toList());
+					for (Entity e:entities) {
+						entity.addRelation(new Relation(DependencyType.CALL,e));
+						matched = true;
+					}
+				}
+			}
+			if (!matched) {
+				entity.addRelation(new Relation(DependencyType.CALL,referredEntity));
+				matched = true;
+			}
+
+		}
+		if (expression.isCreate) {
+			entity.addRelation(new Relation(DependencyType.CREATE,referredEntity));
+			matched = true;
+		}
+		if (expression.isThrow) {
+			entity.addRelation(new Relation(DependencyType.THROW,referredEntity));
+			matched = true;
+		}
+		if (expression.isCast) { 
+			entity.addRelation(new Relation(DependencyType.CAST,referredEntity));
+			matched = true;
+		}
+		if (!matched)  {
+			entity.addRelation(new Relation(DependencyType.USE,referredEntity));
+		}
 	}
 
 	private void computeTypeRelations(TypeEntity type) {
