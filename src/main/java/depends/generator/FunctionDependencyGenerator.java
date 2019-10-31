@@ -50,7 +50,10 @@ public class FunctionDependencyGenerator extends DependencyGenerator {
 			if (entityFrom == -1)
 				continue;
 			for (Relation relation : entity.getRelations()) {
-				if (relation.getEntity().getId() >= 0) {
+				Entity relatedEntity = relation.getEntity();
+        		if (relatedEntity==null) continue;
+        		if (!relatedEntity.inScope()) continue;
+				if (relatedEntity.getId() >= 0) {
 					int entityTo = getFunctionEntityIdNoException(relation.getEntity());
 					if (entityTo == -1)
 						continue;
