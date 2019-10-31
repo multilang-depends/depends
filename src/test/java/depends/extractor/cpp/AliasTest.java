@@ -33,8 +33,18 @@ public class AliasTest extends CppParserTest{
 	}
 	
 	@Test
-	public void test_multi_declares_should_only_count_actual_referred() {
-		fail("to be implemented");
+	public void test_multi_declares_should_only_count_actual_referred() throws IOException {
+		String[] srcs = new String[] {
+	    		"./src/test/resources/cpp-code-examples/MultiDeclareRef.h",
+	    		"./src/test/resources/cpp-code-examples/MultiDeclareRef.cpp",
+	    	    };
+	    
+	    for (String src:srcs) {
+		    CppFileParser parser = createParser(src);
+		    parser.parse();
+	    }
+        inferer.resolveAllBindings();
+        this.assertContainsRelation(repo.getEntity("bar"), DependencyType.CALL, "foo");
 	}
 	
 	@Test
