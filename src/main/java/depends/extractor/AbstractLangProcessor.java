@@ -45,34 +45,43 @@ import depends.relations.ImportLookupStrategy;
 import depends.relations.Inferer;
 import depends.util.FileTraversal;
 import depends.util.FileUtil;
+
 abstract public class AbstractLangProcessor {
 	/**
 	 * The name of the lang
+	 * 
 	 * @return
 	 */
 	public abstract String supportedLanguage();
+
 	/**
 	 * The file suffixes in the lang
+	 * 
 	 * @return
 	 */
 	public abstract String[] fileSuffixes();
 
 	/**
-	 * Strategy of how to lookup  types and entities in the lang.
+	 * Strategy of how to lookup types and entities in the lang.
+	 * 
 	 * @return
 	 */
 	public abstract ImportLookupStrategy getImportLookupStrategy();
+
 	/**
-	 * The builtInType of the lang. 
+	 * The builtInType of the lang.
+	 * 
 	 * @return
 	 */
 	public abstract BuiltInType getBuiltInType();
+
 	/**
 	 * The language specific file parser
+	 * 
 	 * @param fileFullPath
 	 * @return
 	 */
-    protected abstract FileParser createFileParser(String fileFullPath);
+	protected abstract FileParser createFileParser(String fileFullPath);
 
 	public Inferer inferer;
 	protected EntityRepo entityRepo;
@@ -82,65 +91,70 @@ abstract public class AbstractLangProcessor {
 	private DependencyGenerator dependencyGenerator;
 	private Set<UnsolvedBindings> unsolved;
 	private List<String> typeFilter;
+
 	public AbstractLangProcessor(boolean eagerExpressionResolve) {
 		entityRepo = new InMemoryEntityRepo();
-		inferer = new Inferer(entityRepo,getImportLookupStrategy(),getBuiltInType(),eagerExpressionResolve);
+		inferer = new Inferer(entityRepo, getImportLookupStrategy(), getBuiltInType(), eagerExpressionResolve);
 	}
-	
-    /**
-     * The process steps of build dependencies.
-     * Step 1: parse all files, add entities and expression into repositories
-     * Step 2: resolve bindings of files (if not resolved yet)
-     * Step 3: identify dependencies 
-     * @param includeDir 
-     * @param inputDir 
-     */
-	public void buildDependencies(String inputDir, String[] includeDir,List<String> typeFilter,boolean callAsImpl) {
+
+	/**
+	 * The process steps of build dependencies. Step 1: parse all files, add
+	 * entities and expression into repositories Step 2: resolve bindings of files
+	 * (if not resolved yet) Step 3: identify dependencies
+	 * 
+	 * @param includeDir
+	 * @param inputDir
+	 */
+	public void buildDependencies(String inputDir, String[] includeDir, List<String> typeFilter, boolean callAsImpl) {
 		this.inputSrcPath = inputDir;
 		this.includeDirs = includeDir;
 		this.typeFilter = typeFilter;
-        parseAllFiles();
-        markAllEntitiesScope();
-        resolveBindings(callAsImpl);
-        identifyDependencies();
+		parseAllFiles();
+		markAllEntitiesScope();
+		resolveBindings(callAsImpl);
+		identifyDependencies();
 	}
 
-
 	private void markAllEntitiesScope() {
-		entityRepo.getEntities().stream().forEach(entity->{
+		entityRepo.getEntities().stream().forEach(entity -> {
 			Entity file = entity.getAncestorOfType(FileEntity.class);
-			if (!file.getQualifiedName().startsWith(this.inputSrcPath)) {
-				entity.setInScope(false);
+			try {
+				if (!file.getQualifiedName().startsWith(this.inputSrcPath)) {
+					entity.setInScope(false);
+				}
+			} catch (Exception e) {
+
 			}
 		});
 	}
+
 	/**
 	 * 
-	 * @param callAsImpl 
+	 * @param callAsImpl
 	 * @return unsolved bindings
- 	 */
-    private void resolveBindings(boolean callAsImpl) {
+	 */
+	private void resolveBindings(boolean callAsImpl) {
 		System.out.println("Resolve types and bindings of variables, methods and expressions....");
-        this.unsolved =inferer.resolveAllBindings(callAsImpl);
-        if (getUnsolved().size()>0) {
-        	System.err.println("There are " + getUnsolved().size() + " items are unsolved." );
-        }
-        System.out.println("types and bindings resolved successfully...");
-    }
-    
-    private void identifyDependencies(){
-		System.out.println("dependencie data generating...");	
-        dependencyMatrix  = dependencyGenerator.build(entityRepo,typeFilter);
-        entityRepo = null;
-		System.out.println("reorder dependency matrix...");	
-        dependencyMatrix = new OrderedMatrixGenerator(dependencyMatrix).build();
-        System.out.println("dependencie data generating done successfully...");	 	
-    }
+		this.unsolved = inferer.resolveAllBindings(callAsImpl);
+		if (getUnsolved().size() > 0) {
+			System.err.println("There are " + getUnsolved().size() + " items are unsolved.");
+		}
+		System.out.println("types and bindings resolved successfully...");
+	}
 
-    private final void parseAllFiles() {
-        System.out.println("start parsing files...");		
-        Set<String> phase2Files = new HashSet<>();
-    	FileTraversal fileTransversal = new FileTraversal(new FileTraversal.IFileVisitor(){
+	private void identifyDependencies() {
+		System.out.println("dependencie data generating...");
+		dependencyMatrix = dependencyGenerator.build(entityRepo, typeFilter);
+		entityRepo = null;
+		System.out.println("reorder dependency matrix...");
+		dependencyMatrix = new OrderedMatrixGenerator(dependencyMatrix).build();
+		System.out.println("dependencie data generating done successfully...");
+	}
+
+	private final void parseAllFiles() {
+		System.out.println("start parsing files...");
+		Set<String> phase2Files = new HashSet<>();
+		FileTraversal fileTransversal = new FileTraversal(new FileTraversal.IFileVisitor() {
 			@Override
 			public void visit(File file) {
 				String fileFullPath = file.getAbsolutePath();
@@ -149,46 +163,44 @@ abstract public class AbstractLangProcessor {
 					return;
 				}
 				if (isPhase2Files(fileFullPath)) {
-					
-				}else {
+
+				} else {
 					parseFile(fileFullPath);
 				}
 			}
-    		
-    	});
-    	fileTransversal.extensionFilter(this.fileSuffixes());
+
+		});
+		fileTransversal.extensionFilter(this.fileSuffixes());
 		fileTransversal.travers(this.inputSrcPath);
-		for (String f:phase2Files) {
+		for (String f : phase2Files) {
 			parseFile(f);
 		}
-        System.out.println("all files procceed successfully...");		
+		System.out.println("all files procceed successfully...");
 
 	}
-    
 
 	protected void parseFile(String fileFullPath) {
-        FileParser fileParser = createFileParser(fileFullPath);
-        try {
-            System.out.println("parsing " + fileFullPath 
-            		+ "...");		
-            fileParser.parse();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }	
+		FileParser fileParser = createFileParser(fileFullPath);
+		try {
+			System.out.println("parsing " + fileFullPath + "...");
+			fileParser.parse();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
-	
+
 	protected boolean isPhase2Files(String fileFullPath) {
 		return false;
 	}
-	
+
 	public List<String> includePaths() {
 		ArrayList<String> r = new ArrayList<String>();
-		for (String path:includeDirs) {
+		for (String path : includeDirs) {
 			if (FileUtils.fileExists(path)) {
 				if (!r.contains(path))
 					r.add(path);
 			}
-			path = this.inputSrcPath +File.separator+path;
+			path = this.inputSrcPath + File.separator + path;
 			if (FileUtils.fileExists(path)) {
 				if (!r.contains(path))
 					r.add(path);
@@ -196,10 +208,11 @@ abstract public class AbstractLangProcessor {
 		}
 		return r;
 	}
-	
+
 	public DependencyMatrix getDependencies() {
 		return dependencyMatrix;
 	}
+
 	public EntityRepo getEntityRepo() {
 		return this.entityRepo;
 	}
@@ -207,7 +220,9 @@ abstract public class AbstractLangProcessor {
 	public void setDependencyGenerator(DependencyGenerator dependencyGenerator) {
 		this.dependencyGenerator = dependencyGenerator;
 	}
+
 	public abstract List<String> supportedRelations();
+
 	public Set<UnsolvedBindings> getUnsolved() {
 		return unsolved;
 	}

@@ -4,6 +4,7 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import depends.deptypes.DependencyType;
@@ -47,7 +48,7 @@ public class AliasTest extends CppParserTest{
         this.assertContainsRelation(repo.getEntity("bar"), DependencyType.CALL, "foo");
 	}
 	
-	@Test
+	@Ignore
 	public void test_header_files_not_contains_include_should_be_resolved() {
 		/*非规范的include形式，和include顺序有关，例如
 		 A header file contains 
@@ -55,6 +56,7 @@ public class AliasTest extends CppParserTest{
 		 A.hpp // the file use T, but not include T, because it always use after previous header file  
 		     typedef T1 T;
 		 * */
+		//TODO: 
 		fail("to be implemented");
 	}
 
