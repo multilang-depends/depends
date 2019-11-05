@@ -51,7 +51,7 @@ public class PomListener extends XMLParserBaseListener {
 	private static String groupIdPattern = "project.groupId";
 	private static String artifactIdPattern = "project.artifactId";
 	private static String versionPattern = "project.version";
-	private static String elementNamePattern = groupIdPattern + "." + artifactIdPattern + "(" + versionPattern + ")";
+	private static String elementNamePattern = groupIdPattern + "." + artifactIdPattern + "_" + versionPattern + "_";
 
 	public PomListener(String fileFullPath, EntityRepo entityRepo, List<String> includePaths, PomProcessor parseCreator,
 			Inferer inferer) {
