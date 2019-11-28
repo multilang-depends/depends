@@ -129,6 +129,7 @@ public abstract class Entity {
 
 	public void setRawName(GenericName rawName) {
 		this.rawName = rawName;
+		deduceQualifiedName();
 	}
 	
 	public final String getQualifiedName() {

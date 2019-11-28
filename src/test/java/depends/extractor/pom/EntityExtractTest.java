@@ -24,7 +24,7 @@ public class EntityExtractTest extends MavenParserTest{
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
-        assertEquals(0,repo.getEntity("org.log4j-test.log4j(1.2.12)").getRelations().size());
+        assertEquals(0,repo.getEntity("org.log4j-test.log4j_1.2.12_").getRelations().size());
 	}
 	
 	
@@ -39,7 +39,7 @@ public class EntityExtractTest extends MavenParserTest{
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
-        assertNotNull(repo.getEntity("org.apache.maven.surefire.surefire-junit4(2.12.4)"));
+        assertNotNull(repo.getEntity("org.apache.maven.surefire.surefire-junit4_2.12.4_"));
 	}
 	
 	@Test
@@ -53,7 +53,7 @@ public class EntityExtractTest extends MavenParserTest{
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
-        PomArtifactEntity entity = (PomArtifactEntity)(repo.getEntity("properties-test.test(1)"));
+        PomArtifactEntity entity = (PomArtifactEntity)(repo.getEntity("properties-test.test_1_"));
     	/*
         <project.version>1.00</project.version>
         <activeio-version>3.1.4</activeio-version>
@@ -75,7 +75,7 @@ public class EntityExtractTest extends MavenParserTest{
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
-        PomArtifactEntity entity = (PomArtifactEntity)(repo.getEntity("properties-test.test(1)"));
+        PomArtifactEntity entity = (PomArtifactEntity)(repo.getEntity("properties-test.test_1_"));
     	/*
         <project.version>1.00</project.version>
         <activeio-version>3.1.4</activeio-version>
@@ -95,7 +95,7 @@ public class EntityExtractTest extends MavenParserTest{
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
-        PomArtifactEntity entity = (PomArtifactEntity)(repo.getEntity("properties-test.test(1)"));
+        PomArtifactEntity entity = (PomArtifactEntity)(repo.getEntity("properties-test.test_1_"));
         assertEquals("13",entity.getProperty("project.version"));
 	}
 }

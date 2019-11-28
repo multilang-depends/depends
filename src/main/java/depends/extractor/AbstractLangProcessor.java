@@ -135,7 +135,7 @@ abstract public class AbstractLangProcessor {
 	 */
 	private void resolveBindings(boolean callAsImpl) {
 		System.out.println("Resolve types and bindings of variables, methods and expressions....");
-		this.unsolved = inferer.resolveAllBindings(callAsImpl);
+		this.unsolved = inferer.resolveAllBindings(callAsImpl,this);
 		if (getUnsolved().size() > 0) {
 			System.err.println("There are " + getUnsolved().size() + " items are unsolved.");
 		}
@@ -225,6 +225,10 @@ abstract public class AbstractLangProcessor {
 
 	public Set<UnsolvedBindings> getUnsolved() {
 		return unsolved;
+	}
+
+	public String getRelationMapping(String relation) {
+		return relation;
 	}
 
 }

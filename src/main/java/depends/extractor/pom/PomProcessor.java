@@ -24,9 +24,7 @@ SOFTWARE.
 
 package depends.extractor.pom;
 
-import static depends.deptypes.DependencyType.CONTAIN;
-import static depends.deptypes.DependencyType.IMPORT;
-import static depends.deptypes.DependencyType.USE;
+import static depends.deptypes.DependencyType.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,9 +69,17 @@ public class PomProcessor extends AbstractLangProcessor {
 	@Override
 	public List<String> supportedRelations() {
 		ArrayList<String> depedencyTypes = new ArrayList<>();
-		depedencyTypes.add(IMPORT);
-		depedencyTypes.add(CONTAIN);
-		depedencyTypes.add(USE);
+		depedencyTypes.add(PomParent);
+		depedencyTypes.add(PomPlugin);
+		depedencyTypes.add(PomDependency);
 		return depedencyTypes;
 	}			
+	
+	@Override
+	public String getRelationMapping(String relation) {
+		if (relation.equals(IMPORT)) return PomParent;
+		if (relation.equals(USE)) return PomPlugin;
+		if (relation.equals(CONTAIN)) return PomDependency;
+		return relation;
+	}
 }

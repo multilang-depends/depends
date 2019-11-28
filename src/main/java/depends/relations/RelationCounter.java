@@ -42,6 +42,7 @@ import depends.entity.MultiDeclareEntities;
 import depends.entity.TypeEntity;
 import depends.entity.VarEntity;
 import depends.entity.repo.EntityRepo;
+import depends.extractor.AbstractLangProcessor;
 
 public class RelationCounter {
 
@@ -49,12 +50,14 @@ public class RelationCounter {
 	private Inferer inferer;
 	private EntityRepo repo;
 	private boolean callAsImpl;
+	private AbstractLangProcessor langProcessor;
 
-	public RelationCounter(Iterator<Entity> iterator, Inferer inferer, EntityRepo repo, boolean callAsImpl) {
+	public RelationCounter(Iterator<Entity> iterator, Inferer inferer, EntityRepo repo, boolean callAsImpl, AbstractLangProcessor langProcessor) {
 		this.iterator = iterator;
 		this.inferer = inferer;
 		this.repo = repo;
 		this.callAsImpl = callAsImpl;
+		this.langProcessor = langProcessor;
 	}
 	
 	public void computeRelations() {
@@ -83,19 +86,19 @@ public class RelationCounter {
 		entity.resolveExpressions(inferer);
 		for (VarEntity var:entity.getVars()) {
 			if (var.getType()!=null)
-				entity.addRelation(new Relation(DependencyType.CONTAIN,var.getType()));
+				entity.addRelation(buildRelation(DependencyType.CONTAIN,var.getType()));
 			for (Entity type:var.getResolvedTypeParameters()) {
-				var.addRelation(new Relation(DependencyType.PARAMETER,type));
+				var.addRelation(buildRelation(DependencyType.PARAMETER,type));
 			}
 		}
 		for (Entity type:entity.getResolvedAnnotations()) {
-			entity.addRelation(new Relation(DependencyType.ANNOTATION,type));
+			entity.addRelation(buildRelation(DependencyType.ANNOTATION,type));
 		}
 		for (Entity type:entity.getResolvedTypeParameters()) {
-			entity.addRelation(new Relation(DependencyType.USE,type));
+			entity.addRelation(buildRelation(DependencyType.USE,type));
 		}
 		for (ContainerEntity mixin:entity.getResolvedMixins()) {
-			entity.addRelation(new Relation(DependencyType.MIXIN,mixin));
+			entity.addRelation(buildRelation(DependencyType.MIXIN,mixin));
 		}
 		
 		for (Expression expression:entity.expressionList()){
@@ -131,61 +134,67 @@ public class RelationCounter {
 					List<ContainerEntity> entities = m.getEntities().stream().filter(item->(item instanceof FunctionEntityImpl))
 					.collect(Collectors.toList());
 					for (Entity e:entities) {
-						entity.addRelation(new Relation(DependencyType.CALL,e));
+						entity.addRelation(buildRelation(DependencyType.CALL,e));
 						matched = true;
 					}
 				}
 			}
 			if (!matched) {
-				entity.addRelation(new Relation(DependencyType.CALL,referredEntity));
+				entity.addRelation(buildRelation(DependencyType.CALL,referredEntity));
 				matched = true;
 			}
 
 		}
 		if (expression.isCreate) {
-			entity.addRelation(new Relation(DependencyType.CREATE,referredEntity));
+			entity.addRelation(buildRelation(DependencyType.CREATE,referredEntity));
 			matched = true;
 		}
 		if (expression.isThrow) {
-			entity.addRelation(new Relation(DependencyType.THROW,referredEntity));
+			entity.addRelation(buildRelation(DependencyType.THROW,referredEntity));
 			matched = true;
 		}
 		if (expression.isCast) { 
-			entity.addRelation(new Relation(DependencyType.CAST,referredEntity));
+			entity.addRelation(buildRelation(DependencyType.CAST,referredEntity));
 			matched = true;
 		}
 		if (!matched)  {
-			entity.addRelation(new Relation(DependencyType.USE,referredEntity));
+			entity.addRelation(buildRelation(DependencyType.USE,referredEntity));
 		}
+	}
+
+	private Relation buildRelation(String type, Entity referredEntity) {
+		if (this.langProcessor==null)
+			return new Relation(type,referredEntity);
+		return new Relation(langProcessor.getRelationMapping(type),referredEntity);
 	}
 
 	private void computeTypeRelations(TypeEntity type) {
 		for (TypeEntity superType:type.getInheritedTypes()) {
-			type.addRelation(new Relation(DependencyType.INHERIT,superType));
+			type.addRelation(buildRelation(DependencyType.INHERIT,superType));
 		}
 		for (TypeEntity interfaceType:type.getImplementedTypes()) {
-			type.addRelation(new Relation(DependencyType.IMPLEMENT,interfaceType));
+			type.addRelation(buildRelation(DependencyType.IMPLEMENT,interfaceType));
 		}
 	}
 
 	private void computeFunctionRelations(FunctionEntity func) {
 		for (Entity returnType:func.getReturnTypes()) {
-			func.addRelation(new Relation(DependencyType.RETURN,returnType.getActualReferTo()));
+			func.addRelation(buildRelation(DependencyType.RETURN,returnType.getActualReferTo()));
 		}
 		for (VarEntity parameter:func.getParameters()) {
 			if (parameter.getType()!=null) 
-				func.addRelation(new Relation(DependencyType.PARAMETER,parameter.getActualReferTo()));
+				func.addRelation(buildRelation(DependencyType.PARAMETER,parameter.getActualReferTo()));
 		}
 		for (Entity throwType:func.getThrowTypes()) {
-			func.addRelation(new Relation(DependencyType.THROW,throwType));
+			func.addRelation(buildRelation(DependencyType.THROW,throwType));
 		}
 		for (Entity type:func.getResolvedTypeParameters()) {
-			func.addRelation(new Relation(DependencyType.PARAMETER,type));
+			func.addRelation(buildRelation(DependencyType.PARAMETER,type));
 		}
 		if (func instanceof FunctionEntityImpl) {
 			FunctionEntityImpl funcImpl = (FunctionEntityImpl)func;
 			if(funcImpl.getImplemented()!=null) {
-				func.addRelation(new Relation(DependencyType.IMPLEMENT,funcImpl.getImplemented()));
+				func.addRelation(buildRelation(DependencyType.IMPLEMENT,funcImpl.getImplemented()));
 			}
 		}
 	}
@@ -197,9 +206,9 @@ public class RelationCounter {
 			if (imported instanceof FileEntity)
 			{
 				if (((FileEntity)imported).isInProjectScope())
-					file.addRelation(new Relation(DependencyType.IMPORT,imported));
+					file.addRelation(buildRelation(DependencyType.IMPORT,imported));
 			}else {
-				file.addRelation(new Relation(DependencyType.IMPORT,imported));
+				file.addRelation(buildRelation(DependencyType.IMPORT,imported));
 			}
 		}
 	}

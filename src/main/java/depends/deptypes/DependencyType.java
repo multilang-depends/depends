@@ -42,6 +42,10 @@ public class DependencyType {
 	public static final String THROW = "Throw";
 	public static final String ANNOTATION = "Annotation";
 	public static final String MIXIN = "MixIn";
+	public static final String PomParent = "Parent";
+	public static final String PomPlugin = "Plugin";
+	public static final String PomDependency = "Dependency";
+	
 
 	public static ArrayList<String> allDependencies() {
 		ArrayList<String> depedencyTypes = new ArrayList<String>();
@@ -60,6 +64,9 @@ public class DependencyType {
 		depedencyTypes.add(THROW);
 		depedencyTypes.add(ANNOTATION);
 		depedencyTypes.add(MIXIN);
+		depedencyTypes.add(PomParent);
+		depedencyTypes.add(PomPlugin);
+		depedencyTypes.add(PomDependency);
 		return depedencyTypes;
 	}
 }

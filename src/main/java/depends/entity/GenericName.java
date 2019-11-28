@@ -16,7 +16,7 @@ public class GenericName implements Serializable{
 		this.arguments = arguments;
 	}
 	public boolean contains(String rawType) {
-		if (name.equals(rawType)) return true;
+		if (name.contains(rawType)) return true;
 		return false;
 	}
 	public String getName() {
@@ -96,8 +96,9 @@ public class GenericName implements Serializable{
 		return new GenericName(name,arguments);
 	}
 	public boolean find(GenericName rawType) {
-		if (this.equals(rawType)) return true;
+		//if (this.equals(rawType)) return true;
 		for (GenericName subType:this.getArguments()) {
+			if (subType.equals(rawType)) return true;
 			boolean found = subType.find(rawType);
 			if (found) return true;
 		}

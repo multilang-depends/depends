@@ -46,6 +46,7 @@ import depends.entity.VarEntity;
 import depends.entity.repo.BuiltInType;
 import depends.entity.repo.EntityRepo;
 import depends.entity.repo.NullBuiltInType;
+import depends.extractor.AbstractLangProcessor;
 import depends.extractor.UnsolvedBindings;
 import depends.importtypes.Import;
 
@@ -74,17 +75,18 @@ public class Inferer {
 	 * Resolve all bindings
 	 * - Firstly, we resolve all types from there names.
 	 * - Secondly, we resolve all expressions (expression will use type infomation of previous step
+	 * @param langProcessor 
 	 */
-	public  Set<UnsolvedBindings> resolveAllBindings(boolean callAsImpl) {
+	public  Set<UnsolvedBindings> resolveAllBindings(boolean callAsImpl, AbstractLangProcessor langProcessor) {
 		resolveTypes();
 		System.out.println("Dependency analaysing....");
-		new RelationCounter(repo.entityIterator(),this,repo,callAsImpl).computeRelations();
+		new RelationCounter(repo.entityIterator(),this,repo,callAsImpl,langProcessor).computeRelations();
 		System.out.println("Dependency done....");
 		return unsolvedSymbols;		
 	}
 
 	public  Set<UnsolvedBindings> resolveAllBindings() {
-		return resolveAllBindings(false);		
+		return resolveAllBindings(false,null);		
 	}
 	
 	private void resolveTypes() {
@@ -93,7 +95,6 @@ public class Inferer {
 			Entity entity= iterator.next();
 			if (!(entity instanceof FileEntity)) continue;
 //			if (!entity.inScope()) continue;
-			//System.out.println("resolve type of entity " + entity.getDisplayName());
 			entity.inferEntities(this);
 		}
 	}
