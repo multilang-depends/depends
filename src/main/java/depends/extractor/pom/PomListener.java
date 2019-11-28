@@ -117,6 +117,8 @@ public class PomListener extends XMLParserBaseListener {
 			currentEntity.addExpression(ctx, currentExpression);
 		} else if (name.equals("dependency")) {
 			currentVar.setRawType(currentVar.getRawName());
+			//TODO: Depends currently has a limitation: var name cannot be same as var type
+			//To be fixed in future
 			currentVar.setRawName(new GenericName(currentVar.getRawName()+"_var"));
 			currentEntity.addVar(currentVar);
 		} else if (name.equals("parent")) {
