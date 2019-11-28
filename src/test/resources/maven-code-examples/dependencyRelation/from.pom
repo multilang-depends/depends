@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>testgroup</groupId>
+	<artifactId>test</artifactId>
+	<version>1.0</version>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>aplugins</groupId>
+				<artifactId>aplugin</artifactId>
+				<version>0.1</version>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>a-dep-group</groupId>
+			<artifactId>a-artifact</artifactId>
+			<version>0.2</version>
+		</dependency>
+	</dependencies>
+</project>

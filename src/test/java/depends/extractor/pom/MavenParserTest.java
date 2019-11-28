@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import depends.entity.repo.EntityRepo;
+import depends.extractor.ParserTest;
 import depends.relations.Inferer;
 import depends.util.TemporaryFile;
 
-public abstract class MavenParserTest {
+public abstract class MavenParserTest extends ParserTest{
 
 	protected EntityRepo repo;
 	private PomProcessor p;

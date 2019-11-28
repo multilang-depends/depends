@@ -117,6 +117,7 @@ public class PomListener extends XMLParserBaseListener {
 			currentEntity.addExpression(ctx, currentExpression);
 		} else if (name.equals("dependency")) {
 			currentVar.setRawType(currentVar.getRawName());
+			currentVar.setRawName(new GenericName(currentVar.getRawName()+"_var"));
 			currentEntity.addVar(currentVar);
 		} else if (name.equals("parent")) {
 			context.currentFile().addImport(pomParent);
