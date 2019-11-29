@@ -34,22 +34,22 @@ public class PomCoords  {
 	public PomCoords() {
 	}
 
-	public String groupId;
-	public String artifactId;
-	public String version;
+	public String groupId = "";
+	public String artifactId = "";
+	public String version = "";
 	public String getPath() {
 		return groupId+"."+artifactId+"_" +version+"_" ;
 	}
 	public void fillFromIfNull(PomParent pomParent) {
-		if (groupId==null) groupId = pomParent.groupId;
-		if (artifactId==null) artifactId = pomParent.artifactId;
-		if (version==null) version = pomParent.version;
+		if (groupId=="") groupId = pomParent.groupId;
+		if (artifactId=="") artifactId = pomParent.artifactId;
+		if (version=="") version = pomParent.version;
 	}
 	public GenericName getGenericNamePath() {
 		return new GenericName(getPath());
 	}
 	public void sureFillVersion(List<String> includePaths) {
-		if (version!=null) return;
+		if (version!="") return;
 		StringBuilder sb = new StringBuilder();
 		sb.append(this.groupId.replace(".", File.separator));
 		sb.append(File.separator);

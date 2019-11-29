@@ -32,9 +32,9 @@ public class PomParent extends Import {
 		super(content);
 	}
 
-	public String groupId;
-	public String artifactId;
-	public String version;
+	public String groupId = "";
+	public String artifactId = "";
+	public String version = "";
 	public void buildFrom(PomCoords pomCoords) {
 		this.groupId = pomCoords.groupId;
 		this.artifactId = pomCoords.artifactId;

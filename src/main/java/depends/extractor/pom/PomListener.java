@@ -128,7 +128,7 @@ public class PomListener extends XMLParserBaseListener {
 			currentVar.setRawType(peekPomCoords().getGenericNamePath());
 			//TODO: Depends currently has a limitation: var name cannot be same as var type
 			//To be fixed in future
-			currentVar.setRawName(new GenericName(currentVar.getRawType().getName()+"_var"));
+			currentVar.setRawName(new GenericName("_" + currentVar.getRawType().getName()));
 			currentEntity.addVar(currentVar);
 			pomCoords.pop();
 		} else if (name.equals("parent")) {
