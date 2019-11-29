@@ -16,7 +16,7 @@ public class DependencyWithoutVersionTest extends MavenParserTest{
 	public void should_extract_dep_relation() throws IOException {
 	    String[] srcs = new String[] {
 	    		"./src/test/resources/maven-code-examples/dependencyWithoutVersion/from.pom",
-	    		"./src/test/resources/maven-code-examples/dependencyWithoutVersion/to.pom",
+	    		"./src/test/resources/maven-code-examples/dependencyWithoutVersion/a-dep-group/a-artifact/0.2/to.pom",
 	    	    };
 	    
 	    for (String src:srcs) {
@@ -31,7 +31,7 @@ public class DependencyWithoutVersionTest extends MavenParserTest{
 	public void should_extract_plugin_relation() throws IOException {
 	    String[] srcs = new String[] {
 	    		"./src/test/resources/maven-code-examples/dependencyWithoutVersion/from.pom",
-	    		"./src/test/resources/maven-code-examples/dependencyWithoutVersion/plugin.pom",
+	    		"./src/test/resources/maven-code-examples/dependencyWithoutVersion/aplugins/aplugin/0.1/plugin.pom",
 	    	    };
 	    
 	    for (String src:srcs) {

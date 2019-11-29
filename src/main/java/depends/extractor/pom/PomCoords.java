@@ -24,7 +24,11 @@ SOFTWARE.
 
 package depends.extractor.pom;
 
+import java.io.File;
+import java.util.List;
+
 import depends.entity.GenericName;
+import depends.util.FileUtil;
 
 public class PomCoords  {
 	public PomCoords() {
@@ -35,6 +39,35 @@ public class PomCoords  {
 	public String version;
 	public String getPath() {
 		return groupId+"."+artifactId+"_" +version+"_" ;
+	}
+	public void fillFromIfNull(PomParent pomParent) {
+		if (groupId==null) groupId = pomParent.groupId;
+		if (artifactId==null) artifactId = pomParent.artifactId;
+		if (version==null) version = pomParent.version;
+	}
+	public GenericName getGenericNamePath() {
+		return new GenericName(getPath());
+	}
+	public void sureFillVersion(List<String> includePaths) {
+		if (version!=null) return;
+		StringBuilder sb = new StringBuilder();
+		sb.append(this.groupId.replace(".", File.separator));
+		sb.append(File.separator);
+		sb.append(this.artifactId);
+		sb.append(File.separator);
+		
+		for (String includePath:includePaths) {
+			String path = includePath+File.separator+sb.toString();
+			if (FileUtil.existFile(path)) {
+				File f = new File(path);
+				String max = "";
+				for (String d:f.list()) {
+					if (d.compareTo(max)>0)
+						max = d;
+				}
+				version = max;
+			}
+		}
 	}
 
 }

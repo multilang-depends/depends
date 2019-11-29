@@ -37,8 +37,9 @@ public class PomParent extends Import {
 	public String version;
 	public void buildFrom(PomCoords pomCoords) {
 		this.groupId = pomCoords.groupId;
-		this.artifactId = pomCoords.groupId;
+		this.artifactId = pomCoords.artifactId;
 		this.version = pomCoords.version;
+		this.setContent(pomCoords.getPath());
 	}
 
 }
