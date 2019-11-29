@@ -252,11 +252,13 @@ public class Expression implements Serializable{
 
 	private boolean validName(String name) {
 		if (name==null) return false;
-		if (name.equals("<Literal>")) return true;
-		if (name.equals("<Built-In>")) return true;
-		if (name.equals("<built-in>")) return true;
-		if (name.equals("built-in")) return true;
-		return name.matches("([a-zA-Z0-9_]|(\\.))*");
+		if (name.toLowerCase().equals("<literal>")) return true;
+		if (name.toLowerCase().equals("<built-in>")) return true;
+		boolean result = name.matches("([a-zA-Z0-9_]|(\\.)|(\\-))*");
+		if (result==false) {
+			System.err.println("expression name " + name);
+		}
+		return true;
 	}
 
 	public void setIdentifier(GenericName name) {

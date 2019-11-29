@@ -105,9 +105,9 @@ public class ExpressionUsage {
 		if (expression.isDot) {
 			IASTExpression op2 = ((IASTBinaryExpression)ctx).getOperand2();
 			if (op2 instanceof IASTIdExpression)
-				expression.setIdentifier(((IASTIdExpression)op2).getName().toString());
+				expression.setIdentifier(ASTStringUtilExt.getName(((IASTIdExpression)op2).getName()));
 			else if (op2 instanceof IASTLiteralExpression)
-				expression.setIdentifier(((IASTLiteralExpression)op2).getRawSignature());
+				expression.setIdentifier(ASTStringUtilExt.getName((IASTLiteralExpression)op2));
 			else if (op2 instanceof IASTFunctionCallExpression)
 				expression.setIdentifier(getMethodCallIdentifier((IASTFunctionCallExpression)op2));
 			return;
@@ -126,7 +126,7 @@ public class ExpressionUsage {
 		//1. we only handle leaf node. if there is still expression,
 		//   the type will be determined by child node in the expression
 		if (ctx instanceof IASTIdExpression){
-			expression.setIdentifier(((IASTIdExpression) ctx).getName().toString());
+			expression.setIdentifier(ASTStringUtilExt.getName(((IASTIdExpression)ctx).getName()));
 		}else if (ctx instanceof IASTLiteralExpression) {
 		//2. if it is a var name, dertermine the type based on context.
 			expression.setIdentifier("<Literal>");
@@ -141,7 +141,7 @@ public class ExpressionUsage {
 	private GenericName getMethodCallIdentifier(IASTFunctionCallExpression methodCall) {
 		IASTExpression f = methodCall.getFunctionNameExpression();
 		if (f instanceof IASTIdExpression) {
-			return GenericName.build(((IASTIdExpression)f).getName().toString().replace("::", "."));
+			return GenericName.build(ASTStringUtilExt.getName(((IASTIdExpression)f).getName()));
 		}
 		return null;
 	}

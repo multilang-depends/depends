@@ -17,6 +17,7 @@ public abstract class MavenParserTest extends ParserTest{
 	public void init() {
 		List<String> includeDir = new ArrayList<>();
 		includeDir.add("./src/test/resources/maven-code-examples/");
+		includeDir.add("./src/test/resources/maven-code-examples/dependencyWithPropertiesOfParent");
 		this.p = new PomProcessor();
 		p.includeDirs = includeDir.toArray(new String[] {});
 		

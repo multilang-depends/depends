@@ -11,6 +11,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -40,13 +41,15 @@ public class ASTStringUtilExt extends ASTStringUtil {
 		return name;
 	}
 
+	public static String getName(IASTLiteralExpression expr) {
+		return expr.getRawSignature().replace("::", ".").replace("...", "");
+	}
 
 	public static String getTypeIdString(IASTTypeId typeId) {
 		StringBuilder sb = new StringBuilder();
 		return appendBareTypeIdString(sb, typeId).toString().replace("::", ".");
 	}
 	
-
 
 	/**
 	 *  retrieve template parameters from declSpecifier 
@@ -198,5 +201,8 @@ public class ASTStringUtilExt extends ASTStringUtil {
 		String name = appendBareNameString(buffer, nameSpecifier).toString().replace("::", ".").replace("...", "");
 		return name;
 	}
+
+
+
 
 }

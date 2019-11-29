@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>testgroup</groupId>
+	<artifactId>test</artifactId>
+	<version>1.0</version>
+	<properties>
+	  <dep.version>0.2</dep.version>
+	  <plg.version>0.1</plg.version>
+	</properties>	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>aplugins</groupId>
+				<artifactId>aplugin</artifactId>
+				<version>${plg.version}</version>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>a-dep-group</groupId>
+			<artifactId>a-artifact</artifactId>
+			<version>${dep.version}</version>
+		</dependency>
+	</dependencies>
+</project>
