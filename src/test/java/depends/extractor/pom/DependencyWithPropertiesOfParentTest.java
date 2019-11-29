@@ -1,6 +1,8 @@
 package depends.extractor.pom;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
@@ -8,6 +10,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import depends.deptypes.DependencyType;
+import depends.entity.Entity;
+import depends.entity.MultiDeclareEntities;
 
 public class DependencyWithPropertiesOfParentTest extends MavenParserTest{
     @Before
@@ -28,6 +32,7 @@ public class DependencyWithPropertiesOfParentTest extends MavenParserTest{
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
+	    assertFalse(repo.getEntity("parent-group.a-parent_1.0_") instanceof MultiDeclareEntities);
 	    this.assertContainsRelation(repo.getEntity("testgroup.test_1.0_"), DependencyType.CONTAIN, "a-dep-group.a-artifact_0.2_");
 	}
 	

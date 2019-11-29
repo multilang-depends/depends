@@ -40,6 +40,7 @@ import depends.extractor.FileParser;
 import depends.extractor.xml.XMLLexer;
 import depends.extractor.xml.XMLParser;
 import depends.relations.Inferer;
+import depends.util.FileUtil;
 
 public class PomFileParser implements FileParser {
 
@@ -50,7 +51,7 @@ public class PomFileParser implements FileParser {
 	private Inferer inferer;
 
 	public PomFileParser(String fileFullPath, EntityRepo entityRepo, List<String> includePaths, PomProcessor pomProcessor,Inferer inferer) {
-        this.fileFullPath = fileFullPath;
+        this.fileFullPath = FileUtil.uniqFilePath(fileFullPath);
         this.entityRepo = entityRepo;
         this.parseCreator = pomProcessor;
         this.includePaths = includePaths;
