@@ -24,21 +24,17 @@ SOFTWARE.
 
 package depends.extractor.pom;
 
-import depends.importtypes.Import;
+import depends.entity.GenericName;
 
-public class PomParent extends Import {
-
-	public PomParent(String content) {
-		super(content);
+public class PomCoords  {
+	public PomCoords() {
 	}
 
 	public String groupId;
 	public String artifactId;
 	public String version;
-	public void buildFrom(PomCoords pomCoords) {
-		this.groupId = pomCoords.groupId;
-		this.artifactId = pomCoords.groupId;
-		this.version = pomCoords.version;
+	public String getPath() {
+		return groupId+"."+artifactId+"_" +version+"_" ;
 	}
 
 }

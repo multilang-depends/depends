@@ -48,6 +48,7 @@ public class PomListener extends XMLParserBaseListener {
 	private PomProcessor parseCreator;
 	private List<String> includePaths;
 	private Inferer inferer;
+	private PomCoords pomCoords;
 	private static String groupIdPattern = "project.groupId";
 	private static String artifactIdPattern = "project.artifactId";
 	private static String versionPattern = "project.version";
@@ -67,24 +68,31 @@ public class PomListener extends XMLParserBaseListener {
 	public void enterElement(ElementContext ctx) {
 		String name = ctx.Name(0).getText();
 		if (name.equals("project")) {
+			pomCoords = new PomCoords();
 			currentEntity = new PomArtifactEntity(elementNamePattern, context.currentFile(), entityRepo.generateId());
 		} else if (name.equals("plugin")) {
+			pomCoords = new PomCoords();
 			currentExpression = new Expression(entityRepo.generateId());
 			currentExpression.setRawType(elementNamePattern);
 		} else if (name.equals("dependency")) {
+			pomCoords = new PomCoords();
 			currentVar = new VarEntity(GenericName.build(elementNamePattern), GenericName.build(elementNamePattern),
 					currentEntity, entityRepo.generateId());
 		} else if (name.equals("parent")) {
+			pomCoords = new PomCoords();
 			pomParent = new PomParent(elementNamePattern);
 		}
 
 		// Add attribute
 		else if (name.equals("groupId")) {
 			appendData(ctx, getContentValueOf(ctx), groupIdPattern);
+			pomCoords.groupId = getContentValueOf(ctx);
 		} else if (name.equals("artifactId")) {
 			appendData(ctx, getContentValueOf(ctx), artifactIdPattern);
+			pomCoords.artifactId = getContentValueOf(ctx);
 		} else if (name.equals("version")) {
 			appendData(ctx, getContentValueOf(ctx), versionPattern);
+			pomCoords.version = getContentValueOf(ctx);
 		} else if ("properties".equals(getParentElementName(ctx))) {
 			if (ctx.content() != null) {
 				currentEntity.addProperty(name, getContentValueOf(ctx));
@@ -106,6 +114,7 @@ public class PomListener extends XMLParserBaseListener {
 	public void exitElement(ElementContext ctx) {
 		String name = ctx.Name(0).getText();
 		if (name.equals("project")) {
+			System.out.println(pomCoords.getPath());
 			if (pomParent != null) {
 				currentEntity.setRawName(currentEntity.getRawName().replace(artifactIdPattern, pomParent.artifactId));
 				currentEntity.setRawName(currentEntity.getRawName().replace(groupIdPattern, pomParent.groupId));
@@ -114,14 +123,17 @@ public class PomListener extends XMLParserBaseListener {
 			currentEntity.setQualifiedName(currentEntity.getRawName().uniqName());
 			entityRepo.add(currentEntity);
 		} else if (name.equals("plugin")) {
+			System.out.println(pomCoords.getPath());
 			currentEntity.addExpression(ctx, currentExpression);
 		} else if (name.equals("dependency")) {
+			System.out.println(pomCoords.getPath());
 			currentVar.setRawType(currentVar.getRawName());
 			//TODO: Depends currently has a limitation: var name cannot be same as var type
 			//To be fixed in future
 			currentVar.setRawName(new GenericName(currentVar.getRawName()+"_var"));
 			currentEntity.addVar(currentVar);
 		} else if (name.equals("parent")) {
+			System.out.println(pomCoords.getPath());
 			context.currentFile().addImport(pomParent);
 			String parentFileName = new PomLocator(includePaths, pomParent).getLocation();
 			if (parentFileName != null) {
