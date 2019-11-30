@@ -7,13 +7,13 @@
 	<groupId>cn.emergentdesign.se</groupId>
 	<artifactId>depends</artifactId>
 	<!-- <version>1.0-SNAPSHOT</version> -->
-    <version>0.9.3</version>
+	<version>0.9.3</version>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<antlr4.visitor>true</antlr4.visitor>
 		<antlr4.listener>true</antlr4.listener>
 		<neo4j-ogm.version>3.1.9</neo4j-ogm.version>
-		
+
 	</properties>
 	<build>
 		<plugins>
@@ -53,39 +53,39 @@
 						<descriptor>src/main/assemble/package.xml</descriptor>
 					</descriptors>
 				</configuration>
-			    <executions>  
-			        <execution>  
-			            <phase>package</phase>  
-			            <goals>  
-			                <goal>single</goal>  
-			            </goals>  
-			        </execution>  
-			    </executions>				
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.2.1</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <mainClass>depends.Main</mainClass>
-                </configuration>
-            </plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.2.1</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>java</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<mainClass>depends.Main</mainClass>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
 	<dependencies>
-<dependency>
-  <groupId>eclipse-photon</groupId>
-  <artifactId>org.eclipse.core.resources</artifactId>
-  <version>3.13.0.v20180512-1138</version>
-</dependency>
+		<dependency>
+			<groupId>eclipse-photon</groupId>
+			<artifactId>org.eclipse.core.resources</artifactId>
+			<version>3.13.500.v20190819-0800</version>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -106,9 +106,9 @@
 			<version>4.7.1</version>
 		</dependency>
 		<dependency>
-		  <groupId>com.fasterxml.jackson.core</groupId>
-		  <artifactId>jackson-databind</artifactId>
-		  <version>[2.9.9,)</version>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>[2.9.9,)</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.poi</groupId>
@@ -123,12 +123,12 @@
 		<dependency>
 			<groupId>org.eclipse.cdt</groupId>
 			<artifactId>org.eclipse.cdt.core</artifactId>
-			<version>6.5.0.201806170908</version>
+			<version>6.9.0.201909091953</version>
 		</dependency>
 		<dependency>
 			<groupId>eclipse-photon</groupId>
 			<artifactId>org.eclipse.equinox.registry</artifactId>
-			<version>3.8.0.v20180426-1327</version>
+			<version>3.8.500.v20190714-1850</version>
 		</dependency>
 		<dependency>
 			<groupId>eclipse-photon</groupId>
@@ -138,22 +138,22 @@
 		<dependency>
 			<groupId>eclipse-photon</groupId>
 			<artifactId>org.eclipse.equinox.common</artifactId>
-			<version>3.10.0.v20180412-1130</version>
+			<version>3.10.500.v20190815-1535</version>
 		</dependency>
 		<dependency>
 			<groupId>eclipse-photon</groupId>
 			<artifactId>org.eclipse.osgi</artifactId>
-			<version>3.13.0.v20180409-1500</version>
+			<version>3.15.0.v20190830-1434</version>
 		</dependency>
 		<dependency>
 			<groupId>eclipse-photon</groupId>
 			<artifactId>org.eclipse.equinox.preferences</artifactId>
-			<version>3.7.100.v20180510-1129</version>
+			<version>3.7.500.v20190815-1535</version>
 		</dependency>
 		<dependency>
 			<groupId>eclipse-photon</groupId>
 			<artifactId>org.eclipse.core.jobs</artifactId>
-			<version>3.10.0.v20180427-1454</version>
+			<version>3.10.500.v20190620-1426</version>
 		</dependency>
 		<dependency>
 			<groupId>info.picocli</groupId>
@@ -182,6 +182,6 @@
 			<version>0.5.5-SNAPSHOT</version>
 		</dependency>
 
-       		
+
 	</dependencies>
 </project>
