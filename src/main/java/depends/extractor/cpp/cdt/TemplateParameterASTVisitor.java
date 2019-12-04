@@ -6,6 +6,7 @@ import java.util.List;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
@@ -38,6 +39,8 @@ class TemplateParameterASTVisitor extends ASTVisitor{
 				} else if (argument instanceof IASTIdExpression){
 					String parameterName = ASTStringUtilExt.getName(((IASTIdExpression)argument).getName());
 					parameters.add(GenericName.build(parameterName));
+				} else if (argument instanceof IASTLiteralExpression){
+					parameters.add(GenericName.build("<Literal>"));
 				}else {
 					System.err.println ("TODO: unknown template arguments");
 				}
