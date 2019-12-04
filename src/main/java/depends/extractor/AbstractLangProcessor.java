@@ -186,6 +186,9 @@ abstract public class AbstractLangProcessor {
 			fileParser.parse();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} catch (Exception e) {
+			System.err.println("error occoured during parse file " + fileFullPath);
+			e.printStackTrace();
 		}
 	}
 
