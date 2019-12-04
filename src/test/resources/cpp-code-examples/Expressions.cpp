@@ -18,3 +18,28 @@ void foo(ClassA& a) { 	      //parameter a(1)
 	a3[1].x.m = 3; //still lack 1          //set a3,t(2)
 }
 
+void JsonParser::expectToken(Token tk)
+{
+    if (advance() != tk) {
+        if (tk == tkDouble) {
+            if(cur() == tkString
+                && (sv == "Infinity" || sv == "-Infinity" || sv == "NaN")) {
+                curToken = tkDouble;
+                dv = sv == "Infinity" ?
+                    std::numeric_limits<double>::infinity() :
+                    sv == "-Infinity" ?
+                        -std::numeric_limits<double>::infinity() :
+                    std::numeric_limits<double>::quiet_NaN();
+                return;
+            } else if (cur() == tkLong) {
+                dv = double(lv);
+                return;
+            }
+        }
+        ostringstream oss;
+        oss << "Incorrect token in the stream. Expected: "
+            << JsonParser::toString(tk) << ", found "
+            << JsonParser::toString(cur());
+        throw Exception(oss.str());
+    }
+}

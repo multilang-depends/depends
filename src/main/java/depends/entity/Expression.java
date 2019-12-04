@@ -255,9 +255,9 @@ public class Expression implements Serializable{
 		if (name.toLowerCase().equals("<literal>")) return true;
 		if (name.toLowerCase().equals("<built-in>")) return true;
 		boolean result = name.matches("([a-zA-Z0-9_]|(\\.)|(\\-))*");
-		if (result==false) {
-			System.err.println("expression name " + name);
-		}
+//		if (result==false) {
+//			System.err.println("expression name " + name);
+//		}
 		return true;
 	}
 
