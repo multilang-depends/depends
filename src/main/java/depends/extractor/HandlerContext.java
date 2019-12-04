@@ -304,7 +304,9 @@ public abstract class HandlerContext {
 				container.cacheExpressions();
 			}
 		}
-		entityStack.pop();
+		//we never pop up the lastest one (FileEntity)
+		if (entityStack.size()>1)
+			entityStack.pop();
 	}
 	
 	private VarEntity getVar(ContainerEntity container, GenericName varName) {
