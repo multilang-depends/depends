@@ -49,6 +49,7 @@ import depends.matrix.transform.MatrixLevelReducer;
 import depends.matrix.transform.strip.LeadingNameStripper;
 import depends.util.FileUtil;
 import depends.util.FolderCollector;
+import depends.util.TemporaryFile;
 import edu.emory.mathcs.backport.java.util.Arrays;
 import picocli.CommandLine;
 import picocli.CommandLine.PicocliException;
@@ -166,6 +167,7 @@ public class Main {
     			new LeadingNameStripper(app.isStripLeadingPath(),inputDir,app.getStrippedPaths()));
     	unsolvedSymbolDumper.output();
 		long endTime = System.currentTimeMillis();
+		TemporaryFile.getInstance().delete();
 		System.out.println("Consumed time: " + (float) ((endTime - startTime) / 1000.00) + " s,  or "
 				+ (float) ((endTime - startTime) / 60000.00) + " min.");
 	}

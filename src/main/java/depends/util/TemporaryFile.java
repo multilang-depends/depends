@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import depends.util.FileTraversal.IFileVisitor;
+
 public class TemporaryFile {
 	Path tempDirWithPrefix;
 	private static TemporaryFile _inst = null;
@@ -27,5 +29,24 @@ public class TemporaryFile {
 
 	public String exprPath(Integer id) {
 		return tempDirWithPrefix.toAbsolutePath().toFile() + File.separator + id + ".expr";
+	}
+	
+	public void delete() {
+		if (tempDirWithPrefix==null) return;
+		IFileVisitor visitor = new IFileVisitor() {
+			@Override
+			public void visit(File file) {
+				try {
+					Files.deleteIfExists(file.toPath());
+				} catch (IOException e) {
+				}
+			}
+		};
+		FileTraversal t = new FileTraversal(visitor,true,true);
+		t.travers(tempDirWithPrefix.toAbsolutePath().toFile());
+		try {
+			Files.deleteIfExists(tempDirWithPrefix);
+		} catch (IOException e) {
+		}
 	}
 }
