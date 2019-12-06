@@ -149,7 +149,7 @@ public class FileEntity extends TypeEntity {
 		this.cacheExpressions();
 		for (Entity child:containerEntity.getChildren()) {
 			if (child instanceof ContainerEntity) {
-				cacheChildExpressions((ContainerEntity)child);
+				((ContainerEntity)child).cacheExpressions();
 			}
 		}
 	}
