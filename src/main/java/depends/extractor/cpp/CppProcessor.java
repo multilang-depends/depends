@@ -37,7 +37,7 @@ import depends.relations.ImportLookupStrategy;
 
 public class CppProcessor extends AbstractLangProcessor {
 	private static final String LANG = "cpp";
-	private static final String[] SUFFIX = new String[] { ".cpp", ".cc", ".c", ".h", ".hpp", ".hh", ".cxx", ".hxx" };
+	private static final String[] SUFFIX = new String[] { ".cpp", ".cc", ".c", ".c++", ".h", ".hpp", ".hh", ".cxx", ".hxx" };
 	PreprocessorHandler preprocessorHandler;
 
 	MacroRepo macroRepo = null;

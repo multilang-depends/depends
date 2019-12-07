@@ -258,6 +258,7 @@ public class Inferer {
 		}
 		if (nameIndex == -1) {
 			System.err.println("error");
+			return null;
 		}
 		//If it is not an entity with types (not a type, var, function), fall back to itself
 		if (precendenceEntity.getType()==null) 
