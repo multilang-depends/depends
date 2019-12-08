@@ -29,6 +29,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -50,7 +51,10 @@ public abstract class ContainerEntity extends DecoratedEntity {
 
 	private ArrayList<VarEntity> vars;
 	private ArrayList<FunctionEntity> functions;
-	private HashMap<Object, Expression> expressions;
+	WeakReference<HashMap<Object, Expression>> expressionWeakReference = new WeakReference<HashMap<Object, Expression>>(new HashMap<>());
+	//private HashMap<Object, Expression> expressions;
+	
+	
 	private ArrayList<Expression> expressionList;
 	private Collection<GenericName> mixins;
 	private Collection<ContainerEntity> resolvedMixins;
@@ -60,7 +64,6 @@ public abstract class ContainerEntity extends DecoratedEntity {
 		functions = new ArrayList<>();
 		mixins = new ArrayList<>();
 		resolvedMixins = new ArrayList<>();
-		expressions = new HashMap<>();
 		expressionList = new ArrayList<>();
 	}
 
@@ -70,7 +73,6 @@ public abstract class ContainerEntity extends DecoratedEntity {
 		functions = new ArrayList<>();
 		mixins = new ArrayList<>();
 		resolvedMixins = new ArrayList<>();
-		expressions = new HashMap<>();
 		expressionList = new ArrayList<>();
 	}
 
@@ -94,11 +96,13 @@ public abstract class ContainerEntity extends DecoratedEntity {
 	}
 
 	public HashMap<Object, Expression> expressions() {
-		return expressions;
+		HashMap<Object, Expression> r = expressionWeakReference.get();
+		if (r==null) return new HashMap<>();
+		return r;
 	}
 
 	public void addExpression(Object key, Expression expression) {
-		expressions.put(key, expression);
+		expressions().put(key, expression);
 		expressionList.add(expression);
 	}
 
@@ -181,13 +185,19 @@ public abstract class ContainerEntity extends DecoratedEntity {
 	}
 
 	public void cacheExpressions() {
-		this.expressions = new HashMap<>();
+		this.expressions().clear();
+		this.expressionWeakReference.clear();
 		cacheExpressionListToFile();
+		this.expressionList.clear();
+		this.expressionList=null;
 		this.expressionList = new ArrayList<>();
 	}
 
 	public void clearExpressions() {
-		this.expressions = new HashMap<>();
+		this.expressions().clear();
+		this.expressionWeakReference.clear();
+		this.expressionList.clear();
+		this.expressionList=null;
 		this.expressionList = new ArrayList<>();
 	}
 	
@@ -236,7 +246,7 @@ public abstract class ContainerEntity extends DecoratedEntity {
 	}
 
 	public boolean containsExpression() {
-		return expressions.size() > 0;
+		return expressions().size() > 0;
 	}
 
 	public String dumpExpressions() {
@@ -358,10 +368,4 @@ public abstract class ContainerEntity extends DecoratedEntity {
 	public Collection<ContainerEntity> getResolvedMixins() {
 		return resolvedMixins;
 	}
-
-
-
-
-
-
 }
