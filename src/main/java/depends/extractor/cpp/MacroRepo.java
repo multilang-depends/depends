@@ -30,7 +30,7 @@ public class MacroRepo {
 	public void put(String file, IASTPreprocessorMacroDefinition[] macroDefinitions) {
 		Map<String, String> macros = new HashMap<>();
 		for (IASTPreprocessorMacroDefinition def:macroDefinitions) {
-			macros.put(def.getName().toString(), def.getExpansion());
+			macros.put(def.getName().toString(), new String(def.getExpansion()));
 		}
 		Map<String, String> existingMacros = fileMacroDefinition.get(file);
 		if (existingMacros==null)
