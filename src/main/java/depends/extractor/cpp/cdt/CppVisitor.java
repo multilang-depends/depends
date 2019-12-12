@@ -132,7 +132,9 @@ public class CppVisitor  extends ASTVisitor {
 	}
 
 	private boolean notLocalFile(IASTNode node) {
-		if (file.contains(node.getFileLocation().getFileName())) return false;
+		if (file.contains(node.getFileLocation().getFileName())) {
+			return false;
+		}
 		return true;
 	}
 

@@ -17,13 +17,15 @@ public class FileCache {
 		return inst;
 	}
 	public InternalFileContent get(String filePath) {
-		return cache.get(filePath);
+		InternalFileContent result = cache.get(filePath);
+		return result;
 	}
 	public void put(String filePath, InternalFileContent c) {
 		cache.put(filePath,c);
 	}
 	public InternalFileContent get(IIndexFileLocation ifl) {
-		return cache2.get(ifl);
+		InternalFileContent result = cache2.get(ifl);
+		return result;
 	}
 	public void put(IIndexFileLocation ifl, InternalFileContent c) {
 		cache2.put(ifl,c);

@@ -38,12 +38,13 @@ import depends.relations.ImportLookupStrategy;
 public class CppProcessor extends AbstractLangProcessor {
 	private static final String LANG = "cpp";
 	private static final String[] SUFFIX = new String[] { ".cpp", ".cc", ".c", ".c++", ".h", ".hpp", ".hh", ".cxx", ".hxx" };
-	PreprocessorHandler preprocessorHandler;
+	PreprocessorHandler preprocessorHandler = null;
 
 	MacroRepo macroRepo = null;
 
 	public CppProcessor() {
 		super(false);
+
 	}
 
 	@Override
@@ -62,7 +63,9 @@ public class CppProcessor extends AbstractLangProcessor {
 			macroRepo = new MacroRepo();
 			macroRepo.buildDefaultMap(super.includePaths());
 		}
-		preprocessorHandler = new PreprocessorHandler(super.includePaths());
+		if (preprocessorHandler==null) {
+			preprocessorHandler = new PreprocessorHandler(super.inputSrcPath,super.includePaths());
+		}
 		return new CdtCppFileParser(fileFullPath, entityRepo, preprocessorHandler, inferer, macroRepo);
 	}
 

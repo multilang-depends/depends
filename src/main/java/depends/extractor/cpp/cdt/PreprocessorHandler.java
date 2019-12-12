@@ -24,9 +24,10 @@ SOFTWARE.
 
 package depends.extractor.cpp.cdt;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import org.codehaus.plexus.util.StringUtils;
@@ -35,18 +36,47 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.internal.core.parser.scanner.ScannerUtility;
 
+import depends.util.FileTraversal;
+import depends.util.FileTraversal.IFileVisitor;
 import depends.util.FileUtil;
 
 public class PreprocessorHandler {
-	private HashMap<String, String> notExistedIncludedFiles = new HashMap<>();
-	public Collection<String> getNotExistedIncludedFiles() {
-		return notExistedIncludedFiles.values();
-	}
 	private List<String> includePaths;
-	public PreprocessorHandler(List<String> includePaths){
-		notExistedIncludedFiles = new HashMap<>();
-		this.setIncludePaths(includePaths);
+	private String inputSrcPath;
+	private HashSet<String> allFiles = new HashSet<>();
+	public PreprocessorHandler(String inputSrcPath, List<String> includePaths){
+		this.inputSrcPath = inputSrcPath;
+		this.includePaths = includePaths;
+		buildAllFiles();
 	}
+	
+	class AllFileVisitor implements IFileVisitor{
+		@Override
+		public void visit(File file) {
+			try {
+				allFiles.add(file.getCanonicalPath());
+			} catch (IOException e) {
+			}
+		}
+	}
+	private void buildAllFiles() {
+		allFiles = new HashSet<>();
+		AllFileVisitor v = new AllFileVisitor();
+		if (inputSrcPath!=null) {
+			FileTraversal ft = new FileTraversal(v,false,true);
+			ft.travers(inputSrcPath);
+		}
+		for (String includePath:includePaths) {
+			FileTraversal ft = new FileTraversal(v,false,true);
+			ft.travers(includePath);
+		}
+	}
+
+	private boolean existFile(String checkPath) {
+		checkPath = FileUtil.uniformPath(checkPath);
+		return allFiles.contains(checkPath);
+	}
+	
 	public List<String> getDirectIncludedFiles(IASTPreprocessorStatement[] statements, String fileLocation) {
 		ArrayList<String> includedFullPathNames = new ArrayList<>();
 		for (int statementIndex=0;statementIndex<statements.length;statementIndex++) {
@@ -56,10 +86,7 @@ public class PreprocessorHandler {
 				if (!incl.getFileLocation().getFileName().equals(fileLocation))
 					continue;
 				String path = resolveInclude(incl);
-				if (!FileUtil.existFile(path)) {
-					if (!notExistedIncludedFiles.containsKey(path)) {
-						notExistedIncludedFiles.put(path,"Error: " + path + " does not exist in include path!");
-					}
+				if (!existFile(path)) {
 					continue;
 				}
 				if (FileUtil.isDirectory(path)) {
@@ -89,17 +116,15 @@ public class PreprocessorHandler {
 		searchPath.addAll(includePaths);
 		for (String includePath:searchPath) {
 			String checkPath = ScannerUtility.createReconciledPath(includePath,path);
-			if (FileUtil.existFile(checkPath)) {
+			if (existFile(checkPath)) {
 				return FileUtil.uniqFilePath(checkPath);
 			}
 		}
 		return "";
 	}
 	
+
 	public List<String> getIncludePaths() {
 		return includePaths;
-	}
-	public void setIncludePaths(List<String> includePaths) {
-		this.includePaths = includePaths;
 	}
 }

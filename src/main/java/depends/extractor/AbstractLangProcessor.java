@@ -86,7 +86,7 @@ abstract public class AbstractLangProcessor {
 	public Inferer inferer;
 	protected EntityRepo entityRepo;
 	DependencyMatrix dependencyMatrix;
-	private String inputSrcPath;
+	protected String inputSrcPath;
 	public String[] includeDirs;
 	private DependencyGenerator dependencyGenerator;
 	private Set<UnsolvedBindings> unsolved;

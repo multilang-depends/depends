@@ -26,6 +26,7 @@ package depends.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Stack;
 
 public class FileUtil {
 	public static String uniqFilePath(String filePath) {
@@ -53,5 +54,27 @@ public class FileUtil {
 
 	public static String getShortFileName(String path) {
 		return new File(path).getName();
+	}
+	
+	public static String uniformPath(String path) {
+		String[] paths = path.split("[/|\\\\]");
+		StringBuilder sb = new StringBuilder();
+		Stack<String> pathStack = new Stack<>();
+		for (int i=0;i<paths.length;i++) {
+			String s = paths[i];
+			if (s.equals(".")) continue;
+			if (s.equals("..") && !pathStack.empty()) {
+				pathStack.pop();
+				continue;
+			}
+			pathStack.push(s);
+		}
+		
+		for (int i=0;i<pathStack.size();i++) {
+			sb.append(pathStack.get(i));
+			if (i<pathStack.size()-1)
+				sb.append(File.separator);
+		}
+		return sb.toString();
 	}
 }

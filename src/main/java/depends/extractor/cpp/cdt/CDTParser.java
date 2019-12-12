@@ -24,10 +24,7 @@ SOFTWARE.
 
 package depends.extractor.cpp.cdt;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -42,24 +39,6 @@ import depends.extractor.cpp.Scanner;
 
 @SuppressWarnings("deprecation")
 public class CDTParser {
-	protected List<String> sysIncludePath = new ArrayList<>();
-
-	public CDTParser() {
-	}
-	
-	public CDTParser(List<String> includesPath) {
-		for (String f:includesPath) {
-			File file = new File(f);
-			if (file.exists()) {
-				try {
-					sysIncludePath.add(file.getCanonicalPath());
-				} catch (IOException e) {
-				}
-			}else {
-				//System.err.println("include path " + f + " does not exist!");
-			}
-		}
-	}
 	NullLogService NULL_LOG = new NullLogService();
 	protected Map<String, String> macroMap ;
 	public IASTTranslationUnit parse(String file, Map<String, String> macroMap   ) {

@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.parser.IMacroDictionary;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
+import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent.InclusionKind;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;
 
 import depends.extractor.cpp.cdt.FileCache;
@@ -35,11 +36,15 @@ public class Scanner {
 		InternalFileContentProvider ifcp = new InternalFileContentProvider() {
 			@Override
 			public InternalFileContent getContentForInclusion(String filePath, IMacroDictionary macroDictionary) {
-				InternalFileContent c = FileCache.getInstance().get(filePath);
+				InternalFileContent c =  new InternalFileContent(filePath, InclusionKind.SKIP_FILE); 
+/*				
+				FileCache.getInstance().get(filePath);
+				
 				if (c == null) {
 					c = (InternalFileContent) FileContent.createForExternalFileLocation(filePath);
 					FileCache.getInstance().put(filePath, c);
 				}
+*/
 				return c;
 			}
 
