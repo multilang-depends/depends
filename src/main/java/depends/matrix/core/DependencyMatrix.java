@@ -91,7 +91,7 @@ public class DependencyMatrix {
 	}
 	
 	public DependencyMatrix reWriteFilenamePattern(FilenameWritter filenameRewritter) {
-		this.nodeIdToName.clear();
+		this.nodeIdToName = new HashMap<>();
 		for (int i=0;i<nodes.size();i++) {
 			String name = filenameRewritter.reWrite(nodes.get(i));
 			nodes.set(i, name );
