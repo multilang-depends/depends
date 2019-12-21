@@ -86,8 +86,7 @@ public class CdtCppFileParser extends CppFileParser {
 		if (containsIncludes) {
 			tu = (new CDTParser()).parse(fileFullPath,macroMap);
 		}
-		macroRepo.put(this.fileFullPath,macroMap);
-		macroRepo.put(this.fileFullPath,tu.getMacroDefinitions());
+		macroRepo.putMacros(this.fileFullPath,macroMap,tu.getMacroDefinitions());
 		tu.accept(bridge);
 		return;
 	}

@@ -31,6 +31,10 @@ public class TemporaryFile {
 		return tempDirWithPrefix.toAbsolutePath().toFile() + File.separator + id + ".expr";
 	}
 	
+	public String macroPath(Integer fileId) {
+		return tempDirWithPrefix.toAbsolutePath().toFile() + File.separator + fileId + ".macros";
+	}
+	
 	public void delete() {
 		if (tempDirWithPrefix==null) return;
 		IFileVisitor visitor = new IFileVisitor() {
@@ -49,4 +53,5 @@ public class TemporaryFile {
 		} catch (IOException e) {
 		}
 	}
+
 }

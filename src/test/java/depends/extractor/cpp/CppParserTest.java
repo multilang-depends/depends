@@ -22,7 +22,9 @@ public abstract class CppParserTest extends ParserTest{
     	inferer = new Inferer(repo,new CppImportLookupStrategy(),new CppBuiltInType(),false);
     	preprocessorHandler = new PreprocessorHandler("./src/test/resources/cpp-code-examples/",new ArrayList<>());
     	TemporaryFile.reset();
-    	macroRepo = new MacroRepo();
+//    	macroRepo = new MacroMemoryRepo();
+    	macroRepo = new MacroFileRepo(repo);
+
     }
 	
 	public CppFileParser createParser(String src) {
