@@ -39,7 +39,6 @@ public class VarEntity extends ContainerEntity {
 	public VarEntity(GenericName simpleName,  GenericName rawType, Entity parent, int id) {
 		super(simpleName,  parent,id);
 		this.rawType = rawType;
-		functionCalls = new ArrayList<>();
 	}
 
 	public void setRawType(GenericName rawType) {
@@ -77,15 +76,22 @@ public class VarEntity extends ContainerEntity {
 	}
 
 	public List<FunctionCall> getCalledFunctions() {
-		return functionCalls;
+		if (this.functionCalls!=null)
+			return functionCalls;
+		return new ArrayList<>();
 	}
 
 	public void addFunctionCall(GenericName fname) {
+		if (this.functionCalls==null)
+		{
+			functionCalls = new ArrayList<>();
+		}
 		this.functionCalls.add(new FunctionCall(fname));
 	}
 
 	public void fillCandidateTypes(Inferer inferer) {
 		if (type!=null) return ; //it is a strong type lang, do not need deduce candidate types
+		if (functionCalls==null) return;
 		if (functionCalls.size()==0) return; //no information avaliable for type deduction
 		if (this.rawType==null) {
 			this.type = new CandidateTypes(inferer.calculateCandidateTypes(this,this.functionCalls));

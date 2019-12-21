@@ -45,19 +45,23 @@ public class TypeEntity extends ContainerEntity {
 	@Override
 	public void inferLocalLevelEntities(Inferer inferer) {
 		inheritedTypes = new ArrayList<>();
-		identiferToEntities(inferer, this.inhertedTypeIdentifiers).forEach(item -> {
-			Entity typeItem = getTypeEntity(item);
-			if (typeItem !=null) {
-				inheritedTypes.add((TypeEntity) typeItem);
-			}else {
-				System.err.println(item.getRawName() + " expected a type, but actually it is "+ item.getClass().getSimpleName());
-			}
-		});
+		Collection<Entity> r = identiferToEntities(inferer, this.inhertedTypeIdentifiers);
+		if (r!=null) {
+			r.forEach(item -> {
+				Entity typeItem = getTypeEntity(item);
+				if (typeItem !=null) {
+					inheritedTypes.add((TypeEntity) typeItem);
+				}else {
+					System.err.println(item.getRawName() + " expected a type, but actually it is "+ item.getClass().getSimpleName());
+				}
+			});
+		}
 		inheritedTypes.remove(this);
 
 		implementedTypes = new ArrayList<>();
-		identiferToEntities(inferer, this.implementedIdentifiers)
-				.forEach(item -> {
+		r = identiferToEntities(inferer, this.implementedIdentifiers);
+		if (r!=null) {
+				r.forEach(item -> {
 					Entity typeItem = getTypeEntity(item);
 					if (typeItem !=null) {
 						implementedTypes.add((TypeEntity) typeItem);
@@ -65,6 +69,7 @@ public class TypeEntity extends ContainerEntity {
 						System.err.println(item.getRawName() + " expected a type, but actually it is "+ item.getClass().getSimpleName());
 					}
 				});
+		}
 		implementedTypes.remove(this);
 		if (inheritedTypes.size() > 0)
 			inheritedType = inheritedTypes.iterator().next();

@@ -31,9 +31,9 @@ import java.util.List;
 import depends.relations.Inferer;
 
 public abstract class DecoratedEntity extends Entity{
-	private Collection<GenericName> annotations = new ArrayList<>();
-	private Collection<Entity> resolvedTypeParameters = new ArrayList<>();
-	private Collection<Entity> resolvedAnnotations = new ArrayList<>();
+	private Collection<GenericName> annotations;
+	private Collection<Entity> resolvedAnnotations;
+	private Collection<Entity> resolvedTypeParameters;
 	public DecoratedEntity() {
 	}
 
@@ -42,6 +42,8 @@ public abstract class DecoratedEntity extends Entity{
 	}
 	
 	public void addAnnotation(GenericName name) {
+		if(this.annotations==null)
+			annotations  = new ArrayList<>();
 		this.annotations.add(name);
 	}
 	
@@ -56,6 +58,8 @@ public abstract class DecoratedEntity extends Entity{
 	}
 	
 	protected void appendTypeParameters(Collection<Entity> typeParameterEntities) {
+		if (resolvedTypeParameters==null)
+			resolvedTypeParameters = new ArrayList<>();
 		resolvedTypeParameters.addAll(typeParameterEntities);
 	}
 	
@@ -90,11 +94,15 @@ public abstract class DecoratedEntity extends Entity{
 	}
 
 	public Collection<Entity> getResolvedTypeParameters() {
+		if (resolvedTypeParameters==null)
+			return new ArrayList<>();
 		return resolvedTypeParameters;
 	}
 
 
 	public Collection<Entity> getResolvedAnnotations() {
+		if (resolvedAnnotations==null)
+			return new ArrayList<>();
 		return resolvedAnnotations;
 	}
 
@@ -113,6 +121,8 @@ public abstract class DecoratedEntity extends Entity{
 	 * @return The translated Types
 	 */
 	protected Collection<Entity> identiferToEntities(Inferer inferer, Collection<GenericName> identifiers) {
+		if (identifiers==null) return null;
+		if (identifiers.size()==0) return null;
 		ArrayList<Entity> r = new ArrayList<>();
 		for (GenericName name : identifiers) {
 			Entity entity = resolveEntity(inferer, name);

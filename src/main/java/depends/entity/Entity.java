@@ -46,8 +46,8 @@ public abstract class Entity {
 	GenericName rawName = GenericName.build("");
 	Entity parent;
 	private MultiDeclareEntities mutliDeclare = null;
-	private Set<Entity> children = new HashSet<>();
-    ArrayList<Relation> relations = new ArrayList<>();
+	private Set<Entity> children;
+    ArrayList<Relation> relations;
 	private Entity actualReferTo = null;
 	private boolean inScope = true;
 
@@ -58,11 +58,16 @@ public abstract class Entity {
 		this.parent = parent;
 		this.id = id;
 		if (parent!=null)
-			parent.children.add(this);
+			parent.children().add(this);
 		deduceQualifiedName();
 	}
 
-    /**
+    private Set<Entity> children() {
+    	if (children==null)
+    		children = new HashSet<>();
+		return children;
+	}
+	/**
      * Rule 1: if it start with '.' , then the name is equal to raw name
      * Rule 2: if parent not exists, the name is equal to raw name
      * Rule 3: if parent exists but no qualified name exists or empty, the name is equal to raw name
@@ -100,15 +105,19 @@ public abstract class Entity {
     }
 
     public void addRelation(Relation relation) {
+    	if (relations==null)
+    		relations = new ArrayList<>();
         relations.add(relation);
     }
 
     public ArrayList<Relation> getRelations() {
+    	if (relations==null)
+    		return new ArrayList<>();
         return relations;
     }
 
     public void addChild(Entity child) {
-        children.add(child);
+        children().add(child);
     }
 
 	public Entity getParent() {
@@ -120,6 +129,8 @@ public abstract class Entity {
 	}
 	
 	public Collection<Entity> getChildren() {
+		if (children==null)
+			return new HashSet<>();
 		return children;
 	}
 	
@@ -166,7 +177,7 @@ public abstract class Entity {
 	 * */
 	public void inferEntities(Inferer inferer) {
 		inferLocalLevelEntities(inferer);
-		for (Entity child:children) {
+		for (Entity child:this.getChildren()) {
 			child.inferEntities(inferer);
 		}
 	}
