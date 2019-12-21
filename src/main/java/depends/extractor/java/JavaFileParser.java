@@ -30,6 +30,9 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
+import org.antlr.v4.runtime.atn.LexerATNSimulator;
+import org.antlr.v4.runtime.atn.ParserATNSimulator;
+import org.antlr.v4.runtime.atn.PredictionContextCache;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import depends.entity.repo.EntityRepo;
@@ -52,8 +55,10 @@ public class JavaFileParser implements depends.extractor.FileParser{
 	public void parse() throws IOException {
         CharStream input = CharStreams.fromFileName(fileFullPath);
         Lexer lexer = new JavaLexer(input);
+        lexer.setInterpreter(new LexerATNSimulator(lexer, lexer.getATN(), lexer.getInterpreter().decisionToDFA, new PredictionContextCache()));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         JavaParser parser = new JavaParser(tokens);
+        parser.setInterpreter(new ParserATNSimulator(parser, parser.getATN(), parser.getInterpreter().decisionToDFA, new PredictionContextCache()));
         JavaListener bridge = new JavaListener(fileFullPath, entityRepo,inferer);
 	    ParseTreeWalker walker = new ParseTreeWalker();
 	    try {
@@ -62,6 +67,7 @@ public class JavaFileParser implements depends.extractor.FileParser{
 	    	System.err.println("error encountered during parse..." );
 	    	e.printStackTrace();
 	    }
+	    
     }
 	
 }
