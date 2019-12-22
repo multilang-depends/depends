@@ -54,8 +54,8 @@ public class Inferer {
 	private static final Logger logger = LoggerFactory.getLogger(Inferer.class);
 
 	static final public TypeEntity buildInType = new TypeEntity(GenericName.build("built-in"), null, -1);
-	static final public TypeEntity externalType = new TypeEntity(GenericName.build("external"), null, -1);
-	static final public TypeEntity genericParameterType = new TypeEntity(GenericName.build("T"), null, -1);
+	static final public TypeEntity externalType = new TypeEntity(GenericName.build("external"), null, -2);
+	static final public TypeEntity genericParameterType = new TypeEntity(GenericName.build("T"), null, -3);
 	private BuiltInType buildInTypeManager = new NullBuiltInType();
 	private ImportLookupStrategy importLookupStrategy;
 	private Set<UnsolvedBindings> unsolvedSymbols = new HashSet<>();
@@ -225,7 +225,7 @@ public class Inferer {
 	}
 	
 	private Entity lookupEntity(Entity fromEntity, String name, boolean searcImport) {
-		if (name.equals("this") || name.equals("class")) {
+		if (name.equals("this") || name.equals("class") ) {
 			TypeEntity entityType = (TypeEntity) (fromEntity.getAncestorOfType(TypeEntity.class));
 			return entityType;
 		} else if (name.equals("super")) {

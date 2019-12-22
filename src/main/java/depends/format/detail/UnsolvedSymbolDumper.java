@@ -27,10 +27,9 @@ package depends.format.detail;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeMap;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -58,13 +57,13 @@ public class UnsolvedSymbolDumper{
 	}
 
 	private void outputGrouped() {
-		HashMap<String, List<String>> grouped = new HashMap<String, List<String>>();
+		TreeMap<String, Set<String>> grouped = new TreeMap<String, Set<String>>();
 		for (UnsolvedBindings symbol: unsolved) {
 			String depended = symbol.getRawName();
 			String from = leadingNameStripper.stripFilename(symbol.getSourceDisplay());
-			List<String> list = grouped.get(depended);
+			Set<String> list = grouped.get(depended);
 			if (list==null) {
-				list = new ArrayList<>();
+				list = new HashSet<>();
 				grouped.put(depended, list);
 			}
 			list.add(from);
