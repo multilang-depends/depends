@@ -60,8 +60,8 @@ public class UnsolvedSymbolDumper{
 	private void outputGrouped() {
 		HashMap<String, List<String>> grouped = new HashMap<String, List<String>>();
 		for (UnsolvedBindings symbol: unsolved) {
-			String from = leadingNameStripper.stripFilename(symbol.getSourceDisplay());
 			String depended = symbol.getRawName();
+			String from = leadingNameStripper.stripFilename(symbol.getSourceDisplay());
 			List<String> list = grouped.get(depended);
 			if (list==null) {
 				list = new ArrayList<>();

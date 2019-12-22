@@ -22,7 +22,7 @@ public class UnsolvedBindings {
 
 	public String getSourceDisplay() {
 		if (fromEntity==null) return "<not known>";
-		return fromEntity.getDisplayName();
+		return fromEntity.getQualifiedName();
 	}
 	@Override
 	public int hashCode() {
