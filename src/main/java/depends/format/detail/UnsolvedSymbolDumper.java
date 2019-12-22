@@ -27,7 +27,14 @@ package depends.format.detail;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import depends.extractor.UnsolvedBindings;
 import depends.matrix.transform.strip.LeadingNameStripper;
@@ -45,19 +52,45 @@ public class UnsolvedSymbolDumper{
 		this.leadingNameStripper = leadingNameStripper;
 	}
 
-	public boolean output() {
+	public void output() {
+		outputDetail();
+		outputGrouped();
+	}
+
+	private void outputGrouped() {
+		HashMap<String, List<String>> grouped = new HashMap<String, List<String>>();
+		for (UnsolvedBindings symbol: unsolved) {
+			String from = leadingNameStripper.stripFilename(symbol.getSourceDisplay());
+			String depended = symbol.getRawName();
+			List<String> list = grouped.get(depended);
+			if (list==null) {
+				list = new ArrayList<>();
+				grouped.put(depended, list);
+			}
+			list.add(from);
+		}
+		ObjectMapper om = new ObjectMapper();
+		om.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
+		om.configure(SerializationFeature.INDENT_OUTPUT, true);
+		om.setSerializationInclusion(Include.NON_NULL);
+		try {
+			om.writerWithDefaultPrettyPrinter().writeValue(new File(outputDir + File.separator + name +"-PotentialExternalDependencies.json"), grouped);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}	
+	}
+
+	private void outputDetail() {
 		PrintWriter writer;
 		try {
-			writer = new PrintWriter(outputDir + File.separator + name +"-unsolved.txt");
+			writer = new PrintWriter(outputDir + File.separator + name +"-PotentialExternalDependencies.txt");
 			for (UnsolvedBindings symbol: unsolved) {
 				String source = leadingNameStripper.stripFilename(symbol.getSourceDisplay());
             	writer.println(""+symbol.getRawName()+", "+source);
 			}
 			writer.close();
-			return true;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-			return false;
 		}
 	}
 

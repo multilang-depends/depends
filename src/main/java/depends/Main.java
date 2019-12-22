@@ -162,10 +162,12 @@ public class Main {
 		}
 		DependencyDumper output = new DependencyDumper(matrix);
 		output.outputResult(outputName,outputDir,outputFormat);
-		Set<UnsolvedBindings> unsolved = langProcessor.getUnsolved();
-    	UnsolvedSymbolDumper unsolvedSymbolDumper = new UnsolvedSymbolDumper(unsolved,app.getOutputName(),app.getOutputDir(),
-    			new LeadingNameStripper(app.isStripLeadingPath(),inputDir,app.getStrippedPaths()));
-    	unsolvedSymbolDumper.output();
+		if (app.isOutputExternalDependencies()) {
+			Set<UnsolvedBindings> unsolved = langProcessor.getExternalDependencies();
+	    	UnsolvedSymbolDumper unsolvedSymbolDumper = new UnsolvedSymbolDumper(unsolved,app.getOutputName(),app.getOutputDir(),
+	    			new LeadingNameStripper(app.isStripLeadingPath(),inputDir,app.getStrippedPaths()));
+	    	unsolvedSymbolDumper.output();
+		}
 		long endTime = System.currentTimeMillis();
 		TemporaryFile.getInstance().delete();
 		System.out.println("Consumed time: " + (float) ((endTime - startTime) / 1000.00) + " s,  or "

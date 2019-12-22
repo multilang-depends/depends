@@ -78,7 +78,9 @@ public class DependsCommand {
 	private boolean callAsImpl = false;	
 	@Option(names = {"--type-filter"},split=",",  completionCandidates = DependsCommand.SupportedTypes.class, description = "only filter the listed dependency types[${COMPLETION-CANDIDATES}]")
     private String[] typeFilter=new String[]{};
-    @Option(names = {"-h","--help"}, usageHelp = true, description = "display this help and exit")
+	@Option(names = {"--external-deps"}, description = "Output external dependencies")
+	private boolean outputExternalDependencies = false;	
+	@Option(names = {"-h","--help"}, usageHelp = true, description = "display this help and exit")
     boolean help;
 	public DependsCommand() {
 	}
@@ -151,5 +153,8 @@ public class DependsCommand {
 	}
 	public boolean isCallAsImpl() {
 		return callAsImpl;
+	}
+	public boolean isOutputExternalDependencies() {
+		return outputExternalDependencies;
 	}
 }

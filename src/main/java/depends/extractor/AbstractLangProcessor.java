@@ -89,7 +89,7 @@ abstract public class AbstractLangProcessor {
 	protected String inputSrcPath;
 	public String[] includeDirs;
 	private DependencyGenerator dependencyGenerator;
-	private Set<UnsolvedBindings> unsolved;
+	private Set<UnsolvedBindings> potentialExternalDependencies;
 	private List<String> typeFilter;
 
 	public AbstractLangProcessor(boolean eagerExpressionResolve) {
@@ -135,9 +135,9 @@ abstract public class AbstractLangProcessor {
 	 */
 	private void resolveBindings(boolean callAsImpl) {
 		System.out.println("Resolve types and bindings of variables, methods and expressions....");
-		this.unsolved = inferer.resolveAllBindings(callAsImpl,this);
-		if (getUnsolved().size() > 0) {
-			System.err.println("There are " + getUnsolved().size() + " items are unsolved.");
+		this.potentialExternalDependencies = inferer.resolveAllBindings(callAsImpl,this);
+		if (getExternalDependencies().size() > 0) {
+			System.out.println("There are " + getExternalDependencies().size() + " items are potential external dependencies.");
 		}
 		System.out.println("types and bindings resolved successfully...");
 	}
@@ -226,8 +226,8 @@ abstract public class AbstractLangProcessor {
 
 	public abstract List<String> supportedRelations();
 
-	public Set<UnsolvedBindings> getUnsolved() {
-		return unsolved;
+	public Set<UnsolvedBindings> getExternalDependencies() {
+		return potentialExternalDependencies;
 	}
 
 	public String getRelationMapping(String relation) {
