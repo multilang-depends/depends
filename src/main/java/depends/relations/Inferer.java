@@ -51,8 +51,6 @@ import depends.extractor.UnsolvedBindings;
 import depends.importtypes.Import;
 
 public class Inferer {
-	private static final Logger logger = LoggerFactory.getLogger(Inferer.class);
-
 	static final public TypeEntity buildInType = new TypeEntity(GenericName.build("built-in"), null, -1);
 	static final public TypeEntity externalType = new TypeEntity(GenericName.build("external"), null, -2);
 	static final public TypeEntity genericParameterType = new TypeEntity(GenericName.build("T"), null, -3);
@@ -161,10 +159,6 @@ public class Inferer {
 	public Entity resolveName(Entity fromEntity, GenericName rawName, boolean searchImport) {
 		if (rawName==null) return null;
 		Entity entity = resolveNameInternal(fromEntity,rawName,searchImport);
-		if (logger.isDebugEnabled()) {
-			logger.debug("resolve name " + rawName + " from " + fromEntity.getQualifiedName() +" ==> "
-						+ (entity==null?"null":entity.getQualifiedName()));
-		}
 		if (entity==null ||
 				entity.equals(externalType)) {
 			if (!this.buildInTypeManager.isBuiltInType(rawName.getName())) {
@@ -224,7 +218,7 @@ public class Inferer {
 		return findEntitySince(entity, names, names.length-indexCount);
 	}
 	
-	private Entity lookupEntity(Entity fromEntity, String name, boolean searcImport) {
+	private Entity lookupEntity(Entity fromEntity, String name, boolean searchImport) {
 		if (name.equals("this") || name.equals("class") ) {
 			TypeEntity entityType = (TypeEntity) (fromEntity.getAncestorOfType(TypeEntity.class));
 			return entityType;
@@ -241,7 +235,7 @@ public class Inferer {
 		if (inferData != null) {
 			return inferData;
 		}
-		if (searcImport)
+		if (searchImport)
 			inferData = lookupTypeInImported((FileEntity)(fromEntity.getAncestorOfType(FileEntity.class)), name);
 		return inferData;
 	}
