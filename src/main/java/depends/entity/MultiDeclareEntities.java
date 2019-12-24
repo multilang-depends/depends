@@ -37,6 +37,7 @@ import depends.relations.Inferer;
  */
 public class MultiDeclareEntities extends ContainerEntity {
 	List<ContainerEntity> entities = new ArrayList<>();
+	private boolean containsTypeEntity = false;
 	public MultiDeclareEntities(Entity entity, int id ) {
 		super(entity.getRawName(), entity.getParent(), id);
 		add(entity);
@@ -51,6 +52,7 @@ public class MultiDeclareEntities extends ContainerEntity {
 
 	public void add(Entity entity) {
 		entity.setMutliDeclare(this);
+		if (entity instanceof TypeEntity) this.containsTypeEntity = true;
 		if (entity instanceof ContainerEntity)
 			entities.add((ContainerEntity)entity);
 	}
@@ -75,5 +77,9 @@ public class MultiDeclareEntities extends ContainerEntity {
 				return entity.getType();
 		}
 		return null;
+	}
+
+	public boolean isContainsTypeEntity() {
+		return containsTypeEntity;
 	}
 }

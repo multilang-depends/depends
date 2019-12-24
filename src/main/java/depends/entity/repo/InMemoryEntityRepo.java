@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import depends.entity.Entity;
 import depends.entity.GenericName;
@@ -12,8 +14,8 @@ import depends.entity.MultiDeclareEntities;
 
 public class InMemoryEntityRepo extends SimpleIdGenerator implements EntityRepo {
 
-	private HashMap<String, Entity> allEntieisByName;
-	private HashMap<Integer, Entity> allEntitiesById;
+	private Map<String, Entity> allEntieisByName;
+	private Map<Integer, Entity> allEntitiesById;
 	private List<Entity> allEntitiesByOrder;
 
 	public InMemoryEntityRepo() {

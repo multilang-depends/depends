@@ -53,6 +53,7 @@ public abstract class ContainerEntity extends DecoratedEntity {
 	private ArrayList<FunctionEntity> functions;
 	WeakReference<HashMap<Object, Expression>> expressionWeakReference;
 	private ArrayList<Expression> expressionList;
+	private int expressionCount = 0;
 	private Collection<GenericName> mixins;
 	private Collection<ContainerEntity> resolvedMixins;
 
@@ -225,6 +226,8 @@ public abstract class ContainerEntity extends DecoratedEntity {
 	}
 	
 	private void cacheExpressionListToFile() {
+		expressionCount = this.expressionList.size();
+		if (expressionCount ==0) return;
 		try {
 			FileOutputStream fileOut = new FileOutputStream(TemporaryFile.getInstance().exprPath(this.id));
 			ObjectOutputStream out = new ObjectOutputStream(fileOut);
@@ -238,6 +241,7 @@ public abstract class ContainerEntity extends DecoratedEntity {
 
 	@SuppressWarnings("unchecked")
 	public void reloadExpression(EntityRepo repo) {
+		if (expressionCount ==0) return;
 		try
 	      {
 	         FileInputStream fileIn = new FileInputStream(TemporaryFile.getInstance().exprPath(this.id));

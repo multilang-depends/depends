@@ -72,6 +72,7 @@ public class GenericName implements Serializable{
 		return name.startsWith(prefix);
 	}
 	public String uniqName() {
+		if (arguments.size()==0) return name;
 		StringBuffer sb = new StringBuffer();
 		sb.append(name);
 		if (arguments.size()>0) {

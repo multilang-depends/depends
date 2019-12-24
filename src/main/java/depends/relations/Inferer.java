@@ -395,9 +395,13 @@ public class Inferer {
 		if (!fromEntity.getRawName().getName().equals(name))
 			return null;
 		if (fromEntity instanceof MultiDeclareEntities) {
-			for (Entity declaredEntitiy : ((MultiDeclareEntities) fromEntity).getEntities()) {
-				if (declaredEntitiy.getRawName().getName().equals(name) && declaredEntitiy instanceof TypeEntity) {
-					return declaredEntitiy;
+			MultiDeclareEntities multiDeclare = (MultiDeclareEntities) fromEntity;
+			if (multiDeclare.isContainsTypeEntity()) {
+				for (Entity declaredEntitiy :  multiDeclare.getEntities()) {
+					if (declaredEntitiy instanceof TypeEntity && 
+							declaredEntitiy.getRawName().getName().equals(name)) {
+						return declaredEntitiy;
+					}
 				}
 			}
 		}
