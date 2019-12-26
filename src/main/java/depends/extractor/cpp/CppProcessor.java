@@ -60,7 +60,7 @@ public class CppProcessor extends AbstractLangProcessor {
 	@Override
 	protected FileParser createFileParser(String fileFullPath) {
 		if (macroRepo == null) {
-			macroRepo = new MacroFileRepo(entityRepo);
+			macroRepo = new MacroEhcacheRepo(entityRepo);
 			macroRepo.buildDefaultMap(super.includePaths());
 		}
 		if (preprocessorHandler==null) {

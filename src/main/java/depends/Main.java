@@ -51,6 +51,7 @@ import depends.util.FileUtil;
 import depends.util.FolderCollector;
 import depends.util.TemporaryFile;
 import edu.emory.mathcs.backport.java.util.Arrays;
+import net.sf.ehcache.CacheManager;
 import picocli.CommandLine;
 import picocli.CommandLine.PicocliException;
 
@@ -170,6 +171,7 @@ public class Main {
 		}
 		long endTime = System.currentTimeMillis();
 		TemporaryFile.getInstance().delete();
+		CacheManager.create().shutdown();
 		System.out.println("Consumed time: " + (float) ((endTime - startTime) / 1000.00) + " s,  or "
 				+ (float) ((endTime - startTime) / 60000.00) + " min.");
 	}

@@ -23,7 +23,8 @@ public abstract class CppParserTest extends ParserTest{
     	preprocessorHandler = new PreprocessorHandler("./src/test/resources/cpp-code-examples/",new ArrayList<>());
     	TemporaryFile.reset();
 //    	macroRepo = new MacroMemoryRepo();
-    	macroRepo = new MacroFileRepo(repo);
+//    	macroRepo = new MacroFileRepo(repo);
+    	macroRepo = new MacroEhcacheRepo(repo);
 
     }
 	

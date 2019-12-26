@@ -19,8 +19,8 @@ public class InMemoryEntityRepo extends SimpleIdGenerator implements EntityRepo 
 	private List<Entity> allEntitiesByOrder;
 
 	public InMemoryEntityRepo() {
-		allEntieisByName = new HashMap<>();
-		allEntitiesById = new HashMap<>();
+		allEntieisByName = new TreeMap<>();
+		allEntitiesById = new TreeMap<>();
 		allEntitiesByOrder = new LinkedList<>();
 	}
 

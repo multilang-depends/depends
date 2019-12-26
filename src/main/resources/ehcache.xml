@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd">
+    <!-- 磁盘缓存位置 -->
+    <diskStore path="java.io.tmpdir/depends"/>
+
+    <!-- 默认缓存 -->
+    <defaultCache
+           maxBytesLocalHeap="512m"
+           eternal="true"
+           maxEntriesLocalDisk="0"
+           timeToIdleSeconds="120"
+           timeToLiveSeconds="120"
+           overflowToDisk="true"
+           memoryStoreEvictionPolicy="LRU"/>
+
+    <cache name="macros"
+           maxElementsInMemory="100"
+           eternal="true"
+           overflowToDisk="true"
+           memoryStoreEvictionPolicy="LRU"/>
+	</ehcache>
