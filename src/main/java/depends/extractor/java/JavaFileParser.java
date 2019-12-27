@@ -35,6 +35,8 @@ import org.antlr.v4.runtime.atn.ParserATNSimulator;
 import org.antlr.v4.runtime.atn.PredictionContextCache;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
+import depends.entity.Entity;
+import depends.entity.FileEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.java.JavaLexer;
 import depends.extractor.java.JavaParser;
@@ -63,6 +65,9 @@ public class JavaFileParser implements depends.extractor.FileParser{
 	    ParseTreeWalker walker = new ParseTreeWalker();
 	    try {
 	    	walker.walk(bridge, parser.compilationUnit());
+			Entity fileEntity = entityRepo.getEntity(fileFullPath);
+			((FileEntity)fileEntity).cacheAllExpressions();
+	    	
 	    }catch (Exception e) {
 	    	System.err.println("error encountered during parse..." );
 	    	e.printStackTrace();

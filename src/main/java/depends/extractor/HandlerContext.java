@@ -297,13 +297,6 @@ public abstract class HandlerContext {
 	
 	
 	public void exitLastedEntity() {
-		Entity e = entityStack.peek();
-		if (e instanceof ContainerEntity) {
-			ContainerEntity container = (ContainerEntity)e;
-			if (!inferer.isEagerExpressionResolve()) {
-				container.cacheExpressions();
-			}
-		}
 		//we never pop up the lastest one (FileEntity)
 		if (entityStack.size()>1)
 			entityStack.pop();

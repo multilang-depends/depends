@@ -88,6 +88,8 @@ public class CdtCppFileParser extends CppFileParser {
 		}
 		macroRepo.putMacros(this.fileFullPath,macroMap,tu.getMacroDefinitions());
 		tu.accept(bridge);
+		fileEntity = entityRepo.getEntity(fileFullPath);
+		((FileEntity)fileEntity).cacheAllExpressions();
 		return;
 	}
 	
