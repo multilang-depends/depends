@@ -88,7 +88,7 @@ public class Inferer {
 	}
 	
 	private void resolveTypes() {
-		Iterator<Entity> iterator = repo.entityIterator();
+		Iterator<Entity> iterator = repo.sortedFileIterator();
 		while(iterator.hasNext()) {
 			Entity entity= iterator.next();
 			if (!(entity instanceof FileEntity)) continue;
@@ -415,7 +415,7 @@ public class Inferer {
 
 	private List<TypeEntity> searchTypesInRepo(VarEntity fromEntity, List<FunctionCall> functionCalls) {
 		List<TypeEntity> types = new ArrayList<>();
-		Iterator<Entity> iterator = repo.entityIterator();
+		Iterator<Entity> iterator = repo.sortedFileIterator();
 		while(iterator.hasNext()) {
 			Entity f = iterator.next();
 			if (f instanceof FileEntity)

@@ -39,7 +39,8 @@ public class MultiDeclareEntities extends ContainerEntity {
 	List<ContainerEntity> entities = new ArrayList<>();
 	private boolean containsTypeEntity = false;
 	public MultiDeclareEntities(Entity entity, int id ) {
-		super(entity.getRawName(), entity.getParent(), id);
+		setQualifiedName(entity.getQualifiedName());
+		setRawName(entity.getRawName());
 		add(entity);
 	}
 

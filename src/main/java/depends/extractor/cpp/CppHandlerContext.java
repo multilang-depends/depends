@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import depends.entity.Entity;
+import depends.entity.FileEntity;
 import depends.entity.FunctionEntity;
 import depends.entity.FunctionEntityProto;
 import depends.entity.FunctionEntityImpl;
@@ -68,4 +69,18 @@ public class CppHandlerContext extends HandlerContext {
 		super.pushToStack(functionEntity);
 		return functionEntity;		
 	}
+
+	public void doneFile(FileEntity currentFile) {
+		entityRepo.addFile(currentFileEntity);
+	}
+
+	@Override
+	public FileEntity startFile(String fileName) {
+		currentFileEntity = new FileEntity(fileName, idGenerator.generateId(),true);
+		pushToStack(currentFileEntity);
+		entityRepo.add(currentFileEntity);
+		return currentFileEntity;
+	}
+	
+	
 }

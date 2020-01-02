@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import depends.entity.Entity;
+import depends.entity.FileEntity;
 import depends.entity.GenericName;
 
 public interface EntityRepo extends IdGenerator {
@@ -46,6 +47,10 @@ public interface EntityRepo extends IdGenerator {
 	void update(Entity entity);
 
 	Collection<Entity> getEntities();
+
+	Iterator<Entity> sortedFileIterator();
+
+	void addFile(FileEntity currentFileEntity);
 
 
 

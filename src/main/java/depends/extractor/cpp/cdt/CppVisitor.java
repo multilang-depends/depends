@@ -82,6 +82,7 @@ public class CppVisitor  extends ASTVisitor {
 	Inferer inferer;
 	private ExpressionUsage expressionUsage;
 	HashSet<String> file;
+	private String fileFullPath;
 	public CppVisitor(String fileFullPath, EntityRepo entityRepo, PreprocessorHandler preprocessorHandler,Inferer inferer) {
 		super(true);
 		this.shouldVisitAmbiguousNodes = true;
@@ -92,17 +93,19 @@ public class CppVisitor  extends ASTVisitor {
 		this.context = new CppHandlerContext(entityRepo,inferer);
 		idGenerator = entityRepo;
 		this.inferer = inferer;
-		context.startFile(fileFullPath);
 		this.preprocessorHandler = preprocessorHandler;
 		expressionUsage = new ExpressionUsage(context,entityRepo);
-		logger.info("enter file " + fileFullPath);
+		this.fileFullPath = fileFullPath;
 		file = new HashSet<>();
+		context.startFile(fileFullPath);
+		logger.info("enter file " + fileFullPath);
 		file.add(this.context.currentFile().getQualifiedName());
-		
 	}
 
 	@Override
 	public int visit(IASTTranslationUnit tu) {
+		context.doneFile(context.currentFile());
+
 		for (String incl:preprocessorHandler.getDirectIncludedFiles(tu.getAllPreprocessorStatements(),context.currentFile().getQualifiedName())) {
 			context.foundNewImport(new FileImport(incl));
 		}

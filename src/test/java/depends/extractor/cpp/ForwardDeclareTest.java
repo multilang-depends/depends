@@ -15,9 +15,9 @@ public class ForwardDeclareTest extends CppParserTest{
 	@Test
 	public void should_slove_forward_declare_in_cpp() throws IOException {
 	    String[] srcs = new String[] {
+	    		"./src/test/resources/cpp-code-examples/forwardDeclare/App.cpp",
 	    		"./src/test/resources/cpp-code-examples/forwardDeclare/Mutex.h",
 	    		"./src/test/resources/cpp-code-examples/forwardDeclare/App.h",
-	    		"./src/test/resources/cpp-code-examples/forwardDeclare/App.cpp",
 	    	    };
 	    
 	    for (String src:srcs) {

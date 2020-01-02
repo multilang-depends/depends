@@ -1,27 +1,49 @@
 package depends.entity.repo;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
 
 import depends.entity.Entity;
+import depends.entity.FileEntity;
 import depends.entity.GenericName;
 import depends.entity.MultiDeclareEntities;
 
+
 public class InMemoryEntityRepo extends SimpleIdGenerator implements EntityRepo {
 
+	public class EntityＭapIterator implements Iterator<Entity>{
+
+		private Iterator<Entry<Integer, Entity>> entryIterator;
+
+		public EntityＭapIterator(Set<Entry<Integer, Entity>> entries) {
+			this.entryIterator = entries.iterator();
+		}
+		@Override
+		public boolean hasNext() {
+			return entryIterator.hasNext();
+		}
+
+		@Override
+		public Entity next() {
+			return entryIterator.next().getValue();
+		}
+		
+	}
+	
 	private Map<String, Entity> allEntieisByName;
 	private Map<Integer, Entity> allEntitiesById;
-	private List<Entity> allEntitiesByOrder;
+	private List<Entity> allFileEntitiesByOrder;
 
 	public InMemoryEntityRepo() {
 		allEntieisByName = new TreeMap<>();
 		allEntitiesById = new TreeMap<>();
-		allEntitiesByOrder = new LinkedList<>();
+		allFileEntitiesByOrder = new LinkedList<>();
 	}
 
 	@Override
@@ -36,7 +58,6 @@ public class InMemoryEntityRepo extends SimpleIdGenerator implements EntityRepo 
 
 	@Override
 	public void add(Entity entity) {
-		allEntitiesByOrder.add(entity);
 		allEntitiesById.put(entity.getId(), entity);
 		String name = entity.getRawName().uniqName();
 		if (entity.getQualifiedName() != null && !(entity.getQualifiedName().isEmpty())) {
@@ -60,7 +81,7 @@ public class InMemoryEntityRepo extends SimpleIdGenerator implements EntityRepo 
 
 	@Override
 	public Iterator<Entity> entityIterator() {
-		return allEntitiesByOrder.iterator();
+		return new EntityＭapIterator(allEntitiesById.entrySet());
 	}
 
 	
@@ -75,7 +96,17 @@ public class InMemoryEntityRepo extends SimpleIdGenerator implements EntityRepo 
 
 	@Override
 	public Collection<Entity> getEntities() {
-		return allEntitiesByOrder;
+		return allEntitiesById.values();
+	}
+
+	@Override
+	public Iterator<Entity> sortedFileIterator() {
+		return allFileEntitiesByOrder.iterator();
+	}
+
+	@Override
+	public void addFile(FileEntity fileEntity) {
+		allFileEntitiesByOrder.add(fileEntity);
 	}
 
 }
