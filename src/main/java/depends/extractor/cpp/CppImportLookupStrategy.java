@@ -26,7 +26,6 @@ package depends.extractor.cpp;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -42,8 +41,6 @@ import depends.relations.ImportLookupStrategy;
 import depends.relations.Inferer;
 
 public class CppImportLookupStrategy implements ImportLookupStrategy {
-	HashMap<Integer, HashSet<String>> includedFiles = new HashMap<>();
-
 	@Override
 	public Entity lookupImportedType(String name, FileEntity fileEntity, EntityRepo repo, Inferer inferer) {
 		String importedString = fileEntity.importedSuffixMatch(name);
@@ -52,8 +49,8 @@ public class CppImportLookupStrategy implements ImportLookupStrategy {
 			if (r!=null) return r;
 		}
 		
-		
-		HashSet<String> fileSet = findIncludedFiles(fileEntity, repo);
+		HashSet<String> fileSet = new HashSet<>();
+		foundIncludedFiles(fileSet, fileEntity.getImportedFiles(),repo);
 		
 		for (String file:fileSet) {
 			Entity importedItem = repo.getEntity(file);
@@ -71,15 +68,6 @@ public class CppImportLookupStrategy implements ImportLookupStrategy {
 			}	
 		}		
 		return null;
-	}
-
-	private HashSet<String> findIncludedFiles(FileEntity fileEntity, EntityRepo repo) {
-		HashSet<String> fileSet = this.includedFiles.get(fileEntity.getId());
-		if (fileSet!=null) return fileSet;
-		fileSet = new HashSet<>();
-		foundIncludedFiles(fileSet, fileEntity.getImportedFiles(),repo);
-		includedFiles.put(fileEntity.getId(),fileSet);
-		return fileSet;
 	}
 
 	private void foundIncludedFiles(HashSet<String> fileSet, Collection<Entity> importedFiles, EntityRepo repo) {
