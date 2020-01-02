@@ -20,6 +20,7 @@ public class UnsolvedSymbolsTest extends JavaParserTest {
         String src = "./src/test/resources/java-code-examples/UnsolvedSymbols/MissingImport.java";
         JavaFileParser parser = createParser(src);
         parser.parse();
+        inferer.setCollectUnsolvedBindings(true);
         Set<UnsolvedBindings> missing = inferer.resolveAllBindings();
         assertEquals(1,missing.size());
         assertEquals("a.b",missing.iterator().next().getRawName());

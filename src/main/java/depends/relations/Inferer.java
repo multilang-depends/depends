@@ -60,6 +60,7 @@ public class Inferer {
 	private EntityRepo repo;
 
 	private boolean eagerExpressionResolve = false;
+	private boolean isCollectUnsolvedBindings = false;
 
 	public Inferer(EntityRepo repo, ImportLookupStrategy importLookupStrategy, BuiltInType buildInTypeManager, boolean eagerExpressionResolve) {
 		this.repo = repo;
@@ -122,9 +123,14 @@ public class Inferer {
 		Collection<Entity> result = importLookupStrategy.getImportedTypes(importedNames, repo,unsolved);
 		for (UnsolvedBindings item:unsolved) {
 			item.setFromEntity(fileEntity);
-			this.unsolvedSymbols.add(item);
+			addUnsolvedBinding(item);
 		}
 		return result;
+	}
+
+	private void addUnsolvedBinding(UnsolvedBindings item) {
+		if (!isCollectUnsolvedBindings) return;
+		 	this.unsolvedSymbols.add(item);
 	}
 
 	public Collection<Entity> getImportedFiles(List<Import> importedNames) {
@@ -162,7 +168,7 @@ public class Inferer {
 		if (entity==null ||
 				entity.equals(externalType)) {
 			if (!this.buildInTypeManager.isBuiltInType(rawName.getName())) {
-				this.unsolvedSymbols.add(new UnsolvedBindings(rawName.getName(), fromEntity));
+				addUnsolvedBinding(new UnsolvedBindings(rawName.getName(), fromEntity));
 			}
 		}
 		return entity;
@@ -431,6 +437,10 @@ public class Inferer {
 
 	public boolean isEagerExpressionResolve() {
 		return eagerExpressionResolve;
+	}
+
+	public void setCollectUnsolvedBindings(boolean isCollectUnsolvedBindings) {
+		this.isCollectUnsolvedBindings  = isCollectUnsolvedBindings;
 	}
 
 

@@ -91,6 +91,7 @@ abstract public class AbstractLangProcessor {
 	private DependencyGenerator dependencyGenerator;
 	private Set<UnsolvedBindings> potentialExternalDependencies;
 	private List<String> typeFilter;
+	private List<String> includePaths;
 
 	public AbstractLangProcessor(boolean eagerExpressionResolve) {
 		entityRepo = new InMemoryEntityRepo();
@@ -104,11 +105,13 @@ abstract public class AbstractLangProcessor {
 	 * 
 	 * @param includeDir
 	 * @param inputDir
+	 * @param b 
 	 */
-	public void buildDependencies(String inputDir, String[] includeDir, List<String> typeFilter, boolean callAsImpl) {
+	public void buildDependencies(String inputDir, String[] includeDir, List<String> typeFilter, boolean callAsImpl, boolean isCollectUnsolvedBindings) {
 		this.inputSrcPath = inputDir;
 		this.includeDirs = includeDir;
 		this.typeFilter = typeFilter;
+		this.inferer.setCollectUnsolvedBindings(isCollectUnsolvedBindings);
 		parseAllFiles();
 		markAllEntitiesScope();
 		resolveBindings(callAsImpl);
@@ -197,19 +200,28 @@ abstract public class AbstractLangProcessor {
 	}
 
 	public List<String> includePaths() {
-		ArrayList<String> r = new ArrayList<String>();
+		if (this.includePaths ==null) {
+			this.includePaths = buildIncludePath();
+		}
+		return includePaths;
+	}
+
+	private List<String> buildIncludePath() {
+		includePaths = new ArrayList<String>();
 		for (String path : includeDirs) {
 			if (FileUtils.fileExists(path)) {
-				if (!r.contains(path))
-					r.add(path);
+				path = FileUtil.uniqFilePath(path);
+				if (!includePaths.contains(path))
+					includePaths.add(path);
 			}
 			path = this.inputSrcPath + File.separator + path;
 			if (FileUtils.fileExists(path)) {
-				if (!r.contains(path))
-					r.add(path);
+				path = FileUtil.uniqFilePath(path);
+				if (!includePaths.contains(path))
+					includePaths.add(path);
 			}
 		}
-		return r;
+		return includePaths;
 	}
 
 	public DependencyMatrix getDependencies() {

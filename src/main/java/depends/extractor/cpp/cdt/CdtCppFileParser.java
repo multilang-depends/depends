@@ -73,7 +73,7 @@ public class CdtCppFileParser extends CppFileParser {
 		}
 		
 		CppVisitor bridge = new CppVisitor(fileFullPath, entityRepo, preprocessorHandler,inferer);
-		IASTTranslationUnit tu = (new CDTParser()).parse(fileFullPath,macroMap);
+		IASTTranslationUnit tu = (new CDTParser(preprocessorHandler.getIncludePaths())).parse(fileFullPath,macroMap);
 		boolean containsIncludes = false;
 		for (String incl:preprocessorHandler.getDirectIncludedFiles(tu.getAllPreprocessorStatements(),fileFullPath)) {
 			CdtCppFileParser importedParser = new CdtCppFileParser(incl, entityRepo, preprocessorHandler,inferer,macroRepo);
@@ -84,7 +84,7 @@ public class CdtCppFileParser extends CppFileParser {
 			containsIncludes = true;
 		}
 		if (containsIncludes) {
-			tu = (new CDTParser()).parse(fileFullPath,macroMap);
+			tu = (new CDTParser(preprocessorHandler.getIncludePaths())).parse(fileFullPath,macroMap);
 		}
 		macroRepo.putMacros(this.fileFullPath,macroMap,tu.getMacroDefinitions());
 		tu.accept(bridge);

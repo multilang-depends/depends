@@ -17,10 +17,15 @@ import depends.util.FileUtil;
 
 public abstract class MacroRepo {
 	private Map<String, String> defaultMacroMap = new HashMap<>();
+	/**
+	 * Generate default macro from system include paths
+	 * @param sysIncludePath
+	 * @return
+	 */
 	public Map<String, String> buildDefaultMap(List<String> sysIncludePath) {
 		for (String p : sysIncludePath) {
 			if (!FileUtil.isDirectory(p)) {
-				IScanner scanner = Scanner.buildScanner(p,defaultMacroMap);
+				IScanner scanner = Scanner.buildScanner(p,defaultMacroMap, sysIncludePath, true);
 				if (scanner==null) continue;
 				AbstractGNUSourceCodeParser sourceCodeParser = new GNUCPPSourceParser(scanner,
 						ParserMode.COMPLETE_PARSE, new NullLogService(), new GPPParserExtensionConfigurationExtension(),

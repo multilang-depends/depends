@@ -42,7 +42,6 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -82,23 +81,19 @@ public class CppVisitor  extends ASTVisitor {
 	Inferer inferer;
 	private ExpressionUsage expressionUsage;
 	HashSet<String> file;
-	private String fileFullPath;
 	public CppVisitor(String fileFullPath, EntityRepo entityRepo, PreprocessorHandler preprocessorHandler,Inferer inferer) {
 		super(true);
 		this.shouldVisitAmbiguousNodes = true;
 		this.shouldVisitImplicitNames = true;
 		this.includeInactiveNodes = true;
-		this.shouldVisitTokens = true;
 		
 		this.context = new CppHandlerContext(entityRepo,inferer);
 		idGenerator = entityRepo;
 		this.inferer = inferer;
 		this.preprocessorHandler = preprocessorHandler;
 		expressionUsage = new ExpressionUsage(context,entityRepo);
-		this.fileFullPath = fileFullPath;
 		file = new HashSet<>();
 		context.startFile(fileFullPath);
-		logger.info("enter file " + fileFullPath);
 		file.add(this.context.currentFile().getQualifiedName());
 	}
 

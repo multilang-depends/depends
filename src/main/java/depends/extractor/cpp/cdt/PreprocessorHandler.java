@@ -98,9 +98,6 @@ public class PreprocessorHandler {
 		return includedFullPathNames;
 	}
 	private String resolveInclude(IASTPreprocessorIncludeStatement incl) {
-		if (incl.isResolved() && !StringUtils.isEmpty(incl.getPath())) 
-			return FileUtil.uniqFilePath(incl.getPath());
-		//try to find path by our self
 		String path = incl.toString();
 		int pos = path.indexOf(' ');
 		path = path.substring(pos+1).trim();
