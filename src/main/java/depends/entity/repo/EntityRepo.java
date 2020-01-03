@@ -46,7 +46,7 @@ public interface EntityRepo extends IdGenerator {
 
 	void update(Entity entity);
 
-	Collection<Entity> getEntities();
+	Collection<Entity> getFileEntities();
 
 	Iterator<Entity> sortedFileIterator();
 

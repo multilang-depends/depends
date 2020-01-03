@@ -46,14 +46,14 @@ import depends.extractor.AbstractLangProcessor;
 
 public class RelationCounter {
 
-	private Iterator<Entity> iterator;
+	private Collection<Entity> entities;
 	private Inferer inferer;
 	private EntityRepo repo;
 	private boolean callAsImpl;
 	private AbstractLangProcessor langProcessor;
 
-	public RelationCounter(Iterator<Entity> iterator, Inferer inferer, EntityRepo repo, boolean callAsImpl, AbstractLangProcessor langProcessor) {
-		this.iterator = iterator;
+	public RelationCounter(Collection<Entity> iterator, Inferer inferer, EntityRepo repo, boolean callAsImpl, AbstractLangProcessor langProcessor) {
+		this.entities = iterator;
 		this.inferer = inferer;
 		this.repo = repo;
 		this.callAsImpl = callAsImpl;
@@ -61,22 +61,26 @@ public class RelationCounter {
 	}
 	
 	public void computeRelations() {
-		while(iterator.hasNext()) {
-			Entity entity= iterator.next();
-			if (!entity.inScope()) continue;
-			if (entity instanceof FileEntity) {
-				computeImports((FileEntity)entity);
-			}
-			else if (entity instanceof FunctionEntity) {
-				computeFunctionRelations((FunctionEntity)entity);
-			}
-			else if (entity instanceof TypeEntity) {
-				computeTypeRelations((TypeEntity)entity);
-			}
-			if (entity instanceof ContainerEntity) {
-				computeContainerRelations((ContainerEntity)entity);
-			}
+		entities.forEach(entity->
+		computeRelationOf(entity));
+	}
+
+	private void computeRelationOf(Entity entity) {
+		if (!entity.inScope())
+			return;
+		if (entity instanceof FileEntity) {
+			computeImports((FileEntity)entity);
 		}
+		else if (entity instanceof FunctionEntity) {
+			computeFunctionRelations((FunctionEntity)entity);
+		}
+		else if (entity instanceof TypeEntity) {
+			computeTypeRelations((TypeEntity)entity);
+		}
+		if (entity instanceof ContainerEntity) {
+			computeContainerRelations((ContainerEntity)entity);
+		}
+		entity.getChildren().forEach(child->computeRelationOf(child));
 	}
 
 	

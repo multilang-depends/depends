@@ -51,9 +51,9 @@ public class CppImportLookupStrategy implements ImportLookupStrategy {
 			if (r!=null) return r;
 		}
 		
-		HashSet<String> fileSet = getIncludedFiles(fileEntity);
+		HashSet<Integer> fileSet = getIncludedFiles(fileEntity);
 		
-		for (String file:fileSet) {
+		for (Integer file:fileSet) {
 			Entity importedItem = repo.getEntity(file);
 			if (importedItem instanceof FileEntity) {
 				FileEntity importedFile = (FileEntity) repo.getEntity(file);
@@ -71,24 +71,24 @@ public class CppImportLookupStrategy implements ImportLookupStrategy {
 		return null;
 	}
 
-	private Map<Integer, HashSet<String> > includedFiles  = new HashMap<>();
-	private  HashSet<String> getIncludedFiles(FileEntity fileEntity) {
+	private Map<Integer, HashSet<Integer> > includedFiles  = new HashMap<>();
+	private  HashSet<Integer> getIncludedFiles(FileEntity fileEntity) {
 
 		if (includedFiles.containsKey(fileEntity.getId())) {
 				return includedFiles.get(fileEntity.getId());
 		}
-		HashSet<String> fileSet = new HashSet<>();
+		HashSet<Integer> fileSet = new HashSet<>();
 		foundIncludedFiles(fileSet, fileEntity.getImportedFiles());
 		includedFiles.put(fileEntity.getId(), fileSet);
 		return fileSet;
 	}
 
-	private void foundIncludedFiles(HashSet<String> fileSet, Collection<Entity> importedFiles) {
+	private void foundIncludedFiles(HashSet<Integer> fileSet, Collection<Entity> importedFiles) {
 		for (Entity file:importedFiles) {
 			if (file==null ) continue;
 			if (!(file instanceof FileEntity)) continue;
-			if (fileSet.contains(file.getRawName().uniqName())) continue;
-			fileSet.add(file.getRawName().uniqName());
+			if (fileSet.contains(file.getId())) continue;
+			fileSet.add(file.getId());
 			foundIncludedFiles(fileSet,((FileEntity)file).getImportedFiles());
 		}
 	}

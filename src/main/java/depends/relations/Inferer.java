@@ -78,7 +78,7 @@ public class Inferer {
 		resolveTypes();
 		logger.warn("debug: Dependency analaysing...");
 		System.out.println("Dependency analaysing....");
-		new RelationCounter(repo.entityIterator(),this,repo,callAsImpl,langProcessor).computeRelations();
+		new RelationCounter(repo.getFileEntities(),this,repo,callAsImpl,langProcessor).computeRelations();
 		System.out.println("Dependency done....");
 		logger.warn("debug: Dependency done...");
 		return unsolvedSymbols;		
