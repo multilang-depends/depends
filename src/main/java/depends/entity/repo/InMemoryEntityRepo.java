@@ -95,8 +95,8 @@ public class InMemoryEntityRepo extends SimpleIdGenerator implements EntityRepo 
 	}
 
 	@Override
-	public Collection<Entity> getEntities() {
-		return allEntitiesById.values();
+	public Collection<Entity> getFileEntities() {
+		return allFileEntitiesByOrder;
 	}
 
 	@Override

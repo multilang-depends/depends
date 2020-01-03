@@ -119,7 +119,7 @@ abstract public class AbstractLangProcessor {
 	}
 
 	private void markAllEntitiesScope() {
-		entityRepo.getEntities().stream().forEach(entity -> {
+		entityRepo.getFileEntities().stream().forEach(entity -> {
 			Entity file = entity.getAncestorOfType(FileEntity.class);
 			try {
 				if (!file.getQualifiedName().startsWith(this.inputSrcPath)) {

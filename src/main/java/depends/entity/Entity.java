@@ -248,9 +248,12 @@ public abstract class Entity {
 			return false;
 		return true;
 	}
+	
 	public void setInScope(boolean value) {
 		this.inScope  = value;
+		children().forEach(child->child.setInScope(value));
 	}
+	
 	public boolean inScope() {
 		return inScope;
 	}
