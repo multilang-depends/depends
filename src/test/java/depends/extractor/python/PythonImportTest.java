@@ -137,4 +137,17 @@ public class PythonImportTest extends PythonParserTest {
 		this.assertContainsRelation(repo.getEntity(FileUtil.uniqFilePath(srcs[2])), DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[1]));
 		this.assertContainsRelation(repo.getEntity(FileUtil.uniqFilePath(srcs[3])), DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[1]));
 	}
+	
+	@Test
+	public void should_parse_import_with_prefix_dots2() throws IOException {
+		String[] srcs = new String[] {
+	    		"./src/test/resources/python-code-examples/import_with_dir/subdir/importing2.py",
+	    	    };
+	    
+	    for (String src:srcs) {
+		    PythonFileParser parser = createParser(src);
+		    parser.parse();
+	    }
+	    inferer.resolveAllBindings();
+	}
 }

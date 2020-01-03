@@ -26,6 +26,7 @@ package depends.entity;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 
 import depends.relations.Inferer;
 
@@ -179,4 +180,23 @@ public class TypeEntity extends ContainerEntity {
 	public TypeEntity getType() {
 		return this;
 	}
+	@Override
+	public Entity getByName(String name, HashSet<Entity> searched) {
+		Entity entity = super.getByName(name, searched);
+		if (entity!=null)
+			return entity;
+		for (TypeEntity child:getInheritedTypes()) {
+			if (searched.contains(child)) continue;
+			entity = child.getByName(name, searched);
+			if (entity!=null) return entity;
+		}
+		for (TypeEntity child:getImplementedTypes()) {
+			if (searched.contains(child)) continue;
+			entity = child.getByName(name,searched);
+			if (entity!=null) return entity;
+		}
+		return null;
+	}
+	
+	
 }

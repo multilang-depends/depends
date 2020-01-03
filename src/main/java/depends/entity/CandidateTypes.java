@@ -27,6 +27,7 @@ package depends.entity;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import depends.relations.Inferer;
@@ -302,5 +303,18 @@ public class CandidateTypes extends TypeEntity {
 		System.err.println("error: getDisplayName should not been invoked");
 		return super.getDisplayName();
 	}
+	@Override
+	public Entity getByName(String name, HashSet<Entity> searched) {
+		Entity entity = super.getByName(name, searched);
+		if (entity!=null) return entity;
+		for (TypeEntity type:getCandidateTypes()) {
+			if (searched.contains(type)) continue;
+			Entity e = type.getByName(name, searched);
+			if (e !=null) return e;
+		}
+		return null;
+	}
+	
+	
  	
 }

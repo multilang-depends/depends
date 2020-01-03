@@ -26,6 +26,7 @@ package depends.entity;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import depends.relations.Inferer;
@@ -82,5 +83,20 @@ public class MultiDeclareEntities extends ContainerEntity {
 
 	public boolean isContainsTypeEntity() {
 		return containsTypeEntity;
+	}
+
+	@Override
+	public Entity getByName(String name, HashSet<Entity> searched) {
+		Entity entity = super.getByName(name, searched);
+		if (entity!=null) return entity;
+		if (isContainsTypeEntity()) {
+			for (Entity declaredEntitiy : getEntities()) {
+				if (declaredEntitiy instanceof TypeEntity && 
+						declaredEntitiy.getRawName().getName().equals(name)) {
+					return declaredEntitiy;
+				}
+			}
+		}
+		return null;
 	}
 }

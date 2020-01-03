@@ -26,6 +26,7 @@ package depends.entity;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -153,4 +154,29 @@ public class FileEntity extends TypeEntity {
 			}
 		}
 	}
+	
+	
+	@Override
+	public Entity getByName(String name, HashSet<Entity> searched) {
+		Entity entity = super.getByName(name, searched);
+		if (entity!=null) return entity;
+		for (TypeEntity type:getDeclaredTypes()) {
+			if (type.getRawName().getName().equals(name)||
+				suffixMatch(name,type.getQualifiedName())) {
+				return type;
+			}
+		}
+		return null;
+	}
+	
+	private boolean suffixMatch(String name, String qualifiedName) {
+		if (qualifiedName.contains(".")) {
+			if (!name.startsWith(".")) name = "." +name;
+			return qualifiedName.endsWith(name);
+		}
+		else {
+			return qualifiedName.equals(name);
+		}
+	}
+
 }

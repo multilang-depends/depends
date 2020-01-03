@@ -26,6 +26,7 @@ package depends.entity;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -50,7 +51,7 @@ public abstract class Entity {
     ArrayList<Relation> relations;
 	private Entity actualReferTo = null;
 	private boolean inScope = true;
-
+	private HashMap<String, Entity> visibleNames = new HashMap<>();
 	public Entity() {};
     public Entity(GenericName rawName, Entity parent, Integer id) {
 		this.qualifiedName = null;
@@ -58,8 +59,10 @@ public abstract class Entity {
 		this.parent = parent;
 		this.id = id;
 		if (parent!=null)
-			parent.children().add(this);
+			parent.addChild(this);
 		deduceQualifiedName();
+		visibleNames.put(rawName.getName(), this);
+		visibleNames.put(qualifiedName, this);
 	}
 
     private Set<Entity> children() {
@@ -117,7 +120,9 @@ public abstract class Entity {
     }
 
     public void addChild(Entity child) {
-        children().add(child);
+    	children().add(child);
+		visibleNames.put(child.getRawName().getName(), child);
+		visibleNames.put(child.getQualifiedName(), child);
     }
 
 	public Entity getParent() {
@@ -248,6 +253,11 @@ public abstract class Entity {
 	}
 	public boolean inScope() {
 		return inScope;
+	}
+	public Entity getByName(String name, HashSet<Entity> searched) {
+		if (searched.contains(this)) return null;
+		searched.add(this);
+		return visibleNames.get(name);
 	}
 	
 }

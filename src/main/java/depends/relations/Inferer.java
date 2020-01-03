@@ -31,16 +31,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import depends.entity.CandidateTypes;
 import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.FunctionCall;
 import depends.entity.GenericName;
-import depends.entity.MultiDeclareEntities;
-import depends.entity.PackageEntity;
 import depends.entity.TypeEntity;
 import depends.entity.VarEntity;
 import depends.entity.repo.BuiltInType;
@@ -236,7 +230,6 @@ public class Inferer {
 					return parentType;
 			}
 		}
-
 		Entity inferData = findEntityUnderSamePackage(fromEntity, name);
 		if (inferData != null) {
 			return inferData;
@@ -291,56 +284,8 @@ public class Inferer {
 	 */
 	private Entity findEntityUnderSamePackage(Entity fromEntity, String name) {
 		while (true) {
-			Entity entity = tryToFindEntityWithName(fromEntity, name);
-			if (entity != null)
-				return entity;
-			entity = findEntityInChild(fromEntity,name);
+			Entity entity = fromEntity.getByName(name, new HashSet<>());
 			if (entity!=null) return entity;
-			
-			Collection<TypeEntity> searchedTypes = new ArrayList<>();
-			if (fromEntity instanceof TypeEntity) {
-				TypeEntity type = (TypeEntity)fromEntity;
-				while(true) {
-					if (searchedTypes.contains(type)) break;
-					searchedTypes.add(type);
-					if (type.getInheritedTypes().size()==0) break;
-					for (TypeEntity child:type.getInheritedTypes()) {
-						entity = findEntityInChild(child,name);
-						if (entity!=null) return entity;
-						type = child;
-					}
-				}
-				while(true) {
-					if (searchedTypes.contains(type)) break;
-					searchedTypes.add(type);
-					if (type.getImplementedTypes().size()==0) break;
-					for (TypeEntity child:type.getImplementedTypes()) {
-						entity = findEntityInChild(child,name);
-						if (entity!=null) return entity;
-						type = child;
-					}
-				}
-			}
-			
-			if (fromEntity instanceof FileEntity) {
-				FileEntity file = (FileEntity)fromEntity;
-				for (TypeEntity type:file.getDeclaredTypes()) {
-					if (type.getRawName().getName().equals(name)||
-						suffixMatch(name,type.getQualifiedName())) {
-						return type;
-					}
-				}
-			}
-			
-			for (Entity child : fromEntity.getChildren()) {
-				if (child instanceof FileEntity) {
-					for (Entity classUnderFile : child.getChildren()) {
-						entity = tryToFindEntityWithName(classUnderFile, name);
-						if (entity != null)
-							return entity;
-					}
-				}
-			}
 			fromEntity = fromEntity.getParent();
 			if (fromEntity == null)
 				break;
@@ -348,66 +293,6 @@ public class Inferer {
 		return null;
 	}
 	
-	
-	private boolean suffixMatch(String name, String qualifiedName) {
-		if (qualifiedName.contains(".")) {
-			if (!name.startsWith(".")) name = "." +name;
-			return qualifiedName.endsWith(name);
-		}
-		else {
-			return qualifiedName.equals(name);
-		}
-	}
-
-	private Entity findEntityInChild(Entity fromEntity,String name) {
-		Entity entity =null;
-		for (Entity child : fromEntity.getChildren()) {
-			entity = tryToFindEntityWithName(child, name);
-			if (entity != null)
-				return entity;
-		}
-		return entity;
-	}
-	
-	/**
-	 * Only used by findEntityUnderSamePackage
-	 * @param fromEntity
-	 * @param name
-	 * @return
-	 */
-	private Entity tryToFindEntityWithName(Entity fromEntity, String name) {
-		if (fromEntity instanceof CandidateTypes) {
-			for (TypeEntity type:((CandidateTypes)fromEntity).getCandidateTypes()) {
-				Entity e = tryToFindEntityWithNameSureSingleEntity(type,name);
-				if (e !=null) return e;
-			}
-			return null;
-		}
-		else if (fromEntity instanceof PackageEntity) {
-			Entity entity = ((PackageEntity)fromEntity).getChildOfName(name);
-			if (entity!=null)
-				return entity;
-		}
-		return tryToFindEntityWithNameSureSingleEntity(fromEntity,name);
-	}
-	
-	private Entity tryToFindEntityWithNameSureSingleEntity(Entity fromEntity, String name) {
-		if (!fromEntity.getRawName().getName().equals(name))
-			return null;
-		if (fromEntity instanceof MultiDeclareEntities) {
-			MultiDeclareEntities multiDeclare = (MultiDeclareEntities) fromEntity;
-			if (multiDeclare.isContainsTypeEntity()) {
-				for (Entity declaredEntitiy :  multiDeclare.getEntities()) {
-					if (declaredEntitiy instanceof TypeEntity && 
-							declaredEntitiy.getRawName().getName().equals(name)) {
-						return declaredEntitiy;
-					}
-				}
-			}
-		}
-		return fromEntity;
-	}
-
 	/**
 	 * Deduce type based on function calls
 	 * If the function call is a subset of a type, then the type could be a candidate of the var's type 
