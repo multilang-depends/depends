@@ -31,6 +31,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.FunctionCall;
@@ -55,6 +58,7 @@ public class Inferer {
 
 	private boolean eagerExpressionResolve = false;
 	private boolean isCollectUnsolvedBindings = false;
+	private static Logger logger = LoggerFactory.getLogger(Inferer.class);
 
 	public Inferer(EntityRepo repo, ImportLookupStrategy importLookupStrategy, BuiltInType buildInTypeManager, boolean eagerExpressionResolve) {
 		this.repo = repo;
@@ -72,9 +76,11 @@ public class Inferer {
 	 */
 	public  Set<UnsolvedBindings> resolveAllBindings(boolean callAsImpl, AbstractLangProcessor langProcessor) {
 		resolveTypes();
+		logger.warn("debug: Dependency analaysing...");
 		System.out.println("Dependency analaysing....");
 		new RelationCounter(repo.entityIterator(),this,repo,callAsImpl,langProcessor).computeRelations();
 		System.out.println("Dependency done....");
+		logger.warn("debug: Dependency done...");
 		return unsolvedSymbols;		
 	}
 

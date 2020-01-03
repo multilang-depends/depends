@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.codehaus.plexus.util.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import depends.entity.Entity;
 import depends.entity.FileEntity;
@@ -92,7 +94,8 @@ abstract public class AbstractLangProcessor {
 	private Set<UnsolvedBindings> potentialExternalDependencies;
 	private List<String> typeFilter;
 	private List<String> includePaths;
-
+	private static Logger logger = LoggerFactory.getLogger(AbstractLangProcessor.class);
+	
 	public AbstractLangProcessor(boolean eagerExpressionResolve) {
 		entityRepo = new InMemoryEntityRepo();
 		inferer = new Inferer(entityRepo, getImportLookupStrategy(), getBuiltInType(), eagerExpressionResolve);
@@ -138,6 +141,7 @@ abstract public class AbstractLangProcessor {
 	 */
 	private void resolveBindings(boolean callAsImpl) {
 		System.out.println("Resolve types and bindings of variables, methods and expressions....");
+		logger.warn("debug: Resolve types and bindings of variables, methods and expressions....");
 		this.potentialExternalDependencies = inferer.resolveAllBindings(callAsImpl,this);
 		if (getExternalDependencies().size() > 0) {
 			System.out.println("There are " + getExternalDependencies().size() + " items are potential external dependencies.");
@@ -152,6 +156,7 @@ abstract public class AbstractLangProcessor {
 		System.out.println("reorder dependency matrix...");
 		dependencyMatrix = new OrderedMatrixGenerator(dependencyMatrix).build();
 		System.out.println("dependencie data generating done successfully...");
+		logger.warn("debug: dependencie data generating done successfully...");
 	}
 
 	private final void parseAllFiles() {
