@@ -51,7 +51,7 @@ public abstract class ContainerEntity extends DecoratedEntity {
 
 	private ArrayList<VarEntity> vars;
 	private ArrayList<FunctionEntity> functions;
-	WeakReference<HashMap<Object, Expression>> expressionWeakReference;
+	HashMap<Object, Expression> expressions;
 	private ArrayList<Expression> expressionList;
 	private int expressionCount = 0;
 	private Collection<GenericName> mixins;
@@ -106,11 +106,9 @@ public abstract class ContainerEntity extends DecoratedEntity {
 	}
 
 	public HashMap<Object, Expression> expressions() {
-		if (expressionWeakReference==null)
-			expressionWeakReference= new WeakReference<HashMap<Object, Expression>>(new HashMap<>());
-		HashMap<Object, Expression> r = expressionWeakReference.get();
-		if (r==null) return new HashMap<>();
-		return r;
+		if (expressions==null) 
+			expressions= new HashMap<>();
+		return expressions;
 	}
 
 	public void addExpression(Object key, Expression expression) {
@@ -205,27 +203,18 @@ public abstract class ContainerEntity extends DecoratedEntity {
 	}
 
 	public void cacheExpressions() {
-		if (expressionWeakReference==null) return;
-		if (expressionList==null) return;
-		this.expressions().clear();
-		this.expressionWeakReference.clear();
+		this.expressions=null;
 		cacheExpressionListToFile();
-		this.expressionList.clear();
 		this.expressionList=null;
-		this.expressionList = new ArrayList<>();
 	}
 
 	public void clearExpressions() {
-		if (expressionWeakReference==null) return;
-		if (expressionList==null) return;
-		this.expressions().clear();
-		this.expressionWeakReference.clear();
-		this.expressionList.clear();
+		this.expressions=null;
 		this.expressionList=null;
-		this.expressionList = new ArrayList<>();
 	}
 	
 	private void cacheExpressionListToFile() {
+		if(this.expressionList==null) return;
 		expressionCount = this.expressionList.size();
 		if (expressionCount ==0) return;
 		try {
