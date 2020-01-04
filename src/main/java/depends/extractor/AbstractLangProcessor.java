@@ -26,6 +26,7 @@ package depends.extractor;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -115,10 +116,20 @@ abstract public class AbstractLangProcessor {
 		this.includeDirs = includeDir;
 		this.typeFilter = typeFilter;
 		this.inferer.setCollectUnsolvedBindings(isCollectUnsolvedBindings);
+		logger.info("Start parsing files...");
 		parseAllFiles();
 		markAllEntitiesScope();
+		if (logger.isInfoEnabled()) {
+			logger.info("Resolve types and bindings of variables, methods and expressions.... " + this.inputSrcPath);
+			logger.info("Heap Information: " + ManagementFactory.getMemoryMXBean().getHeapMemoryUsage());
+		}
 		resolveBindings(callAsImpl);
+		if (logger.isInfoEnabled()) {
+			System.gc();
+			logger.info("Heap Information: " + ManagementFactory.getMemoryMXBean().getHeapMemoryUsage());
+		}
 		identifyDependencies();
+		logger.info("Dependencie data generating done successfully...");
 	}
 
 	private void markAllEntitiesScope() {
@@ -141,7 +152,6 @@ abstract public class AbstractLangProcessor {
 	 */
 	private void resolveBindings(boolean callAsImpl) {
 		System.out.println("Resolve types and bindings of variables, methods and expressions....");
-		logger.warn("debug: Resolve types and bindings of variables, methods and expressions....");
 		this.potentialExternalDependencies = inferer.resolveAllBindings(callAsImpl,this);
 		if (getExternalDependencies().size() > 0) {
 			System.out.println("There are " + getExternalDependencies().size() + " items are potential external dependencies.");
@@ -155,12 +165,11 @@ abstract public class AbstractLangProcessor {
 		entityRepo = null;
 		System.out.println("reorder dependency matrix...");
 		dependencyMatrix = new OrderedMatrixGenerator(dependencyMatrix).build();
-		System.out.println("dependencie data generating done successfully...");
-		logger.warn("debug: dependencie data generating done successfully...");
+		System.out.println("Dependencie data generating done successfully...");
 	}
 
 	private final void parseAllFiles() {
-		System.out.println("start parsing files...");
+		System.out.println("Start parsing files...");
 		Set<String> phase2Files = new HashSet<>();
 		FileTraversal fileTransversal = new FileTraversal(new FileTraversal.IFileVisitor() {
 			@Override

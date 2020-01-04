@@ -9,8 +9,8 @@
            maxBytesLocalHeap="512m"
            eternal="true"
            maxEntriesLocalDisk="0"
-           timeToIdleSeconds="120"
-           timeToLiveSeconds="120"
+           timeToIdleSeconds="0"
+           timeToLiveSeconds="0"
            overflowToDisk="true"
            memoryStoreEvictionPolicy="LRU"/>
 

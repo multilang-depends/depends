@@ -24,6 +24,7 @@ SOFTWARE.
 
 package depends.relations;
 
+import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -75,12 +76,20 @@ public class Inferer {
 	 * @param langProcessor 
 	 */
 	public  Set<UnsolvedBindings> resolveAllBindings(boolean callAsImpl, AbstractLangProcessor langProcessor) {
+		System.out.println("Resolve type bindings....");
+		if (logger.isInfoEnabled()) {
+			logger.info("Resolve type bindings...");
+		}
 		resolveTypes();
-		logger.warn("debug: Dependency analaysing...");
 		System.out.println("Dependency analaysing....");
+		if (logger.isInfoEnabled()) {
+			logger.info("Dependency analaysing...");
+			System.gc();
+		}
+		logger.info("Heap Information: " + ManagementFactory.getMemoryMXBean().getHeapMemoryUsage());
+		
 		new RelationCounter(repo.getFileEntities(),this,repo,callAsImpl,langProcessor).computeRelations();
 		System.out.println("Dependency done....");
-		logger.warn("debug: Dependency done...");
 		return unsolvedSymbols;		
 	}
 
@@ -92,8 +101,6 @@ public class Inferer {
 		Iterator<Entity> iterator = repo.sortedFileIterator();
 		while(iterator.hasNext()) {
 			Entity entity= iterator.next();
-			if (!(entity instanceof FileEntity)) continue;
-//			if (!entity.inScope()) continue;
 			entity.inferEntities(this);
 		}
 	}
