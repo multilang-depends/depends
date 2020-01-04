@@ -13,6 +13,7 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
-    - name: Build with Maven
+    - name: Install depended jars
       run: ./lib_install.sh
+    - name: Build with Maven
       run: mvn -B package --file pom.xml -Dmaven.test.skip=true
