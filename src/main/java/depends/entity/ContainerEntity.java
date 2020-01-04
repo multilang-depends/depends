@@ -203,6 +203,16 @@ public abstract class ContainerEntity extends DecoratedEntity {
 			}
 		}
 	}
+	
+	public void cacheChildExpressions() {
+		cacheExpressions();
+		for (Entity child:getChildren()) {
+			if (child instanceof ContainerEntity) {
+				((ContainerEntity)child).cacheChildExpressions();
+			}
+		}
+	}
+
 
 	public void cacheExpressions() {
 		if (expressionWeakReference==null) return;

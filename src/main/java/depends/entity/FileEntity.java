@@ -143,19 +143,10 @@ public class FileEntity extends TypeEntity {
 	}
 
 	public void cacheAllExpressions() {
-		cacheChildExpressions(this);
+		this.cacheChildExpressions();
 	}
 
-	private void cacheChildExpressions(ContainerEntity containerEntity) {
-		this.cacheExpressions();
-		for (Entity child:containerEntity.getChildren()) {
-			if (child instanceof ContainerEntity) {
-				((ContainerEntity)child).cacheExpressions();
-			}
-		}
-	}
-	
-	
+
 	@Override
 	public Entity getByName(String name, HashSet<Entity> searched) {
 		Entity entity = super.getByName(name, searched);
