@@ -59,8 +59,10 @@ public class ExpressionUsage {
 	public void foundExpression(IASTExpression ctx) {
 		Expression parent = findParentInStack(ctx);
 		//If parent already a call 
-		if (ctx instanceof IASTIdExpression && (parent.isCall() || parent.isCast)) {
-			return;
+		if (parent!=null ) {
+			if (ctx instanceof IASTIdExpression && (parent.isCall() || parent.isCast)) {
+				return;
+			}
 		}
 		/* create expression and link it with parent*/
 		Expression expression = new Expression(idGenerator.generateId());
