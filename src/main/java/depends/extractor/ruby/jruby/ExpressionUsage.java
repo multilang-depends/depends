@@ -108,7 +108,7 @@ public class ExpressionUsage {
 			expression.isSet = true;
 		} else if (helper.isFunctionCall(ctx)) {
 			String name = helper.getName(ctx);
-			expression.isCall = true;
+			expression.setCall(true);
 			if (name.equals("new")) {
 				expression.isCreate = true;
 				List<Node> childNodes = ctx.childNodes();

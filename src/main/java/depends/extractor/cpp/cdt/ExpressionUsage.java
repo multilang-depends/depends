@@ -52,12 +52,16 @@ public class ExpressionUsage {
 		/* create expression and link it with parent*/
 		Expression expression = new Expression(idGenerator.generateId());
 		context.lastContainer().addExpression(declarator,expression);
-		expression.isCall = true;
+		expression.setCall(true);
 		expression.setIdentifier(functionName);
 	}
 	
 	public void foundExpression(IASTExpression ctx) {
 		Expression parent = findParentInStack(ctx);
+		//If parent already a call 
+		if (ctx instanceof IASTIdExpression && (parent.isCall() || parent.isCast)) {
+			return;
+		}
 		/* create expression and link it with parent*/
 		Expression expression = new Expression(idGenerator.generateId());
 		expression.text = ctx.getRawSignature(); //for debug purpose. no actual effect
@@ -71,7 +75,7 @@ public class ExpressionUsage {
 		}
 		
 		expression.isSet = isSet(ctx);
-		expression.isCall = (ctx instanceof IASTFunctionCallExpression)?true:false;
+		expression.setCall((ctx instanceof IASTFunctionCallExpression)?true:false);
 		expression.isLogic = isLogic(ctx);
 		if (ctx instanceof ICPPASTNewExpression){
 			expression.isCreate = true;
@@ -88,11 +92,11 @@ public class ExpressionUsage {
 		//method call
 		if (ctx instanceof IASTFunctionCallExpression) {
 			expression.setIdentifier(getMethodCallIdentifier((IASTFunctionCallExpression)ctx));
-			expression.isCall = true;
+			expression.setCall(true);
 		}
 		if (ctx instanceof ICPPASTNewExpression) {
 			expression.setRawType(GenericName.build(ASTStringUtilExt.getTypeIdString(((ICPPASTNewExpression)ctx).getTypeId())));
-			expression.isCall = true;
+			expression.setCall(true);
 			expression.deriveTypeFromChild = false;
 		}
 

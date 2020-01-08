@@ -57,7 +57,7 @@ public class ExpressionUsage {
 		}
 		
 		expression.isSet = isSet(ctx);
-		expression.isCall = ctx.methodCall()==null?false:true;
+		expression.setCall(ctx.methodCall()==null?false:true);
 		expression.isLogic = isLogic(ctx);
 		expression.isDot = isDot(ctx);
 		if (ctx.creator()!=null ||ctx.innerCreator()!=null){
@@ -76,12 +76,12 @@ public class ExpressionUsage {
 		//method call
 		if (ctx.methodCall()!=null) {
 			expression.setIdentifier(getMethodCallIdentifier(ctx.methodCall()));
-			expression.isCall = true;
+			expression.setCall(true);
 		}
 		//new 
 		if (ctx.NEW()!=null && ctx.creator()!=null) {
 			expression.setRawType(CreatorContextHelper.getCreatorType(ctx.creator()));
-			expression.isCall = true;
+			expression.setCall(true);
 			expression.deriveTypeFromChild = false;
 		}
 		

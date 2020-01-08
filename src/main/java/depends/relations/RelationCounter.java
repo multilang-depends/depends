@@ -130,7 +130,8 @@ public class RelationCounter {
 			return;
 		}
 		boolean matched = false;
-		if (expression.isCall) {
+		if (expression.isCall()) {
+			/* if it is a FunctionEntityProto, add Relation to all Impl Entities*/
 			if (callAsImpl && referredEntity instanceof FunctionEntityProto) {
 				Entity multiDeclare = repo.getEntity(referredEntity.getQualifiedName());
 				if (multiDeclare instanceof MultiDeclareEntities) {
@@ -143,10 +144,8 @@ public class RelationCounter {
 					}
 				}
 			}
-			if (!matched) {
-				entity.addRelation(buildRelation(DependencyType.CALL,referredEntity));
-				matched = true;
-			}
+			entity.addRelation(buildRelation(DependencyType.CALL,referredEntity));
+			matched = true;
 
 		}
 		if (expression.isCreate) {
@@ -162,7 +161,16 @@ public class RelationCounter {
 			matched = true;
 		}
 		if (!matched)  {
-			entity.addRelation(buildRelation(DependencyType.USE,referredEntity));
+			if (callAsImpl && repo.getEntity(referredEntity.getQualifiedName()) instanceof MultiDeclareEntities) {
+				MultiDeclareEntities m =  (MultiDeclareEntities)(repo.getEntity(referredEntity.getQualifiedName()));
+				for (Entity e:m.getEntities()) {
+					entity.addRelation(buildRelation(DependencyType.USE,e));
+					matched = true;
+				}
+			}
+			else {
+				entity.addRelation(buildRelation(DependencyType.USE,referredEntity));
+			}
 		}
 	}
 

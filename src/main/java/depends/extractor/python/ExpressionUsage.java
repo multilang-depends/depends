@@ -86,15 +86,15 @@ public class ExpressionUsage {
 					Entity prefixEntity = context.foundEntityWithName(preFix);
 					if (prefixEntity instanceof VarEntity) {
 						((VarEntity) prefixEntity).addFunctionCall(functionName);
-						expression.isCall = true;
+						expression.setCall(true);
 					}
 				}
-				if (!expression.isCall) {
+				if (!expression.isCall()) {
 					Entity typeEntity = context.foundEntityWithName(expression.getIdentifier());
 					if (typeEntity instanceof TypeEntity && typeEntity.getId() > 0) {
 						expression.isCreate = true;
 					} else {
-						expression.isCall = true;
+						expression.setCall(true);
 					}
 				}
 			} else if (expr.member_access() != null) {

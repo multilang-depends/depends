@@ -188,7 +188,7 @@ public abstract class ContainerEntity extends DecoratedEntity {
 					expression.setType(entity.getType(), entity, inferer);
 					continue;
 				}
-				if (expression.isCall) {
+				if (expression.isCall()) {
 					FunctionEntity func = this.lookupFunctionInVisibleScope(expression.getIdentifier());
 					if (func != null) {
 						expression.setType(func.getType(), func, inferer);

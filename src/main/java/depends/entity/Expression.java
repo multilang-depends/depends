@@ -40,7 +40,15 @@ public class Expression implements Serializable{
 	private GenericName identifier; // the varName, or method name, etc.
 	public boolean isSet = false; // is a set relation from right to leftHand
 	public boolean isDot = false; // is a dot expression, will decuce variable tfype left to right
-	public boolean isCall = false;
+	public boolean isCall() {
+		return isCall;
+	}
+
+	public void setCall(boolean isCall) {
+		this.isCall = isCall;
+	}
+
+	private boolean isCall = false;
 	public boolean isLogic = false;
 	public boolean isCreate = false;
 	public boolean isCast = false;
@@ -147,7 +155,7 @@ public class Expression implements Serializable{
 		}
 		/* if it is a.b, and we already get a's type, b's type could be identified easily  */
 		else if (parent.isDot) {
-			if (parent.isCall) {
+			if (parent.isCall()) {
 				FunctionEntity func = this.getType().lookupFunctionInVisibleScope(parent.identifier);
 				if (func!=null) {
 					parent.setType(func.getType(), func,inferer);
