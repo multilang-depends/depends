@@ -60,13 +60,15 @@ public class JavaFileParser implements depends.extractor.FileParser{
         lexer.setInterpreter(new LexerATNSimulator(lexer, lexer.getATN(), lexer.getInterpreter().decisionToDFA, new PredictionContextCache()));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         JavaParser parser = new JavaParser(tokens);
-        parser.setInterpreter(new ParserATNSimulator(parser, parser.getATN(), parser.getInterpreter().decisionToDFA, new PredictionContextCache()));
+        ParserATNSimulator interpreter = new ParserATNSimulator(parser, parser.getATN(), parser.getInterpreter().decisionToDFA, new PredictionContextCache());
+        parser.setInterpreter(interpreter);
         JavaListener bridge = new JavaListener(fileFullPath, entityRepo,inferer);
 	    ParseTreeWalker walker = new ParseTreeWalker();
 	    try {
 	    	walker.walk(bridge, parser.compilationUnit());
 			Entity fileEntity = entityRepo.getEntity(fileFullPath);
 			((FileEntity)fileEntity).cacheAllExpressions();
+			interpreter.clearDFA();
 	    	
 	    }catch (Exception e) {
 	    	System.err.println("error encountered during parse..." );
