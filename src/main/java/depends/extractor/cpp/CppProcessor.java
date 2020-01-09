@@ -94,6 +94,7 @@ public class CppProcessor extends AbstractLangProcessor {
 		depedencyTypes.add(USE);
 		depedencyTypes.add(CAST);
 		depedencyTypes.add(THROW);
+		depedencyTypes.add(IMPLLINK);
 		return depedencyTypes;
 	}
 

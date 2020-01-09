@@ -40,6 +40,7 @@ public class DependencyType {
 	public static final String CREATE = "Create";
 	public static final String CAST = "Cast";
 	public static final String THROW = "Throw";
+	public static final String IMPLLINK = "ImplLink";
 	public static final String ANNOTATION = "Annotation";
 	public static final String MIXIN = "MixIn";
 	public static final String PomParent = "Parent";
@@ -64,6 +65,7 @@ public class DependencyType {
 		depedencyTypes.add(THROW);
 		depedencyTypes.add(ANNOTATION);
 		depedencyTypes.add(MIXIN);
+		depedencyTypes.add(IMPLLINK);
 		depedencyTypes.add(PomParent);
 		depedencyTypes.add(PomPlugin);
 		depedencyTypes.add(PomDependency);

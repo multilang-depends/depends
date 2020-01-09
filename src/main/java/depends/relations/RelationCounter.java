@@ -139,7 +139,7 @@ public class RelationCounter {
 					List<ContainerEntity> entities = m.getEntities().stream().filter(item->(item instanceof FunctionEntityImpl))
 					.collect(Collectors.toList());
 					for (Entity e:entities) {
-						entity.addRelation(buildRelation(DependencyType.CALL,e));
+						entity.addRelation(buildRelation(DependencyType.IMPLLINK,e));
 						matched = true;
 					}
 				}
@@ -161,10 +161,15 @@ public class RelationCounter {
 			matched = true;
 		}
 		if (!matched)  {
-			if (callAsImpl && repo.getEntity(referredEntity.getQualifiedName()) instanceof MultiDeclareEntities) {
+			if (callAsImpl && repo.getEntity(referredEntity.getQualifiedName()) instanceof MultiDeclareEntities &&
+					(referredEntity instanceof VarEntity ||referredEntity instanceof FunctionEntity)) {
 				MultiDeclareEntities m =  (MultiDeclareEntities)(repo.getEntity(referredEntity.getQualifiedName()));
 				for (Entity e:m.getEntities()) {
-					entity.addRelation(buildRelation(DependencyType.USE,e));
+					if (e==referredEntity) {
+						entity.addRelation(buildRelation(DependencyType.USE,e));
+					}else {
+						entity.addRelation(buildRelation(DependencyType.IMPLLINK,e));
+					}
 					matched = true;
 				}
 			}

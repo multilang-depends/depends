@@ -6,3 +6,8 @@ void bar(){
 void baz(){
 x++;
 }
+
+void qux(){
+int x=0;
+x++;
+}
