@@ -90,7 +90,9 @@ public class Main {
 		String[] outputFormat = app.getFormat();
 
 		inputDir = FileUtil.uniqFilePath(inputDir);
-
+		boolean supportImplLink = false;
+		if (app.getLang().equals("cpp")) supportImplLink = true;
+		
 		if (app.isAutoInclude()) {
 			FolderCollector includePathCollector = new FolderCollector();
 			List<String> additionalIncludePaths = includePathCollector.getFolders(inputDir);
@@ -153,7 +155,8 @@ public class Main {
 		
 		dependencyGenerator.setFilenameRewritter(filenameWritter);
 		langProcessor.setDependencyGenerator(dependencyGenerator);
-		langProcessor.buildDependencies(inputDir, includeDir,app.getTypeFilter(),app.isCallAsImpl(),app.isOutputExternalDependencies());
+		
+		langProcessor.buildDependencies(inputDir, includeDir,app.getTypeFilter(),supportImplLink,app.isOutputExternalDependencies());
 		
 		
 		DependencyMatrix matrix = langProcessor.getDependencies();
