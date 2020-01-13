@@ -85,10 +85,14 @@ public class Expression implements Serializable{
 		if (this.type==null && type!=null) {
 			this.type = type;
 			for (VarEntity var:deducedTypeVars) {
-				var.setType(this.type);
+				if (var!=null) {
+					var.setType(this.type);
+				}
 			}
 			for (FunctionEntity func:deducedTypeFunctions) {
-				func.addReturnType(this.type);
+				if (func!=null) {
+					func.addReturnType(this.type);
+				}
 			}
 			changedType = true;
 		}
