@@ -7,7 +7,7 @@ import java.util.List;
 
 public class GenericName implements Serializable{
 	private static final long serialVersionUID = 1L;
-	char[] name;
+	private char[] name;
 	List<GenericName> arguments;
 	public GenericName(String name) {
 		this.name = name.toCharArray();
@@ -57,8 +57,7 @@ public class GenericName implements Serializable{
 		return sb.toString();
 	}
 	public GenericName substring(int start) {
-		this.name = new String(this.name).substring(start).toCharArray();
-		return this;
+		return new GenericName(new String(this.name).substring(start));
 	}
 	public boolean isNull() {
 		return name==null;
