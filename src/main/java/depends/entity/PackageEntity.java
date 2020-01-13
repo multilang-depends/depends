@@ -54,6 +54,7 @@ public class PackageEntity extends TypeEntity {
 	public void addChild(String moduleName, Entity entity) {
 		super.addChild(entity);
 		entities.put(moduleName, entity);
+		visibleNames.put(moduleName, entity);
 	}
 	
 	@Override

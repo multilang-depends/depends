@@ -51,7 +51,7 @@ public abstract class Entity {
     ArrayList<Relation> relations;
 	private Entity actualReferTo = null;
 	private boolean inScope = true;
-	private HashMap<String, Entity> visibleNames = new HashMap<>();
+	protected HashMap<String, Entity> visibleNames = new HashMap<>();
 	public Entity() {};
     public Entity(GenericName rawName, Entity parent, Integer id) {
 		this.qualifiedName = null;
