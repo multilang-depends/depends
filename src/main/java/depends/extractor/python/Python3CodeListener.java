@@ -118,7 +118,9 @@ public class Python3CodeListener extends Python3BaseListener {
 			aliasedName = ctx.NAME().getText();
 		}
 		String fullName = foundImportedModuleOrPackage(0, originalName);
-		context.foundNewImport(new NameAliasImport(fullName, entityRepo.getEntity(fullName), aliasedName));
+		if (fullName!=null) {
+			context.foundNewImport(new NameAliasImport(fullName, entityRepo.getEntity(fullName), aliasedName));
+		}
 		super.enterDotted_as_name(ctx);
 	}
 
