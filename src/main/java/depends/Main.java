@@ -91,7 +91,7 @@ public class Main {
 
 		inputDir = FileUtil.uniqFilePath(inputDir);
 		boolean supportImplLink = false;
-		if (app.getLang().equals("cpp")) supportImplLink = true;
+		if (app.getLang().equals("cpp") || app.getLang().equals("python")) supportImplLink = true;
 		
 		if (app.isAutoInclude()) {
 			FolderCollector includePathCollector = new FolderCollector();

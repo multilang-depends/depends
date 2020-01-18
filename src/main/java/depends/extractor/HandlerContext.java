@@ -259,7 +259,7 @@ public abstract class HandlerContext {
 			container = currentFile();
 		}
 		
-		VarEntity var = getVar(container,GenericName.build(varName));
+		VarEntity var = getVarInLocalFile(container,GenericName.build(varName));
 		if (var!=null) return var;
 		var = new VarEntity(GenericName.build(varName), null, container, idGenerator.generateId());
 		container.addVar(var);
@@ -268,7 +268,20 @@ public abstract class HandlerContext {
 		return var;
 	}
 	
-
+	public VarEntity foundGlobalVarDefinition(ContainerEntity container,String varName) {
+		if (container==null) {
+			System.out.println("fallback to file container for var " + varName + " in file "+ currentFile().getRawName());
+			container = currentFile();
+		}
+		
+		VarEntity var = getVarInLocalFile(container,GenericName.build(varName));
+		if (var!=null) return var;
+		var = new VarEntity(GenericName.build(varName), null, container, idGenerator.generateId());
+		container.addVar(var);
+		var.setQualifiedName(var.getRawName().toString());
+		entityRepo.add(var);
+		return var;
+	}
 
 	public VarEntity foundVarDefinition(String varName, GenericName type, List<GenericName> typeArguments) {
 		VarEntity var = new VarEntity(GenericName.build(varName), type, lastContainer(), idGenerator.generateId());
@@ -303,9 +316,10 @@ public abstract class HandlerContext {
 			entityStack.pop();
 	}
 	
-	private VarEntity getVar(ContainerEntity container, GenericName varName) {
-		Entity entity = inferer.resolveName(container, varName, true); //TODO: should be check based on local/class/global
+	private VarEntity getVarInLocalFile(ContainerEntity container, GenericName varName) {
+		Entity entity = inferer.resolveName(container, varName, false); 
 		if (entity ==null ) return null;
+		if (!entity.getAncestorOfType(FileEntity.class).equals(currentFileEntity)) return null;
 		if (entity instanceof VarEntity) return (VarEntity)entity;
 		return null;
 	}

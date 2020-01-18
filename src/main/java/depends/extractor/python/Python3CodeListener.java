@@ -214,7 +214,7 @@ public class Python3CodeListener extends Python3BaseListener {
 	@Override
 	public void enterGlobal_stmt(Global_stmtContext ctx) {
 		// TODO: need to check
-		context.foundVarDefinition(context.globalScope(), helper.getName(ctx));
+		context.foundGlobalVarDefinition(context.currentFile(), helper.getName(ctx));
 		super.enterGlobal_stmt(ctx);
 	}
 
