@@ -68,6 +68,7 @@ public class PythonProcessor extends AbstractLangProcessor {
 		depedencyTypes.add(CREATE);
 		depedencyTypes.add(USE);
 		depedencyTypes.add(THROW);
+		depedencyTypes.add(IMPLLINK);
 		return depedencyTypes;
 	}
 
