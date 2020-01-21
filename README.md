@@ -15,16 +15,16 @@ We believe that dependency analysis of software source code is one of the most i
 You could download the latest version of *Depends* from https://github.com/multilang-depends/depends/releases/,  
 and then unzip the ```depends-*version*.tgz``` file in any directory of your computer.
 
-*Depends* is written in java, so it could be run on any OS with a JRE or JDK envoirment (like Windows, Linux or Mac OS). 
+*Depends* is written in java, so it could be run on any OS with a JRE or JDK environment (like Windows, Linux or Mac OS). 
 
-## Run it from commmand line
+## Run it from command line
 
 Following the single responsibility principle, *Depends* is designed for the purpose of extracting dependencies only. It only provides CLI interface, without GUI. But you can convert the output of *Depends* into the GUI of other tools, such as GraphViz(http://graphviz.org/), PlantUML(http://plantuml.com/), and DV8 (https://www.archdia.com). 
 
 You could run *Depends* in the following ways: ```depends.sh``` on Linux/Mac, ```depends.bat``` on Microsoft Windows, or  ```java -jar depends.jar```.
 
-Note: If you encountered Out of Memory error like ```GC overhead limt exceed```, please expands
-the JVM memory like follwing ```java -Xmx4g -jar depends.jar <args>```.
+Note: If you encountered Out of Memory error like ```GC overhead limt exceed```, please expand
+the JVM memory like following ```java -Xmx4g -jar depends.jar <args>```.
 
 ## Parameters
 
@@ -69,7 +69,7 @@ For ```Java``` programs, you are not required to specify include paths, because 
 
 ### Output
 
-The output of *Depends* can be exported into 5 formats: json, xml, excel, dot, and plantuml. Due to the limitation of MS excel,  you can only export into a excel file if the number of elements is less than 256.)
+The output of *Depends* can be exported into 5 formats: json, xml, excel, dot, and plantuml. Due to the limitation of MS excel,  you can only export into an excel file if the number of elements is less than 256.)
 
 Dot files could be used to generate graphs using GraphViz (http://graphviz.org/).
 
