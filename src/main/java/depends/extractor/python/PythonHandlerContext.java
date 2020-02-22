@@ -1,4 +1,4 @@
-package depends.extractor.python3;
+package depends.extractor.python;
 
 import depends.entity.repo.EntityRepo;
 import depends.extractor.HandlerContext;

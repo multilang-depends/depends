@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import depends.entity.FunctionEntity;
-import depends.extractor.python3.PythonFileParser;
+import depends.extractor.python.py3.Python3FileParser;
 
 public class PythonFunctionTest extends Python3ParserTest {
     @Before
@@ -24,7 +24,7 @@ public class PythonFunctionTest extends Python3ParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    PythonFileParser parser = createParser(src);
+		    Python3FileParser parser = createParser(src);
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
@@ -38,7 +38,7 @@ public class PythonFunctionTest extends Python3ParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    PythonFileParser parser = createParser(src);
+		    Python3FileParser parser = createParser(src);
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();

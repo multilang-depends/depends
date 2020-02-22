@@ -1,4 +1,4 @@
-package depends.extractor.python3;
+package depends.extractor.python;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,6 +14,7 @@ import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.UnsolvedBindings;
+import depends.extractor.python.py3.NameAliasImport;
 import depends.importtypes.Import;
 import depends.relations.ImportLookupStrategy;
 import depends.relations.Inferer;

@@ -1,4 +1,4 @@
-package depends.extractor.python3;
+package depends.extractor.python.py3;
 
 import java.io.IOException;
 
@@ -17,16 +17,16 @@ import depends.extractor.python.Python3Parser;
 import depends.extractor.ruby.IncludedFileLocator;
 import depends.relations.Inferer;
 
-public class PythonFileParser implements FileParser {
+public class Python3FileParser implements FileParser {
 
 	private String fileFullPath;
 	private EntityRepo entityRepo;
 	private Inferer inferer;
 	private IncludedFileLocator includeFileLocator;
-	private PythonProcessor processor;
+	private Python3Processor processor;
 
-	public PythonFileParser(String fileFullPath, EntityRepo entityRepo, IncludedFileLocator includeFileLocator,
-			Inferer inferer, PythonProcessor pythonProcessor) {
+	public Python3FileParser(String fileFullPath, EntityRepo entityRepo, IncludedFileLocator includeFileLocator,
+			Inferer inferer, Python3Processor pythonProcessor) {
 		this.fileFullPath = fileFullPath;
 		this.entityRepo = entityRepo;
 		this.inferer = inferer;
@@ -45,8 +45,6 @@ public class PythonFileParser implements FileParser {
         Lexer lexer = new Python3Lexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         
-//        Python2Parser parser = new Python2Parser(tokens);
-//        Python2BaseListener bridge = new Python2BaseListener();
         
         Python3Parser parser = new Python3Parser(tokens);
         Python3CodeListener bridge = new Python3CodeListener(fileFullPath, entityRepo,inferer, includeFileLocator, processor);

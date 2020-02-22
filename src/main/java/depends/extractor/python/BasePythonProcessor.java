@@ -1,28 +1,30 @@
-package depends.extractor.python3;
+package depends.extractor.python;
 
-import static depends.deptypes.DependencyType.*;
+import static depends.deptypes.DependencyType.ANNOTATION;
+import static depends.deptypes.DependencyType.CALL;
+import static depends.deptypes.DependencyType.CONTAIN;
+import static depends.deptypes.DependencyType.CREATE;
+import static depends.deptypes.DependencyType.IMPLLINK;
+import static depends.deptypes.DependencyType.IMPORT;
+import static depends.deptypes.DependencyType.INHERIT;
+import static depends.deptypes.DependencyType.PARAMETER;
+import static depends.deptypes.DependencyType.RETURN;
+import static depends.deptypes.DependencyType.SET;
+import static depends.deptypes.DependencyType.THROW;
+import static depends.deptypes.DependencyType.USE;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import depends.entity.repo.BuiltInType;
 import depends.extractor.AbstractLangProcessor;
-import depends.extractor.FileParser;
-import depends.extractor.ruby.IncludedFileLocator;
 import depends.relations.ImportLookupStrategy;
 
-public class PythonProcessor extends AbstractLangProcessor {
+public abstract class BasePythonProcessor extends AbstractLangProcessor{
 	private PythonImportLookupStrategy importedLookupStrategy;
 
-	public PythonProcessor() {
-		/* Because Python is dynamic languange, 
-		 * we eagerly resolve expression*/
-		super(true);
-	}
-
-	@Override
-	public String supportedLanguage() {
-		return "python3";
+	public BasePythonProcessor(boolean eagerExpressionResolve) {
+		super(eagerExpressionResolve);
 	}
 
 	@Override
@@ -40,12 +42,6 @@ public class PythonProcessor extends AbstractLangProcessor {
 	@Override
 	public BuiltInType getBuiltInType() {
 		return new PythonBuiltInType();
-	}
-	
-	@Override
-	protected FileParser createFileParser(String fileFullPath) {
-		IncludedFileLocator includeFileLocator = new IncludedFileLocator(super.includePaths());
-		return new PythonFileParser(fileFullPath,entityRepo,includeFileLocator,inferer,this);
 	}
 
 	@Override
@@ -71,5 +67,4 @@ public class PythonProcessor extends AbstractLangProcessor {
 		depedencyTypes.add(IMPLLINK);
 		return depedencyTypes;
 	}
-
 }

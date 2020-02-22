@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import depends.deptypes.DependencyType;
 import depends.entity.Entity;
-import depends.extractor.python3.PythonFileParser;
+import depends.extractor.python.py3.Python3FileParser;
 import depends.util.FileUtil;
 
 public class PythonImportTest extends Python3ParserTest {
@@ -24,7 +24,7 @@ public class PythonImportTest extends Python3ParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    PythonFileParser parser = createParser(src);
+		    Python3FileParser parser = createParser(src);
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
@@ -41,7 +41,7 @@ public class PythonImportTest extends Python3ParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    PythonFileParser parser = createParser(src);
+		    Python3FileParser parser = createParser(src);
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
@@ -58,7 +58,7 @@ public class PythonImportTest extends Python3ParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    PythonFileParser parser = createParser(src);
+		    Python3FileParser parser = createParser(src);
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
@@ -75,7 +75,7 @@ public class PythonImportTest extends Python3ParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    PythonFileParser parser = createParser(src);
+		    Python3FileParser parser = createParser(src);
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
@@ -93,7 +93,7 @@ public class PythonImportTest extends Python3ParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    PythonFileParser parser = createParser(src);
+		    Python3FileParser parser = createParser(src);
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
@@ -111,7 +111,7 @@ public class PythonImportTest extends Python3ParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    PythonFileParser parser = createParser(src);
+		    Python3FileParser parser = createParser(src);
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
@@ -130,7 +130,7 @@ public class PythonImportTest extends Python3ParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    PythonFileParser parser = createParser(src);
+		    Python3FileParser parser = createParser(src);
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
@@ -146,7 +146,7 @@ public class PythonImportTest extends Python3ParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    PythonFileParser parser = createParser(src);
+		    Python3FileParser parser = createParser(src);
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
