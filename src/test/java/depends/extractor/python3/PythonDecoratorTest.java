@@ -1,4 +1,4 @@
-package depends.extractor.python;
+package depends.extractor.python3;
 
 import static org.junit.Assert.assertEquals;
 
@@ -9,8 +9,9 @@ import org.junit.Test;
 
 import depends.deptypes.DependencyType;
 import depends.entity.FunctionEntity;
+import depends.extractor.python3.PythonFileParser;
 
-public class PythonDecoratorTest extends PythonParserTest {
+public class PythonDecoratorTest extends Python3ParserTest {
     @Before
     public void setUp() {
     	super.init();

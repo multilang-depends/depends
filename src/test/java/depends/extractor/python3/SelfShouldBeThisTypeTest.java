@@ -1,6 +1,5 @@
-package depends.extractor.python;
+package depends.extractor.python3;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -8,13 +7,12 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
-import depends.entity.CandidateTypes;
 import depends.entity.FunctionEntity;
 import depends.entity.TypeEntity;
 import depends.entity.VarEntity;
 import depends.extractor.FileParser;
 
-public class PythonParameterTypeDedudceTest extends PythonParserTest {
+public class SelfShouldBeThisTypeTest extends Python3ParserTest {
 	@Before
 	public void setUp() {
 		super.init();
@@ -23,7 +21,7 @@ public class PythonParameterTypeDedudceTest extends PythonParserTest {
 	@Test
 	public void test_deduce_type_of_return() throws IOException {
 		String[] srcs = new String[] {
-	    		"./src/test/resources/python-code-examples/deducetype_parameter.py",
+	    		"./src/test/resources/python-code-examples/self_should_be_this_type.py",
 	    	    };
 	    
 	    for (String src:srcs) {
@@ -31,14 +29,10 @@ public class PythonParameterTypeDedudceTest extends PythonParserTest {
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
-	    String name = withPackageName(srcs[0],"test");
-	    FunctionEntity function = (FunctionEntity)( repo.getEntity(name));
-	    VarEntity var = function.lookupVarLocally("t1");
+	    FunctionEntity function = (FunctionEntity)(repo.getEntity(withPackageName(srcs[0],"A.foo")));
+	    VarEntity var = function.lookupVarLocally("self");
 	    TypeEntity type = var.getType();
-	    assertTrue(type instanceof CandidateTypes);
-	    assertEquals(2,((CandidateTypes)type).getCandidateTypes().size());
+	    assertTrue(type.getQualifiedName().equals(withPackageName(srcs[0],"A")));
 	}
-
-
 }
 

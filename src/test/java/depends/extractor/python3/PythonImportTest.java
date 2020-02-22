@@ -1,4 +1,4 @@
-package depends.extractor.python;
+package depends.extractor.python3;
 
 import java.io.IOException;
 
@@ -7,9 +7,10 @@ import org.junit.Test;
 
 import depends.deptypes.DependencyType;
 import depends.entity.Entity;
+import depends.extractor.python3.PythonFileParser;
 import depends.util.FileUtil;
 
-public class PythonImportTest extends PythonParserTest {
+public class PythonImportTest extends Python3ParserTest {
     @Before
     public void setUp() {
     	super.init();

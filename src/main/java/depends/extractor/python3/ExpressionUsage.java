@@ -1,4 +1,4 @@
-package depends.extractor.python;
+package depends.extractor.python3;
 
 import java.util.List;
 

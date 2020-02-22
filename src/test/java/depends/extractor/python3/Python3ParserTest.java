@@ -1,4 +1,4 @@
-package depends.extractor.python;
+package depends.extractor.python3;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,11 +7,13 @@ import depends.entity.repo.EntityRepo;
 import depends.extractor.FileParser;
 import depends.extractor.ParserCreator;
 import depends.extractor.ParserTest;
+import depends.extractor.python3.PythonFileParser;
+import depends.extractor.python3.PythonProcessor;
 import depends.relations.Inferer;
 import depends.util.FileUtil;
 import depends.util.TemporaryFile;
 
-public abstract class PythonParserTest extends ParserTest implements ParserCreator {
+public abstract class Python3ParserTest extends ParserTest implements ParserCreator {
 
 	protected EntityRepo repo;
 	private PythonProcessor p;

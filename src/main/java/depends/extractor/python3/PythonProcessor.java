@@ -1,4 +1,4 @@
-package depends.extractor.python;
+package depends.extractor.python3;
 
 import static depends.deptypes.DependencyType.*;
 
@@ -22,7 +22,7 @@ public class PythonProcessor extends AbstractLangProcessor {
 
 	@Override
 	public String supportedLanguage() {
-		return "python";
+		return "python3";
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package depends.extractor.python;
+package depends.extractor.python3;
 
 import java.io.IOException;
 
@@ -7,8 +7,9 @@ import org.junit.Test;
 
 import depends.deptypes.DependencyType;
 import depends.entity.FunctionEntity;
+import depends.extractor.python3.PythonFileParser;
 
-public class PythonObjectThrowReturn extends PythonParserTest {
+public class PythonObjectThrowReturn extends Python3ParserTest {
     @Before
     public void setUp() {
     	super.init();

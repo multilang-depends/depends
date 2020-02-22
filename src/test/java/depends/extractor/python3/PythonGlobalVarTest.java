@@ -1,4 +1,4 @@
-package depends.extractor.python;
+package depends.extractor.python3;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -10,8 +10,9 @@ import org.junit.Test;
 
 import depends.deptypes.DependencyType;
 import depends.entity.Entity;
+import depends.extractor.python3.PythonFileParser;
 
-public class PythonGlobalVarTest extends PythonParserTest {
+public class PythonGlobalVarTest extends Python3ParserTest {
     @Before
     public void setUp() {
     	super.init();

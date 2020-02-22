@@ -1,4 +1,4 @@
-package depends.extractor.python;
+package depends.extractor.python3;
 
 import java.io.IOException;
 
@@ -12,6 +12,8 @@ import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.FileParser;
+import depends.extractor.python.Python3Lexer;
+import depends.extractor.python.Python3Parser;
 import depends.extractor.ruby.IncludedFileLocator;
 import depends.relations.Inferer;
 
