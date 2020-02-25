@@ -73,7 +73,6 @@ public class ExpressionUsage {
 		}
 		if (context.lastContainer().containsExpression(ctx)) return;
 		if (ctx.getParent() instanceof TrailerContext) return;
-		System.out.println("expr: "+ctx.getText() + " class:" + ctx.getClass().getSimpleName());
 		
 		Expression parent = findParentInStack(ctx);
 		Expression expression = parent;
@@ -122,7 +121,7 @@ public class ExpressionUsage {
 
 
 	private void makeSureVarExist(GenericName identifier) {
-		if (context.foundEntityWithName(identifier).equals(Inferer.externalType)) {
+		if (Inferer.externalType.equals(context.foundEntityWithName(identifier))) {
 			context.foundVarDefinition(context.lastContainer(), identifier.getName());
 		}
 	}
