@@ -1,18 +1,8 @@
 package depends.extractor.python.py3;
 
-import static depends.deptypes.DependencyType.*;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import depends.entity.repo.BuiltInType;
-import depends.extractor.AbstractLangProcessor;
 import depends.extractor.FileParser;
 import depends.extractor.python.BasePythonProcessor;
-import depends.extractor.python.PythonBuiltInType;
-import depends.extractor.python.PythonImportLookupStrategy;
 import depends.extractor.ruby.IncludedFileLocator;
-import depends.relations.ImportLookupStrategy;
 
 public class Python3Processor extends BasePythonProcessor {
 
@@ -24,7 +14,7 @@ public class Python3Processor extends BasePythonProcessor {
 
 	@Override
 	public String supportedLanguage() {
-		return "python3";
+		return "python3[deprecated]";
 	}
 
 
