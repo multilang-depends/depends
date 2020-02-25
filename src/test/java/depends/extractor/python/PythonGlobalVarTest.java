@@ -7,7 +7,6 @@ import org.junit.Test;
 
 import depends.deptypes.DependencyType;
 import depends.entity.Entity;
-import depends.extractor.python.py3.Python3FileParser;
 import depends.extractor.python.union.PythonFileParser;
 
 public class PythonGlobalVarTest extends PythonParserTest {

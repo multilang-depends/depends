@@ -7,7 +7,6 @@ import org.junit.Test;
 
 import depends.deptypes.DependencyType;
 import depends.entity.FunctionEntity;
-import depends.extractor.python.py3.Python3FileParser;
 import depends.extractor.python.union.PythonFileParser;
 
 public class PythonObjectCreationTest extends PythonParserTest {

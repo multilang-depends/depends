@@ -7,8 +7,6 @@ import depends.entity.repo.EntityRepo;
 import depends.extractor.FileParser;
 import depends.extractor.ParserCreator;
 import depends.extractor.ParserTest;
-import depends.extractor.python.py3.Python3FileParser;
-import depends.extractor.python.py3.Python3Processor;
 import depends.extractor.python.union.PythonFileParser;
 import depends.extractor.python.union.PythonProcessor;
 import depends.relations.Inferer;
