@@ -27,7 +27,7 @@ THE SOFTWARE.
 
 parser grammar PythonParser;
 
-options { tokenVocab=PythonLexer; superClass=PythonParserBase; }
+options { tokenVocab=PythonLexer; superClass=depends.extractor.python.union.PythonParserBase; }
 
 root
     : (single_input

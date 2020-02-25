@@ -27,7 +27,7 @@ THE SOFTWARE.
 
 lexer grammar PythonLexer;
 
-options { superClass=PythonLexerBase; }
+options { superClass=depends.extractor.python.union.PythonLexerBase; }
 
 // Artificial tokens only for parser purposes
 

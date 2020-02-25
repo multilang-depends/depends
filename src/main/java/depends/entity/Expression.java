@@ -297,6 +297,10 @@ public class Expression implements Serializable{
 		}
 		this.rawType = GenericName.build(name);
 	}
+
+	public Expression getParent() {
+		return this.parent;
+	}
 	
 	
 }

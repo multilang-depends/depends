@@ -17,6 +17,7 @@ import depends.entity.PackageEntity;
 import depends.entity.TypeEntity;
 import depends.entity.VarEntity;
 import depends.entity.repo.EntityRepo;
+import depends.extractor.python.NameAliasImport;
 import depends.extractor.python.Python3BaseListener;
 import depends.extractor.python.PythonHandlerContext;
 import depends.extractor.python.Python3Parser.ClassdefContext;

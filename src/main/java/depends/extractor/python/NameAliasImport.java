@@ -1,4 +1,4 @@
-package depends.extractor.python.py3;
+package depends.extractor.python;
 
 import depends.entity.Entity;
 import depends.importtypes.Import;
