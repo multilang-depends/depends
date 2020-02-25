@@ -36,7 +36,6 @@ public class LangRegister {
 		add (new depends.extractor.ruby.RubyProcessor());
 		add (new depends.extractor.pom.PomProcessor());
 		add (new depends.extractor.kotlin.KotlinProcessor());
-		add (new depends.extractor.python.py3.Python3Processor());
 		add (new depends.extractor.python.union.PythonProcessor());
 	}
 	
