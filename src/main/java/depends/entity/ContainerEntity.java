@@ -189,12 +189,12 @@ public abstract class ContainerEntity extends DecoratedEntity {
 				Entity entity = inferer.resolveName(this, expression.getIdentifier(), true);
 				String composedName = expression.getIdentifier().toString();
 				Expression theExpr = expression;
-				if (entity.equals(Inferer.externalType)) {
-					while(theExpr.getParent()==null || !theExpr.isDot) {
+				if (Inferer.externalType.equals(entity)) {
+					while(theExpr.getParent()!=null && theExpr.getParent().isDot) {
 						theExpr = theExpr.getParent();
 						composedName = composedName + "." + theExpr.getIdentifier().toString();
 						entity = inferer.resolveName(this, GenericName.build(composedName), true);
-						if (entity!=null && !entity.equals(Inferer.externalType))
+						if (entity!=null && !Inferer.externalType.equals(entity))
 							break;
 					}
 				}
