@@ -192,6 +192,7 @@ public abstract class ContainerEntity extends DecoratedEntity {
 				if (Inferer.externalType.equals(entity)) {
 					while(theExpr.getParent()!=null && theExpr.getParent().isDot) {
 						theExpr = theExpr.getParent();
+						if (theExpr.getIdentifier()==null) break;
 						composedName = composedName + "." + theExpr.getIdentifier().toString();
 						entity = inferer.resolveName(this, GenericName.build(composedName), true);
 						if (entity!=null && !Inferer.externalType.equals(entity))
