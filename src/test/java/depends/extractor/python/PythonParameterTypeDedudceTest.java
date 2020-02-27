@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import depends.entity.CandidateTypes;
@@ -21,7 +22,7 @@ public class PythonParameterTypeDedudceTest extends PythonParserTest {
 	}
 	
 	@Test
-	public void test_deduce_type_of_return() throws IOException {
+	public void test_deduce_type_of_parameter() throws IOException {
 		String[] srcs = new String[] {
 	    		"./src/test/resources/python-code-examples/deducetype_parameter.py",
 	    	    };
@@ -34,6 +35,66 @@ public class PythonParameterTypeDedudceTest extends PythonParserTest {
 	    String name = withPackageName(srcs[0],"test");
 	    FunctionEntity function = (FunctionEntity)( repo.getEntity(name));
 	    VarEntity var = function.lookupVarLocally("t1");
+	    TypeEntity type = var.getType();
+	    assertTrue(type instanceof CandidateTypes);
+	    assertEquals(2,((CandidateTypes)type).getCandidateTypes().size());
+	}
+	
+	
+	@Test
+	public void test_deduce_type_of_builtIn() throws IOException {
+		String[] srcs = new String[] {
+	    		"./src/test/resources/python-code-examples/deducetype_builtin.py",
+	    	    };
+	    
+	    for (String src:srcs) {
+		    FileParser parser = createFileParser(src);
+		    parser.parse();
+	    }
+	    inferer.resolveAllBindings();
+	    String name = withPackageName(srcs[0],"test");
+	    FunctionEntity function = (FunctionEntity)( repo.getEntity(name));
+	    VarEntity var = function.lookupVarLocally("t1");
+	    TypeEntity type = var.getType();
+	    assertTrue(type instanceof CandidateTypes);
+	    assertEquals(0,((CandidateTypes)type).getCandidateTypes().size());
+	}
+
+	
+	@Test
+	public void test_deduce_type_of_builtIn_cannot_override() throws IOException {
+		String[] srcs = new String[] {
+	    		"./src/test/resources/python-code-examples/deducetype_builtin.py",
+	    	    };
+	    
+	    for (String src:srcs) {
+		    FileParser parser = createFileParser(src);
+		    parser.parse();
+	    }
+	    inferer.resolveAllBindings();
+	    String name = withPackageName(srcs[0],"test2");
+	    FunctionEntity function = (FunctionEntity)( repo.getEntity(name));
+	    VarEntity var = function.lookupVarLocally("t1");
+	    TypeEntity type = var.getType();
+	    assertTrue(type instanceof CandidateTypes);
+	    assertEquals(1,((CandidateTypes)type).getCandidateTypes().size());
+	}
+	
+	
+	@Ignore
+	public void test_deduce_type_of_non_param_var() throws IOException {
+		String[] srcs = new String[] {
+	    		"./src/test/resources/python-code-examples/deducetype_nonparam.py",
+	    	    };
+	    
+	    for (String src:srcs) {
+		    FileParser parser = createFileParser(src);
+		    parser.parse();
+	    }
+	    inferer.resolveAllBindings();
+	    String name = withPackageName(srcs[0],"test");
+	    FunctionEntity function = (FunctionEntity)( repo.getEntity(name));
+	    VarEntity var = function.lookupVarLocally("t2");
 	    TypeEntity type = var.getType();
 	    assertTrue(type instanceof CandidateTypes);
 	    assertEquals(2,((CandidateTypes)type).getCandidateTypes().size());

@@ -25,8 +25,10 @@ SOFTWARE.
 package depends.entity.repo;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import depends.entity.FunctionCall;
 import depends.relations.Inferer;
 
 public abstract class BuiltInType {
@@ -67,6 +69,10 @@ public abstract class BuiltInType {
 
 	public boolean isBuildInMethod(String name) {
 		return builtInMethod.contains(name); 
+	}
+
+	public  boolean isBuildInTypeMethods(List<FunctionCall> functionCalls) {
+		return false;
 	}
 
 }

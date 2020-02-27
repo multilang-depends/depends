@@ -314,6 +314,9 @@ public class Inferer {
 	 * @return
 	 */
 	public List<TypeEntity> calculateCandidateTypes(VarEntity fromEntity, List<FunctionCall> functionCalls) {
+		if (buildInTypeManager.isBuildInTypeMethods(functionCalls)) {
+			return new ArrayList<>();
+		}
 		return searchTypesInRepo(fromEntity, functionCalls);
 	}
 
@@ -322,11 +325,12 @@ public class Inferer {
 		Iterator<Entity> iterator = repo.sortedFileIterator();
 		while(iterator.hasNext()) {
 			Entity f = iterator.next();
-			if (f instanceof FileEntity)
-			for (TypeEntity type:((FileEntity)f).getDeclaredTypes()) {
-				FunctionMatcher functionMatcher = new FunctionMatcher(type.getFunctions());
-				if (functionMatcher.containsAll(functionCalls)) {
-					types.add(type);
+			if (f instanceof FileEntity) {
+				for (TypeEntity type:((FileEntity)f).getDeclaredTypes()) {
+					FunctionMatcher functionMatcher = new FunctionMatcher(type.getFunctions());
+					if (functionMatcher.containsAll(functionCalls)) {
+						types.add(type);
+					}
 				}
 			}
 		}
