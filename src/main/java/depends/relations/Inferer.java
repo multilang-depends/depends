@@ -84,7 +84,6 @@ public class Inferer {
 		System.out.println("Dependency analaysing....");
 		if (logger.isInfoEnabled()) {
 			logger.info("Dependency analaysing...");
-			System.gc();
 		}
 		logger.info("Heap Information: " + ManagementFactory.getMemoryMXBean().getHeapMemoryUsage());
 		

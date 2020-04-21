@@ -151,4 +151,21 @@ public class PythonImportTest extends PythonParserTest {
 	    }
 	    inferer.resolveAllBindings();
 	}
+	
+	
+	@Test
+	public void should_import_from_package__init__file() throws IOException {
+		String[] srcs = new String[] {
+	    		"./src/test/resources/python-code-examples/import_from_init/importing.py",
+	    		"./src/test/resources/python-code-examples/import_from_init/pkg/__init__.py",
+	    	    };
+	    
+	    for (String src:srcs) {
+		    PythonFileParser parser = createParser(src);
+		    parser.parse();
+	    }
+	    inferer.resolveAllBindings();
+		this.assertContainsRelation(repo.getEntity(FileUtil.uniqFilePath(srcs[0])), DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[1]));
+	}
+	
 }

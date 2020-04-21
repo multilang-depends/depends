@@ -171,6 +171,9 @@ public class PythonCodeListener extends PythonParserBaseListener{
 						}
 					}
 				}
+				if (FileUtil.existFile(fullName+File.separator + "__init__.py")) {
+					fullName = fullName+File.separator +"__init__.py";
+				}
 			} else {
 				visitIncludedFile(fullName);
 			}
