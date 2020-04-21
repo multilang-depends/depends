@@ -82,8 +82,9 @@ public class PythonCodeListener extends PythonParserBaseListener{
 			if (dotted_as_name.name()!=null) {
 				aliasName = dotted_as_name.name().getText();
 			}
-			String fullName = foundImportedModuleOrPackage(0,moduleName);
-			if (fullName!=null) {
+			List<String> fullNames = foundImportedModuleOrPackage(0,moduleName);
+			 
+			for (String fullName:fullNames) {
 				context.foundNewImport(new NameAliasImport(fullName, entityRepo.getEntity(fullName), aliasName));
 			}
 		}
@@ -97,22 +98,23 @@ public class PythonCodeListener extends PythonParserBaseListener{
 		}
 		int prefixDotCount = getDotCounter(ctx);
 
-		String fullName = foundImportedModuleOrPackage(prefixDotCount, moduleName);
-		if (fullName != null) {
+		 List<String> fullNames = foundImportedModuleOrPackage(prefixDotCount, moduleName);
+		for (String fullName:fullNames) {
 			if (ctx.import_as_names() == null) {// import *
 				ContainerEntity moduleEntity = (ContainerEntity) (entityRepo.getEntity(fullName));
 				if (moduleEntity != null) {
-					for (FunctionEntity func : moduleEntity.getFunctions()) {
-						context.foundNewImport(new NameAliasImport(fullName, func, func.getRawName().uniqName()));
-					}
-					for (VarEntity var : moduleEntity.getVars()) {
-						context.foundNewImport(new NameAliasImport(fullName, var, var.getRawName().uniqName()));
+					for (Entity child:moduleEntity.getChildren()) {
+						context.foundNewImport(new NameAliasImport(fullName, child, child.getRawName().uniqName()));
 					}
 					if (moduleEntity instanceof PackageEntity) {
 						for (Entity file : moduleEntity.getChildren()) {
 							String fileName = file.getRawName().uniqName().substring(fullName.length());
 							context.foundNewImport(new NameAliasImport(file.getRawName().uniqName(), file, fileName));
 						}
+					}
+					if (moduleEntity instanceof FileEntity) {
+						String fileName = moduleEntity.getRawName().uniqName().substring(fullName.length());
+						context.foundNewImport(new NameAliasImport(moduleEntity.getRawName().uniqName(), moduleEntity, fileName));
 					}
 				}
 			} else {
@@ -141,7 +143,7 @@ public class PythonCodeListener extends PythonParserBaseListener{
 		}
 		return total;
 	}
-	private String foundImportedModuleOrPackage(int prefixDotCount, String originalName) {
+	private List<String> foundImportedModuleOrPackage(int prefixDotCount, String originalName) {
 		String dir = FileUtil.getLocatedDir(context.currentFile().getRawName().uniqName());
 		String preFix = "";
 		for (int i = 0; i < prefixDotCount - 1; i++) {
@@ -171,14 +173,17 @@ public class PythonCodeListener extends PythonParserBaseListener{
 						}
 					}
 				}
-				if (FileUtil.existFile(fullName+File.separator + "__init__.py")) {
-					fullName = fullName+File.separator +"__init__.py";
-				}
 			} else {
 				visitIncludedFile(fullName);
 			}
 		}
-		return fullName;
+		ArrayList<String> r = new ArrayList<>();
+		if (fullName==null) return r;
+		r.add(fullName);
+		if (FileUtil.existFile(fullName+File.separator + "__init__.py")) {
+			r.add( fullName+File.separator +"__init__.py");
+		}
+		return r;
 	}
 
 	private void visitIncludedFile(String fullName) {
