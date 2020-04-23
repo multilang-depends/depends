@@ -41,6 +41,7 @@ import depends.extractor.python.PythonParser.Return_stmtContext;
 import depends.extractor.python.PythonParser.Yield_stmtContext;
 import depends.extractor.python.PythonParserBaseListener;
 import depends.extractor.ruby.IncludedFileLocator;
+import depends.importtypes.FileImport;
 import depends.relations.Inferer;
 import depends.util.FileUtil;
 
@@ -85,6 +86,9 @@ public class PythonCodeListener extends PythonParserBaseListener{
 			List<String> fullNames = foundImportedModuleOrPackage(0,moduleName);
 			 
 			for (String fullName:fullNames) {
+				if (FileUtil.existFile(fullName) && !(FileUtil.isDirectory(fullName))) {
+					context.foundNewImport(new FileImport(fullName));
+				}
 				context.foundNewImport(new NameAliasImport(fullName, entityRepo.getEntity(fullName), aliasName));
 			}
 		}
@@ -100,6 +104,7 @@ public class PythonCodeListener extends PythonParserBaseListener{
 
 		 List<String> fullNames = foundImportedModuleOrPackage(prefixDotCount, moduleName);
 		for (String fullName:fullNames) {
+
 			if (ctx.import_as_names() == null) {// import *
 				ContainerEntity moduleEntity = (ContainerEntity) (entityRepo.getEntity(fullName));
 				if (moduleEntity != null) {
@@ -123,6 +128,15 @@ public class PythonCodeListener extends PythonParserBaseListener{
 					String alias = name;
 					if (item.name().size() > 1)
 						alias = item.name(1).getText();
+					if (FileUtil.isDirectory(fullName)) {
+						String fileName = fullName + File.separator + name + ".py";
+						if (FileUtil.existFile(fileName) && !(FileUtil.isDirectory(fileName))) {
+							context.foundNewImport(new FileImport(fileName));
+						}
+					}
+					if (FileUtil.existFile(fullName) && !(FileUtil.isDirectory(fullName))) {
+						context.foundNewImport(new FileImport(fullName));
+					}
 					Entity itemEntity = inferer.resolveName(entityRepo.getEntity(fullName), GenericName.build(name), true);
 					if (itemEntity != null)
 						context.foundNewImport(new NameAliasImport(itemEntity.getQualifiedName(), itemEntity, alias));

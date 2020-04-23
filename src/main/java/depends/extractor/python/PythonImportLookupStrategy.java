@@ -14,6 +14,7 @@ import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.UnsolvedBindings;
+import depends.importtypes.FileImport;
 import depends.importtypes.Import;
 import depends.relations.ImportLookupStrategy;
 import depends.relations.Inferer;
@@ -55,7 +56,7 @@ public class PythonImportLookupStrategy implements ImportLookupStrategy {
 
 	@Override
 	public Collection<Entity> getImportedTypes(List<Import> importedNames, EntityRepo repo, Set<UnsolvedBindings> unsolvedBindings) {
-		ArrayList<Entity> result = new ArrayList<>();
+		Set<Entity> result = new HashSet<>();
 		for (Import importedItem:importedNames) {
 			if (importedItem instanceof NameAliasImport) {
 				NameAliasImport nameAliasImport = (NameAliasImport)importedItem;
@@ -65,6 +66,13 @@ public class PythonImportLookupStrategy implements ImportLookupStrategy {
 					continue;
 				}				
 				result.add(imported);
+			}
+			if (importedItem instanceof FileImport) {
+				FileImport fileImport = (FileImport)importedItem;
+				Entity imported = (repo.getEntity(fileImport.getContent()));
+				if (imported!=null) {
+					result.add(imported);
+				}
 			}
 		}
 		return result;

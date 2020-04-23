@@ -168,4 +168,20 @@ public class PythonImportTest extends PythonParserTest {
 		this.assertContainsRelation(repo.getEntity(FileUtil.uniqFilePath(srcs[0])), DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[1]));
 	}
 	
+	
+	@Test
+	public void should_not_bypass_import_in_same_dir() throws IOException {
+		String[] srcs = new String[] {
+	    		"./src/test/resources/python-code-examples/import_of_same_dir/pkg/importing.py",
+	    		"./src/test/resources/python-code-examples/import_of_same_dir/pkg/a.py",
+	    	    };
+	   
+	    for (String src:srcs) {
+		    PythonFileParser parser = createParser(src);
+		    parser.parse();
+	    }
+	    inferer.resolveAllBindings();
+		this.assertContainsRelation(repo.getEntity(FileUtil.uniqFilePath(srcs[0])), DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[1]));
+	}
+	
 }
