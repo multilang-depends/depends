@@ -148,9 +148,6 @@ public class Expression implements Serializable{
 		if (this.type.equals(Inferer.buildInType)) {
 			parent.setType(Inferer.buildInType,Inferer.buildInType,inferer);
 			return;
-		}else if (this.type.equals(Inferer.externalType)){
-			parent.setType(Inferer.externalType,Inferer.externalType,inferer);
-			return;
 		}
 		
 		/* if it is a logic expression, the return type/type is boolean. */

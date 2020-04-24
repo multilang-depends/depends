@@ -50,7 +50,6 @@ import depends.importtypes.Import;
 
 public class Inferer {
 	static final public TypeEntity buildInType = new TypeEntity(GenericName.build("built-in"), null, -1);
-	static final public TypeEntity externalType = new TypeEntity(GenericName.build("external"), null, -2);
 	static final public TypeEntity genericParameterType = new TypeEntity(GenericName.build("T"), null, -3);
 	private BuiltInType buildInTypeManager = new NullBuiltInType();
 	private ImportLookupStrategy importLookupStrategy;
@@ -171,8 +170,7 @@ public class Inferer {
 	public Entity resolveName(Entity fromEntity, GenericName rawName, boolean searchImport) {
 		if (rawName==null) return null;
 		Entity entity = resolveNameInternal(fromEntity,rawName,searchImport);
-		if (entity==null ||
-				entity.equals(externalType)) {
+		if (entity==null ) {
 			if (!this.buildInTypeManager.isBuiltInType(rawName.getName())) {
 				addUnsolvedBinding(new UnsolvedBindings(rawName.getName(), fromEntity));
 			}
@@ -201,7 +199,7 @@ public class Inferer {
 		if (fromEntity==null) return null;
 		do {
 			entity = lookupEntity(fromEntity, name, searchImport);
-			if (entity!=null && !entity.equals(externalType)) {
+			if (entity!=null ) {
 				break;
 			}
 			if (importLookupStrategy.supportGlobalNameLookup()) {
@@ -283,7 +281,7 @@ public class Inferer {
 		Entity type = importLookupStrategy.lookupImportedType(name, fileEntity, repo,this);
 		if (type != null)
 			return type;
-		return externalType;
+		return null;
 	}
 
 

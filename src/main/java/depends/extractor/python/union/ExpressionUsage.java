@@ -121,7 +121,7 @@ public class ExpressionUsage {
 
 
 	private void makeSureVarExist(GenericName identifier) {
-		if (Inferer.externalType.equals(context.foundEntityWithName(identifier))) {
+		if (null==context.foundEntityWithName(identifier)) {
 			context.foundVarDefinition(context.lastContainer(), identifier.getName());
 		}
 	}
