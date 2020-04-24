@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import depends.deptypes.DependencyType;
 import depends.entity.Entity;
+import depends.entity.FunctionEntity;
 import depends.extractor.python.union.PythonFileParser;
 import depends.util.FileUtil;
 
@@ -184,4 +185,61 @@ public class PythonImportTest extends PythonParserTest {
 		this.assertContainsRelation(repo.getEntity(FileUtil.uniqFilePath(srcs[0])), DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[1]));
 	}
 	
+	
+	@Test
+	public void should_resolve_symbols_of_imported_in_same_dir() throws IOException {
+		String[] srcs = new String[] {
+	    		"./src/test/resources/python-code-examples/import_of_same_dir/pkg/importing.py",
+	    		"./src/test/resources/python-code-examples/import_of_same_dir/pkg/a.py",
+	    	    };
+	   
+	    for (String src:srcs) {
+		    PythonFileParser parser = createParser(src);
+		    parser.parse();
+	    }
+	    inferer.resolveAllBindings();
+	    FunctionEntity func = (FunctionEntity)repo.getEntity(withPackageName(srcs[0],"test"));
+	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[1],"foo"));
+	}
+	
+	
+	
+	@Test
+	public void should_resolve_symbols_of_ducktyping() throws IOException {
+		String[] srcs = new String[] {
+	    		"./src/test/resources/python-code-examples/duck_typing/forest.py",
+	    		"./src/test/resources/python-code-examples/duck_typing/animals.py",
+	    		"./src/test/resources/python-code-examples/duck_typing/controller.py",
+	    	    };
+	   
+	    for (String src:srcs) {
+		    PythonFileParser parser = createParser(src);
+		    parser.parse();
+	    }
+	    inferer.resolveAllBindings();
+	    FunctionEntity func = (FunctionEntity)repo.getEntity(withPackageName(srcs[0],"in_the_forest"));
+	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[1],"Duck.quack"));
+	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[1],"Bird.quack"));
+	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[1],"Doge.quack"));
+	}
+
+	@Test
+	public void should_resolve_symbols_of_ducktyping2() throws IOException {
+		String[] srcs = new String[] {
+	    		"./src/test/resources/python-code-examples/duck_typing/animals.py",
+	    		"./src/test/resources/python-code-examples/duck_typing/forest.py",
+	    		"./src/test/resources/python-code-examples/duck_typing/controller.py",
+	    	    };
+	   
+	    for (String src:srcs) {
+		    PythonFileParser parser = createParser(src);
+		    parser.parse();
+	    }
+	    inferer.resolveAllBindings();
+	    FunctionEntity func = (FunctionEntity)repo.getEntity(withPackageName(srcs[1],"in_the_forest"));
+	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[0],"Duck.quack"));
+	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[0],"Bird.quack"));
+	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[0],"Doge.quack"));
+	}
+
 }

@@ -90,7 +90,7 @@ public class VarEntity extends ContainerEntity {
 	}
 
 	public void fillCandidateTypes(Inferer inferer) {
-		if (type!=null) return ; //it is a strong type lang, do not need deduce candidate types
+		if (type!=null && !(type instanceof CandidateTypes)) return ; //it is a strong type lang, do not need deduce candidate types
 		if (functionCalls==null) return;
 		if (functionCalls.size()==0) return; //no information avaliable for type deduction
 		if (this.rawType==null) {
