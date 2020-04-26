@@ -6,6 +6,10 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
+import depends.deptypes.DependencyType;
+import depends.entity.Entity;
+import depends.relations.Inferer;
+
 public class MacroRelationTest extends CppParserTest{
     @Before
     public void setUp() {
@@ -24,7 +28,10 @@ public class MacroRelationTest extends CppParserTest{
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
-        assertEquals(4,repo.getEntity("foo").getRelations().size());
+	    Entity e = repo.getEntity("foo");
+	    this.assertContainsRelation(e, DependencyType.RETURN, Inferer.buildInType.getQualifiedName());
+	    this.assertContainsRelation(e, DependencyType.CONTAIN, Inferer.buildInType.getQualifiedName());
+	    this.assertContainsRelation(e, DependencyType.USE, Inferer.buildInType.getQualifiedName());
 	}
 	
 	

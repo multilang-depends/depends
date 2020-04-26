@@ -18,7 +18,7 @@ public class CppParameterParserTest extends CppParserTest{
 	    CppFileParser parser = createParser(src);
         parser.parse();
         inferer.resolveAllBindings();
-        assertEquals(5,repo.getEntity("FunctionParameters.function_with_parameters_same_type").getRelations().size());
+        assertEquals(4,repo.getEntity("FunctionParameters.function_with_parameters_same_type").getRelations().size());
 	}
 
 }
