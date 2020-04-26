@@ -6,6 +6,7 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
+import depends.deptypes.DependencyType;
 import depends.extractor.cpp.cdt.CdtCppFileParser;
 
 public class ContainRelationTest extends CppParserTest{
@@ -55,7 +56,7 @@ public class ContainRelationTest extends CppParserTest{
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
-        assertEquals(2,repo.getEntity("UnderTest").getRelations().size());
+	    this.assertContainsRelation(repo.getEntity("UnderTest"), DependencyType.CONTAIN, "Member");
 	}
 	
 	
