@@ -82,7 +82,7 @@ public class ExpressionUsage {
 		}else {
 			/* create expression and link it with parent*/
 			expression = new Expression(idGenerator.generateId());
-			expression.text = ctx.getText();
+			expression.setText(ctx.getText());
 			context.lastContainer().addExpression(ctx,expression);
 			expression.setParent(parent);
 		}
@@ -91,7 +91,7 @@ public class ExpressionUsage {
 		if (ctx instanceof Expr_stmtContext) {
 			Expr_stmtContext exprAssign = (Expr_stmtContext)ctx;
 			if (exprAssign.assign_part()!=null) {
-				expression.isSet = true;
+				expression.setSet(true);
 				expression.setIdentifier(exprAssign.testlist_star_expr().getText());
 				if (isValidIdentifier(expression.getIdentifier())) {
 					makeSureVarExist(expression.getIdentifier());
@@ -100,8 +100,7 @@ public class ExpressionUsage {
 			}
 		}
 		if (ctx instanceof Raise_stmtContext) {
-			expression.isThrow = true;
-			expression.deriveTypeFromChild = true;
+			expression.setThrow (true);
 		}
 		if (ctx instanceof Return_stmtContext) {
 			deduceReturnTypeInCaseOfReturn((Return_stmtContext)ctx,expression);
@@ -141,7 +140,7 @@ public class ExpressionUsage {
 			//atom
 			Expression atomExpr = new Expression(idGenerator.generateId());
 			atomExpr.setParent(expression);
-			atomExpr.text = exprCtx.atom().getText();
+			atomExpr.setText(exprCtx.atom().getText());
 			atomExpr.setIdentifier(exprCtx.atom().getText());
 			context.lastContainer().addExpression(exprCtx.atom(),atomExpr);
 			processAtom(exprCtx.atom(),atomExpr);
@@ -152,12 +151,12 @@ public class ExpressionUsage {
 				for (TrailerContext trailer:exprCtx.trailer()) {
 					if (trailer.name()!=null) {
 						Expression trailerExpr = new Expression(idGenerator.generateId());
-						trailerExpr.text = trailer.getText();
+						trailerExpr.setText(trailer.getText());
 						context.lastContainer().addExpression(trailer,trailerExpr);
 						trailerExpr.setParent(expression);
 
 						//doted name = member access or method call
-						trailerExpr.isDot = true;
+						trailerExpr.setDot(true);;
 						trailerExpr.setIdentifier(trailer.name().getText());
 						if (trailer.arguments()!=null) {
 							if (trailer.arguments().OPEN_PAREN()!=null) {
@@ -218,7 +217,7 @@ public class ExpressionUsage {
 		}
 		Entity typeEntity = context.foundEntityWithName(funcName);
 		if (typeEntity instanceof TypeEntity && typeEntity.getId() > 0) {
-			theExpression.isCreate = true;
+			theExpression.setCreate(true);
 			theExpression.setType(typeEntity.getType(), typeEntity, inferer);
 			theExpression.setRawType(typeEntity.getRawName());
 			return;
@@ -232,7 +231,7 @@ public class ExpressionUsage {
 		GenericName funcName = theExpression.getIdentifier();
 		Entity typeEntity = context.foundEntityWithName(funcName);
 		if (typeEntity instanceof TypeEntity && typeEntity.getId() > 0) {
-			theExpression.getParent().isCreate = true;
+			theExpression.getParent().setCreate(true);
 			theExpression.setType(typeEntity.getType(), typeEntity, inferer);
 			theExpression.getParent().setRawType(typeEntity.getRawName());
 			return;

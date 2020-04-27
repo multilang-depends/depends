@@ -20,7 +20,7 @@ public class DuplicateDeclarationTest extends CppParserTest {
 		public void duplication_declaration_should_be_resolved() throws IOException {
 			
 			 String[] srcs = new String[] {
-			    		"	",
+			    		"./src/test/resources/cpp-code-examples/DuplicationDeclarationCouldBeResolved.cpp",
 			    	    };
 			    
 			    for (String src:srcs) {

@@ -342,5 +342,9 @@ public class Inferer {
 		this.isCollectUnsolvedBindings  = isCollectUnsolvedBindings;
 	}
 
+	public EntityRepo getRepo() {
+		return repo;
+	}
+
 
 }

@@ -50,10 +50,9 @@ public class PythonFileParser implements FileParser {
         PythonCodeListener bridge = new PythonCodeListener(fileFullPath, entityRepo,inferer, includeFileLocator, processor);
 	    ParseTreeWalker walker = new ParseTreeWalker();
 	    walker.walk(bridge, parser.file_input());
-	    
 		fileEntity = entityRepo.getEntity(fileFullPath);
-		fileEntity.inferEntities(inferer);
 		((FileEntity)fileEntity).cacheAllExpressions();
+		bridge.done();
 	}
 
 }

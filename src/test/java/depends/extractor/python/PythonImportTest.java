@@ -218,9 +218,9 @@ public class PythonImportTest extends PythonParserTest {
 	    }
 	    inferer.resolveAllBindings();
 	    FunctionEntity func = (FunctionEntity)repo.getEntity(withPackageName(srcs[0],"in_the_forest"));
-	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[1],"Duck.quack"));
-	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[1],"Bird.quack"));
 	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[1],"Doge.quack"));
+	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[1],"Bird.quack"));
+	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[1],"Duck.quack"));
 	}
 
 	@Test

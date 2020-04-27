@@ -60,13 +60,13 @@ public class ExpressionUsage {
 		Expression parent = findParentInStack(ctx);
 		//If parent already a call 
 		if (parent!=null ) {
-			if (ctx instanceof IASTIdExpression && (parent.isCall() || parent.isCast)) {
+			if (ctx instanceof IASTIdExpression && (parent.isCall() || parent.isCast())) {
 				return;
 			}
 		}
 		/* create expression and link it with parent*/
 		Expression expression = new Expression(idGenerator.generateId());
-		expression.text = ctx.getRawSignature(); //for debug purpose. no actual effect
+		expression.setText( ctx.getRawSignature());
 		context.lastContainer().addExpression(ctx,expression);
 		expression.setParent(parent);
 	
@@ -76,13 +76,13 @@ public class ExpressionUsage {
 			return;
 		}
 		
-		expression.isSet = isSet(ctx);
+		expression.setSet(isSet(ctx));
 		expression.setCall((ctx instanceof IASTFunctionCallExpression)?true:false);
-		expression.isLogic = isLogic(ctx);
+		expression.setLogic(isLogic(ctx));
 		if (ctx instanceof ICPPASTNewExpression){
-			expression.isCreate = true;
+			expression.setCreate(true);;
 		}		
-		expression.isDot = isDot(ctx);
+		expression.setDot(isDot(ctx));
 
 		/**
  *    | expression bop='.'
@@ -99,16 +99,16 @@ public class ExpressionUsage {
 		if (ctx instanceof ICPPASTNewExpression) {
 			expression.setRawType(GenericName.build(ASTStringUtilExt.getTypeIdString(((ICPPASTNewExpression)ctx).getTypeId())));
 			expression.setCall(true);
-			expression.deriveTypeFromChild = false;
+			expression.disableDriveTypeFromChild();
 		}
 
 		if (ctx instanceof IASTCastExpression) {
-			expression.isCast=true;
+			expression.setCast(true);
 			expression.setRawType(GenericName.build(ASTStringUtilExt.getTypeIdString(((IASTCastExpression)ctx).getTypeId())));
-			expression.deriveTypeFromChild = false;
+			expression.disableDriveTypeFromChild();
 
 		}
-		if (expression.isDot) {
+		if (expression.isDot()) {
 			IASTExpression op2 = ((IASTBinaryExpression)ctx).getOperand2();
 			if (op2 instanceof IASTIdExpression)
 				expression.setIdentifier(ASTStringUtilExt.getName(((IASTIdExpression)op2).getName()));

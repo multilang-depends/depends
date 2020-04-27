@@ -94,9 +94,6 @@ public class FunctionEntity extends ContainerEntity{
 		if (throwTypes.size()<throwTypesIdentifiers.size())
 			throwTypes = identiferToEntities(inferer,this.throwTypesIdentifiers);
 		super.inferLocalLevelEntities(inferer);
-		if (this.returnTypes.size()==0 && this.getLastExpressionType()!=null) {
-			this.returnTypes.add(this.getLastExpressionType());
-		}
 	}
 	
 
@@ -140,6 +137,13 @@ public class FunctionEntity extends ContainerEntity{
 		}
 		return super.lookupVarLocally(varName);
 	}
-
-
+	
+	public void linkReturnToLastExpression() {
+		if (expressionList()==null) return;
+		for (int i = expressionList().size() - 1; i >= 0; i--) {
+			Expression expr = expressionList().get(i);
+			if (expr.isStatement())
+				expr.addDeducedTypeFunction(this);
+		}
+	}
 }

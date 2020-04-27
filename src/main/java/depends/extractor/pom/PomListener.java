@@ -164,5 +164,8 @@ public class PomListener extends XMLParserBaseListener {
 		return name;
 	}
 
+	public void done() {
+		context.done();
+	}
 
 }

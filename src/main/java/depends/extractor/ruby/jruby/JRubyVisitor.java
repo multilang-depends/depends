@@ -307,4 +307,8 @@ public class JRubyVisitor extends NoopVisitor {
 		expressionUsage.foundExpression(node);
 		return super.visit(node);
 	}
+
+	public void done() {
+		context.done();
+	}
 }

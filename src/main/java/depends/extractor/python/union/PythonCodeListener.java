@@ -384,5 +384,7 @@ public class PythonCodeListener extends PythonParserBaseListener{
 		expressionUsage.stopExpr();
 		super.exitAssert_stmt(ctx);
 	}
-
+	public void done() {
+		context.done();
+	}
 }

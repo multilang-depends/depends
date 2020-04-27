@@ -27,6 +27,7 @@ public abstract class ParserTest {
 		for (Relation r:inEntity.getRelations()) {
 			if (r.getType().equals(dependencyType)) {
 				relation = r;
+				if (r.getEntity()==null) continue;
 				if (r.getEntity().getQualifiedName().equals(dependedEntityFullName))
 					return;
 			}

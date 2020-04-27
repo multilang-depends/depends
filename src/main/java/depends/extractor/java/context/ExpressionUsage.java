@@ -56,12 +56,12 @@ public class ExpressionUsage {
 			return;
 		}
 		
-		expression.isSet = isSet(ctx);
+		expression.setSet (isSet(ctx));
 		expression.setCall(ctx.methodCall()==null?false:true);
-		expression.isLogic = isLogic(ctx);
-		expression.isDot = isDot(ctx);
+		expression.setLogic (isLogic(ctx));
+		expression.setDot(isDot(ctx));
 		if (ctx.creator()!=null ||ctx.innerCreator()!=null){
-			expression.isCreate = true;
+			expression.setCreate( true);
 		}		
 /**
  *    | expression bop='.'
@@ -82,26 +82,26 @@ public class ExpressionUsage {
 		if (ctx.NEW()!=null && ctx.creator()!=null) {
 			expression.setRawType(CreatorContextHelper.getCreatorType(ctx.creator()));
 			expression.setCall(true);
-			expression.deriveTypeFromChild = false;
+			expression.disableDriveTypeFromChild();
 		}
 		
 		if (ctx.typeCast()!=null) {
-			expression.isCast=true;
+			expression.setCast(true);
 			expression.setRawType(ctx.typeCast().typeType().getText());
-			expression.deriveTypeFromChild = false;
+			expression.disableDriveTypeFromChild();
 		}
 		
 		if (ctx.bop!=null && ctx.bop.getText().equals("instanceof")) {
-			expression.isCast=true;
+			expression.setCast(true);
 			expression.setRawType(ctx.typeType().getText());
-			expression.deriveTypeFromChild = false;
+			expression.disableDriveTypeFromChild();
 		}
 		
 		if (ctx.creator()!=null) {
-			expression.deriveTypeFromChild = false;
+			expression.disableDriveTypeFromChild();
 		}
 		
-		if (expression.isDot) {
+		if (expression.isDot()) {
 			if (ctx.IDENTIFIER()!=null)
 				expression.setIdentifier(ctx.IDENTIFIER().getText());
 			else if (ctx.methodCall()!=null)

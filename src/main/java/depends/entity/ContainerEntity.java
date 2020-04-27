@@ -116,6 +116,7 @@ public abstract class ContainerEntity extends DecoratedEntity {
 	public void addExpression(Object key, Expression expression) {
 		expressions().put(key, expression);
 		expressionList().add(expression);
+		expressionCount = expressionList.size();
 	}
 
 	public boolean containsExpression(Object key) {
@@ -133,10 +134,12 @@ public abstract class ContainerEntity extends DecoratedEntity {
 		for (FunctionEntity func : this.getFunctions()) {
 			func.inferLocalLevelEntities(inferer);
 		}
-		resolvedMixins = identiferToContainerEntity(inferer, getMixins());
 		if (inferer.isEagerExpressionResolve()) {
-			this.resolveExpressions(inferer);
+			reloadExpression(inferer.getRepo());
+			resolveExpressions(inferer);
+			cacheExpressions();
 		}
+		resolvedMixins = identiferToContainerEntity(inferer, getMixins());
 	}
 
 	private Collection<GenericName> getMixins() {
@@ -165,13 +168,18 @@ public abstract class ContainerEntity extends DecoratedEntity {
 	 * @param inferer
 	 */
 	public void resolveExpressions(Inferer inferer) {
+		
+		if (this instanceof FunctionEntity) {
+			((FunctionEntity)this).linkReturnToLastExpression();
+		}
+		
 		if (expressionList==null) return;
 		if(expressionList.size()>10000) return;
 		for (Expression expression : expressionList) {
 			// 1. if expression's type existed, break;
 			if (expression.getType() != null)
 				continue;
-			if (expression.isDot) { // wait for previous
+			if (expression.isDot()) { // wait for previous
 				continue;
 			}
 			if (expression.getRawType() == null && expression.getIdentifier() == null)
@@ -190,7 +198,7 @@ public abstract class ContainerEntity extends DecoratedEntity {
 				String composedName = expression.getIdentifier().toString();
 				Expression theExpr = expression;
 				if (entity==null) {
-					while(theExpr.getParent()!=null && theExpr.getParent().isDot) {
+					while(theExpr.getParent()!=null && theExpr.getParent().isDot()) {
 						theExpr = theExpr.getParent();
 						if (theExpr.getIdentifier()==null) break;
 						composedName = composedName + "." + theExpr.getIdentifier().toString();
@@ -251,7 +259,6 @@ public abstract class ContainerEntity extends DecoratedEntity {
 	}
 	
 	private void cacheExpressionListToFile() {
-		expressionCount = this.expressionList.size();
 		if (expressionCount ==0) return;
 		try {
 			FileOutputStream fileOut = new FileOutputStream(TemporaryFile.getInstance().exprPath(this.id));
@@ -284,15 +291,6 @@ public abstract class ContainerEntity extends DecoratedEntity {
 	      }
 	}
 	
-	public TypeEntity getLastExpressionType() {
-		if (expressionList==null) return null;
-		for (int i = this.expressionList.size() - 1; i >= 0; i--) {
-			Expression expr = this.expressionList.get(i);
-			if (expr.isStatement)
-				return expr.getType();
-		}
-		return null;
-	}
 
 	public List<Expression> expressionList() {
 		if (expressionList==null) 
@@ -303,17 +301,6 @@ public abstract class ContainerEntity extends DecoratedEntity {
 	public boolean containsExpression() {
 		return expressions().size() > 0;
 	}
-
-	public String dumpExpressions() {
-		if (expressionList==null) return "";
-		StringBuilder sb = new StringBuilder();
-		for (Expression exp : expressionList) {
-			sb.append(exp.toString()).append("\n");
-		}
-		return sb.toString();
-	}
-
-
 	
 	/**
 	 * The entry point of lookup functions. It will treat multi-declare entities and

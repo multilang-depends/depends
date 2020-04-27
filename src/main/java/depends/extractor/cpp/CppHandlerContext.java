@@ -70,9 +70,6 @@ public class CppHandlerContext extends HandlerContext {
 		return functionEntity;		
 	}
 
-	public void doneFile(FileEntity currentFile) {
-		entityRepo.addFile(currentFileEntity);
-	}
 
 	@Override
 	public FileEntity startFile(String fileName) {

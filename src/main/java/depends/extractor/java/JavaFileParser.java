@@ -69,6 +69,7 @@ public class JavaFileParser implements depends.extractor.FileParser{
 			Entity fileEntity = entityRepo.getEntity(fileFullPath);
 			((FileEntity)fileEntity).cacheAllExpressions();
 			interpreter.clearDFA();
+			bridge.done();
 	    	
 	    }catch (Exception e) {
 	    	System.err.println("error encountered during parse..." );

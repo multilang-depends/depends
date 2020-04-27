@@ -30,9 +30,6 @@ public class RubyReturnTypeDedudceTest extends RubyParserTest {
 
 	    function = (FunctionEntity)(entityRepo.getEntity("Class.implicitReturn"));
 	    this.assertContainReturnType(function,"Class1");
-
 	}
-
-
 }
 

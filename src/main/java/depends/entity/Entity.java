@@ -110,6 +110,7 @@ public abstract class Entity {
     public void addRelation(Relation relation) {
     	if (relations==null)
     		relations = new ArrayList<>();
+    	if (relation.getEntity()==null) return;
         relations.add(relation);
     }
 

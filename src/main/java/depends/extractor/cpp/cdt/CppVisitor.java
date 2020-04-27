@@ -98,8 +98,6 @@ public class CppVisitor  extends ASTVisitor {
 
 	@Override
 	public int visit(IASTTranslationUnit tu) {
-		context.doneFile(context.currentFile());
-
 		for (String incl:preprocessorHandler.getDirectIncludedFiles(tu.getAllPreprocessorStatements(),context.currentFile().getQualifiedName())) {
 			context.foundNewImport(new FileImport(incl));
 		}
@@ -371,5 +369,9 @@ public class CppVisitor  extends ASTVisitor {
 			//System.out.println("** parameterDeclaration = " + parameter);
 		}
 		return super.visit(parameterDeclaration);
+	}
+
+	public void done() {
+		context.done();
 	}
 }

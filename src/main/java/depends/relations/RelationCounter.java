@@ -86,8 +86,6 @@ public class RelationCounter {
 	
 
 	private void computeContainerRelations(ContainerEntity entity) {
-		entity.reloadExpression(repo);
-		entity.resolveExpressions(inferer);
 		for (VarEntity var:entity.getVars()) {
 			if (var.getType()!=null)
 				entity.addRelation(buildRelation(DependencyType.CONTAIN,var.getType()));
@@ -105,15 +103,18 @@ public class RelationCounter {
 			entity.addRelation(buildRelation(DependencyType.MIXIN,mixin));
 		}
 		
+		entity.reloadExpression(repo);
+		if (!inferer.isEagerExpressionResolve())
+		{
+			entity.resolveExpressions(inferer);
+		}
 		for (Expression expression:entity.expressionList()){
-			if (expression.isStatement) {
+			if (expression.isStatement()) {
 				continue;
 			}
 			Entity referredEntity = expression.getReferredEntity();
 			addRelationFromExpression(entity, expression, referredEntity);
 		}
-		
-
 		entity.clearExpressions();
 	}
 
@@ -148,15 +149,15 @@ public class RelationCounter {
 			matched = true;
 
 		}
-		if (expression.isCreate) {
+		if (expression.isCreate()) {
 			entity.addRelation(buildRelation(DependencyType.CREATE,referredEntity));
 			matched = true;
 		}
-		if (expression.isThrow) {
+		if (expression.isThrow()) {
 			entity.addRelation(buildRelation(DependencyType.THROW,referredEntity));
 			matched = true;
 		}
-		if (expression.isCast) { 
+		if (expression.isCast()) { 
 			entity.addRelation(buildRelation(DependencyType.CAST,referredEntity));
 			matched = true;
 		}

@@ -90,6 +90,7 @@ public class CdtCppFileParser extends CppFileParser {
 		tu.accept(bridge);
 		fileEntity = entityRepo.getEntity(fileFullPath);
 		((FileEntity)fileEntity).cacheAllExpressions();
+		bridge.done();
 		return;
 	}
 	

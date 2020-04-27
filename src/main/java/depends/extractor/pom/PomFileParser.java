@@ -74,7 +74,7 @@ public class PomFileParser implements FileParser {
 	    ParseTreeWalker walker = new ParseTreeWalker();
 	    walker.walk(bridge, parser.document());
 		fileEntity = entityRepo.getEntity(fileFullPath);
-//		fileEntity.inferEntities(inferer);
+		bridge.done();
 		((FileEntity)fileEntity).cacheAllExpressions();
 	}
 

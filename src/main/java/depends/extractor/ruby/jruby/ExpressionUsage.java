@@ -81,10 +81,10 @@ public class ExpressionUsage {
 		Expression parent = findParentInStack(ctx);
 		/* create expression and link it with parent */
 		expression = new Expression(idGenerator.generateId());
-		expression.text = ctx.toString();
+		expression.setText(ctx.toString());
 		expression.setParent(parent);
 		if (ctx instanceof NewlineNode) {
-			expression.isStatement = true;
+			expression.setStatement(true);
 		}
 
 		context.lastContainer().addExpression(ctx, expression);
@@ -105,12 +105,12 @@ public class ExpressionUsage {
 			expression.setIdentifier(helper.getName(ctx));
 		}
 		if (ctx instanceof AssignableNode) {
-			expression.isSet = true;
+			expression.setSet(true);
 		} else if (helper.isFunctionCall(ctx)) {
 			String name = helper.getName(ctx);
 			expression.setCall(true);
 			if (name.equals("new")) {
-				expression.isCreate = true;
+				expression.setCreate(true);
 				List<Node> childNodes = ctx.childNodes();
 				if (childNodes.size() > 0) {
 					expression.setIdentifier(helper.getName(ctx.childNodes().get(0)));
@@ -118,10 +118,9 @@ public class ExpressionUsage {
 					expression.setIdentifier(context.currentType().getRawName());
 				}
 				expression.setRawType(expression.getIdentifier());
-				expression.deriveTypeFromChild = false;
+				expression.disableDriveTypeFromChild();
 			} else if (name.equals("raise")) {
-				expression.isThrow = true;
-				expression.deriveTypeFromChild = true;
+				expression.setThrow (true);
 			} else if (helper.isArithMeticOperator(name)) {
 				expression.setIdentifier("<operator>");
 				expression.setRawType(Inferer.buildInType.getQualifiedName());
@@ -129,11 +128,11 @@ public class ExpressionUsage {
 				expression.setIdentifier(name);
 				expression.setRawType(helper.getReciever(ctx));
 				if (expression.getRawType() != null) {
-					expression.isDot = true;
+					expression.setDot(true);
 				}
 
 				if (ctx instanceof VCallNode || ctx instanceof FCallNode) {
-					expression.deriveTypeFromChild = false;
+					expression.disableDriveTypeFromChild();
 				}
 			}
 		}

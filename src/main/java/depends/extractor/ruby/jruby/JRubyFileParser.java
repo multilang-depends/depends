@@ -31,6 +31,7 @@ import java.util.concurrent.ExecutorService;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.jrubyparser.CompatVersion;
+import org.jrubyparser.NodeVisitor;
 import org.jrubyparser.Parser;
 import org.jrubyparser.ast.Node;
 import org.jrubyparser.parser.ParserConfiguration;
@@ -79,10 +80,11 @@ public class JRubyFileParser implements FileParser {
 		ParserConfiguration config = new ParserConfiguration(0, version);
 		try {
 			Node node = rubyParser.parse("<code>", in, config);
-			node.accept(new JRubyVisitor(fileFullPath, entityRepo, includesFileLocator,executor,inferer,parserCreator));
+			JRubyVisitor parser = new JRubyVisitor(fileFullPath, entityRepo, includesFileLocator,executor,inferer,parserCreator);
+			node.accept(parser);
 			fileEntity = entityRepo.getEntity(fileFullPath);
-			fileEntity.inferEntities(inferer);
 			((FileEntity)fileEntity).cacheAllExpressions();
+			parser.done();
 		}catch(Exception e) {
 			System.err.println("parsing error in "+fileFullPath);
 		}

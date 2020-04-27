@@ -6,7 +6,9 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
+import depends.deptypes.DependencyType;
 import depends.entity.Entity;
+import depends.relations.Inferer;
 
 public class UsingTest extends CppParserTest{
     @Before
@@ -26,7 +28,10 @@ public class UsingTest extends CppParserTest{
 	    }
 	    inferer.resolveAllBindings();
         Entity e = repo.getEntity("foo");
-        assertEquals(4,e.getRelations().size());
+        this.assertContainsRelation(e, DependencyType.RETURN, Inferer.buildInType.getQualifiedName());
+        this.assertContainsRelation(e, DependencyType.CONTAIN, "A.C");
+        this.assertContainsRelation(e, DependencyType.CONTAIN, "B.X");
+        
 	}
 	
 	@Test
@@ -41,6 +46,8 @@ public class UsingTest extends CppParserTest{
 	    }
 	    inferer.resolveAllBindings();
         Entity e = repo.getEntity("bar");
-        assertEquals(4,e.getRelations().size());
+        this.assertContainsRelation(e, DependencyType.RETURN, Inferer.buildInType.getQualifiedName());
+        this.assertContainsRelation(e, DependencyType.CONTAIN, "A.C");
+        this.assertContainsRelation(e, DependencyType.CONTAIN, "B.X");
 	}
 }

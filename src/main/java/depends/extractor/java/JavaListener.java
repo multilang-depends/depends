@@ -361,6 +361,9 @@ public class JavaListener extends JavaParserBaseListener {
 			context.currentType().addTypeParameter(GenericName.build(typeParam.IDENTIFIER().getText()));
 		}
 	}
-	
+
+	public void done() {
+		context.done();
+	}
 
 }

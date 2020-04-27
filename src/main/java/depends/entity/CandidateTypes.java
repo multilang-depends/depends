@@ -167,11 +167,6 @@ public class CandidateTypes extends TypeEntity {
 		super.resolveExpressions(inferer);
 	}
 
-	@Override
-	public TypeEntity getLastExpressionType() {
-		System.err.println("error: getLastExpressionType should not been invoked");
-		return super.getLastExpressionType();
-	}
 
 	@Override
 	public void addMixin(GenericName moduleName) {
