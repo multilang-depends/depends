@@ -110,12 +110,14 @@ abstract public class AbstractLangProcessor {
 	 * @param includeDir
 	 * @param inputDir
 	 * @param b 
+	 * @param b 
 	 */
-	public void buildDependencies(String inputDir, String[] includeDir, List<String> typeFilter, boolean callAsImpl, boolean isCollectUnsolvedBindings) {
+	public void buildDependencies(String inputDir, String[] includeDir, List<String> typeFilter, boolean callAsImpl, boolean isCollectUnsolvedBindings, boolean isDuckTypingDeduce) {
 		this.inputSrcPath = inputDir;
 		this.includeDirs = includeDir;
 		this.typeFilter = typeFilter;
 		this.inferer.setCollectUnsolvedBindings(isCollectUnsolvedBindings);
+		this.inferer.setDuckTypingDeduce(isDuckTypingDeduce);
 		logger.info("Start parsing files...");
 		parseAllFiles();
 		markAllEntitiesScope();

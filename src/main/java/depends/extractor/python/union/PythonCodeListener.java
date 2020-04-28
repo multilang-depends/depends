@@ -64,7 +64,11 @@ public class PythonCodeListener extends PythonParserBaseListener{
 
 		String dir = FileUtil.uniqFilePath(FileUtil.getLocatedDir(fileFullPath));
 		if (entityRepo.getEntity(dir) == null) {
-			entityRepo.add(new PackageEntity(dir, entityRepo.generateId()));
+			PackageEntity pacakgeEntity = new PackageEntity(dir, entityRepo.generateId());
+			entityRepo.add(pacakgeEntity);
+			if (FileUtil.existFile(dir + File.separator+"__init__.py")) {
+				pacakgeEntity.setFilePath(FileUtil.uniqFilePath(dir + File.separator+"__init__.py"));
+			}
 		}
 
 		PackageEntity packageEntity = (PackageEntity) entityRepo.getEntity(dir);
@@ -110,11 +114,18 @@ public class PythonCodeListener extends PythonParserBaseListener{
 				if (moduleEntity != null) {
 					for (Entity child:moduleEntity.getChildren()) {
 						context.foundNewImport(new NameAliasImport(fullName, child, child.getRawName().uniqName()));
+						context.foundNewAlias(child.getRawName(), child);
 					}
 					if (moduleEntity instanceof PackageEntity) {
 						for (Entity file : moduleEntity.getChildren()) {
-							String fileName = file.getRawName().uniqName().substring(fullName.length());
-							context.foundNewImport(new NameAliasImport(file.getRawName().uniqName(), file, fileName));
+							if (file instanceof FileEntity) {
+								String fileName = file.getRawName().uniqName().substring(fullName.length());
+								context.foundNewImport(new NameAliasImport(file.getRawName().uniqName(), file, fileName));
+								context.foundNewAlias(GenericName.build(FileUtil.getShortFileName(fileName).replace(".py", "")), file);
+							}else {
+								context.foundNewImport(new NameAliasImport(file.getRawName().uniqName(), file, file.getRawName().uniqName()));
+								context.foundNewAlias(GenericName.build(FileUtil.getShortFileName(file.getRawName().uniqName())), file);
+							}
 						}
 					}
 					if (moduleEntity instanceof FileEntity) {
@@ -138,8 +149,10 @@ public class PythonCodeListener extends PythonParserBaseListener{
 						context.foundNewImport(new FileImport(fullName));
 					}
 					Entity itemEntity = inferer.resolveName(entityRepo.getEntity(fullName), GenericName.build(name), true);
-					if (itemEntity != null)
+					if (itemEntity != null) {
+						context.foundNewAlias(GenericName.build(alias), itemEntity);
 						context.foundNewImport(new NameAliasImport(itemEntity.getQualifiedName(), itemEntity, alias));
+					}
 				}
 			}
 		}

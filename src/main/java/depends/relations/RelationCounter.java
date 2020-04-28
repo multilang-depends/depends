@@ -125,7 +125,7 @@ public class RelationCounter {
 		}
 
 		if (referredEntity instanceof MultiDeclareEntities) {
-			for (ContainerEntity e:((MultiDeclareEntities)referredEntity).getEntities()) {
+			for (Entity e:((MultiDeclareEntities)referredEntity).getEntities()) {
 				addRelationFromExpression(entity,expression,e);
 			}
 			return;
@@ -137,7 +137,7 @@ public class RelationCounter {
 				Entity multiDeclare = repo.getEntity(referredEntity.getQualifiedName());
 				if (multiDeclare instanceof MultiDeclareEntities) {
 					MultiDeclareEntities m = (MultiDeclareEntities)multiDeclare;
-					List<ContainerEntity> entities = m.getEntities().stream().filter(item->(item instanceof FunctionEntityImpl))
+					List<Entity> entities = m.getEntities().stream().filter(item->(item instanceof FunctionEntityImpl))
 					.collect(Collectors.toList());
 					for (Entity e:entities) {
 						entity.addRelation(buildRelation(DependencyType.IMPLLINK,e));

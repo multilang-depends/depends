@@ -56,8 +56,7 @@ public class PythonParameterTypeDedudceTest extends PythonParserTest {
 	    FunctionEntity function = (FunctionEntity)( repo.getEntity(name));
 	    VarEntity var = function.lookupVarLocally("t1");
 	    TypeEntity type = var.getType();
-	    assertTrue(type instanceof CandidateTypes);
-	    assertEquals(0,((CandidateTypes)type).getCandidateTypes().size());
+	    assertTrue(type == null);
 	}
 
 	

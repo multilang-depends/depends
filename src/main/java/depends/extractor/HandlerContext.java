@@ -87,13 +87,20 @@ public abstract class HandlerContext {
 		return foundNewType(GenericName.build(name));
 	}
 
-	public void foundNewTypeAlias(String aliasName, String originalName) {
+	public void foundNewAlias(String aliasName, String originalName) {
 		if (aliasName.equals(originalName)) return; //it is a tricky, we treat same name no different. 
 		//indeed it is not perfect -> the right match should depends on no-bare format like "struct a" instead of "a"
 		AliasEntity currentTypeEntity = new AliasEntity(GenericName.build(aliasName), this.latestValidContainer(),
 				idGenerator.generateId(),GenericName.build(originalName) );
 	 	entityRepo.add(currentTypeEntity);
 		return ;		
+	}
+	
+	public void foundNewAlias(GenericName aliasName, Entity referToEntity) {
+		AliasEntity currentTypeEntity = new AliasEntity(aliasName, this.latestValidContainer(),
+				idGenerator.generateId(),aliasName);
+		currentTypeEntity.setReferToEntity(referToEntity);
+	 	entityRepo.add(currentTypeEntity);
 	}
 	
 	/**

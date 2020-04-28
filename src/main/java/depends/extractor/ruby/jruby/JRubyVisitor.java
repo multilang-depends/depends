@@ -88,7 +88,7 @@ public class JRubyVisitor extends NoopVisitor {
 
 	@Override
 	public Object visitAliasNode(AliasNode node) {
-		context.foundNewTypeAlias(node.getNewNameString(), node.getOldNameString());
+		context.foundNewAlias(node.getNewNameString(), node.getOldNameString());
 		return super.visitAliasNode(node);
 	}
 

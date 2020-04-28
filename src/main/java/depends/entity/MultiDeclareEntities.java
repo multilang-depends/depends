@@ -37,7 +37,7 @@ import depends.relations.Inferer;
  * in C++, a function could be declared in different place with the same signature.
  */
 public class MultiDeclareEntities extends ContainerEntity {
-	List<ContainerEntity> entities = new ArrayList<>();
+	List<Entity> entities = new ArrayList<>();
 	private boolean containsTypeEntity = false;
 	public MultiDeclareEntities(Entity entity, int id ) {
 		setQualifiedName(entity.getQualifiedName());
@@ -54,12 +54,13 @@ public class MultiDeclareEntities extends ContainerEntity {
 
 	public void add(Entity entity) {
 		entity.setMutliDeclare(this);
-		if (entity instanceof TypeEntity) this.containsTypeEntity = true;
-		if (entity instanceof ContainerEntity)
-			entities.add((ContainerEntity)entity);
+		if (entity instanceof TypeEntity) 
+			this.containsTypeEntity = true;
+		
+		entities.add(entity);
 	}
 
-	public List<ContainerEntity> getEntities() {
+	public List<Entity> getEntities() {
 		return entities;
 	}
 

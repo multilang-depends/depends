@@ -39,8 +39,8 @@ public class CandidateTypes extends TypeEntity {
 	public CandidateTypes() {
 		candidateTypes = new ArrayList<>();
 	}
-	public CandidateTypes(List<TypeEntity> candidateTypes) {
-		super(GenericName.build("candidateTypes"), null, -1);
+	public CandidateTypes(List<TypeEntity> candidateTypes, Integer id) {
+		super(GenericName.build("candidateTypes"), null, id);
 		this.candidateTypes = candidateTypes;
 	}
 
@@ -80,18 +80,23 @@ public class CandidateTypes extends TypeEntity {
 		return inheritedType;
 	}
  	@Override
- 	public FunctionEntity lookupFunctionInVisibleScope(GenericName functionName) {
+ 	public List<Entity> lookupFunctionInVisibleScope(GenericName functionName) {
+ 		List<Entity> functions = new ArrayList<>();
  		for (TypeEntity type:candidateTypes) {
-			FunctionEntity f = type.lookupFunctionInVisibleScope(functionName);
-			if (f!=null) return f;
+ 			List<Entity> f = type.lookupFunctionInVisibleScope(functionName);
+			if (f!=null) {
+				functions.addAll(f);
+			}
 		}
- 		return null;
+ 		if (functions.size()==0)
+ 			return null;
+ 		return functions;
 	}
  	
 	@Override
-	public VarEntity lookupVarInVisibleScope(GenericName varName) {
+	public Entity lookupVarInVisibleScope(GenericName varName) {
 		for (TypeEntity type:candidateTypes) {
-			VarEntity v = type.lookupVarInVisibleScope(varName);
+			Entity v = type.lookupVarInVisibleScope(varName);
 			if (v!=null) return v;
 		}
  		return null;	
@@ -213,13 +218,11 @@ public class CandidateTypes extends TypeEntity {
 
 	@Override
 	public GenericName getRawName() {
-		System.err.println("error: getRawName should not been invoked");
 		return super.getRawName();
 	}
 
 	@Override
 	public Integer getId() {
-		System.err.println("error: getId should not been invoked");
 		return super.getId();
 	}
 
@@ -243,8 +246,7 @@ public class CandidateTypes extends TypeEntity {
 
 	@Override
 	public Entity getParent() {
-		System.err.println("error: getParent should not been invoked");
-		return super.getParent();
+		return null;
 	}
 
 	@Override
@@ -283,8 +285,7 @@ public class CandidateTypes extends TypeEntity {
 	
 	@Override
 	public Entity getAncestorOfType(@SuppressWarnings("rawtypes") Class classType) {
-		System.err.println("error: getAncestorOfType should not been invoked");
-		return super.getAncestorOfType(classType);
+		return null;
 	}
 
 	@Override

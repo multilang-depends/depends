@@ -8,6 +8,7 @@ import org.junit.Test;
 import depends.deptypes.DependencyType;
 import depends.entity.Entity;
 import depends.entity.FunctionEntity;
+import depends.entity.MultiDeclareEntities;
 import depends.extractor.python.union.PythonFileParser;
 import depends.util.FileUtil;
 
@@ -217,10 +218,13 @@ public class PythonImportTest extends PythonParserTest {
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
-	    FunctionEntity func = (FunctionEntity)repo.getEntity(withPackageName(srcs[0],"in_the_forest"));
+	    
+	    MultiDeclareEntities funcs = (MultiDeclareEntities)repo.getEntity(withPackageName(srcs[1],"in_the_forest"));
+	    Entity func = funcs.getEntities().get(0);
+
+	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[1],"Duck.quack"));
 	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[1],"Doge.quack"));
 	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[1],"Bird.quack"));
-	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[1],"Duck.quack"));
 	}
 
 	@Test
@@ -236,10 +240,29 @@ public class PythonImportTest extends PythonParserTest {
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
-	    FunctionEntity func = (FunctionEntity)repo.getEntity(withPackageName(srcs[1],"in_the_forest"));
+	    
+	    MultiDeclareEntities funcs = (MultiDeclareEntities)repo.getEntity(withPackageName(srcs[1],"in_the_forest"));
+	    Entity func = funcs.getEntities().get(0);
 	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[0],"Duck.quack"));
 	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[0],"Bird.quack"));
 	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[0],"Doge.quack"));
+	}
+	
+	@Test
+	public void should_resolve_imported_symbols() throws IOException {
+		String[] srcs = new String[] {
+	    		"./src/test/resources/python-code-examples/import_from_init/use_imported.py",
+	    		"./src/test/resources/python-code-examples/import_from_init/pkg/__init__.py",
+	    		"./src/test/resources/python-code-examples/import_from_init/pkg/core.py",
+	    	    };
+	   
+	    for (String src:srcs) {
+		    PythonFileParser parser = createParser(src);
+		    parser.parse();
+	    }
+	    inferer.resolveAllBindings();
+	    FunctionEntity func = (FunctionEntity)repo.getEntity(withPackageName(srcs[0],"bar"));
+	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[2],"C"));
 	}
 
 }

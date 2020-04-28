@@ -43,6 +43,7 @@ public class AliasEntity extends Entity {
 	}
 
 	public void inferLocalLevelEntities(Inferer inferer) {
+		if (!(referToEntity instanceof EmptyTypeEntity)) return;
 		Entity entity = inferer.resolveName(this, originName, true);
 		while(entity instanceof AliasEntity) {
 			AliasEntity aliasEntity = (AliasEntity)entity;
@@ -97,14 +98,14 @@ public class AliasEntity extends Entity {
 		return origin.lookupFunctionLocally(functionName);
 	}
 
-	public FunctionEntity lookupFunctionInVisibleScope(GenericName functionName) {
+	public List<Entity> lookupFunctionInVisibleScope(GenericName functionName) {
 		if (!(referToEntity instanceof ContainerEntity))
 			return null;
 		ContainerEntity origin = (ContainerEntity) referToEntity;
 		return origin.lookupFunctionInVisibleScope(functionName);
 	}
 
-	public VarEntity lookupVarsInVisibleScope(GenericName varName) {
+	public Entity lookupVarsInVisibleScope(GenericName varName) {
 		if (!(referToEntity instanceof ContainerEntity))
 			return null;
 		ContainerEntity origin = (ContainerEntity) referToEntity;
@@ -163,6 +164,12 @@ public class AliasEntity extends Entity {
 
 	public Entity getOriginType() {
 		return referToEntity;
+	}
+	public Entity getReferToEntity() {
+		return referToEntity;
+	}
+	public void setReferToEntity(Entity referToEntity) {
+		this.referToEntity = referToEntity;
 	}
 	
 

@@ -58,6 +58,7 @@ public class Inferer {
 
 	private boolean eagerExpressionResolve = false;
 	private boolean isCollectUnsolvedBindings = false;
+	private boolean isDuckTypingDeduce = true;
 	private static Logger logger = LoggerFactory.getLogger(Inferer.class);
 
 	public Inferer(EntityRepo repo, ImportLookupStrategy importLookupStrategy, BuiltInType buildInTypeManager, boolean eagerExpressionResolve) {
@@ -314,6 +315,8 @@ public class Inferer {
 		if (buildInTypeManager.isBuildInTypeMethods(functionCalls)) {
 			return new ArrayList<>();
 		}
+		if (!isDuckTypingDeduce) 
+			return new ArrayList<>();
 		return searchTypesInRepo(fromEntity, functionCalls);
 	}
 
@@ -345,6 +348,12 @@ public class Inferer {
 	public EntityRepo getRepo() {
 		return repo;
 	}
+
+	public void setDuckTypingDeduce(boolean isDuckTypingDeduce) {
+		this.isDuckTypingDeduce = isDuckTypingDeduce;
+	}
+	
+
 
 
 }

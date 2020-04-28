@@ -62,12 +62,13 @@ public class VarEntity extends ContainerEntity {
 	public void inferLocalLevelEntities(Inferer inferer) {
 		super.inferLocalLevelEntities(inferer);
 		Entity entity = inferer.resolveName(this, rawType, true);
-		if (entity==null) return;
-		this.setActualReferTo(entity);
-		type = entity.getType();
-		if (type==null) {
-			if (((ContainerEntity)getParent()).isGenericTypeParameter(rawType)) {
-				type = Inferer.genericParameterType;
+		if (entity!=null) {
+			this.setActualReferTo(entity);
+			type = entity.getType();
+			if (type==null) {
+				if (((ContainerEntity)getParent()).isGenericTypeParameter(rawType)) {
+					type = Inferer.genericParameterType;
+				}
 			}
 		}
 		if (type==null) {
@@ -90,11 +91,16 @@ public class VarEntity extends ContainerEntity {
 	}
 
 	public void fillCandidateTypes(Inferer inferer) {
+		if (!inferer.isEagerExpressionResolve()) return;
 		if (type!=null && !(type instanceof CandidateTypes)) return ; //it is a strong type lang, do not need deduce candidate types
 		if (functionCalls==null) return;
 		if (functionCalls.size()==0) return; //no information avaliable for type deduction
 		if (this.rawType==null) {
-			this.type = new CandidateTypes(inferer.calculateCandidateTypes(this,this.functionCalls));
+			List<TypeEntity> candidateTypes = inferer.calculateCandidateTypes(this,this.functionCalls);
+			if (candidateTypes.size()>0) {
+				this.type = new CandidateTypes(candidateTypes,inferer.getRepo().generateId());
+				inferer.getRepo().add(this.type);
+			}
 		}
 	}
 }

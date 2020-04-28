@@ -29,6 +29,7 @@ import java.util.HashSet;
 
 public class PackageEntity extends TypeEntity {
 	HashMap<String,Entity> entities	 = new HashMap<>();
+	private String filePath;
 	
 	public PackageEntity() {}
 
@@ -70,6 +71,18 @@ public class PackageEntity extends TypeEntity {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * For Python, the package entities defined in a file path
+	 * @param filePath
+	 */
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
+	}
+	
+	public String getFilePath() {
+		return filePath;
 	}
 	
 }

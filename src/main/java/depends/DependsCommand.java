@@ -78,6 +78,8 @@ public class DependsCommand {
     private String[] typeFilter=new String[]{};
 	@Option(names = {"--external-deps"}, description = "Output external dependencies")
 	private boolean outputExternalDependencies = false;	
+	@Option(names = {"--duck-typing-deduce"}, description = "Deduce implicit variable types")
+	private boolean duckTypingDeduce = true;	
 	@Option(names = {"-h","--help"}, usageHelp = true, description = "display this help and exit")
     boolean help;
 	public DependsCommand() {
@@ -151,5 +153,9 @@ public class DependsCommand {
 	}
 	public boolean isOutputExternalDependencies() {
 		return outputExternalDependencies;
+	}
+	
+	public boolean isDuckTypingDeduce() {
+		return this.duckTypingDeduce;
 	}
 }

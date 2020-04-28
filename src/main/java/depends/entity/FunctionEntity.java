@@ -113,7 +113,7 @@ public class FunctionEntity extends ContainerEntity{
 		return throwTypes;
 	}
 	@Override
-	public VarEntity lookupVarInVisibleScope(GenericName varName) {
+	public Entity lookupVarInVisibleScope(GenericName varName) {
 		for (VarEntity param:parameters) {
 			if (varName.equals(param.getRawName())) {
 				return param;

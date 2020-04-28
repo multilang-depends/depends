@@ -129,10 +129,14 @@ public abstract class ContainerEntity extends DecoratedEntity {
 	public void inferLocalLevelEntities(Inferer inferer) {
 		super.inferLocalLevelEntities(inferer);
 		for (VarEntity var : this.vars()) {
-			var.inferLocalLevelEntities(inferer);
+			if (var.getParent()!=this) {
+				var.inferLocalLevelEntities(inferer);
+			}
 		}
 		for (FunctionEntity func : this.getFunctions()) {
-			func.inferLocalLevelEntities(inferer);
+			if (func.getParent()!=this) {
+				func.inferLocalLevelEntities(inferer);
+			}
 		}
 		if (inferer.isEagerExpressionResolve()) {
 			reloadExpression(inferer.getRepo());
@@ -212,13 +216,15 @@ public abstract class ContainerEntity extends DecoratedEntity {
 					continue;
 				}
 				if (expression.isCall()) {
-					FunctionEntity func = this.lookupFunctionInVisibleScope(expression.getIdentifier());
-					if (func != null) {
-						expression.setType(func.getType(), func, inferer);
+					List<Entity> funcs = this.lookupFunctionInVisibleScope(expression.getIdentifier());
+					if (funcs != null) {
+						for (Entity func:funcs) {
+							expression.setType(func.getType(), func, inferer);
+						}
 					}
 				} else {
 
-					VarEntity varEntity = this.lookupVarInVisibleScope(expression.getIdentifier());
+					Entity varEntity = this.lookupVarInVisibleScope(expression.getIdentifier());
 					if (varEntity != null) {
 						expression.setType(varEntity.getType(), varEntity, inferer);
 					}
@@ -311,16 +317,23 @@ public abstract class ContainerEntity extends DecoratedEntity {
 	 * @param functionName
 	 * @return
 	 */
-	public FunctionEntity lookupFunctionInVisibleScope(GenericName functionName) {
+	public List<Entity> lookupFunctionInVisibleScope(GenericName functionName) {
+		List<Entity> functions = new ArrayList<>();
 		if (this.getMutliDeclare() != null) {
-			for (ContainerEntity fromEntity : this.getMutliDeclare().getEntities()) {
-				FunctionEntity f = lookupFunctionBottomUpTillTopContainer(functionName, fromEntity);
-				if (f != null)
-					return f;
+			for (Entity fromEntity : this.getMutliDeclare().getEntities()) {
+				Entity f = lookupFunctionBottomUpTillTopContainer(functionName, fromEntity);
+				if (f != null) {
+					functions.add(f);
+					return functions;
+				}
 			}
 		} else {
 			ContainerEntity fromEntity = this;
-			return lookupFunctionBottomUpTillTopContainer(functionName, fromEntity);
+			Entity f = lookupFunctionBottomUpTillTopContainer(functionName, fromEntity);
+			if (f != null) {
+				functions.add(f);
+				return functions;
+			}
 		}
 		return null;
 	}
@@ -332,12 +345,18 @@ public abstract class ContainerEntity extends DecoratedEntity {
 	 * @param fromEntity
 	 * @return
 	 */
-	private FunctionEntity lookupFunctionBottomUpTillTopContainer(GenericName functionName, ContainerEntity fromEntity) {
+	private Entity lookupFunctionBottomUpTillTopContainer(GenericName functionName, Entity fromEntity) {
 		while (fromEntity != null) {
 			if (fromEntity instanceof ContainerEntity) {
 				FunctionEntity func = ((ContainerEntity) fromEntity).lookupFunctionLocally(functionName);
 				if (func != null)
 					return func;
+			}
+			for (Entity child:this.getChildren()) {
+				if (child instanceof AliasEntity) {
+					if (child.getRawName().equals(functionName))
+						return child;
+				}
 			}
 			fromEntity = (ContainerEntity) this.getAncestorOfType(ContainerEntity.class);
 		}
@@ -368,7 +387,7 @@ public abstract class ContainerEntity extends DecoratedEntity {
 	 * @param varName
 	 * @return
 	 */
-	public VarEntity lookupVarInVisibleScope(GenericName varName) {
+	public Entity lookupVarInVisibleScope(GenericName varName) {
 		ContainerEntity fromEntity = this;
 		return lookupVarBottomUpTillTopContainer(varName, fromEntity);
 	}
@@ -380,12 +399,18 @@ public abstract class ContainerEntity extends DecoratedEntity {
 	 * @param varName
 	 * @return
 	 */
-	private VarEntity lookupVarBottomUpTillTopContainer(GenericName varName, ContainerEntity fromEntity) {
+	private Entity lookupVarBottomUpTillTopContainer(GenericName varName, ContainerEntity fromEntity) {
 		while (fromEntity != null) {
 			if (fromEntity instanceof ContainerEntity) {
 				VarEntity var = ((ContainerEntity) fromEntity).lookupVarLocally(varName);
 				if (var != null)
 					return var;
+			}
+			for (Entity child:this.getChildren()) {
+				if (child instanceof AliasEntity) {
+					if (child.getRawName().equals(varName))
+						return child;
+				}
 			}
 			fromEntity = (ContainerEntity) this.getAncestorOfType(ContainerEntity.class);
 		}

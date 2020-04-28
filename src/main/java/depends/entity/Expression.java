@@ -176,21 +176,45 @@ public class Expression implements Serializable{
 		/* if it is a.b, and we already get a's type, b's type could be identified easily  */
 		else if (parent.isDot) {
 			if (parent.isCall()) {
-				FunctionEntity func = this.getType().lookupFunctionInVisibleScope(parent.identifier);
-				if (func!=null) {
-					parent.setType(func.getType(), func,inferer);
-					parent.setReferredEntity(func);
+				if (parent.getIdentifier().getName().equals("C")) {
+					System.out.println("hh");
+				}
+				List<Entity> funcs = this.getType().lookupFunctionInVisibleScope(parent.identifier);
+				if (funcs!=null) {
+					Entity func = funcs.get(0);
+					if (funcs.size()>1) {
+						MultiDeclareEntities m = new MultiDeclareEntities(func, inferer.getRepo().generateId());
+						inferer.getRepo().add(m);
+						for (int i=1;i<funcs.size();i++) {
+							m.add(funcs.get(i));
+						}
+						parent.setType(func.getType(), m,inferer);
+						parent.setReferredEntity(m);
+					}else {
+						parent.setType(func.getType(), func,inferer);
+						parent.setReferredEntity(func);
+					}
 				}
 			}else {
-				VarEntity var = this.getType().lookupVarInVisibleScope(parent.identifier);
+				Entity var = this.getType().lookupVarInVisibleScope(parent.identifier);
 				if (var!=null) {
 					parent.setType(var.getType(),var, inferer);
 					parent.setReferredEntity(var);
 				}else {
-					FunctionEntity func = this.getType().lookupFunctionInVisibleScope(parent.identifier);
-					if (func!=null) {
-						parent.setType(func.getType(), func,inferer);
-						parent.setReferredEntity(func);
+					List<Entity> funcs = this.getType().lookupFunctionInVisibleScope(parent.identifier);
+					if (funcs!=null) {
+						Entity func = funcs.get(0);
+						if (funcs.size()>1) {
+							MultiDeclareEntities m = new MultiDeclareEntities(func, -1);
+							for (int i=1;i<funcs.size();i++) {
+								m.add(funcs.get(i));
+							}
+							parent.setType(func.getType(), m,inferer);
+							parent.setReferredEntity(m);
+						}else {
+							parent.setType(func.getType(), func,inferer);
+							parent.setReferredEntity(func);
+						}
 					}
 				}
 			}
