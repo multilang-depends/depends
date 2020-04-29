@@ -176,9 +176,6 @@ public class Expression implements Serializable{
 		/* if it is a.b, and we already get a's type, b's type could be identified easily  */
 		else if (parent.isDot) {
 			if (parent.isCall()) {
-				if (parent.getIdentifier().getName().equals("C")) {
-					System.out.println("hh");
-				}
 				List<Entity> funcs = this.getType().lookupFunctionInVisibleScope(parent.identifier);
 				if (funcs!=null) {
 					Entity func = funcs.get(0);
