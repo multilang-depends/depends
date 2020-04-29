@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import depends.deptypes.DependencyType;
+import depends.entity.AliasEntity;
 import depends.entity.ContainerEntity;
 import depends.entity.Entity;
 import depends.entity.Expression;
@@ -130,6 +131,7 @@ public class RelationCounter {
 			}
 			return;
 		}
+		
 		boolean matched = false;
 		if (expression.isCall()) {
 			/* if it is a FunctionEntityProto, add Relation to all Impl Entities*/
@@ -181,6 +183,12 @@ public class RelationCounter {
 	}
 
 	private Relation buildRelation(String type, Entity referredEntity) {
+		if (referredEntity instanceof AliasEntity) {
+			AliasEntity alias = ((AliasEntity) referredEntity);
+			if (alias.getReferToEntityTillNoAlias()!=null) {
+				referredEntity = alias.getReferToEntityTillNoAlias();
+			}
+		}
 		if (this.langProcessor==null)
 			return new Relation(type,referredEntity);
 		return new Relation(langProcessor.getRelationMapping(type),referredEntity);

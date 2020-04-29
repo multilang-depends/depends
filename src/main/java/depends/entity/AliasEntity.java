@@ -26,7 +26,9 @@ package depends.entity;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import depends.relations.Inferer;
 
@@ -170,6 +172,20 @@ public class AliasEntity extends Entity {
 	}
 	public void setReferToEntity(Entity referToEntity) {
 		this.referToEntity = referToEntity;
+	}
+	public Entity getReferToEntityTillNoAlias() {
+		Set<Entity> searched = new HashSet<>();
+		int i=0;
+		Entity current = this;
+		while(i<100) { //maximum 100 levels
+			if (searched.contains(current)) return current; //with a loop
+			if (!(current instanceof AliasEntity)) return current;
+			searched.add(current);
+			current = ((AliasEntity)current).getReferToEntity();
+			if (current ==null) return this;
+			i++;
+		}
+		return current;
 	}
 	
 

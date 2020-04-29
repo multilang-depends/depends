@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import depends.deptypes.DependencyType;
 import depends.entity.Entity;
+import depends.entity.FileEntity;
 import depends.entity.FunctionEntity;
 import depends.entity.MultiDeclareEntities;
 import depends.extractor.python.union.PythonFileParser;
@@ -263,6 +264,22 @@ public class PythonImportTest extends PythonParserTest {
 	    inferer.resolveAllBindings();
 	    FunctionEntity func = (FunctionEntity)repo.getEntity(withPackageName(srcs[0],"bar"));
 	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[2],"C"));
+	}
+
+	@Test
+	public void should_resolve_imported_vars() throws IOException {
+		String[] srcs = new String[] {
+	    		"./src/test/resources/python-code-examples/import_from_var/use_imported.py",
+	    		"./src/test/resources/python-code-examples/import_from_var/pkg/core.py",
+	    	    };
+	   
+	    for (String src:srcs) {
+		    PythonFileParser parser = createParser(src);
+		    parser.parse();
+	    }
+	    inferer.resolveAllBindings();
+	    FileEntity f = (FileEntity)repo.getEntity(FileUtil.uniqFilePath(srcs[0]));
+	    this.assertContainsRelation(f, DependencyType.CALL, withPackageName(srcs[1],"Core.foo"));
 	}
 
 }
