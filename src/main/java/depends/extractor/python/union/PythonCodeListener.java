@@ -11,7 +11,6 @@ import depends.entity.ContainerEntity;
 import depends.entity.DecoratedEntity;
 import depends.entity.Entity;
 import depends.entity.FileEntity;
-import depends.entity.FunctionEntity;
 import depends.entity.GenericName;
 import depends.entity.PackageEntity;
 import depends.entity.TypeEntity;
@@ -66,9 +65,6 @@ public class PythonCodeListener extends PythonParserBaseListener{
 		if (entityRepo.getEntity(dir) == null) {
 			PackageEntity pacakgeEntity = new PackageEntity(dir, entityRepo.generateId());
 			entityRepo.add(pacakgeEntity);
-			if (FileUtil.existFile(dir + File.separator+"__init__.py")) {
-				pacakgeEntity.setFilePath(FileUtil.uniqFilePath(dir + File.separator+"__init__.py"));
-			}
 		}
 
 		PackageEntity packageEntity = (PackageEntity) entityRepo.getEntity(dir);

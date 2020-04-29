@@ -88,11 +88,7 @@ public class FileDependencyGenerator extends DependencyGenerator{
 	private int getFileEntityIdNoException(EntityRepo entityRepo, Entity entity) {
 		Entity ancestor = entity.getAncestorOfType(FileEntity.class);
 		if (ancestor==null) {
-			PackageEntity packageEntity = (PackageEntity)( entity.getAncestorOfType(PackageEntity.class));
-			if (packageEntity==null) return -1;
-			if (packageEntity.getFilePath()==null) return -1;
-			if (entityRepo.getEntity(packageEntity.getFilePath())==null) return -1;
-			return entityRepo.getEntity(packageEntity.getFilePath()).getId();
+			return -1;
 		}
 		if (!ancestor.inScope()) return -1;
 		return ancestor.getId();

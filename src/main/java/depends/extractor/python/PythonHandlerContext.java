@@ -1,10 +1,7 @@
 package depends.extractor.python;
 
 import depends.entity.Entity;
-import depends.entity.FileEntity;
-import depends.entity.FunctionEntity;
-import depends.entity.GenericName;
-import depends.entity.TypeEntity;
+import depends.entity.PackageEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.HandlerContext;
 import depends.relations.Inferer;
@@ -15,16 +12,22 @@ public class PythonHandlerContext extends HandlerContext {
 		super(entityRepo,inferer);
 	}
 
+
 	@Override
-	public Entity latestValidContainer() {
-		Entity validContainer = super.latestValidContainer();
-		if (validContainer==null) return null;
-		if (validContainer instanceof FileEntity &&
-				validContainer.getRawName().getName().endsWith("__init__.py")) {
-			return validContainer.getParent();
-		}
-		return validContainer;
+	public void addToRepo(Entity entity) {
+		super.addToRepo(entity);
+		postProcessingOfInit(entity);
 	}
 
+
+	private void postProcessingOfInit(Entity entity) {
+		Entity parent = entity.getParent();
+		if (parent==null) return;
+		if (parent.getRawName().getName().endsWith("__init__.py")) {
+			Entity packageEntity = parent.getAncestorOfType(PackageEntity.class);
+			if (packageEntity==null) return;
+			packageEntity.addChild(entity);
+		}
+	}
 
 }

@@ -27,6 +27,7 @@ package depends.entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import depends.entity.repo.EntityRepo;
 import depends.relations.Inferer;
@@ -178,18 +179,21 @@ public class Expression implements Serializable{
 			if (parent.isCall()) {
 				List<Entity> funcs = this.getType().lookupFunctionInVisibleScope(parent.identifier);
 				if (funcs!=null) {
-					Entity func = funcs.get(0);
-					if (funcs.size()>1) {
-						MultiDeclareEntities m = new MultiDeclareEntities(func, inferer.getRepo().generateId());
-						inferer.getRepo().add(m);
-						for (int i=1;i<funcs.size();i++) {
-							m.add(funcs.get(i));
+					//funcs = funcs.stream().filter(item->!(item instanceof MultiDeclareEntities)).collect(Collectors.toList());
+					if (funcs.size()>0) {
+						Entity func = funcs.get(0);
+						if (funcs.size()>1) {
+							MultiDeclareEntities m = new MultiDeclareEntities(func, inferer.getRepo().generateId());
+							inferer.getRepo().add(m);
+							for (int i=1;i<funcs.size();i++) {
+								m.add(funcs.get(i));
+							}
+							parent.setType(func.getType(), m,inferer);
+							parent.setReferredEntity(m);
+						}else {
+							parent.setType(func.getType(), func,inferer);
+							parent.setReferredEntity(func);
 						}
-						parent.setType(func.getType(), m,inferer);
-						parent.setReferredEntity(m);
-					}else {
-						parent.setType(func.getType(), func,inferer);
-						parent.setReferredEntity(func);
 					}
 				}
 			}else {
@@ -202,7 +206,9 @@ public class Expression implements Serializable{
 					if (funcs!=null) {
 						Entity func = funcs.get(0);
 						if (funcs.size()>1) {
-							MultiDeclareEntities m = new MultiDeclareEntities(func, -1);
+							MultiDeclareEntities m = new MultiDeclareEntities(func, inferer.getRepo().generateId());
+							inferer.getRepo().add(m);
+
 							for (int i=1;i<funcs.size();i++) {
 								m.add(funcs.get(i));
 							}
@@ -229,8 +235,9 @@ public class Expression implements Serializable{
 
 	private void setReferredEntity(Entity referredEntity) {
 		this.referredEntity = referredEntity;
-		if (this.referredEntity!=null)
+		if (this.referredEntity!=null) {
 			this.referredEntityId = referredEntity.getId();
+		}
 	}
 
 	public void addDeducedTypeVar(VarEntity var) {
