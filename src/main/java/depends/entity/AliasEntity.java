@@ -36,6 +36,7 @@ public class AliasEntity extends Entity {
 	private Entity referToEntity = new EmptyTypeEntity();
 	private GenericName originName;
 	private List<Entity> referPath = new ArrayList<>();
+	private boolean deepResolve = false;
 	public AliasEntity() {
 		
 	}
@@ -173,19 +174,33 @@ public class AliasEntity extends Entity {
 	public void setReferToEntity(Entity referToEntity) {
 		this.referToEntity = referToEntity;
 	}
-	public Entity getReferToEntityTillNoAlias() {
+	public Entity deepResolve() {
+		if (!deepResolve) return this;
 		Set<Entity> searched = new HashSet<>();
 		int i=0;
 		Entity current = this;
 		while(i<100) { //maximum 100 levels
-			if (searched.contains(current)) return current; //with a loop
+			if (searched.contains(current)) return current; //avoid a loop
 			if (!(current instanceof AliasEntity)) return current;
+			
 			searched.add(current);
+			Entity originalFile = current.getAncestorOfType(FileEntity.class);
 			current = ((AliasEntity)current).getReferToEntity();
+			
 			if (current ==null) return this;
+			//if already out of current file, return current
+			if (!current.getAncestorOfType(FileEntity.class).equals(originalFile)) {
+				return current;
+			}
 			i++;
 		}
 		return current;
+	}
+	public boolean isDeepResolve() {
+		return deepResolve;
+	}
+	public void setDeepResolve(boolean deepResolve) {
+		this.deepResolve = deepResolve;
 	}
 	
 

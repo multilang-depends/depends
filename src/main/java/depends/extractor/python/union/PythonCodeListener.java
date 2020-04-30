@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 
+import depends.entity.AliasEntity;
 import depends.entity.ContainerEntity;
 import depends.entity.DecoratedEntity;
 import depends.entity.Entity;

@@ -185,8 +185,8 @@ public class RelationCounter {
 	private Relation buildRelation(String type, Entity referredEntity) {
 		if (referredEntity instanceof AliasEntity) {
 			AliasEntity alias = ((AliasEntity) referredEntity);
-			if (alias.getReferToEntityTillNoAlias()!=null) {
-				referredEntity = alias.getReferToEntityTillNoAlias();
+			if (alias.deepResolve()!=null) {
+				referredEntity = alias.deepResolve();
 			}
 		}
 		if (this.langProcessor==null)
