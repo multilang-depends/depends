@@ -70,6 +70,10 @@ public abstract class DecoratedEntity extends Entity{
 	public void inferLocalLevelEntities(Inferer inferer) {
 		Collection<Entity> typeParameterEntities = typeParametersToEntities(inferer);
 		appendTypeParameters(typeParameterEntities);
+//		if (this.getAncestorOfType(FileEntity.class).getRawName().contains("/examples/usersession/server.py")
+//				) {
+//			System.out.print("dd");
+//		}
 		resolvedAnnotations = identiferToEntities(inferer, annotations);
 	}
 

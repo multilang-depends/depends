@@ -89,19 +89,19 @@ public class RelationCounter {
 	private void computeContainerRelations(ContainerEntity entity) {
 		for (VarEntity var:entity.getVars()) {
 			if (var.getType()!=null)
-				entity.addRelation(buildRelation(DependencyType.CONTAIN,var.getType()));
+				entity.addRelation(buildRelation(entity,DependencyType.CONTAIN,var.getType()));
 			for (Entity type:var.getResolvedTypeParameters()) {
-				var.addRelation(buildRelation(DependencyType.PARAMETER,type));
+				var.addRelation(buildRelation(var, DependencyType.PARAMETER,type));
 			}
 		}
 		for (Entity type:entity.getResolvedAnnotations()) {
-			entity.addRelation(buildRelation(DependencyType.ANNOTATION,type));
+			entity.addRelation(buildRelation(entity,DependencyType.ANNOTATION,type));
 		}
 		for (Entity type:entity.getResolvedTypeParameters()) {
-			entity.addRelation(buildRelation(DependencyType.USE,type));
+			entity.addRelation(buildRelation(entity,DependencyType.USE,type));
 		}
 		for (ContainerEntity mixin:entity.getResolvedMixins()) {
-			entity.addRelation(buildRelation(DependencyType.MIXIN,mixin));
+			entity.addRelation(buildRelation(entity,DependencyType.MIXIN,mixin));
 		}
 		
 		entity.reloadExpression(repo);
@@ -142,25 +142,25 @@ public class RelationCounter {
 					List<Entity> entities = m.getEntities().stream().filter(item->(item instanceof FunctionEntityImpl))
 					.collect(Collectors.toList());
 					for (Entity e:entities) {
-						entity.addRelation(buildRelation(DependencyType.IMPLLINK,e));
+						entity.addRelation(buildRelation(entity,DependencyType.IMPLLINK,e));
 						matched = true;
 					}
 				}
 			}
-			entity.addRelation(buildRelation(DependencyType.CALL,referredEntity));
+			entity.addRelation(buildRelation(entity,DependencyType.CALL,referredEntity));
 			matched = true;
 
 		}
 		if (expression.isCreate()) {
-			entity.addRelation(buildRelation(DependencyType.CREATE,referredEntity));
+			entity.addRelation(buildRelation(entity,DependencyType.CREATE,referredEntity));
 			matched = true;
 		}
 		if (expression.isThrow()) {
-			entity.addRelation(buildRelation(DependencyType.THROW,referredEntity));
+			entity.addRelation(buildRelation(entity,DependencyType.THROW,referredEntity));
 			matched = true;
 		}
 		if (expression.isCast()) { 
-			entity.addRelation(buildRelation(DependencyType.CAST,referredEntity));
+			entity.addRelation(buildRelation(entity,DependencyType.CAST,referredEntity));
 			matched = true;
 		}
 		if (!matched)  {
@@ -169,24 +169,26 @@ public class RelationCounter {
 				MultiDeclareEntities m =  (MultiDeclareEntities)(repo.getEntity(referredEntity.getQualifiedName()));
 				for (Entity e:m.getEntities()) {
 					if (e==referredEntity) {
-						entity.addRelation(buildRelation(DependencyType.USE,e));
+						entity.addRelation(buildRelation(entity,DependencyType.USE,e));
 					}else {
-						entity.addRelation(buildRelation(DependencyType.IMPLLINK,e));
+						entity.addRelation(buildRelation(entity,DependencyType.IMPLLINK,e));
 					}
 					matched = true;
 				}
 			}
 			else {
-				entity.addRelation(buildRelation(DependencyType.USE,referredEntity));
+				entity.addRelation(buildRelation(entity,DependencyType.USE,referredEntity));
 			}
 		}
 	}
 
-	private Relation buildRelation(String type, Entity referredEntity) {
+	private Relation buildRelation(Entity from, String type, Entity referredEntity) {
 		if (referredEntity instanceof AliasEntity) {
-			AliasEntity alias = ((AliasEntity) referredEntity);
-			if (alias.deepResolve()!=null) {
-				referredEntity = alias.deepResolve();
+			if (from.getAncestorOfType(FileEntity.class).equals(referredEntity.getAncestorOfType(FileEntity.class))) {
+				AliasEntity alias = ((AliasEntity) referredEntity);
+				if (alias.deepResolve()!=null) {
+					referredEntity = alias.deepResolve();
+				}
 			}
 		}
 		if (this.langProcessor==null)
@@ -196,31 +198,31 @@ public class RelationCounter {
 
 	private void computeTypeRelations(TypeEntity type) {
 		for (TypeEntity superType:type.getInheritedTypes()) {
-			type.addRelation(buildRelation(DependencyType.INHERIT,superType));
+			type.addRelation(buildRelation(type,DependencyType.INHERIT,superType));
 		}
 		for (TypeEntity interfaceType:type.getImplementedTypes()) {
-			type.addRelation(buildRelation(DependencyType.IMPLEMENT,interfaceType));
+			type.addRelation(buildRelation(type,DependencyType.IMPLEMENT,interfaceType));
 		}
 	}
 
 	private void computeFunctionRelations(FunctionEntity func) {
 		for (Entity returnType:func.getReturnTypes()) {
-			func.addRelation(buildRelation(DependencyType.RETURN,returnType.getActualReferTo()));
+			func.addRelation(buildRelation(func,DependencyType.RETURN,returnType.getActualReferTo()));
 		}
 		for (VarEntity parameter:func.getParameters()) {
 			if (parameter.getType()!=null) 
-				func.addRelation(buildRelation(DependencyType.PARAMETER,parameter.getActualReferTo()));
+				func.addRelation(buildRelation(func,DependencyType.PARAMETER,parameter.getActualReferTo()));
 		}
 		for (Entity throwType:func.getThrowTypes()) {
-			func.addRelation(buildRelation(DependencyType.THROW,throwType));
+			func.addRelation(buildRelation(func,DependencyType.THROW,throwType));
 		}
 		for (Entity type:func.getResolvedTypeParameters()) {
-			func.addRelation(buildRelation(DependencyType.PARAMETER,type));
+			func.addRelation(buildRelation(func,DependencyType.PARAMETER,type));
 		}
 		if (func instanceof FunctionEntityImpl) {
 			FunctionEntityImpl funcImpl = (FunctionEntityImpl)func;
 			if(funcImpl.getImplemented()!=null) {
-				func.addRelation(buildRelation(DependencyType.IMPLEMENT,funcImpl.getImplemented()));
+				func.addRelation(buildRelation(func,DependencyType.IMPLEMENT,funcImpl.getImplemented()));
 			}
 		}
 	}
@@ -232,9 +234,9 @@ public class RelationCounter {
 			if (imported instanceof FileEntity)
 			{
 				if (((FileEntity)imported).isInProjectScope())
-					file.addRelation(buildRelation(DependencyType.IMPORT,imported));
+					file.addRelation(buildRelation(file,DependencyType.IMPORT,imported));
 			}else {
-				file.addRelation(buildRelation(DependencyType.IMPORT,imported));
+				file.addRelation(buildRelation(file,DependencyType.IMPORT,imported));
 			}
 		}
 	}
