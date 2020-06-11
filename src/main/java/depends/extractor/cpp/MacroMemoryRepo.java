@@ -1,19 +1,9 @@
 package depends.extractor.cpp;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
-import org.eclipse.cdt.core.dom.ast.IMacroBinding;
-import org.eclipse.cdt.core.parser.IScanner;
-import org.eclipse.cdt.core.parser.NullLogService;
-import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
-
-import depends.extractor.cpp.cdt.GPPParserExtensionConfigurationExtension;
-import depends.util.FileUtil;
 
 public class MacroMemoryRepo extends MacroRepo{
 

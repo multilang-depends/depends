@@ -11,7 +11,7 @@ import java.util.Map;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 
 import depends.entity.repo.EntityRepo;
-import depends.util.TemporaryFile;
+import multilang.depends.util.file.TemporaryFile;
 
 public class MacroFileRepo extends MacroRepo{
 	private EntityRepo entityRepo;

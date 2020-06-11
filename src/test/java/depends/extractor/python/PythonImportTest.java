@@ -11,7 +11,7 @@ import depends.entity.FileEntity;
 import depends.entity.FunctionEntity;
 import depends.entity.MultiDeclareEntities;
 import depends.extractor.python.union.PythonFileParser;
-import depends.util.FileUtil;
+import multilang.depends.util.file.FileUtil;
 
 public class PythonImportTest extends PythonParserTest {
     @Before

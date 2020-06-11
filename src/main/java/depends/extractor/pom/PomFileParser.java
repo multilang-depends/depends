@@ -40,7 +40,7 @@ import depends.extractor.FileParser;
 import depends.extractor.xml.XMLLexer;
 import depends.extractor.xml.XMLParser;
 import depends.relations.Inferer;
-import depends.util.FileUtil;
+import multilang.depends.util.file.FileUtil;
 
 public class PomFileParser implements FileParser {
 

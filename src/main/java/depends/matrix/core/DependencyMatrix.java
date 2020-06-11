@@ -29,7 +29,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
-import depends.format.path.FilenameWritter;
+import multilang.depends.util.file.path.FilenameWritter;
 
 public class DependencyMatrix {
     private HashMap<String, DependencyPair> dependencyPairs = new HashMap<>();

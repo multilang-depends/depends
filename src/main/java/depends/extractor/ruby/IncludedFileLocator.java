@@ -27,7 +27,7 @@ package depends.extractor.ruby;
 import java.io.File;
 import java.util.List;
 
-import depends.util.FileUtil;
+import multilang.depends.util.file.FileUtil;
 
 public class IncludedFileLocator {
 	private List<String> includesPath;

@@ -24,7 +24,6 @@ SOFTWARE.
 
 package depends.extractor.ruby;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ExecutorService;
 
@@ -36,7 +35,7 @@ import depends.extractor.HandlerContext;
 import depends.extractor.ParserCreator;
 import depends.importtypes.FileImport;
 import depends.relations.Inferer;
-import depends.util.FileUtil;
+import multilang.depends.util.file.FileUtil;
 
 public class RubyHandlerContext extends HandlerContext {
 

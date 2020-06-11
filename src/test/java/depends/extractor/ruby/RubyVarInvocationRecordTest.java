@@ -10,7 +10,7 @@ import org.junit.Test;
 import depends.entity.ContainerEntity;
 import depends.entity.VarEntity;
 import depends.extractor.FileParser;
-import depends.util.FileUtil;
+import multilang.depends.util.file.FileUtil;
 
 public class RubyVarInvocationRecordTest extends RubyParserTest {
 	@Before

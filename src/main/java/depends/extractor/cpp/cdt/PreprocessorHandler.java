@@ -30,15 +30,14 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import org.codehaus.plexus.util.StringUtils;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.internal.core.parser.scanner.ScannerUtility;
 
-import depends.util.FileTraversal;
-import depends.util.FileTraversal.IFileVisitor;
-import depends.util.FileUtil;
+import multilang.depends.util.file.FileTraversal;
+import multilang.depends.util.file.FileTraversal.IFileVisitor;
+import multilang.depends.util.file.FileUtil;
 
 public class PreprocessorHandler {
 	private List<String> includePaths;

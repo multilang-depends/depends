@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 
-import depends.entity.AliasEntity;
 import depends.entity.ContainerEntity;
 import depends.entity.DecoratedEntity;
 import depends.entity.Entity;
@@ -43,7 +42,7 @@ import depends.extractor.python.PythonParserBaseListener;
 import depends.extractor.ruby.IncludedFileLocator;
 import depends.importtypes.FileImport;
 import depends.relations.Inferer;
-import depends.util.FileUtil;
+import multilang.depends.util.file.FileUtil;
 
 public class PythonCodeListener extends PythonParserBaseListener{
 	private PythonHandlerContext context;

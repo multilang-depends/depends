@@ -46,8 +46,8 @@ import depends.matrix.core.DependencyMatrix;
 import depends.matrix.transform.OrderedMatrixGenerator;
 import depends.relations.ImportLookupStrategy;
 import depends.relations.Inferer;
-import depends.util.FileTraversal;
-import depends.util.FileUtil;
+import multilang.depends.util.file.FileTraversal;
+import multilang.depends.util.file.FileUtil;
 
 abstract public class AbstractLangProcessor {
 	/**

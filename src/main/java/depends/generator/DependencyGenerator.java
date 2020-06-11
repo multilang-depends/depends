@@ -29,12 +29,12 @@ import java.util.List;
 import depends.entity.Entity;
 import depends.entity.PackageNamePrefixRemover;
 import depends.entity.repo.EntityRepo;
-import depends.format.path.EmptyFilenameWritter;
-import depends.format.path.FilenameWritter;
+import multilang.depends.util.file.path.EmptyFilenameWritter;
+import multilang.depends.util.file.path.FilenameWritter;
 import depends.matrix.core.DependencyDetail;
 import depends.matrix.core.DependencyMatrix;
-import depends.matrix.transform.strip.EmptyLeadingNameStripper;
-import depends.matrix.transform.strip.ILeadingNameStrippper;
+import multilang.depends.util.file.strip.EmptyLeadingNameStripper;
+import multilang.depends.util.file.strip.ILeadingNameStrippper;
 
 public abstract class DependencyGenerator {
 	public abstract DependencyMatrix build(EntityRepo entityRepo,List<String> typeFilter);

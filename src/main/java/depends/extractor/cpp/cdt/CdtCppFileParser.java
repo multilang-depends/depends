@@ -36,7 +36,7 @@ import depends.entity.repo.EntityRepo;
 import depends.extractor.cpp.CppFileParser;
 import depends.extractor.cpp.MacroRepo;
 import depends.relations.Inferer;
-import depends.util.FileUtil;
+import multilang.depends.util.file.FileUtil;
 
 public class CdtCppFileParser extends CppFileParser {
 

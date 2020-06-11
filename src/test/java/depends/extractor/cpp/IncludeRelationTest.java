@@ -6,14 +6,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
 
 import depends.deptypes.DependencyType;
 import depends.entity.AliasEntity;
-import depends.extractor.cpp.CppFileParser;
-import depends.util.FileUtil;
+import multilang.depends.util.file.FileUtil;
 
 public class IncludeRelationTest extends CppParserTest{
     @Before

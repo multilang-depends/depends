@@ -31,7 +31,6 @@ import java.util.concurrent.ExecutorService;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.jrubyparser.CompatVersion;
-import org.jrubyparser.NodeVisitor;
 import org.jrubyparser.Parser;
 import org.jrubyparser.ast.Node;
 import org.jrubyparser.parser.ParserConfiguration;
@@ -43,7 +42,7 @@ import depends.extractor.FileParser;
 import depends.extractor.ParserCreator;
 import depends.extractor.ruby.IncludedFileLocator;
 import depends.relations.Inferer;
-import depends.util.FileUtil;
+import multilang.depends.util.file.FileUtil;
 public class JRubyFileParser implements FileParser {
 	private String fileFullPath;
 	private EntityRepo entityRepo;

@@ -10,8 +10,8 @@ import depends.extractor.ParserTest;
 import depends.extractor.python.union.PythonFileParser;
 import depends.extractor.python.union.PythonProcessor;
 import depends.relations.Inferer;
-import depends.util.FileUtil;
-import depends.util.TemporaryFile;
+import multilang.depends.util.file.FileUtil;
+import multilang.depends.util.file.TemporaryFile;
 
 public abstract class PythonParserTest extends ParserTest implements ParserCreator {
 

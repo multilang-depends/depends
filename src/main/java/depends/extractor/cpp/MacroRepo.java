@@ -13,7 +13,7 @@ import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 
 import depends.extractor.cpp.cdt.GPPParserExtensionConfigurationExtension;
-import depends.util.FileUtil;
+import multilang.depends.util.file.FileUtil;
 
 public abstract class MacroRepo {
 	private Map<String, String> defaultMacroMap = new HashMap<>();

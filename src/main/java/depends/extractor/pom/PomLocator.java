@@ -27,7 +27,7 @@ package depends.extractor.pom;
 import java.io.File;
 import java.util.List;
 
-import depends.util.FileUtil;
+import multilang.depends.util.file.FileUtil;
 
 public class PomLocator {
 

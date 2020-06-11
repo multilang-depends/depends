@@ -28,7 +28,7 @@ import java.io.File;
 import java.util.List;
 
 import depends.entity.GenericName;
-import depends.util.FileUtil;
+import multilang.depends.util.file.FileUtil;
 
 public class PomCoords  {
 	public PomCoords() {

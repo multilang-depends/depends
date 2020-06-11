@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 
 import depends.entity.repo.EntityRepo;
 import depends.relations.Inferer;
-import depends.util.TemporaryFile;
+import multilang.depends.util.file.TemporaryFile;
 
 /**
  * ContainerEntity for example file, class, method, etc. they could contain

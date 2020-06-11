@@ -12,7 +12,7 @@ import depends.extractor.ParserCreator;
 import depends.extractor.ParserTest;
 import depends.extractor.ruby.jruby.JRubyFileParser;
 import depends.relations.Inferer;
-import depends.util.TemporaryFile;
+import multilang.depends.util.file.TemporaryFile;
 public abstract class RubyParserTest extends ParserTest implements ParserCreator{
 	protected  EntityRepo entityRepo ;
 	protected Inferer inferer ;
