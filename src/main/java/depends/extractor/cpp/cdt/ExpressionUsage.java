@@ -23,16 +23,7 @@ SOFTWARE.
 */
 
 package depends.extractor.cpp.cdt;
-import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
-import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
-import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
-import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
-import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
-import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.*;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 
 import depends.entity.Expression;
@@ -75,7 +66,6 @@ public class ExpressionUsage {
 			tryFillExpressionTypeAndIdentifier(ctx,expression);
 			return;
 		}
-		
 		expression.setSet(isSet(ctx));
 		expression.setCall((ctx instanceof IASTFunctionCallExpression)?true:false);
 		expression.setLogic(isLogic(ctx));
@@ -108,15 +98,16 @@ public class ExpressionUsage {
 			expression.disableDriveTypeFromChild();
 
 		}
-		if (expression.isDot()) {
-			IASTExpression op2 = ((IASTBinaryExpression)ctx).getOperand2();
-			if (op2 instanceof IASTIdExpression)
-				expression.setIdentifier(ASTStringUtilExt.getName(((IASTIdExpression)op2).getName()));
-			else if (op2 instanceof IASTLiteralExpression)
-				expression.setIdentifier(ASTStringUtilExt.getName((IASTLiteralExpression)op2));
-			else if (op2 instanceof IASTFunctionCallExpression)
-				expression.setIdentifier(getMethodCallIdentifier((IASTFunctionCallExpression)op2));
-			return;
+		if (expression.isDot() ) {
+			if (ctx instanceof  IASTBinaryExpression) {
+				IASTExpression op2 = ((IASTBinaryExpression) ctx).getOperand2();
+				if (op2 instanceof IASTIdExpression)
+					expression.setIdentifier(ASTStringUtilExt.getName(((IASTIdExpression) op2).getName()));
+				else if (op2 instanceof IASTLiteralExpression)
+					expression.setIdentifier(ASTStringUtilExt.getName((IASTLiteralExpression) op2));
+				else if (op2 instanceof IASTFunctionCallExpression)
+					expression.setIdentifier(getMethodCallIdentifier((IASTFunctionCallExpression) op2));
+			}
 		}		
 	}
 
@@ -149,6 +140,10 @@ public class ExpressionUsage {
 		if (f instanceof IASTIdExpression) {
 			return GenericName.build(ASTStringUtilExt.getName(((IASTIdExpression)f).getName()));
 		}
+		if (f instanceof  IASTFieldReference){
+			IASTFieldReference func = (IASTFieldReference) f;
+			return GenericName.build(ASTStringUtilExt.getName(func.getFieldName()));
+		}
 		return null;
 	}
 
@@ -157,6 +152,12 @@ public class ExpressionUsage {
 			int op = ((IASTBinaryExpression)ctx).getOperator();
 			if (op==IASTBinaryExpression.op_pmdot ||
 					op==IASTBinaryExpression.op_pmarrow	) return true;
+		}
+		if (ctx instanceof  IASTFunctionCallExpression){
+			if (ctx.getChildren().length>0){
+				if (ctx.getChildren()[0] instanceof IASTFieldReference)
+					return true;
+			}
 		}
 		return false;
 	}

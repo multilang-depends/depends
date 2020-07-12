@@ -121,9 +121,6 @@ public class ExpressionUsage {
 
 	private void makeSureVarExist(GenericName identifier) {
 		if (null==context.foundEntityWithName(identifier)) {
-			if (identifier.getName().contains("Pyro4.config.SERVERTYPE")) {
-				System.out.println(identifier);
-			}
 			context.foundVarDefinition(context.lastContainer(), identifier.getName());
 		}
 	}

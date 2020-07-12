@@ -11,6 +11,6 @@ class DupClass{
 class X{
     void invoke(){
          DupClass* c = new DupClass();
-         c->bar();
+         c->foo();
     }
 };
