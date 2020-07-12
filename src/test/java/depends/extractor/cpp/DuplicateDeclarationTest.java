@@ -1,14 +1,11 @@
 package depends.extractor.cpp;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.IOException;
-
+import depends.deptypes.DependencyType;
+import depends.entity.Entity;
 import org.junit.Before;
 import org.junit.Test;
 
-import depends.deptypes.DependencyType;
-import depends.entity.Entity;
+import java.io.IOException;
 
 public class DuplicateDeclarationTest extends CppParserTest {
 	 @Before
@@ -32,9 +29,8 @@ public class DuplicateDeclarationTest extends CppParserTest {
 			    this.assertContainsRelation(e, DependencyType.CONTAIN,"DupClass");
 			    this.assertContainsRelation(e, DependencyType.CALL,"DupClass");
 			    this.assertContainsRelation(e, DependencyType.CREATE,"DupClass");
-			    this.assertContainsRelation(e, DependencyType.USE,"DupClass");
-			    this.assertContainsRelation(e, DependencyType.USE,"X.invoke.c");
-			    			    
+			    this.assertContainsRelation(e, DependencyType.CALL,"DupClass.foo");
+
 		}
 
 

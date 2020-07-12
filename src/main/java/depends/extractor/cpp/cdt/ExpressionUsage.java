@@ -49,30 +49,28 @@ public class ExpressionUsage {
 	
 	public void foundExpression(IASTExpression ctx) {
 		Expression parent = findParentInStack(ctx);
-		//If parent already a call 
-		if (parent!=null ) {
-			if (ctx instanceof IASTIdExpression && (parent.isCall() || parent.isCast())) {
-				return;
-			}
+		Expression expression = null;
+		if (parent!=null && ctx.getParent()!=null && (ctx.getParent().getChildren().length==1)){
+			expression = parent;
+		}else {
+			/* create expression and link it with parent*/
+			expression = new Expression(idGenerator.generateId());
+			expression.setText(ctx.getRawSignature());
+			context.lastContainer().addExpression(ctx, expression);
+			expression.setParent(parent);
 		}
-		/* create expression and link it with parent*/
-		Expression expression = new Expression(idGenerator.generateId());
-		expression.setText( ctx.getRawSignature());
-		context.lastContainer().addExpression(ctx,expression);
-		expression.setParent(parent);
-	
 		
 		if (isTerminalExpression(ctx)) {
 			tryFillExpressionTypeAndIdentifier(ctx,expression);
 			return;
 		}
-		expression.setSet(isSet(ctx));
-		expression.setCall((ctx instanceof IASTFunctionCallExpression)?true:false);
-		expression.setLogic(isLogic(ctx));
+		expression.setSet(expression.isSet() || isSet(ctx));
+		expression.setCall(expression.isCall() || (ctx instanceof IASTFunctionCallExpression)?true:false);
+		expression.setLogic(expression.isLogic() || isLogic(ctx));
 		if (ctx instanceof ICPPASTNewExpression){
 			expression.setCreate(true);;
 		}		
-		expression.setDot(isDot(ctx));
+		expression.setDot(expression.isDot() || isDot(ctx));
 
 		/**
  *    | expression bop='.'
