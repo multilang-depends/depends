@@ -77,6 +77,8 @@ Plantuml files could be used to generate UML diagram using PlantUML (http://plan
 
 Json and XML files could be used to generate Design Structure Matrices (DSMs) using DV8 (https://www.archdia.net).
 
+The detail of json/xml format could be found [here](./doc/output_format.md).
+
 ### How many dependency types does *Depends* support?
 
 *Depends* supports major dependency types, including:
@@ -92,6 +94,9 @@ Json and XML files could be used to generate Design Structure Matrices (DSMs) us
 * Return: returned type
 * Throw: throw exceptions
 * Use: use or set variables
+* ImplLink: the implementation link between call and the implementation of prototype.
+
+For detail of supported types, please refer to [here](./doc/dependency_types.md)
 
 # How to contribute
 
