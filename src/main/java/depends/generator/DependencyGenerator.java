@@ -24,17 +24,17 @@ SOFTWARE.
 
 package depends.generator;
 
-import java.util.List;
-
 import depends.entity.Entity;
 import depends.entity.PackageNamePrefixRemover;
 import depends.entity.repo.EntityRepo;
-import multilang.depends.util.file.path.EmptyFilenameWritter;
-import multilang.depends.util.file.path.FilenameWritter;
 import depends.matrix.core.DependencyDetail;
 import depends.matrix.core.DependencyMatrix;
+import multilang.depends.util.file.path.EmptyFilenameWritter;
+import multilang.depends.util.file.path.FilenameWritter;
 import multilang.depends.util.file.strip.EmptyLeadingNameStripper;
 import multilang.depends.util.file.strip.ILeadingNameStrippper;
+
+import java.util.List;
 
 public abstract class DependencyGenerator {
 	public abstract DependencyMatrix build(EntityRepo entityRepo,List<String> typeFilter);
@@ -46,10 +46,16 @@ public abstract class DependencyGenerator {
 	public void setLeadingStripper(ILeadingNameStrippper stripper) {
 		this.stripper = stripper;
 	}
-	protected DependencyDetail buildDescription(Entity fromEntity, Entity toEntity) {
+	protected DependencyDetail buildDescription(Entity fromEntity, Entity toEntity, Integer fromLineNumber) {
 		if (!generateDetail) return null;
 		String srcName = PackageNamePrefixRemover.remove(fromEntity);
 		String destName = PackageNamePrefixRemover.remove(toEntity);
+		if (fromLineNumber!=null){
+			srcName += ":"+fromLineNumber;
+		}
+		if (toEntity.getLine()!=null){
+			destName += ":"+toEntity.getLine();
+		}
 		return new DependencyDetail(srcName,destName);
 	}
 	public void setFilenameRewritter(FilenameWritter filenameWritter) {

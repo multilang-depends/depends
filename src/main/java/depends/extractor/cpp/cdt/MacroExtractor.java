@@ -24,36 +24,44 @@ SOFTWARE.
 
 package depends.extractor.cpp.cdt;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import depends.entity.FunctionEntity;
+import depends.entity.VarEntity;
+import depends.extractor.cpp.CppHandlerContext;
+import depends.relations.Inferer;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorFunctionStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorObjectStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 
+import java.util.ArrayList;
+
 public class MacroExtractor {
-	ArrayList<String> macroVars = new ArrayList<>();
-	ArrayList<String> macroFuncs = new ArrayList<>();
+
+	private final String fileLocation;
+	private IASTPreprocessorStatement[] statements;
 
 	public MacroExtractor(IASTPreprocessorStatement[] statements, String fileLocation) {
+		this.statements = statements;
+		this.fileLocation = fileLocation;
+	}
+
+	public void extract(CppHandlerContext context) {
 		for (int statementIndex=0;statementIndex<statements.length;statementIndex++) {
 			if (statements[statementIndex] instanceof IASTPreprocessorFunctionStyleMacroDefinition) {
 				IASTPreprocessorFunctionStyleMacroDefinition funcMacro = (IASTPreprocessorFunctionStyleMacroDefinition)statements[statementIndex];
 				if (!funcMacro.getFileLocation().getFileName().equals(fileLocation))
 					continue;
-				macroFuncs.add(funcMacro.getName().getRawSignature());
+				String func = funcMacro.getName().getRawSignature();
+				FunctionEntity funcEntity = context.foundMethodDeclarator(func, Inferer.buildInType.getRawName().uniqName(), new ArrayList<>());
+				funcEntity.setLine(funcMacro.getFileLocation().getStartingLineNumber());
+				context.exitLastedEntity();
 			}else if (statements[statementIndex] instanceof IASTPreprocessorObjectStyleMacroDefinition) {
 				IASTPreprocessorObjectStyleMacroDefinition varMacro = (IASTPreprocessorObjectStyleMacroDefinition)statements[statementIndex];
 				if (!varMacro.getFileLocation().getFileName().equals(fileLocation))
 					continue;
-				macroVars.add(varMacro.getName().getRawSignature());
+				String var = varMacro.getName().getRawSignature();
+				VarEntity varEntity = context.foundVarDefinition(var, Inferer.buildInType.getRawName(), new ArrayList<>());
+				varEntity.setLine(varMacro.getFileLocation().getStartingLineNumber());
 			}
 		}
 	}
-	public List<String> getMacroVars() {
-		return macroVars;
-	}
-	public List<String> getMacroFuncs() {
-		return macroFuncs;
-	}	
 }

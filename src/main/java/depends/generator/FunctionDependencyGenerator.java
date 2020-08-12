@@ -24,9 +24,6 @@ SOFTWARE.
 
 package depends.generator;
 
-import java.util.Iterator;
-import java.util.List;
-
 import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.FunctionEntity;
@@ -34,6 +31,9 @@ import depends.entity.PackageNamePrefixRemover;
 import depends.entity.repo.EntityRepo;
 import depends.matrix.core.DependencyMatrix;
 import depends.relations.Relation;
+
+import java.util.Iterator;
+import java.util.List;
 
 public class FunctionDependencyGenerator extends DependencyGenerator {
 	public DependencyMatrix build(EntityRepo entityRepo,List<String> typeFilter) {
@@ -57,7 +57,7 @@ public class FunctionDependencyGenerator extends DependencyGenerator {
 					if (entityTo == -1)
 						continue;
 					dependencyMatrix.addDependency(relation.getType(), entityFrom, entityTo, 1,buildDescription(entity,
-							relation.getEntity()));
+							relation.getEntity(),relation.getFromLine()));
 				}
 			}
 		}

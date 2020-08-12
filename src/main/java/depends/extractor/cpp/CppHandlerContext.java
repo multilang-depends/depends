@@ -24,17 +24,7 @@ SOFTWARE.
 
 package depends.extractor.cpp;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import depends.entity.Entity;
-import depends.entity.FileEntity;
-import depends.entity.FunctionEntity;
-import depends.entity.FunctionEntityProto;
-import depends.entity.FunctionEntityImpl;
-import depends.entity.GenericName;
-import depends.entity.PackageEntity;
+import depends.entity.*;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.HandlerContext;
 import depends.relations.Inferer;

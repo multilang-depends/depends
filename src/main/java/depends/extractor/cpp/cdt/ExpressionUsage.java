@@ -47,7 +47,7 @@ public class ExpressionUsage {
 		expression.setIdentifier(functionName);
 	}
 	
-	public void foundExpression(IASTExpression ctx) {
+	public Expression foundExpression(IASTExpression ctx) {
 		Expression parent = findParentInStack(ctx);
 		Expression expression = null;
 		if (parent!=null && ctx.getParent()!=null && (ctx.getParent().getChildren().length==1)){
@@ -62,7 +62,7 @@ public class ExpressionUsage {
 		
 		if (isTerminalExpression(ctx)) {
 			tryFillExpressionTypeAndIdentifier(ctx,expression);
-			return;
+			return expression;
 		}
 		expression.setSet(expression.isSet() || isSet(ctx));
 		expression.setCall(expression.isCall() || (ctx instanceof IASTFunctionCallExpression)?true:false);
@@ -106,7 +106,8 @@ public class ExpressionUsage {
 				else if (op2 instanceof IASTFunctionCallExpression)
 					expression.setIdentifier(getMethodCallIdentifier((IASTFunctionCallExpression) op2));
 			}
-		}		
+		}
+		return expression;
 	}
 
 	private boolean isTerminalExpression(IASTExpression ctx) {

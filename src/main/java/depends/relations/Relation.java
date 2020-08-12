@@ -25,17 +25,21 @@ SOFTWARE.
 package depends.relations;
 
 import depends.entity.Entity;
+import depends.entity.Location;
 
 /**
  * Dependency relation object
  */
 public class Relation {
+	/*Where the relation happen in src*/
+	private Location location;
 	private String type;
 	private Entity toEntity;
 	
-	public Relation(String type, Entity toEntity) {
+	public Relation(String type, Entity toEntity,Location location) {
 		this.toEntity = toEntity;
 		this.type = type;
+		this.location = location;
 	}
 	public String getType() {
 		return type;
@@ -48,5 +52,9 @@ public class Relation {
 	public Entity getEntity() {
 		return toEntity;
 	}
-	
+
+	public Integer getFromLine() {
+		if (location==null) return null;
+		return location.getLine();
+	}
 }
