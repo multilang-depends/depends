@@ -1,9 +1,10 @@
 package depends.extractor.cpp;
 
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IMacroBinding;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 
 public class MacroMemoryRepo extends MacroRepo{
 
@@ -19,7 +20,7 @@ public class MacroMemoryRepo extends MacroRepo{
 	private void put(String file, IASTPreprocessorMacroDefinition[] macroDefinitions) {
 		Map<String, String> macros = new HashMap<>();
 		for (IASTPreprocessorMacroDefinition def:macroDefinitions) {
-			macros.put(def.getName().toString().intern(), new String(def.getExpansion()).intern());
+			macros.put(((IMacroBinding)def.getName().resolveBinding()).toString(), new String(def.getExpansion()).intern());
 		}
 		Map<String, String>  existingMacros = fileMacroDefinition.get(file);
 		if (existingMacros==null)

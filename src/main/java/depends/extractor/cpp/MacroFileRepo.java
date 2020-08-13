@@ -1,17 +1,13 @@
 package depends.extractor.cpp;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
-
 import depends.entity.repo.EntityRepo;
 import multilang.depends.util.file.TemporaryFile;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IMacroBinding;
+
+import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MacroFileRepo extends MacroRepo{
 	private EntityRepo entityRepo;
@@ -49,7 +45,7 @@ public class MacroFileRepo extends MacroRepo{
 		Map<String, String> macros = get(fileFullPath);
 		macros.putAll(macroMap);
 		for (IASTPreprocessorMacroDefinition def:macroDefinitions) {
-			macros.put(def.getName().toString(), new String(def.getExpansion()));
+			macros.put(((IMacroBinding)def.getName().resolveBinding()).toString(), new String(def.getExpansion()));
 		}
 		
 		try {

@@ -1,12 +1,11 @@
 package depends.extractor.cpp;
-import static org.junit.Assert.assertEquals;
-
-import java.io.IOException;
-
+import depends.extractor.cpp.cdt.CdtCppFileParser;
 import org.junit.Before;
 import org.junit.Test;
 
-import depends.entity.Entity;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ParseErrorTest extends CppParserTest{
     @Before
@@ -25,6 +24,22 @@ public class ParseErrorTest extends CppParserTest{
 		    parser.parse();
 	    }
 	    inferer.resolveAllBindings();
+	}
+
+	@Test
+	public void macro_definition() throws IOException {
+		String[] srcs = new String[] {
+				"./src/test/resources/cpp-code-examples/parseError/macro.c",
+		};
+
+		for (String src:srcs) {
+			CdtCppFileParser parser = (CdtCppFileParser)createParser(src);
+
+			Map<String, String> macroMap = new HashMap<>();
+			macroMap.put("AP_DECLARE(x)","x");
+			parser.parse(true,macroMap);
+		}
+		inferer.resolveAllBindings();
 	}
 	
 }

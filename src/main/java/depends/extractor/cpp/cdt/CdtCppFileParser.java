@@ -24,12 +24,6 @@ SOFTWARE.
 
 package depends.extractor.cpp.cdt;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-
 import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.repo.EntityRepo;
@@ -37,6 +31,11 @@ import depends.extractor.cpp.CppFileParser;
 import depends.extractor.cpp.MacroRepo;
 import depends.relations.Inferer;
 import multilang.depends.util.file.FileUtil;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CdtCppFileParser extends CppFileParser {
 
@@ -71,7 +70,9 @@ public class CdtCppFileParser extends CppFileParser {
 				t.setInProjectScope(true);
 			return;
 		}
-		
+		if (fileFullPath.contains("regex.h")){
+			System.out.println("stop");
+		}
 		CppVisitor bridge = new CppVisitor(fileFullPath, entityRepo, preprocessorHandler,inferer);
 		IASTTranslationUnit tu = (new CDTParser(preprocessorHandler.getIncludePaths())).parse(fileFullPath,macroMap);
 		boolean containsIncludes = false;

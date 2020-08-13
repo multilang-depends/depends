@@ -1,14 +1,14 @@
 package depends.extractor.cpp;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
-
 import depends.entity.repo.EntityRepo;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IMacroBinding;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MacroEhcacheRepo extends MacroRepo {
 	private EntityRepo entityRepo;
@@ -44,7 +44,7 @@ public class MacroEhcacheRepo extends MacroRepo {
 		Map<String, String> macros = get(fileFullPath);
 		macros.putAll(macroMap);
 		for (IASTPreprocessorMacroDefinition def : macroDefinitions) {
-			macros.put(def.getName().toString(), new String(def.getExpansion()));
+			macros.put(((IMacroBinding)def.getName().resolveBinding()).toString(), new String(def.getExpansion()));
 		}
 		Element cacheElement = new Element(buildKey(fileId), macros);
 		cache.put(cacheElement);

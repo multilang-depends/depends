@@ -1,9 +1,7 @@
 package depends.extractor.cpp;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import depends.extractor.cpp.cdt.GPPParserExtensionConfigurationExtension;
+import multilang.depends.util.file.FileUtil;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.parser.IScanner;
@@ -12,8 +10,9 @@ import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 
-import depends.extractor.cpp.cdt.GPPParserExtensionConfigurationExtension;
-import multilang.depends.util.file.FileUtil;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public abstract class MacroRepo {
 	private Map<String, String> defaultMacroMap = new HashMap<>();
@@ -34,10 +33,7 @@ public abstract class MacroRepo {
 				Map<String, IMacroBinding> macros = scanner.getMacroDefinitions();
 				for (String key : macros.keySet()) {
 					String exp = new String(macros.get(key).getExpansion());
-					if (exp.length() > 0) {
-						defaultMacroMap.put(key, exp);
-					}
-
+					defaultMacroMap.put(macros.get(key).toString(), exp);
 				}
 			}
 		}
