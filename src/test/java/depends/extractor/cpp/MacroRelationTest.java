@@ -1,14 +1,11 @@
 package depends.extractor.cpp;
-import static org.junit.Assert.assertEquals;
-
-import java.io.IOException;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import depends.deptypes.DependencyType;
 import depends.entity.Entity;
 import depends.relations.Inferer;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.io.IOException;
 
 public class MacroRelationTest extends CppParserTest{
     @Before
@@ -31,7 +28,6 @@ public class MacroRelationTest extends CppParserTest{
 	    Entity e = repo.getEntity("foo");
 	    this.assertContainsRelation(e, DependencyType.RETURN, Inferer.buildInType.getQualifiedName());
 	    this.assertContainsRelation(e, DependencyType.CONTAIN, Inferer.buildInType.getQualifiedName());
-	    this.assertContainsRelation(e, DependencyType.USE, Inferer.buildInType.getQualifiedName());
 	}
 	
 	

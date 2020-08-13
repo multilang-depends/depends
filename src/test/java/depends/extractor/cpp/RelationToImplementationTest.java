@@ -1,19 +1,15 @@
 package depends.extractor.cpp;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
-import java.io.IOException;
-
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-
-import depends.deptypes.DependencyType;
 import depends.entity.Entity;
 import depends.entity.FunctionEntityImpl;
 import depends.entity.FunctionEntityProto;
 import depends.entity.VarEntity;
 import depends.relations.Relation;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
 
 public class RelationToImplementationTest extends CppParserTest{
     @Before

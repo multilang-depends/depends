@@ -24,37 +24,16 @@ SOFTWARE.
 
 package depends.extractor.ruby.jruby;
 
-import java.util.List;
-
-import org.jrubyparser.ast.AndNode;
-import org.jrubyparser.ast.AssignableNode;
-import org.jrubyparser.ast.BlockNode;
-import org.jrubyparser.ast.ClassVarNode;
-import org.jrubyparser.ast.Colon3Node;
-import org.jrubyparser.ast.ConstNode;
-import org.jrubyparser.ast.FCallNode;
-import org.jrubyparser.ast.FalseNode;
-import org.jrubyparser.ast.GlobalVarNode;
-import org.jrubyparser.ast.ILiteralNode;
-import org.jrubyparser.ast.InstVarNode;
-import org.jrubyparser.ast.ListNode;
-import org.jrubyparser.ast.LocalVarNode;
-import org.jrubyparser.ast.NewlineNode;
-import org.jrubyparser.ast.Node;
-import org.jrubyparser.ast.OrNode;
-import org.jrubyparser.ast.ReturnNode;
-import org.jrubyparser.ast.RootNode;
-import org.jrubyparser.ast.TrueNode;
-import org.jrubyparser.ast.VCallNode;
-
 import depends.entity.ContainerEntity;
 import depends.entity.Expression;
 import depends.entity.FunctionEntity;
-import depends.entity.GenericName;
 import depends.entity.VarEntity;
 import depends.entity.repo.IdGenerator;
 import depends.extractor.ruby.RubyHandlerContext;
 import depends.relations.Inferer;
+import org.jrubyparser.ast.*;
+
+import java.util.List;
 
 public class ExpressionUsage {
 	RubyHandlerContext context;

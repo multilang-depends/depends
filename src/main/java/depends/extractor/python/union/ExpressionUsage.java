@@ -1,35 +1,19 @@
 package depends.extractor.python.union;
 
+import depends.entity.*;
+import depends.entity.repo.IdGenerator;
+import depends.extractor.HandlerContext;
 import depends.extractor.python.PythonHandlerContext;
-import depends.extractor.python.PythonParser.Assert_stmtContext;
-import depends.extractor.python.PythonParser.AtomContext;
-import depends.extractor.python.PythonParser.Del_stmtContext;
-import depends.extractor.python.PythonParser.ExprContext;
-import depends.extractor.python.PythonParser.Expr_stmtContext;
-import depends.extractor.python.PythonParser.Raise_stmtContext;
-import depends.extractor.python.PythonParser.Return_stmtContext;
-import depends.extractor.python.PythonParser.Testlist_star_exprContext;
-import depends.extractor.python.PythonParser.TrailerContext;
-import depends.extractor.python.PythonParser.Yield_stmtContext;
+import depends.extractor.python.PythonParser.*;
 import depends.extractor.python.PythonParserBaseVisitor;
 import depends.relations.Inferer;
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.RuleContext;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.RuleContext;
-
-import depends.entity.Entity;
-import depends.entity.Expression;
-import depends.entity.FunctionEntity;
-import depends.entity.GenericName;
-import depends.entity.TypeEntity;
-import depends.entity.VarEntity;
-import depends.entity.repo.IdGenerator;
-import depends.extractor.HandlerContext;
 public class ExpressionUsage {
 	HandlerContext context;
 	IdGenerator idGenerator;
@@ -82,6 +66,7 @@ public class ExpressionUsage {
 		}else {
 			/* create expression and link it with parent*/
 			expression = new Expression(idGenerator.generateId());
+
 			expression.setText(ctx.getText());
 			context.lastContainer().addExpression(ctx,expression);
 			expression.setParent(parent);

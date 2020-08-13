@@ -24,23 +24,16 @@ SOFTWARE.
 
 package depends.entity;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-
+import depends.entity.repo.EntityRepo;
+import depends.relations.Inferer;
+import depends.relations.Relation;
+import multilang.depends.util.file.TemporaryFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import depends.entity.repo.EntityRepo;
-import depends.relations.Inferer;
-import multilang.depends.util.file.TemporaryFile;
+import java.io.*;
+import java.lang.ref.WeakReference;
+import java.util.*;
 
 /**
  * ContainerEntity for example file, class, method, etc. they could contain
@@ -271,6 +264,7 @@ public abstract class ContainerEntity extends DecoratedEntity {
 		this.expressionList.clear();
 		this.expressionList=null;
 		this.expressionList = new ArrayList<>();
+		this.expressionUseList = null;
 	}
 	
 	private void cacheExpressionListToFile() {
@@ -447,5 +441,35 @@ public abstract class ContainerEntity extends DecoratedEntity {
 		return resolvedMixins;
 	}
 
+	HashMap<String,Set<Expression>> expressionUseList = null;
+	public void addRelation(Expression expression, Relation relation) {
+		String key = relation.getEntity().qualifiedName+relation.getType();
+		if (this.expressionUseList==null)
+			expressionUseList = new HashMap<>();
+		if (expressionUseList.containsKey(key)){
+			Set<Expression> expressions = expressionUseList.get(key);
+			for (Expression expr:expressions){
+				if (linkedExpr(expr,expression)) return;
+			}
+		}else{
+			expressionUseList.put(key,new HashSet<>());
+		}
 
+		expressionUseList.get(key).add(expression);
+		super.addRelation(relation);
+	}
+
+	private boolean linkedExpr(Expression a, Expression b) {
+		Expression parent = a.getParent();
+		while(parent!=null){
+			if (parent==b) return true;
+			parent = parent.getParent();
+		}
+		parent = b.getParent();
+		while(parent!=null){
+			if (parent==a) return true;
+			parent = parent.getParent();
+		}
+		return  false;
+	}
 }

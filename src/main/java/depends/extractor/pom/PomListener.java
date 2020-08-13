@@ -24,11 +24,6 @@ SOFTWARE.
 
 package depends.extractor.pom;
 
-import java.util.List;
-import java.util.Stack;
-
-import org.antlr.v4.runtime.ParserRuleContext;
-
 import depends.entity.Expression;
 import depends.entity.GenericName;
 import depends.entity.VarEntity;
@@ -37,6 +32,10 @@ import depends.extractor.FileParser;
 import depends.extractor.xml.XMLParser.ElementContext;
 import depends.extractor.xml.XMLParserBaseListener;
 import depends.relations.Inferer;
+import org.antlr.v4.runtime.ParserRuleContext;
+
+import java.util.List;
+import java.util.Stack;
 
 public class PomListener extends XMLParserBaseListener {
 	private PomHandlerContext context;

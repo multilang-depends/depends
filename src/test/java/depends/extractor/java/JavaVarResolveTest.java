@@ -1,17 +1,16 @@
 package depends.extractor.java;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.IOException;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import depends.deptypes.DependencyType;
 import depends.entity.ContainerEntity;
 import depends.entity.Entity;
 import depends.entity.FunctionEntity;
 import depends.entity.TypeEntity;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
 
 public class JavaVarResolveTest extends JavaParserTest{
 	@Before
@@ -86,7 +85,7 @@ public class JavaVarResolveTest extends JavaParserTest{
         JavaFileParser parser = createParser(src);
         parser.parse();
         inferer.resolveAllBindings();
-        assertEquals(13,entityRepo.getEntity("ValidateAll.validate").getRelations().size());
+        assertEquals(10,entityRepo.getEntity("ValidateAll.validate").getRelations().size());
 	}
 	
 	@Test

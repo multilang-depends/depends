@@ -271,4 +271,5 @@ public abstract class Entity {
 	public Location getLocation() {
 		return this.location;
 	}
+
 }

@@ -1,11 +1,12 @@
 package depends.extractor.cpp;
-import java.io.IOException;
-
+import depends.deptypes.DependencyType;
+import depends.entity.Entity;
 import org.junit.Before;
 import org.junit.Test;
 
-import depends.deptypes.DependencyType;
-import depends.entity.Entity;
+import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
 
 public class CppExpressionTest extends CppParserTest{
     @Before
@@ -31,4 +32,13 @@ public class CppExpressionTest extends CppParserTest{
         this.assertContainsRelation(e, DependencyType.CONTAIN,"ClassA");
 	}
 
+	@Test
+    public void test_should_not_count_expr_duplicated() throws IOException {
+        String src = "./src/test/resources/cpp-code-examples/DupExpressions.cpp";
+        CppFileParser parser = createParser(src);
+        parser.parse();
+        inferer.resolveAllBindings();
+        Entity e = repo.getEntity("foo");
+        assertEquals(4,e.getRelations().size());
+    }
 }

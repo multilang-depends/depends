@@ -51,6 +51,7 @@ public class Expression implements Serializable{
 	private boolean isStatement = false; //statement is only used for return type calcuation in some langs such as ruby
     									//they will not be treat as real expressions in case of relation calculation
 	private boolean deriveTypeFromChild = true;
+
 	private Integer deduceTypeBasedId; //by default, parent expression type determined by most left child
 
 	private Integer parentId = -1; 

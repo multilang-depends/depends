@@ -40,7 +40,7 @@ public class RelationInSameFileTest extends CppParserTest{
 	    		matchCount++;
 	    	}
 	    }
-	    assertEquals(2, matchCount);
+	    assertEquals(1, matchCount);
 	}
 	
 
