@@ -24,24 +24,16 @@ SOFTWARE.
 
 package depends.extractor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
-import java.util.stream.Collectors;
-
-import depends.entity.AliasEntity;
-import depends.entity.ContainerEntity;
-import depends.entity.Entity;
-import depends.entity.FileEntity;
-import depends.entity.FunctionEntity;
-import depends.entity.PackageEntity;
-import depends.entity.GenericName;
-import depends.entity.TypeEntity;
-import depends.entity.VarEntity;
+import depends.entity.*;
 import depends.entity.repo.EntityRepo;
 import depends.entity.repo.IdGenerator;
 import depends.importtypes.Import;
 import depends.relations.Inferer;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
+import java.util.stream.Collectors;
 
 public abstract class HandlerContext {
 	protected EntityRepo entityRepo;
@@ -307,9 +299,9 @@ public abstract class HandlerContext {
 		return varEntity;
 	}
 
-	public void foundEnumConstDefinition(String varName) {
+	public VarEntity foundEnumConstDefinition(String varName) {
 		GenericName type = lastContainer().getRawName();
-		foundVarDefinition(varName,type,new ArrayList<>());
+		return foundVarDefinition(varName,type,new ArrayList<>());
 	}
 	
 	protected Stack<Entity> entityStack = new Stack<Entity>();

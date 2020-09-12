@@ -42,7 +42,7 @@ public class ExpressionUsage {
 		this.idGenerator = idGenerator;
 	}
 
-	public void foundExpression(ExpressionContext ctx) {
+	public Expression foundExpression(ExpressionContext ctx) {
 		Expression parent = findParentInStack(ctx);
 		/* create expression and link it with parent*/
 		Expression expression = new Expression(idGenerator.generateId());
@@ -53,7 +53,7 @@ public class ExpressionUsage {
 		
 		if (ctx.primary()!=null) {
 			tryFillExpressionTypeAndIdentifier(ctx.primary(),expression);
-			return;
+			return expression;
 		}
 		
 		expression.setSet (isSet(ctx));
@@ -112,8 +112,9 @@ public class ExpressionUsage {
 				expression.setIdentifier(ctx.innerCreator().IDENTIFIER().getText());
 			else if (ctx.SUPER()!=null)
 				expression.setIdentifier("super");
-			return;
+			return expression;
 		}
+		return expression;
 	}
 
 	private GenericName getMethodCallIdentifier(MethodCallContext methodCall) {
