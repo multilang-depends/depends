@@ -1,48 +1,21 @@
 package depends.extractor.python.union;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.antlr.v4.runtime.ParserRuleContext;
-
-import depends.entity.ContainerEntity;
-import depends.entity.DecoratedEntity;
-import depends.entity.Entity;
-import depends.entity.FileEntity;
-import depends.entity.GenericName;
-import depends.entity.PackageEntity;
-import depends.entity.TypeEntity;
-import depends.entity.VarEntity;
+import depends.entity.*;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.python.NameAliasImport;
 import depends.extractor.python.PythonHandlerContext;
-import depends.extractor.python.PythonParser.ArglistContext;
-import depends.extractor.python.PythonParser.Assert_stmtContext;
-import depends.extractor.python.PythonParser.Class_or_func_def_stmtContext;
-import depends.extractor.python.PythonParser.ClassdefContext;
-import depends.extractor.python.PythonParser.DecoratorContext;
-import depends.extractor.python.PythonParser.Def_parameterContext;
-import depends.extractor.python.PythonParser.Def_parametersContext;
-import depends.extractor.python.PythonParser.Del_stmtContext;
-import depends.extractor.python.PythonParser.Dotted_as_nameContext;
-import depends.extractor.python.PythonParser.Dotted_nameContext;
-import depends.extractor.python.PythonParser.Expr_stmtContext;
-import depends.extractor.python.PythonParser.From_stmtContext;
-import depends.extractor.python.PythonParser.FuncdefContext;
-import depends.extractor.python.PythonParser.Global_stmtContext;
-import depends.extractor.python.PythonParser.Import_as_nameContext;
-import depends.extractor.python.PythonParser.Import_stmtContext;
-import depends.extractor.python.PythonParser.NameContext;
-import depends.extractor.python.PythonParser.Raise_stmtContext;
-import depends.extractor.python.PythonParser.Return_stmtContext;
-import depends.extractor.python.PythonParser.Yield_stmtContext;
+import depends.extractor.python.PythonParser.*;
 import depends.extractor.python.PythonParserBaseListener;
 import depends.extractor.ruby.IncludedFileLocator;
 import depends.importtypes.FileImport;
 import depends.relations.Inferer;
 import multilang.depends.util.file.FileUtil;
+import org.antlr.v4.runtime.ParserRuleContext;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PythonCodeListener extends PythonParserBaseListener{
 	private PythonHandlerContext context;
@@ -225,8 +198,9 @@ public class PythonCodeListener extends PythonParserBaseListener{
 		if (name!=null) {
 			functionName = name;
 		}
-		
-		context.foundMethodDeclarator(functionName);
+
+		FunctionEntity method = context.foundMethodDeclarator(functionName);
+		method.setLine(ctx.getStart().getLine());
 		if (ctx.typedargslist()!=null) {
 			List<String> parameters = getParameterList(ctx.typedargslist().def_parameters());
 			for (String param : parameters) {
@@ -250,6 +224,8 @@ public class PythonCodeListener extends PythonParserBaseListener{
 	public void enterClassdef(ClassdefContext ctx) {
 		String name = getName(ctx.name());
 		TypeEntity type = context.foundNewType(name);
+		type.setLine(ctx.getStart().getLine());
+
 		List<String> baseClasses = getArgList(ctx.arglist());
 		baseClasses.forEach(base -> type.addExtends(GenericName.build(base)));
 
@@ -309,6 +285,8 @@ public class PythonCodeListener extends PythonParserBaseListener{
 		String decoratedName = getDecoratedName(ctx);
 		if (decoratedName!=null) {
 			Entity entity = context.foundEntityWithName(GenericName.build(decoratedName));
+			entity.setLine(ctx.getStart().getLine());
+
 			if (entity instanceof DecoratedEntity) {
 				for (DecoratorContext decorator: ctx.decorator()) {
 					String decoratorName = getName(decorator.dotted_name());
@@ -323,7 +301,9 @@ public class PythonCodeListener extends PythonParserBaseListener{
 	@Override
 	public void enterGlobal_stmt(Global_stmtContext ctx) {
 		for (NameContext name:ctx.name()){
-			context.foundGlobalVarDefinition(context.currentFile(),name.getText());
+			VarEntity var = context.foundGlobalVarDefinition(context.currentFile(), name.getText());
+			var.setLine(ctx.getStart().getLine());
+
 		}
 		super.enterGlobal_stmt(ctx);
 	}
