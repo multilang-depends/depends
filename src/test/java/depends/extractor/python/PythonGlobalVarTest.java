@@ -1,13 +1,12 @@
 package depends.extractor.python;
 
-import java.io.IOException;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import depends.deptypes.DependencyType;
 import depends.entity.Entity;
 import depends.extractor.python.union.PythonFileParser;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.io.IOException;
 
 public class PythonGlobalVarTest extends PythonParserTest {
     @Before
@@ -28,7 +27,7 @@ public class PythonGlobalVarTest extends PythonParserTest {
 	    }
 	    inferer.resolveAllBindings(true,null);
         Entity foo = repo.getEntity(withPackageName(srcs[0],"foo"));
-        this.assertContainsRelation(foo, DependencyType.IMPLLINK, "global_var");
+        this.assertContainsRelation(foo, DependencyType.USE, "global_var");
 	}
 	
 
