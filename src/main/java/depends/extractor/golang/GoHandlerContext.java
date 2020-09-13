@@ -22,29 +22,18 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-package depends;
+package depends.extractor.golang;
 
-import depends.extractor.AbstractLangProcessor;
-import depends.extractor.LangProcessorRegistration;
+import depends.entity.repo.EntityRepo;
+import depends.extractor.HandlerContext;
+import depends.relations.Inferer;
 
-public class LangRegister {
-	public LangRegister() {
-		add (new depends.extractor.java.JavaProcessor());
-		add (new depends.extractor.cpp.CppProcessor());
-		add (new depends.extractor.ruby.RubyProcessor());
-		add (new depends.extractor.pom.PomProcessor());
-		add (new depends.extractor.kotlin.KotlinProcessor());
-		add (new depends.extractor.python.union.PythonProcessor());
-		add (new depends.extractor.golang.GoProcessor());
-	}
-	
-	public void register() {
+public class GoHandlerContext extends HandlerContext {
 
+	public GoHandlerContext(EntityRepo entityRepo, Inferer inferer) {
+		super(entityRepo,inferer);
 	}
-	
-	private void add(AbstractLangProcessor langProcessor) {
-		LangProcessorRegistration.getRegistry().register(langProcessor);
-	}
+
+
+
 }
-
-

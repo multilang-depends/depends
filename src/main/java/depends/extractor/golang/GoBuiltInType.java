@@ -22,29 +22,29 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-package depends;
+package depends.extractor.golang;
 
-import depends.extractor.AbstractLangProcessor;
-import depends.extractor.LangProcessorRegistration;
+import depends.entity.repo.BuiltInType;
 
-public class LangRegister {
-	public LangRegister() {
-		add (new depends.extractor.java.JavaProcessor());
-		add (new depends.extractor.cpp.CppProcessor());
-		add (new depends.extractor.ruby.RubyProcessor());
-		add (new depends.extractor.pom.PomProcessor());
-		add (new depends.extractor.kotlin.KotlinProcessor());
-		add (new depends.extractor.python.union.PythonProcessor());
-		add (new depends.extractor.golang.GoProcessor());
+public class GoBuiltInType extends BuiltInType{
+
+	public GoBuiltInType() {
+        super.createBuiltInTypes();
+	}
+	@Override
+	public String[] getBuiltInTypeStr() {
+		return new String[]{
+				"<Built-in>"
+		};
+	}
+	@Override
+	public String[] getBuiltInPrefixStr() {
+		return new String[]{
+		};
+	}
+	@Override
+	public String[] getBuiltInMethods() {
+		return new String[]{};
 	}
 	
-	public void register() {
-
-	}
-	
-	private void add(AbstractLangProcessor langProcessor) {
-		LangProcessorRegistration.getRegistry().register(langProcessor);
-	}
 }
-
-
