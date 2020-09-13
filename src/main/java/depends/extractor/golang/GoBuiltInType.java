@@ -26,25 +26,39 @@ package depends.extractor.golang;
 
 import depends.entity.repo.BuiltInType;
 
-public class GoBuiltInType extends BuiltInType{
+public class GoBuiltInType extends BuiltInType {
 
-	public GoBuiltInType() {
+    public GoBuiltInType() {
         super.createBuiltInTypes();
-	}
-	@Override
-	public String[] getBuiltInTypeStr() {
-		return new String[]{
-				"<Built-in>"
-		};
-	}
-	@Override
-	public String[] getBuiltInPrefixStr() {
-		return new String[]{
-		};
-	}
-	@Override
-	public String[] getBuiltInMethods() {
-		return new String[]{};
-	}
-	
+    }
+
+    @Override
+    public String[] getBuiltInTypeStr() {
+        return new String[]{
+                "<Built-in>",
+                "break", "default", "func", "interface",
+				"select", "case", "defer", "go", "map", "struct", "chan",
+				"else", "goto", "package", "switch", "const", "fallthrough",
+				"if", "range", "type", "continue", "for", "import", "return",
+				"var", "append", "bool", "byte", "cap", "close", "complex",
+				"complex64", "complex128", "uint16", "copy", "false", "float32",
+				"float64", "imag", "int", "int8", "int16", "uint32", "int32",
+				"int64", "iota", "len", "make", "new", "nil", "panic", "uint64",
+				"print", "println", "real", "recover", "string", "true", "uint",
+				"uint8", "uintptr",
+				"_"
+        };
+    }
+
+    @Override
+    public String[] getBuiltInPrefixStr() {
+        return new String[]{
+        };
+    }
+
+    @Override
+    public String[] getBuiltInMethods() {
+        return new String[]{};
+    }
+
 }
