@@ -24,53 +24,18 @@ SOFTWARE.
 
 package depends.extractor.ruby.jruby;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.concurrent.ExecutorService;
-
-import org.jrubyparser.ast.AliasNode;
-import org.jrubyparser.ast.ArgumentNode;
-import org.jrubyparser.ast.ArrayNode;
-import org.jrubyparser.ast.CallNode;
-import org.jrubyparser.ast.ClassNode;
-import org.jrubyparser.ast.ClassVarAsgnNode;
-import org.jrubyparser.ast.ClassVarDeclNode;
-import org.jrubyparser.ast.ClassVarNode;
-import org.jrubyparser.ast.Colon2ConstNode;
-import org.jrubyparser.ast.Colon3Node;
-import org.jrubyparser.ast.ConstNode;
-import org.jrubyparser.ast.DAsgnNode;
-import org.jrubyparser.ast.DVarNode;
-import org.jrubyparser.ast.DefnNode;
-import org.jrubyparser.ast.DefsNode;
-import org.jrubyparser.ast.FCallNode;
-import org.jrubyparser.ast.GlobalAsgnNode;
-import org.jrubyparser.ast.GlobalVarNode;
-import org.jrubyparser.ast.IArgumentNode;
-import org.jrubyparser.ast.INameNode;
-import org.jrubyparser.ast.InstAsgnNode;
-import org.jrubyparser.ast.InstVarNode;
-import org.jrubyparser.ast.LocalAsgnNode;
-import org.jrubyparser.ast.LocalVarNode;
-import org.jrubyparser.ast.ModuleNode;
-import org.jrubyparser.ast.Node;
-import org.jrubyparser.ast.RootNode;
-import org.jrubyparser.ast.SelfNode;
-import org.jrubyparser.ast.StrNode;
-import org.jrubyparser.ast.SymbolNode;
-import org.jrubyparser.ast.UnaryCallNode;
-import org.jrubyparser.ast.VCallNode;
-import org.jrubyparser.util.NoopVisitor;
-
-import depends.entity.ContainerEntity;
-import depends.entity.Entity;
-import depends.entity.GenericName;
-import depends.entity.VarEntity;
+import depends.entity.*;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.ParserCreator;
 import depends.extractor.ruby.IncludedFileLocator;
 import depends.extractor.ruby.RubyHandlerContext;
 import depends.relations.Inferer;
+import org.jrubyparser.ast.*;
+import org.jrubyparser.util.NoopVisitor;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.concurrent.ExecutorService;
 
 public class JRubyVisitor extends NoopVisitor {
 
@@ -95,7 +60,7 @@ public class JRubyVisitor extends NoopVisitor {
 	@Override
 	public Object visitModuleNode(ModuleNode node) {
 		String name = helper.getName(node.getCPath());
-		context.foundNamespace(name);
+		context.foundNamespace(name,node.getPosition().getStartLine());
 		super.visitModuleNode(node);
 		context.exitLastedEntity();
 		return null;
@@ -103,7 +68,7 @@ public class JRubyVisitor extends NoopVisitor {
 
 	@Override
 	public Object visitClassNode(ClassNode node) {
-		context.foundNewType(helper.getName(node.getCPath()));
+		TypeEntity type = context.foundNewType(helper.getName(node.getCPath()),node.getPosition().getStartLine());
 		Node superNode = node.getSuper();
 		
 		if (superNode instanceof ConstNode ||
@@ -132,7 +97,7 @@ public class JRubyVisitor extends NoopVisitor {
 	public Object visitFCallNode(FCallNode node) {
 		String fname = helper.getName(node);
 		Collection<String> params = getParams(node);
-		context.processSpecialFuncCall(fname, params);
+		context.processSpecialFuncCall(fname, params, node.getPosition().getStartLine());
 		return super.visitFCallNode(node);
 	}
 
@@ -157,7 +122,7 @@ public class JRubyVisitor extends NoopVisitor {
 		String fname = helper.getName(node);
 		Collection<String> params = getParams(node);
 		addCallToReceiverVar(node, fname);
-		context.processSpecialFuncCall(fname, params);
+		context.processSpecialFuncCall(fname, params, node.getPosition().getStartLine());
 		return super.visitCallNode(node);
 	}
 
@@ -178,7 +143,7 @@ public class JRubyVisitor extends NoopVisitor {
 	public Object visitUnaryCallNode(UnaryCallNode node) {
 		String fname = helper.getName(node);
 		Collection<String> params = new ArrayList<>();
-		context.processSpecialFuncCall(fname, params);
+		context.processSpecialFuncCall(fname, params, node.getPosition().getStartLine());
 		return super.visitUnaryCallNode(node);
 	}
 
@@ -192,7 +157,9 @@ public class JRubyVisitor extends NoopVisitor {
 
 	@Override
 	public Object visitDefnNode(DefnNode node) {
-		context.foundMethodDeclarator(node.getName());
+		FunctionEntity method = context.foundMethodDeclarator(node.getName(),node.getPosition().getStartLine());
+		method.setLine(node.getPosition().getStartLine());
+
 		super.visitDefnNode(node);
 		context.exitLastedEntity();
 		return null;
@@ -208,7 +175,8 @@ public class JRubyVisitor extends NoopVisitor {
 			String className = ((INameNode) varNode).getName();
 			Entity entity = context.foundEntityWithName(GenericName.build(className));
 			if (entity != null && entity instanceof ContainerEntity) {
-				context.foundMethodDeclarator(((ContainerEntity) entity), node.getName());
+				FunctionEntity method = context.foundMethodDeclarator(((ContainerEntity) entity), node.getName(),node.getPosition().getStartLine());
+				method.setLine(node.getPosition().getStartLine());
 				handled = true;
 			}
 
@@ -216,14 +184,16 @@ public class JRubyVisitor extends NoopVisitor {
 			String varName = ((INameNode) varNode).getName();
 			Entity var = context.foundEntityWithName(GenericName.build(varName));
 			if (var != null && var instanceof ContainerEntity) {
-				context.foundMethodDeclarator(((ContainerEntity) var), node.getName());
+				FunctionEntity method = context.foundMethodDeclarator(((ContainerEntity) var), node.getName(),node.getPosition().getStartLine());
+				method.setLine(node.getPosition().getStartLine());
 				handled = true;
 			}
 		} 
 
 		if (!handled) {
 			// fallback to add it to last container
-			context.foundMethodDeclarator(node.getName());
+			FunctionEntity method = context.foundMethodDeclarator(node.getName(),node.getPosition().getStartLine());
+			method.setLine(node.getPosition().getStartLine());
 		}
 		super.visitDefsNode(node);
 		context.exitLastedEntity();
@@ -232,31 +202,31 @@ public class JRubyVisitor extends NoopVisitor {
 
 	@Override
 	public Object visitGlobalVarNode(GlobalVarNode node) {
-		context.foundVarDefinition(context.globalScope(), node.getName());
+		context.foundVarDefinition(context.globalScope(), node.getName(),node.getPosition().getStartLine());
 		return super.visitGlobalVarNode(node);
 	}
 
 	@Override
 	public Object visitInstVarNode(InstVarNode node) {
-		context.foundVarDefinition(context.currentType(), node.getName());
+		context.foundVarDefinition(context.currentType(), node.getName(),node.getPosition().getStartLine());
 		return super.visitInstVarNode(node);
 	}
 
 	@Override
 	public Object visitClassVarAsgnNode(ClassVarAsgnNode node) {
-		context.foundVarDefinition(helper.getScopeOfVar(node,context), node.getName());
+		context.foundVarDefinition(helper.getScopeOfVar(node,context), node.getName(),node.getPosition().getStartLine());
 		return super.visitClassVarAsgnNode(node);
 	}
 
 	@Override
 	public Object visitClassVarDeclNode(ClassVarDeclNode node) {
-		context.foundVarDefinition(context.currentType(), node.getName());
+		context.foundVarDefinition(context.currentType(), node.getName(),node.getPosition().getStartLine());
 		return super.visitClassVarDeclNode(node);
 	}
 
 	@Override
 	public Object visitClassVarNode(ClassVarNode node) {
-		context.foundVarDefinition(context.currentType(), node.getName());
+		context.foundVarDefinition(context.currentType(), node.getName(),node.getPosition().getStartLine());
 		return super.visitClassVarNode(node);
 	}
 
@@ -267,25 +237,25 @@ public class JRubyVisitor extends NoopVisitor {
 
 	@Override
 	public Object visitDVarNode(DVarNode node) {
-		context.foundVarDefinition(context.lastContainer(), node.getName());
+		context.foundVarDefinition(context.lastContainer(), node.getName(),node.getPosition().getStartLine());
 		return super.visitDVarNode(node);
 	}
 
 	@Override
 	public Object visitDAsgnNode(DAsgnNode node) {
-		context.foundVarDefinition(helper.getScopeOfVar(node,context), node.getName());
+		context.foundVarDefinition(helper.getScopeOfVar(node,context), node.getName(),node.getPosition().getStartLine());
 		return super.visitDAsgnNode(node);
 	}
 
 	@Override
 	public Object visitGlobalAsgnNode(GlobalAsgnNode node) {
-		context.foundVarDefinition(helper.getScopeOfVar(node,context), node.getName());
+		context.foundVarDefinition(helper.getScopeOfVar(node,context), node.getName(),node.getPosition().getStartLine());
 		return super.visitGlobalAsgnNode(node);
 	}
 
 	@Override
 	public Object visitInstAsgnNode(InstAsgnNode node) {
-		context.foundVarDefinition(helper.getScopeOfVar(node,context), node.getName());
+		context.foundVarDefinition(helper.getScopeOfVar(node,context), node.getName(),node.getPosition().getStartLine());
 		return super.visitInstAsgnNode(node);
 	}
 
@@ -298,7 +268,7 @@ public class JRubyVisitor extends NoopVisitor {
 
 	@Override
 	public Object visitLocalAsgnNode(LocalAsgnNode node) {
-		context.foundVarDefinition(helper.getScopeOfVar(node,context), node.getName());
+		context.foundVarDefinition(helper.getScopeOfVar(node,context), node.getName(),node.getPosition().getStartLine());
 		return super.visitLocalAsgnNode(node);
 	}
 

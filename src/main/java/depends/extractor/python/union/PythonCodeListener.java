@@ -18,12 +18,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PythonCodeListener extends PythonParserBaseListener{
-	private PythonHandlerContext context;
-	private ExpressionUsage expressionUsage;
-	private EntityRepo entityRepo;
-	private IncludedFileLocator includeFileLocator;
-	private PythonProcessor pythonProcessor;
-	private Inferer inferer;
+	private final PythonHandlerContext context;
+	private final ExpressionUsage expressionUsage;
+	private final EntityRepo entityRepo;
+	private final IncludedFileLocator  includeFileLocator;
+	private final PythonProcessor pythonProcessor;
+	private final Inferer inferer;
 	public PythonCodeListener(String fileFullPath, EntityRepo entityRepo, Inferer inferer,
 			IncludedFileLocator includeFileLocator, PythonProcessor pythonProcessor) {
 		this.context = new PythonHandlerContext(entityRepo, inferer);
@@ -43,7 +43,7 @@ public class PythonCodeListener extends PythonParserBaseListener{
 		PackageEntity packageEntity = (PackageEntity) entityRepo.getEntity(dir);
 		String moduleName = fileEntity.getRawName().uniqName().substring(packageEntity.getRawName().uniqName().length() + 1);
 		if (moduleName.endsWith(".py"))
-			moduleName = moduleName.substring(0, moduleName.length() - ".py".length());
+			moduleName.substring(0, moduleName.length() - ".py".length());
 		Entity.setParent(fileEntity, packageEntity);
 		packageEntity.addChild(FileUtil.getShortFileName(fileEntity.getRawName().uniqName()).replace(".py", ""), fileEntity);
 	}
@@ -199,8 +199,7 @@ public class PythonCodeListener extends PythonParserBaseListener{
 			functionName = name;
 		}
 
-		FunctionEntity method = context.foundMethodDeclarator(functionName);
-		method.setLine(ctx.getStart().getLine());
+		FunctionEntity method = context.foundMethodDeclarator(functionName,ctx.getStart().getLine());
 		if (ctx.typedargslist()!=null) {
 			List<String> parameters = getParameterList(ctx.typedargslist().def_parameters());
 			for (String param : parameters) {
@@ -223,9 +222,7 @@ public class PythonCodeListener extends PythonParserBaseListener{
 	@Override
 	public void enterClassdef(ClassdefContext ctx) {
 		String name = getName(ctx.name());
-		TypeEntity type = context.foundNewType(name);
-		type.setLine(ctx.getStart().getLine());
-
+		TypeEntity type = context.foundNewType(name, ctx.getStart().getLine());
 		List<String> baseClasses = getArgList(ctx.arglist());
 		baseClasses.forEach(base -> type.addExtends(GenericName.build(base)));
 
@@ -301,9 +298,7 @@ public class PythonCodeListener extends PythonParserBaseListener{
 	@Override
 	public void enterGlobal_stmt(Global_stmtContext ctx) {
 		for (NameContext name:ctx.name()){
-			VarEntity var = context.foundGlobalVarDefinition(context.currentFile(), name.getText());
-			var.setLine(ctx.getStart().getLine());
-
+			VarEntity var = context.foundGlobalVarDefinition(context.currentFile(), name.getText(),ctx.getStart().getLine());
 		}
 		super.enterGlobal_stmt(ctx);
 	}

@@ -24,9 +24,6 @@ SOFTWARE.
 
 package depends.extractor.ruby;
 
-import java.util.Collection;
-import java.util.concurrent.ExecutorService;
-
 import depends.entity.Entity;
 import depends.entity.PackageEntity;
 import depends.entity.repo.EntityRepo;
@@ -36,6 +33,9 @@ import depends.extractor.ParserCreator;
 import depends.importtypes.FileImport;
 import depends.relations.Inferer;
 import multilang.depends.util.file.FileUtil;
+
+import java.util.Collection;
+import java.util.concurrent.ExecutorService;
 
 public class RubyHandlerContext extends HandlerContext {
 
@@ -50,7 +50,7 @@ public class RubyHandlerContext extends HandlerContext {
 		this.parserCreator = parserCreator;
 	}
 	
-	public Entity foundNamespace(String nampespaceName) {
+	public Entity foundNamespace(String nampespaceName, Integer startLine) {
 		Entity parentEntity = currentFile();
 		if (latestValidContainer()!=null) 
 			parentEntity = latestValidContainer();
@@ -60,7 +60,7 @@ public class RubyHandlerContext extends HandlerContext {
 		return pkgEntity;
 	}
 
-	public void processSpecialFuncCall(String methodName, Collection<String> params) {
+	public void processSpecialFuncCall(String methodName, Collection<String> params, Integer startLine) {
 		// Handle Import relation
 		if(methodName.equals("require") || methodName.equals("require_relative")) { 
 			for (String importedFilename:params) {
@@ -97,7 +97,7 @@ public class RubyHandlerContext extends HandlerContext {
 		else if (methodName.equals("attr_accessor")||methodName.equals("attr_writer")||methodName.equals("attr_reader")) {
 			for (String name:params) {
 				name = name.replace(":", ""); //remove symbol
-				foundMethodDeclarator(name);
+				foundMethodDeclarator(name,startLine);
 			}
 		} 
 	}

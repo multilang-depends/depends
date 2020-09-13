@@ -106,7 +106,7 @@ public class ExpressionUsage {
 
 	private void makeSureVarExist(GenericName identifier, ParserRuleContext ctx) {
 		if (null==context.foundEntityWithName(identifier)) {
-			VarEntity var = context.foundVarDefinition(context.lastContainer(), identifier.getName());
+			VarEntity var = context.foundVarDefinition(context.lastContainer(), identifier.getName(),ctx.getStart().getLine());
 			var.setLine(ctx.getStart().getLine());
 
 		}

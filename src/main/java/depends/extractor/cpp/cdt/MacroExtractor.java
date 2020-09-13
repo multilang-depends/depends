@@ -51,7 +51,7 @@ public class MacroExtractor {
 				if (!funcMacro.getFileLocation().getFileName().equals(fileLocation))
 					continue;
 				String func = funcMacro.getName().getRawSignature();
-				FunctionEntity funcEntity = context.foundMethodDeclarator(func, Inferer.buildInType.getRawName().uniqName(), new ArrayList<>());
+				FunctionEntity funcEntity = context.foundMethodDeclarator(func, Inferer.buildInType.getRawName().uniqName(), new ArrayList<>(),funcMacro.getFileLocation().getStartingLineNumber());
 				funcEntity.setLine(funcMacro.getFileLocation().getStartingLineNumber());
 				context.exitLastedEntity();
 			}else if (statements[statementIndex] instanceof IASTPreprocessorObjectStyleMacroDefinition) {
@@ -59,7 +59,7 @@ public class MacroExtractor {
 				if (!varMacro.getFileLocation().getFileName().equals(fileLocation))
 					continue;
 				String var = varMacro.getName().getRawSignature();
-				VarEntity varEntity = context.foundVarDefinition(var, Inferer.buildInType.getRawName(), new ArrayList<>());
+				VarEntity varEntity = context.foundVarDefinition(var, Inferer.buildInType.getRawName(), new ArrayList<>(),varMacro.getFileLocation().getStartingLineNumber());
 				varEntity.setLine(varMacro.getFileLocation().getStartingLineNumber());
 			}
 		}

@@ -60,6 +60,7 @@ public class ExpressionUsage {
 		Expression parent = findParentInStack(ctx);
 		/* create expression and link it with parent */
 		expression = new Expression(idGenerator.generateId());
+		expression.setLine(ctx.getPosition().getStartLine());
 		expression.setText(ctx.toString());
 		expression.setParent(parent);
 		if (ctx instanceof NewlineNode) {
