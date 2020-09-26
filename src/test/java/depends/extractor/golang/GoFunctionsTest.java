@@ -2,6 +2,7 @@ package depends.extractor.golang;
 
 import depends.entity.TypeEntity;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -23,7 +24,7 @@ public class GoFunctionsTest extends GolangParserTest {
         assertNotNull(entityRepo.getEntity("main"));
 	}
 
-	@Test
+	@Ignore
 	public void test_could_parse_struct_type() throws IOException {
 		String src = "./src/test/resources/go-code-examples/struct.go";
 		GoFileParser parser =createParser(src);
@@ -32,7 +33,7 @@ public class GoFunctionsTest extends GolangParserTest {
 		assertNotNull(entityRepo.getEntity("Books"));
 	}
 
-	@Test
+	@Ignore
 	public void test_could_parse_struct_members() throws IOException {
 		String src = "./src/test/resources/go-code-examples/struct.go";
 		GoFileParser parser =createParser(src);
