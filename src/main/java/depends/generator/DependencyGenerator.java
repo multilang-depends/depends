@@ -25,10 +25,12 @@ SOFTWARE.
 package depends.generator;
 
 import depends.entity.Entity;
-import depends.entity.PackageNamePrefixRemover;
+import depends.entity.FileEntity;
+import depends.entity.EntityNameBuilder;
 import depends.entity.repo.EntityRepo;
 import depends.matrix.core.DependencyDetail;
 import depends.matrix.core.DependencyMatrix;
+import depends.matrix.core.LocationInfo;
 import multilang.depends.util.file.path.EmptyFilenameWritter;
 import multilang.depends.util.file.path.FilenameWritter;
 import multilang.depends.util.file.strip.EmptyLeadingNameStripper;
@@ -48,15 +50,15 @@ public abstract class DependencyGenerator {
 	}
 	protected DependencyDetail buildDescription(Entity fromEntity, Entity toEntity, Integer fromLineNumber) {
 		if (!generateDetail) return null;
-		String srcName = PackageNamePrefixRemover.remove(fromEntity);
-		String destName = PackageNamePrefixRemover.remove(toEntity);
-		if (fromLineNumber!=null){
-			srcName += ":"+fromLineNumber;
-		}
-		if (toEntity.getLine()!=null){
-			destName += ":"+toEntity.getLine();
-		}
-		return new DependencyDetail(srcName,destName);
+		String fromObject = EntityNameBuilder.build(fromEntity);
+		String toObject = EntityNameBuilder.build(toEntity);
+
+		Entity fromFile = fromEntity.getAncestorOfType(FileEntity.class);
+		Entity toFile = toEntity.getAncestorOfType(FileEntity.class);
+
+		return new DependencyDetail(
+				new LocationInfo(fromObject,fromFile.getQualifiedName(),fromLineNumber),
+				new LocationInfo(toObject,toFile.getQualifiedName(),toEntity.getLine()));
 	}
 	public void setFilenameRewritter(FilenameWritter filenameWritter) {
 		this.filenameWritter = filenameWritter;

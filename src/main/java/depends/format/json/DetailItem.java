@@ -1,22 +1,24 @@
 package depends.format.json;
 
+import depends.matrix.core.LocationInfo;
+
 public class DetailItem {
 
-	private String src;
-	private String dest;
+	private LocationInfo src;
+	private LocationInfo dest;
 	private String type;
 
-	public DetailItem(String src, String dest, String type) {
+	public DetailItem(LocationInfo src, LocationInfo dest, String type) {
 		this.src = src;
 		this.dest = dest;
 		this.type = type;
 	}
 
-	public String getSrc() {
+	public LocationInfo getSrc() {
 		return src;
 	}
 
-	public String getDest() {
+	public LocationInfo getDest() {
 		return dest;
 	}
 

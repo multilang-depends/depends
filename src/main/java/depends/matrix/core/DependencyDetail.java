@@ -1,25 +1,24 @@
 package depends.matrix.core;
 
+
 public class DependencyDetail {
+	private LocationInfo from;
+	private LocationInfo to;
 
-	private String src;
-	private String dest;
-
-	public DependencyDetail(String src, String dest) {
-		this.src = src;
-		this.dest = dest;
-	}
-	public String getSrc() {
-		return src;
-	}
-
-	public String getDest() {
-		return dest;
+	public DependencyDetail(LocationInfo from, LocationInfo to) {
+		this.from = from;
+		this.to = to;
 	}
 	@Override
 	public String toString() {
-		return src + "->" + dest;
+		return from + "->" + to;
 	}
 
-	
+	public LocationInfo getSrc() {
+		return from;
+	}
+
+	public LocationInfo getDest() {
+		return to;
+	}
 }

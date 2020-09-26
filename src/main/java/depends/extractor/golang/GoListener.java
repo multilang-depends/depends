@@ -37,6 +37,12 @@ public class GoListener extends  GoParserBaseListener {
         super.exitFunctionDecl(ctx);
     }
 
+    @Override
+    public void enterPackageClause(GoParser.PackageClauseContext ctx) {
+        context.foundPackageDeclaration(ctx.IDENTIFIER().getText());
+        super.enterPackageClause(ctx);
+    }
+
     private void foundFuncSignature(GoParser.SignatureContext signature) {
         FunctionEntity func = (FunctionEntity) context.lastContainer();
         if (signature.parameters()!=null) {

@@ -29,7 +29,9 @@ import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.TypeEntity;
 import depends.entity.repo.EntityRepo;
+import depends.matrix.core.DependencyDetail;
 import depends.matrix.core.DependencyMatrix;
+import depends.matrix.core.LocationInfo;
 import depends.relations.Relation;
 
 import java.util.Iterator;
@@ -65,7 +67,9 @@ public class FileDependencyGenerator extends DependencyGenerator{
     	        		if (candidateType.getId()>=0) {
     	        			int fileEntityTo = getFileEntityIdNoException(entityRepo,candidateType);
     	        			if (fileEntityTo!=-1) {
-    	        				dependencyMatrix.addDependency(relation.getType(), fileEntityFrom,fileEntityTo,1,buildDescription(entity,candidateType,relation.getFromLine()));
+								DependencyDetail detail = buildDescription(entity,candidateType,relation.getFromLine());
+								detail = rewriteDetail(detail);
+								dependencyMatrix.addDependency(relation.getType(), fileEntityFrom,fileEntityTo,1,detail);
     	        			}
     	        		}
         			}
@@ -73,7 +77,9 @@ public class FileDependencyGenerator extends DependencyGenerator{
 	        		if (relatedEntity.getId()>=0) {
 	        			int fileEntityTo = getFileEntityIdNoException(entityRepo,relatedEntity);
 	        			if (fileEntityTo!=-1) {
-	        				dependencyMatrix.addDependency(relation.getType(), fileEntityFrom,fileEntityTo,1,buildDescription(entity,relatedEntity,relation.getFromLine()));
+							DependencyDetail detail = buildDescription(entity, relatedEntity, relation.getFromLine());
+							detail = rewriteDetail(detail);
+							dependencyMatrix.addDependency(relation.getType(), fileEntityFrom,fileEntityTo,1,detail);
 	        			}
 	        		}
         		}
@@ -82,6 +88,17 @@ public class FileDependencyGenerator extends DependencyGenerator{
 		System.out.println("Finish create dependencies matrix....");
 
 		return dependencyMatrix;
+	}
+
+	private DependencyDetail rewriteDetail(DependencyDetail detail) {
+		String srcFile = filenameWritter.reWrite(detail.getSrc().getFile());
+		String dstFile = filenameWritter.reWrite(detail.getDest().getFile());
+		return new DependencyDetail(
+				new LocationInfo(detail.getSrc().getObject(),
+						srcFile, detail.getSrc().getLineNumber())
+		,
+				new LocationInfo(detail.getDest().getObject(),
+						dstFile, detail.getDest().getLineNumber()));
 	}
 
 	private int getFileEntityIdNoException(EntityRepo entityRepo, Entity entity) {

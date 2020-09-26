@@ -24,6 +24,8 @@ SOFTWARE.
 
 package depends.extractor.golang;
 
+import depends.entity.Entity;
+import depends.entity.PackageEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.HandlerContext;
 import depends.relations.Inferer;
@@ -34,6 +36,14 @@ public class GoHandlerContext extends HandlerContext {
 		super(entityRepo,inferer);
 	}
 
-
+	public Entity foundPackageDeclaration(String packageName){
+		Entity pkgEntity = entityRepo.getEntity(packageName);
+		if (pkgEntity == null) {
+			pkgEntity = new PackageEntity(packageName, idGenerator.generateId());
+			entityRepo.add(pkgEntity);
+		}
+		Entity.setParent(currentFileEntity,pkgEntity);
+		return pkgEntity;
+	}
 
 }
