@@ -92,8 +92,11 @@ public class FileDependencyGenerator extends DependencyGenerator{
 
 	private DependencyDetail rewriteDetail(DependencyDetail detail) {
 		if (detail==null) return null;
-		String srcFile = filenameWritter.reWrite(detail.getSrc().getFile());
-		String dstFile = filenameWritter.reWrite(detail.getDest().getFile());
+		String srcFile = filenameWritter.reWrite(
+				stripper.stripFilename(detail.getSrc().getFile())
+				);
+		String dstFile = filenameWritter.reWrite(
+				stripper.stripFilename(detail.getDest().getFile()));
 		return new DependencyDetail(
 				new LocationInfo(detail.getSrc().getObject(),
 						srcFile, detail.getSrc().getLineNumber())
