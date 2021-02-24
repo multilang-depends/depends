@@ -62,7 +62,7 @@ public class DependsCommand {
 	@Option(names = {"--strip-paths"}, split=",", description =  "The path(s) to be stripped. if -s enabled, the path(s) start after <src>. "
 			+ "Otherwise, the path(s) should be valid.")
 	private String[] strippedPaths = new String[]{};
-	@Option(names = {"-g", "--granularity"},  description = "Granularity of dependency.[file(default),method,L#(the level of folder. e.g. L1=1st level folder)]")
+	@Option(names = {"-g", "--granularity"},  description = "Granularity of dependency.[file(default),method,structure,L#(the level of folder. e.g. L1=1st level folder)]")
     private String granularity="file";
 	@Option(names = {"-p", "--namepattern"},  description = "The name path pattern.[dot(.), unix(/) or windows(\\)")
     private String namePathPattern="";

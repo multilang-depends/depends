@@ -28,6 +28,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
+import depends.generator.StructureDependencyGenerator;
 import org.codehaus.plexus.util.StringUtils;
 
 import depends.addons.DV8MappingFileBuilder;
@@ -135,7 +136,9 @@ public class Main {
 		if (!StringUtils.isEmpty(app.getGranularity())) {
 			/* method parameter means use method generator */
 			if (app.getGranularity().equals("method"))
-					dependencyGenerator = new FunctionDependencyGenerator();
+				dependencyGenerator = new FunctionDependencyGenerator();
+			else if (app.getGranularity().equals("structure"))
+				dependencyGenerator = new StructureDependencyGenerator();
 			else if (app.getGranularity().equals("file"))
 				/*no action*/;
 			else if (app.getGranularity().startsWith("L"))
