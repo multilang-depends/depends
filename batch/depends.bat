@@ -1,2 +1,2 @@
 @echo off
-java -jar %~dp0\depends.jar %*
+java -jar %~dp0depends.jar %*
