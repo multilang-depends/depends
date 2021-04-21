@@ -1,18 +1,12 @@
 package depends.entity.repo;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeMap;
-
 import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.GenericName;
 import depends.entity.MultiDeclareEntities;
+
+import java.util.*;
+import java.util.Map.Entry;
 
 
 public class InMemoryEntityRepo extends SimpleIdGenerator implements EntityRepo {
@@ -109,4 +103,10 @@ public class InMemoryEntityRepo extends SimpleIdGenerator implements EntityRepo 
 		allFileEntitiesByOrder.add(fileEntity);
 	}
 
+	@Override
+	public void clear() {
+		allEntieisByName.clear();
+		allEntitiesById.clear();
+		allFileEntitiesByOrder.clear();
+	}
 }

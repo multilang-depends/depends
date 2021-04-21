@@ -25,20 +25,37 @@ SOFTWARE.
 package depends.generator;
 
 import depends.entity.Entity;
-import depends.entity.FileEntity;
 import depends.entity.EntityNameBuilder;
+import depends.entity.FileEntity;
 import depends.entity.repo.EntityRepo;
 import depends.matrix.core.DependencyDetail;
 import depends.matrix.core.DependencyMatrix;
 import depends.matrix.core.LocationInfo;
+import depends.matrix.transform.OrderedMatrixGenerator;
 import multilang.depends.util.file.path.EmptyFilenameWritter;
 import multilang.depends.util.file.path.FilenameWritter;
 import multilang.depends.util.file.strip.EmptyLeadingNameStripper;
 import multilang.depends.util.file.strip.ILeadingNameStrippper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public abstract class DependencyGenerator {
+
+	private static Logger logger = LoggerFactory.getLogger(DependencyGenerator.class);
+
+	public DependencyMatrix identifyDependencies(EntityRepo entityRepo, List<String> typeFilter) {
+		System.out.println("dependencie data generating...");
+		DependencyMatrix dependencyMatrix = build(entityRepo, typeFilter);
+		entityRepo.clear();
+		System.out.println("reorder dependency matrix...");
+		dependencyMatrix = new OrderedMatrixGenerator(dependencyMatrix).build();
+		System.out.println("Dependencies data generating done successfully...");
+		logger.info("Dependencies data generating done successfully...");
+		return dependencyMatrix;
+	}
+
 	public abstract DependencyMatrix build(EntityRepo entityRepo,List<String> typeFilter);
 
 	protected ILeadingNameStrippper stripper = new EmptyLeadingNameStripper();

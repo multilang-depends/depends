@@ -29,9 +29,6 @@ import depends.entity.FileEntity;
 import depends.entity.repo.BuiltInType;
 import depends.entity.repo.EntityRepo;
 import depends.entity.repo.InMemoryEntityRepo;
-import depends.generator.DependencyGenerator;
-import depends.matrix.core.DependencyMatrix;
-import depends.matrix.transform.OrderedMatrixGenerator;
 import depends.relations.ImportLookupStrategy;
 import depends.relations.Inferer;
 import multilang.depends.util.file.FileTraversal;
@@ -88,12 +85,9 @@ abstract public class AbstractLangProcessor {
 
 	public Inferer inferer;
 	protected EntityRepo entityRepo;
-	DependencyMatrix dependencyMatrix;
 	protected String inputSrcPath;
 	public String[] includeDirs;
-	private DependencyGenerator dependencyGenerator;
 	private Set<UnsolvedBindings> potentialExternalDependencies;
-	private List<String> typeFilter;
 	private List<String> includePaths;
 	private static Logger logger = LoggerFactory.getLogger(AbstractLangProcessor.class);
 	
@@ -106,14 +100,14 @@ abstract public class AbstractLangProcessor {
 	 * The process steps of build dependencies. Step 1: parse all files, add
 	 * entities and expression into repositories Step 2: resolve bindings of files
 	 * (if not resolved yet) Step 3: identify dependencies
-	 * 
-	 * @param includeDir
+	 *
 	 * @param inputDir
+	 * @param includeDir
+	 * @return
 	 */
-	public void buildDependencies(String inputDir, String[] includeDir, List<String> typeFilter, boolean callAsImpl, boolean isCollectUnsolvedBindings, boolean isDuckTypingDeduce) {
+	public EntityRepo buildDependencies(String inputDir, String[] includeDir, boolean callAsImpl, boolean isCollectUnsolvedBindings, boolean isDuckTypingDeduce) {
 		this.inputSrcPath = inputDir;
 		this.includeDirs = includeDir;
-		this.typeFilter = typeFilter;
 		this.inferer.setCollectUnsolvedBindings(isCollectUnsolvedBindings);
 		this.inferer.setDuckTypingDeduce(isDuckTypingDeduce);
 		logger.info("Start parsing files...");
@@ -128,8 +122,7 @@ abstract public class AbstractLangProcessor {
 			System.gc();
 			logger.info("Heap Information: " + ManagementFactory.getMemoryMXBean().getHeapMemoryUsage());
 		}
-		identifyDependencies();
-		logger.info("Dependencie data generating done successfully...");
+		return entityRepo;
 	}
 
 	private void markAllEntitiesScope() {
@@ -159,14 +152,7 @@ abstract public class AbstractLangProcessor {
 		System.out.println("types and bindings resolved successfully...");
 	}
 
-	private void identifyDependencies() {
-		System.out.println("dependencie data generating...");
-		dependencyMatrix = dependencyGenerator.build(entityRepo, typeFilter);
-		entityRepo = null;
-		System.out.println("reorder dependency matrix...");
-		dependencyMatrix = new OrderedMatrixGenerator(dependencyMatrix).build();
-		System.out.println("Dependencie data generating done successfully...");
-	}
+
 
 	private final void parseAllFiles() {
 		System.out.println("Start parsing files...");
@@ -238,17 +224,11 @@ abstract public class AbstractLangProcessor {
 		return includePaths;
 	}
 
-	public DependencyMatrix getDependencies() {
-		return dependencyMatrix;
-	}
 
 	public EntityRepo getEntityRepo() {
 		return this.entityRepo;
 	}
 
-	public void setDependencyGenerator(DependencyGenerator dependencyGenerator) {
-		this.dependencyGenerator = dependencyGenerator;
-	}
 
 	public abstract List<String> supportedRelations();
 

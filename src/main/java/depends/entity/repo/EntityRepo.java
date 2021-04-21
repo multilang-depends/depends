@@ -24,12 +24,12 @@ SOFTWARE.
 
 package depends.entity.repo;
 
-import java.util.Collection;
-import java.util.Iterator;
-
 import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.GenericName;
+
+import java.util.Collection;
+import java.util.Iterator;
 
 public interface EntityRepo extends IdGenerator {
 	public static final String GLOBAL_SCOPE_NAME = "::GLOBAL::";
@@ -52,6 +52,5 @@ public interface EntityRepo extends IdGenerator {
 
 	void addFile(FileEntity currentFileEntity);
 
-
-
+    void clear();
 }

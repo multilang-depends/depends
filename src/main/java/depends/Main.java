@@ -24,37 +24,33 @@ SOFTWARE.
 
 package depends;
 
-import java.io.File;
-import java.util.List;
-import java.util.Set;
-
-import depends.generator.StructureDependencyGenerator;
-import org.codehaus.plexus.util.StringUtils;
-
 import depends.addons.DV8MappingFileBuilder;
+import depends.entity.repo.EntityRepo;
 import depends.extractor.AbstractLangProcessor;
 import depends.extractor.LangProcessorRegistration;
 import depends.extractor.UnsolvedBindings;
 import depends.format.DependencyDumper;
 import depends.format.detail.UnsolvedSymbolDumper;
-import multilang.depends.util.file.path.DotPathFilenameWritter;
-import multilang.depends.util.file.path.EmptyFilenameWritter;
-import multilang.depends.util.file.path.FilenameWritter;
-import multilang.depends.util.file.path.UnixPathFilenameWritter;
-import multilang.depends.util.file.path.WindowsPathFilenameWritter;
 import depends.generator.DependencyGenerator;
 import depends.generator.FileDependencyGenerator;
 import depends.generator.FunctionDependencyGenerator;
+import depends.generator.StructureDependencyGenerator;
 import depends.matrix.core.DependencyMatrix;
 import depends.matrix.transform.MatrixLevelReducer;
-import multilang.depends.util.file.strip.LeadingNameStripper;
+import edu.emory.mathcs.backport.java.util.Arrays;
 import multilang.depends.util.file.FileUtil;
 import multilang.depends.util.file.FolderCollector;
 import multilang.depends.util.file.TemporaryFile;
-import edu.emory.mathcs.backport.java.util.Arrays;
+import multilang.depends.util.file.path.*;
+import multilang.depends.util.file.strip.LeadingNameStripper;
 import net.sf.ehcache.CacheManager;
+import org.codehaus.plexus.util.StringUtils;
 import picocli.CommandLine;
 import picocli.CommandLine.PicocliException;
+
+import java.io.File;
+import java.util.List;
+import java.util.Set;
 
 public class Main {
 
@@ -157,13 +153,10 @@ public class Main {
 		}
 		
 		dependencyGenerator.setFilenameRewritter(filenameWritter);
-		langProcessor.setDependencyGenerator(dependencyGenerator);
-		
-		langProcessor.buildDependencies(inputDir, includeDir,app.getTypeFilter(),supportImplLink,app.isOutputExternalDependencies(),app.isDuckTypingDeduce());
-		
-		
-		DependencyMatrix matrix = langProcessor.getDependencies();
 
+		EntityRepo entityRepo = langProcessor.buildDependencies(inputDir, includeDir,  supportImplLink, app.isOutputExternalDependencies(), app.isDuckTypingDeduce());
+		DependencyMatrix matrix = dependencyGenerator.identifyDependencies(entityRepo,app.getTypeFilter());
+		
 		if (app.getGranularity().startsWith("L")) {
 			matrix = new MatrixLevelReducer(matrix,app.getGranularity().substring(1)).shrinkToLevel();
 		}
