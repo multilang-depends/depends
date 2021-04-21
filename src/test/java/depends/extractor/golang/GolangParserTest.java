@@ -12,7 +12,7 @@ public abstract class GolangParserTest extends ParserTest{
 
 	public void init() {
 		entityRepo = new InMemoryEntityRepo();
-		inferer = new Inferer(entityRepo,new GoImportLookupStrategy(),new GoBuiltInType(),false);
+		inferer = new Inferer(entityRepo,new GoImportLookupStrategy(entityRepo),new GoBuiltInType(),false);
     	TemporaryFile.reset();
 	}
 	

@@ -24,16 +24,17 @@ SOFTWARE.
 
 package depends.extractor.cpp;
 
-import static depends.deptypes.DependencyType.*;
-import java.util.ArrayList;
-import java.util.List;
-
 import depends.entity.repo.BuiltInType;
 import depends.extractor.AbstractLangProcessor;
 import depends.extractor.FileParser;
 import depends.extractor.cpp.cdt.CdtCppFileParser;
 import depends.extractor.cpp.cdt.PreprocessorHandler;
 import depends.relations.ImportLookupStrategy;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static depends.deptypes.DependencyType.*;
 
 public class CppProcessor extends AbstractLangProcessor {
 	private static final String LANG = "cpp";
@@ -71,7 +72,7 @@ public class CppProcessor extends AbstractLangProcessor {
 
 	@Override
 	public ImportLookupStrategy getImportLookupStrategy() {
-		return new CppImportLookupStrategy();
+		return new CppImportLookupStrategy(entityRepo);
 	}
 
 	@Override

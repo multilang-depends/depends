@@ -1,10 +1,5 @@
 package depends.extractor.ruby;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import depends.entity.repo.EntityRepo;
 import depends.entity.repo.InMemoryEntityRepo;
 import depends.extractor.FileParser;
@@ -13,13 +8,18 @@ import depends.extractor.ParserTest;
 import depends.extractor.ruby.jruby.JRubyFileParser;
 import depends.relations.Inferer;
 import multilang.depends.util.file.TemporaryFile;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 public abstract class RubyParserTest extends ParserTest implements ParserCreator{
 	protected  EntityRepo entityRepo ;
 	protected Inferer inferer ;
 
 	public void init() {
 		entityRepo = new InMemoryEntityRepo();
-		inferer = new Inferer(entityRepo,new RubyImportLookupStrategy(),new RubyBuiltInType(),true);
+		inferer = new Inferer(entityRepo,new RubyImportLookupStrategy(entityRepo),new RubyBuiltInType(),true);
     	TemporaryFile.reset();
 	}
 	

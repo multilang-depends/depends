@@ -1,15 +1,5 @@
 package depends.extractor.python;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import org.apache.commons.collections4.CollectionUtils;
-
 import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.repo.EntityRepo;
@@ -17,14 +7,23 @@ import depends.extractor.UnsolvedBindings;
 import depends.importtypes.FileImport;
 import depends.importtypes.Import;
 import depends.relations.ImportLookupStrategy;
-import depends.relations.Inferer;
+import org.apache.commons.collections4.CollectionUtils;
 
-public class PythonImportLookupStrategy implements ImportLookupStrategy {
-	public PythonImportLookupStrategy() {
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+public class PythonImportLookupStrategy extends ImportLookupStrategy {
+
+	public PythonImportLookupStrategy(EntityRepo repo) {
+		super(repo);
 	}
 
 	@Override
-	public Entity lookupImportedType(String name, FileEntity fileEntity, EntityRepo repo, Inferer inferer) {
+	public Entity lookupImportedType(String name, FileEntity fileEntity) {
 		List<Import> importedNames = fileEntity.getImportedNames();
 		for (Import importedItem:importedNames) {
 			if (importedItem instanceof NameAliasImport) {
@@ -38,9 +37,9 @@ public class PythonImportLookupStrategy implements ImportLookupStrategy {
 	}
 
 	@Override
-	public Collection<Entity> getImportedRelationEntities(List<Import> importedNames, EntityRepo repo) {
-		Collection<Entity> files = getImportedFiles(importedNames,repo);
-		Collection<Entity> filescontainsTypes = 	this.getImportedTypes(importedNames, repo,new HashSet<>()).stream().map(e->{
+	public Collection<Entity> getImportedRelationEntities(List<Import> importedNames) {
+		Collection<Entity> files = getImportedFiles(importedNames);
+		Collection<Entity> filescontainsTypes = this.getImportedTypes(importedNames, new HashSet<>()).stream().map(e->{
 			return e.getAncestorOfType(FileEntity.class);
 		}).filter(new Predicate<Entity>() {
 
@@ -55,7 +54,7 @@ public class PythonImportLookupStrategy implements ImportLookupStrategy {
 	}
 
 	@Override
-	public Collection<Entity> getImportedTypes(List<Import> importedNames, EntityRepo repo, Set<UnsolvedBindings> unsolvedBindings) {
+	public Collection<Entity> getImportedTypes(List<Import> importedNames, Set<UnsolvedBindings> unsolvedBindings) {
 		Set<Entity> result = new HashSet<>();
 		for (Import importedItem:importedNames) {
 			if (importedItem instanceof NameAliasImport) {
@@ -79,9 +78,9 @@ public class PythonImportLookupStrategy implements ImportLookupStrategy {
 	}
 
 	@Override
-	public Collection<Entity> getImportedFiles(List<Import> importedNames, EntityRepo repo) {
+	public Collection<Entity> getImportedFiles(List<Import> importedNames) {
 		Set<Entity> files = new HashSet<>();
-		Collection<Entity> entities = getImportedTypes(importedNames,repo,new HashSet<>());
+		Collection<Entity> entities = getImportedTypes(importedNames,new HashSet<>());
 		for (Entity entity:entities) {
 			if (entity instanceof FileEntity)
 				files.add(entity);

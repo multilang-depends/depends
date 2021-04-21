@@ -24,40 +24,43 @@ SOFTWARE.
 
 package depends.extractor.empty;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.UnsolvedBindings;
 import depends.importtypes.Import;
 import depends.relations.ImportLookupStrategy;
-import depends.relations.Inferer;
 
-public class EmptyImportLookupStategy implements ImportLookupStrategy {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+public class EmptyImportLookupStategy extends ImportLookupStrategy {
+
+	public EmptyImportLookupStategy(EntityRepo repo) {
+		super(repo);
+	}
 
 	@Override
-	public Entity lookupImportedType(String name, FileEntity fileEntity, EntityRepo repo, Inferer inferer) {
+	public Entity lookupImportedType(String name, FileEntity fileEntity) {
 		return null;
 	}
 
 	@Override
-	public List<Entity> getImportedRelationEntities(List<Import> importedNames, EntityRepo repo) {
+	public List<Entity> getImportedRelationEntities(List<Import> importedNames) {
 		return new ArrayList<Entity>();
 	}
 
 	@Override
-	public List<Entity> getImportedTypes(List<Import> importedNames, EntityRepo repo, Set<UnsolvedBindings> unsolvedBindings) {
+	public List<Entity> getImportedTypes(List<Import> importedNames,Set<UnsolvedBindings> unsolvedBindings) {
 		return new ArrayList<Entity>();
 	}
 
 	@Override
-	public List<Entity> getImportedFiles(List<Import> importedNames, EntityRepo repo) {
+	public List<Entity> getImportedFiles(List<Import> importedNames) {
 		return new ArrayList<Entity>();
 	}
-	@Override
+
 	public boolean supportGlobalNameLookup() {
 		return false;
 	}

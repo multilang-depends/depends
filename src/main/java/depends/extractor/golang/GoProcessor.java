@@ -58,7 +58,7 @@ public class GoProcessor extends AbstractLangProcessor {
 
 	@Override
 	public ImportLookupStrategy getImportLookupStrategy() {
-		return new GoImportLookupStrategy();
+		return new GoImportLookupStrategy(entityRepo);
 	}
 
 	@Override

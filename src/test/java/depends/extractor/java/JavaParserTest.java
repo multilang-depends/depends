@@ -12,7 +12,7 @@ public abstract class JavaParserTest  extends ParserTest{
 
 	public void init() {
 		entityRepo = new InMemoryEntityRepo();
-		inferer = new Inferer(entityRepo,new JavaImportLookupStrategy(),new JavaBuiltInType(),false);
+		inferer = new Inferer(entityRepo,new JavaImportLookupStrategy(entityRepo),new JavaBuiltInType(),false);
     	TemporaryFile.reset();
 	}
 	

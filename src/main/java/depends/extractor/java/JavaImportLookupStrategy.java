@@ -24,10 +24,6 @@ SOFTWARE.
 
 package depends.extractor.java;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.PackageEntity;
@@ -35,11 +31,19 @@ import depends.entity.repo.EntityRepo;
 import depends.extractor.UnsolvedBindings;
 import depends.importtypes.Import;
 import depends.relations.ImportLookupStrategy;
-import depends.relations.Inferer;
 
-public class JavaImportLookupStrategy implements ImportLookupStrategy{
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+public class JavaImportLookupStrategy extends ImportLookupStrategy{
+
+	public JavaImportLookupStrategy(EntityRepo repo) {
+		super(repo);
+	}
+
 	@Override
-	public Entity lookupImportedType(String name, FileEntity fileEntity, EntityRepo repo, Inferer inferer) {
+	public Entity lookupImportedType(String name, FileEntity fileEntity) {
 		//Java Strategy
 		String importedString = fileEntity.importedSuffixMatch(name);
 		if (importedString==null) return null;	
@@ -48,7 +52,7 @@ public class JavaImportLookupStrategy implements ImportLookupStrategy{
 
 
 	@Override
-	public List<Entity> getImportedRelationEntities(List<Import> importedList, EntityRepo repo) {
+	public List<Entity> getImportedRelationEntities(List<Import> importedList) {
 		ArrayList<Entity> result = new ArrayList<>();
 		for (Import importedItem:importedList) {
 			Entity imported = repo.getEntity(importedItem.getContent());
@@ -63,7 +67,7 @@ public class JavaImportLookupStrategy implements ImportLookupStrategy{
 	}
 
 	@Override
-	public List<Entity> getImportedTypes(List<Import> importedList, EntityRepo repo, Set<UnsolvedBindings> unsolvedBindings) {
+	public List<Entity> getImportedTypes(List<Import> importedList,Set<UnsolvedBindings> unsolvedBindings) {
 		ArrayList<Entity> result = new ArrayList<>();
 		for (Import importedItem:importedList) {
 			Entity imported = repo.getEntity(importedItem.getContent());
@@ -88,7 +92,7 @@ public class JavaImportLookupStrategy implements ImportLookupStrategy{
 	}
 
 	@Override
-	public List<Entity> getImportedFiles(List<Import> importedList, EntityRepo repo) {
+	public List<Entity> getImportedFiles(List<Import> importedList) {
 		return new ArrayList<Entity>();
 	}
 

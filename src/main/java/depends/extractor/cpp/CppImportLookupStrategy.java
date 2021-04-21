@@ -24,14 +24,6 @@ SOFTWARE.
 
 package depends.extractor.cpp;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.GenericName;
@@ -40,11 +32,17 @@ import depends.extractor.UnsolvedBindings;
 import depends.importtypes.FileImport;
 import depends.importtypes.Import;
 import depends.relations.ImportLookupStrategy;
-import depends.relations.Inferer;
 
-public class CppImportLookupStrategy implements ImportLookupStrategy {
+import java.util.*;
+
+public class CppImportLookupStrategy extends ImportLookupStrategy {
+
+
+	public CppImportLookupStrategy(EntityRepo repo){
+		super(repo);
+	}
 	@Override
-	public Entity lookupImportedType(String name, FileEntity fileEntity, EntityRepo repo, Inferer inferer) {
+	public Entity lookupImportedType(String name, FileEntity fileEntity) {
 		String importedString = fileEntity.importedSuffixMatch(name);
 		if (importedString!=null) {
 			Entity r = repo.getEntity(importedString);
@@ -95,7 +93,7 @@ public class CppImportLookupStrategy implements ImportLookupStrategy {
 	
 	
 	@Override
-	public List<Entity> getImportedRelationEntities(List<Import> importedList, EntityRepo repo) {
+	public List<Entity> getImportedRelationEntities(List<Import> importedList) {
 		ArrayList<Entity> result = new ArrayList<>();
 		for (Import importedItem:importedList) {
 			if (importedItem instanceof FileImport) {
@@ -108,7 +106,7 @@ public class CppImportLookupStrategy implements ImportLookupStrategy {
 	}
 
 	@Override
-	public List<Entity> getImportedTypes(List<Import> importedList, EntityRepo repo, Set<UnsolvedBindings> unsolvedBindings) {
+	public List<Entity> getImportedTypes(List<Import> importedList,  Set<UnsolvedBindings> unsolvedBindings) {
 		ArrayList<Entity> result = new ArrayList<>();
 		for (Import importedItem:importedList) {
 			if (!(importedItem instanceof FileImport)) {
@@ -124,8 +122,8 @@ public class CppImportLookupStrategy implements ImportLookupStrategy {
 	}
 
 	@Override
-	public List<Entity> getImportedFiles(List<Import> importedList, EntityRepo repo) {
-		return getImportedRelationEntities(importedList,repo);
+	public List<Entity> getImportedFiles(List<Import> importedList) {
+		return getImportedRelationEntities(importedList);
 	}
 	
 	@Override

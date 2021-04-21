@@ -24,17 +24,21 @@ SOFTWARE.
 
 package depends.extractor.pom;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import depends.entity.Entity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.empty.EmptyImportLookupStategy;
 import depends.importtypes.Import;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PomImportLookupStategy extends EmptyImportLookupStategy  {
+	public PomImportLookupStategy(EntityRepo repo) {
+		super(repo);
+	}
+
 	@Override
-	public List<Entity> getImportedRelationEntities(List<Import> importedList, EntityRepo repo) {
+	public List<Entity> getImportedRelationEntities(List<Import> importedList) {
 		ArrayList<Entity> result = new ArrayList<>();
 		for (Import importedItem:importedList) {
 			Entity imported = repo.getEntity(importedItem.getContent());

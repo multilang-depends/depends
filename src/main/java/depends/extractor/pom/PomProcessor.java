@@ -24,16 +24,17 @@ SOFTWARE.
 
 package depends.extractor.pom;
 
-import static depends.deptypes.DependencyType.*;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import depends.entity.repo.BuiltInType;
 import depends.extractor.AbstractLangProcessor;
 import depends.extractor.FileParser;
 import depends.extractor.empty.EmptyBuiltInType;
 import depends.relations.ImportLookupStrategy;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static depends.deptypes.DependencyType.PomParent;
+import static depends.deptypes.DependencyType.*;
 
 public class PomProcessor extends AbstractLangProcessor {
 
@@ -53,7 +54,7 @@ public class PomProcessor extends AbstractLangProcessor {
 
 	@Override
 	public ImportLookupStrategy getImportLookupStrategy() {
-		return new PomImportLookupStategy();
+		return new PomImportLookupStategy(entityRepo);
 	}
 
 	@Override

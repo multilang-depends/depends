@@ -24,18 +24,6 @@ SOFTWARE.
 
 package depends.extractor;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.codehaus.plexus.util.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.repo.BuiltInType;
@@ -48,8 +36,20 @@ import depends.relations.ImportLookupStrategy;
 import depends.relations.Inferer;
 import multilang.depends.util.file.FileTraversal;
 import multilang.depends.util.file.FileUtil;
+import org.codehaus.plexus.util.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 abstract public class AbstractLangProcessor {
+
 	/**
 	 * The name of the lang
 	 * 
@@ -99,7 +99,7 @@ abstract public class AbstractLangProcessor {
 	
 	public AbstractLangProcessor(boolean eagerExpressionResolve) {
 		entityRepo = new InMemoryEntityRepo();
-		inferer = new Inferer(entityRepo, getImportLookupStrategy(), getBuiltInType(), eagerExpressionResolve);
+		inferer = new Inferer(entityRepo,  getImportLookupStrategy(), getBuiltInType(), eagerExpressionResolve);
 	}
 
 	/**
@@ -109,8 +109,6 @@ abstract public class AbstractLangProcessor {
 	 * 
 	 * @param includeDir
 	 * @param inputDir
-	 * @param b 
-	 * @param b 
 	 */
 	public void buildDependencies(String inputDir, String[] includeDir, List<String> typeFilter, boolean callAsImpl, boolean isCollectUnsolvedBindings, boolean isDuckTypingDeduce) {
 		this.inputSrcPath = inputDir;

@@ -1,15 +1,14 @@
 package depends.extractor.cpp;
 
-import java.util.ArrayList;
-
 import depends.entity.repo.EntityRepo;
 import depends.entity.repo.InMemoryEntityRepo;
-
 import depends.extractor.ParserTest;
 import depends.extractor.cpp.cdt.CdtCppFileParser;
 import depends.extractor.cpp.cdt.PreprocessorHandler;
 import depends.relations.Inferer;
 import multilang.depends.util.file.TemporaryFile;
+
+import java.util.ArrayList;
 
 public abstract class CppParserTest extends ParserTest{
 	protected EntityRepo repo;
@@ -19,7 +18,7 @@ public abstract class CppParserTest extends ParserTest{
 
 	public void init() {
     	repo = new InMemoryEntityRepo();
-    	inferer = new Inferer(repo,new CppImportLookupStrategy(),new CppBuiltInType(),false);
+    	inferer = new Inferer(repo,new CppImportLookupStrategy(repo),new CppBuiltInType(),false);
     	preprocessorHandler = new PreprocessorHandler("./src/test/resources/cpp-code-examples/",new ArrayList<>());
     	TemporaryFile.reset();
 //    	macroRepo = new MacroMemoryRepo();

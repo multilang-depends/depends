@@ -24,17 +24,17 @@ SOFTWARE.
 
 package depends.relations;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
 import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.UnsolvedBindings;
 import depends.importtypes.Import;
 
-public interface ImportLookupStrategy {
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+
+public abstract class ImportLookupStrategy {
 	/**
 	 * How to find the corresponding entity out of current scope
 	 * 
@@ -44,7 +44,7 @@ public interface ImportLookupStrategy {
 	 * @param inferer - the inferer object, which could be used when necessary
 	 * @return the founded entity, or null if not found.
 	 */
-	Entity lookupImportedType(String name, FileEntity fileEntity, EntityRepo repo, Inferer inferer);
+	public abstract Entity lookupImportedType(String name, FileEntity fileEntity);
 	
 	/**
 	 * The lanaguage specific import relation computation. For example, 
@@ -54,7 +54,7 @@ public interface ImportLookupStrategy {
 	 * @param repo - entity repo
 	 * @return the corresponding entities related with importedNames
 	 */
-	Collection<Entity> getImportedRelationEntities(List<Import> importedNames, EntityRepo repo);
+	public abstract Collection<Entity> getImportedRelationEntities(List<Import> importedNames);
 	
 	/**
 	 * The types been imported
@@ -62,7 +62,7 @@ public interface ImportLookupStrategy {
 	 * @param repo
 	 * @return
 	 */
-	Collection<Entity> getImportedTypes(List<Import> importedNames, EntityRepo repo, Set<UnsolvedBindings> unsolvedSymbols);
+	public abstract Collection<Entity> getImportedTypes(List<Import> importedNames,Set<UnsolvedBindings> unsolvedSymbols);
 	
 	/**
 	 * The files been imported
@@ -70,12 +70,20 @@ public interface ImportLookupStrategy {
 	 * @param repo
 	 * @return
 	 */
-	Collection<Entity> getImportedFiles(List<Import> importedNames, EntityRepo repo);
+	public abstract Collection<Entity> getImportedFiles(List<Import> importedNames);
 
 	/** Whether support global name lookup
 	 * for java, it should be true;
 	 * for most of langs, it should be false;
 	 */
-	boolean supportGlobalNameLookup();
+	public abstract boolean supportGlobalNameLookup();
 
+	public void setInferer(Inferer inferer){
+		this.inferer = inferer;
+	}
+	public  ImportLookupStrategy(EntityRepo repo){
+		this.repo = repo;
+	}
+	protected EntityRepo repo;
+	protected Inferer inferer;
 }

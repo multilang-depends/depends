@@ -1,28 +1,16 @@
 package depends.extractor.kotlin;
 
-import static depends.deptypes.DependencyType.ANNOTATION;
-import static depends.deptypes.DependencyType.CALL;
-import static depends.deptypes.DependencyType.CAST;
-import static depends.deptypes.DependencyType.CONTAIN;
-import static depends.deptypes.DependencyType.CREATE;
-import static depends.deptypes.DependencyType.IMPLEMENT;
-import static depends.deptypes.DependencyType.IMPORT;
-import static depends.deptypes.DependencyType.INHERIT;
-import static depends.deptypes.DependencyType.PARAMETER;
-import static depends.deptypes.DependencyType.RETURN;
-import static depends.deptypes.DependencyType.SET;
-import static depends.deptypes.DependencyType.THROW;
-import static depends.deptypes.DependencyType.USE;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import depends.entity.repo.BuiltInType;
 import depends.extractor.AbstractLangProcessor;
 import depends.extractor.FileParser;
 import depends.extractor.java.JavaBuiltInType;
 import depends.extractor.java.JavaImportLookupStrategy;
 import depends.relations.ImportLookupStrategy;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static depends.deptypes.DependencyType.*;
 
 public class KotlinProcessor extends AbstractLangProcessor {
 
@@ -42,7 +30,7 @@ public class KotlinProcessor extends AbstractLangProcessor {
 
 	@Override
 	public ImportLookupStrategy getImportLookupStrategy() {
-		return new JavaImportLookupStrategy();
+		return new JavaImportLookupStrategy(entityRepo);
 	}
 
 	@Override

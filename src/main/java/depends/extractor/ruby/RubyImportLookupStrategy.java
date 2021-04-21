@@ -24,9 +24,12 @@ SOFTWARE.
 
 package depends.extractor.ruby;
 
+import depends.entity.repo.EntityRepo;
 import depends.extractor.cpp.CppImportLookupStrategy;
 
 public class RubyImportLookupStrategy extends  CppImportLookupStrategy {
 
-
+    public RubyImportLookupStrategy(EntityRepo repo) {
+        super(repo);
+    }
 }

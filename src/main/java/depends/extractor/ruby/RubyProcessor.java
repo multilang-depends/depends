@@ -24,19 +24,19 @@ SOFTWARE.
 
 package depends.extractor.ruby;
 
-import static depends.deptypes.DependencyType.*;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import depends.entity.repo.BuiltInType;
 import depends.extractor.AbstractLangProcessor;
 import depends.extractor.FileParser;
 import depends.extractor.ParserCreator;
 import depends.extractor.ruby.jruby.JRubyFileParser;
 import depends.relations.ImportLookupStrategy;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import static depends.deptypes.DependencyType.*;
 
 public class RubyProcessor extends AbstractLangProcessor implements ParserCreator{
     private static final String LANG = "ruby";
@@ -72,7 +72,7 @@ public class RubyProcessor extends AbstractLangProcessor implements ParserCreato
 
 	@Override
 	public ImportLookupStrategy getImportLookupStrategy() {
-		return new RubyImportLookupStrategy();
+		return new RubyImportLookupStrategy(entityRepo);
 	}
 
 

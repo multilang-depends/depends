@@ -24,13 +24,14 @@ SOFTWARE.
 
 package depends.extractor.java;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import depends.entity.repo.BuiltInType;
 import depends.extractor.AbstractLangProcessor;
 import depends.extractor.FileParser;
 import depends.relations.ImportLookupStrategy;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static depends.deptypes.DependencyType.*;
 public class JavaProcessor extends AbstractLangProcessor {
     private static final String JAVA_LANG = "java";
@@ -57,7 +58,7 @@ public class JavaProcessor extends AbstractLangProcessor {
 	
 	@Override
 	public ImportLookupStrategy getImportLookupStrategy() {
-		return new JavaImportLookupStrategy();
+		return new JavaImportLookupStrategy(entityRepo);
 	}
 	
 	@Override

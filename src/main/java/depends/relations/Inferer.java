@@ -24,29 +24,18 @@ SOFTWARE.
 
 package depends.relations;
 
-import java.lang.management.ManagementFactory;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import depends.entity.Entity;
-import depends.entity.FileEntity;
-import depends.entity.FunctionCall;
-import depends.entity.GenericName;
-import depends.entity.TypeEntity;
-import depends.entity.VarEntity;
+import depends.entity.*;
 import depends.entity.repo.BuiltInType;
 import depends.entity.repo.EntityRepo;
 import depends.entity.repo.NullBuiltInType;
 import depends.extractor.AbstractLangProcessor;
 import depends.extractor.UnsolvedBindings;
 import depends.importtypes.Import;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.lang.management.ManagementFactory;
+import java.util.*;
 
 public class Inferer {
 	static final public TypeEntity buildInType = new TypeEntity(GenericName.build("built-in"), null, -1);
@@ -67,6 +56,7 @@ public class Inferer {
 		this.buildInTypeManager = buildInTypeManager;
 		unsolvedSymbols= new HashSet<>();
 		this.eagerExpressionResolve = eagerExpressionResolve;
+		importLookupStrategy.setInferer(this);
 	}
 
 	/**
@@ -121,12 +111,12 @@ public class Inferer {
 	 * while in java, only 'import class/function, or import wildcard class.* package.* exists. 
 	 */
 	public Collection<Entity> getImportedRelationEntities(List<Import> importedNames) {
-		return importLookupStrategy.getImportedRelationEntities(importedNames, repo);
+		return importLookupStrategy.getImportedRelationEntities(importedNames);
 	}
 
 	public Collection<Entity> getImportedTypes(List<Import> importedNames, FileEntity fileEntity) {
 		HashSet<UnsolvedBindings> unsolved = new HashSet<UnsolvedBindings>();
-		Collection<Entity> result = importLookupStrategy.getImportedTypes(importedNames, repo,unsolved);
+		Collection<Entity> result = importLookupStrategy.getImportedTypes(importedNames,unsolved);
 		for (UnsolvedBindings item:unsolved) {
 			item.setFromEntity(fileEntity);
 			addUnsolvedBinding(item);
@@ -140,7 +130,7 @@ public class Inferer {
 	}
 
 	public Collection<Entity> getImportedFiles(List<Import> importedNames) {
-		return importLookupStrategy.getImportedFiles(importedNames, repo);
+		return importLookupStrategy.getImportedFiles(importedNames);
 	}
 
 	/**
@@ -279,7 +269,7 @@ public class Inferer {
 	public Entity lookupTypeInImported(FileEntity fileEntity, String name) {
 		if (fileEntity == null)
 			return null;
-		Entity type = importLookupStrategy.lookupImportedType(name, fileEntity, repo,this);
+		Entity type = importLookupStrategy.lookupImportedType(name, fileEntity);
 		if (type != null)
 			return type;
 		return null;
