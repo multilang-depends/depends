@@ -25,7 +25,7 @@ public class RubyVCallTest extends RubyParserTest {
 		    FileParser parser = createFileParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
 	    FunctionEntity function = (FunctionEntity)(entityRepo.getEntity("called_from"));
 	    this.assertContainsRelation(function, DependencyType.CALL, "called");
 	}
@@ -40,7 +40,7 @@ public class RubyVCallTest extends RubyParserTest {
 		    FileParser parser = createFileParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
 	    FunctionEntity function = (FunctionEntity)(entityRepo.getEntity("test"));
 	    this.assertContainsRelation(function, DependencyType.CALL, "foo");
 	    this.assertContainsRelation(function, DependencyType.CALL, "bar");

@@ -16,7 +16,7 @@ public class JavaParseErrorFileTest extends JavaParserTest{
         String src = "./src/test/resources/java-code-examples/IncompleteFile.java";
         JavaFileParser parser = createParser(src);
         parser.parse();
-        inferer.resolveAllBindings();
+        resolveAllBindings();
 	}
 	
 	@Test
@@ -24,7 +24,7 @@ public class JavaParseErrorFileTest extends JavaParserTest{
         String src = "./src/test/resources/java-code-examples/EclipseTestBase_No_ResponseDuirngTypeResolve.java";
         JavaFileParser parser = createParser(src);
         parser.parse();
-        inferer.resolveAllBindings();
+        resolveAllBindings();
 	}
 	
 	

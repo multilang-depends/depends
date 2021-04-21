@@ -26,7 +26,7 @@ public class PythonObjectThrowReturn extends PythonParserTest {
 		    PythonFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
 	    FunctionEntity func = (FunctionEntity)repo.getEntity(withPackageName(srcs[0],"t1"));
 	    this.assertContainsRelation(func, DependencyType.THROW, withPackageName(srcs[0],"Bar"));
 	}
@@ -42,7 +42,7 @@ public class PythonObjectThrowReturn extends PythonParserTest {
 		    PythonFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
 	    FunctionEntity func = (FunctionEntity)repo.getEntity(withPackageName(srcs[0],"t2"));
 	    this.assertContainsRelation(func, DependencyType.RETURN, withPackageName(srcs[0],"Bar"));
 	}

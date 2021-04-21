@@ -20,7 +20,7 @@ public class AliasTest extends CppParserTest{
 	    String src = "./src/test/resources/cpp-code-examples/Alias.cpp";
 	    CppFileParser parser = createParser(src);
         parser.parse();
-        inferer.resolveAllBindings();
+        resolveAllBindings();
         this.assertContainsRelation(repo.getEntity("bar"), DependencyType.CALL, "F.foo");
 	}
 	
@@ -29,7 +29,7 @@ public class AliasTest extends CppParserTest{
 	    String src = "./src/test/resources/cpp-code-examples/AliasType.cpp";
 	    CppFileParser parser = createParser(src);
         parser.parse();
-        inferer.resolveAllBindings();
+        resolveAllBindings();
         this.assertContainsRelation(repo.getEntity("C"), DependencyType.INHERIT, "A");
 	}
 	
@@ -44,7 +44,7 @@ public class AliasTest extends CppParserTest{
 		    CppFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-        inferer.resolveAllBindings();
+        resolveAllBindings();
         this.assertContainsRelation(repo.getEntity("bar"), DependencyType.CALL, "foo");
 	}
 	

@@ -18,7 +18,7 @@ public class JavaGenericTypeTest extends JavaParserTest{
         String src = "./src/test/resources/java-code-examples/GenericTypeTest.java";
         JavaFileParser parser = createParser(src);
         parser.parse();
-        inferer.resolveAllBindings();
+        resolveAllBindings();
         this.assertContainsRelation(entityRepo.getEntity("x.GenericTypeTest.v"),
         		DependencyType.PARAMETER, "x.Parent2.Enum");
 	}
@@ -28,7 +28,7 @@ public class JavaGenericTypeTest extends JavaParserTest{
         String src = "./src/test/resources/java-code-examples/GenericTypeEmbededTest.java";
         JavaFileParser parser = createParser(src);
         parser.parse();
-        inferer.resolveAllBindings();
+        resolveAllBindings();
         this.assertContainsRelation(entityRepo.getEntity("GenericTypeEmbededTest"),
         		DependencyType.CONTAIN, "MyHashMap");
         this.assertContainsRelation(entityRepo.getEntity("GenericTypeEmbededTest.data"),

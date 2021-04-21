@@ -1,17 +1,19 @@
 package depends.extractor.pom;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import depends.entity.repo.EntityRepo;
 import depends.extractor.ParserTest;
+import depends.extractor.UnsolvedBindings;
 import depends.relations.Inferer;
 import multilang.depends.util.file.TemporaryFile;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 public abstract class MavenParserTest extends ParserTest{
 
 	protected EntityRepo repo;
-	private PomProcessor p;
+	private PomProcessor langProcessor;
 	protected Inferer inferer;
 
 	public void init() {
@@ -20,16 +22,20 @@ public abstract class MavenParserTest extends ParserTest{
 		includeDir.add("./src/test/resources/maven-code-examples/dependencyWithPropertiesOfParent");
 		includeDir.add("./src/test/resources/maven-code-examples/dependencyWithoutVersion");
 		
-		this.p = new PomProcessor();
-		p.includeDirs = includeDir.toArray(new String[] {});
+		this.langProcessor = new PomProcessor();
+		langProcessor.includeDirs = includeDir.toArray(new String[] {});
 		
-		this.repo = p.getEntityRepo();
-		this.inferer = p.inferer;
+		this.repo = langProcessor.getEntityRepo();
+		this.inferer = langProcessor.inferer;
     	TemporaryFile.reset();
 
     }
 	
 	public PomFileParser createParser(String src) {
-		return (PomFileParser) p.createFileParser(src);
+		return (PomFileParser) langProcessor.createFileParser(src);
+	}
+
+	public Set<UnsolvedBindings> resolveAllBindings() {
+		return inferer.resolveAllBindings(false, langProcessor);
 	}
 }

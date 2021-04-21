@@ -29,7 +29,7 @@ public class RelationToImplementationTest extends CppParserTest{
 		    CppFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings(true,null);
+	    inferer.resolveAllBindings(true,langProcessor);
 	    Entity bar = repo.getEntity("bar");
 	    int matchCount = 0;
 	    for (Relation relation:bar.getRelations()) {
@@ -56,7 +56,7 @@ public class RelationToImplementationTest extends CppParserTest{
 		    CppFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings(true,null);
+	    inferer.resolveAllBindings(true,langProcessor);
 	    Entity bar = repo.getEntity("baz");
 	    int matchCount = 0;
 	    for (Relation relation:bar.getRelations()) {
@@ -80,7 +80,7 @@ public class RelationToImplementationTest extends CppParserTest{
 		    CppFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings(true,null);
+	    inferer.resolveAllBindings(true,langProcessor);
 	    Entity bar = repo.getEntity("qux");
 	    int matchCount = 0;
 	    for (Relation relation:bar.getRelations()) {

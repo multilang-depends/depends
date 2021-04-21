@@ -15,7 +15,7 @@ import static depends.deptypes.DependencyType.*;
 public class KotlinProcessor extends AbstractLangProcessor {
 
 	public KotlinProcessor() {
-    	super(true);
+    	super();
 	}
 
 	@Override
@@ -42,7 +42,12 @@ public class KotlinProcessor extends AbstractLangProcessor {
 	protected FileParser createFileParser(String fileFullPath) {
 		return new KotlinFileParser(fileFullPath,entityRepo, inferer);
 	}
-	
+
+	@Override
+	public boolean isEagerExpressionResolve(){
+		return true;
+	}
+
 	@Override
 	public List<String> supportedRelations() {
 		ArrayList<String> depedencyTypes = new ArrayList<>();

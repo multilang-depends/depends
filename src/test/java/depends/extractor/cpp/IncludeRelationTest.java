@@ -33,7 +33,7 @@ public class IncludeRelationTest extends CppParserTest{
 		    CppFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
         File f = new File(srcs[0]);
         assertEquals(3,repo.getEntity(f.getCanonicalPath()).getRelations().size());
 	}
@@ -52,7 +52,7 @@ public class IncludeRelationTest extends CppParserTest{
 		    CppFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
         File f = new File(srcs[0]);
         assertEquals(1,repo.getEntity(f.getCanonicalPath()).getRelations().size());
 	}
@@ -68,7 +68,7 @@ public class IncludeRelationTest extends CppParserTest{
 		    CppFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
         assertEquals("abc",((AliasEntity)repo.getEntity("abc_t")).getOriginType().getRawName().uniqName());
         
 	}
@@ -85,7 +85,7 @@ public class IncludeRelationTest extends CppParserTest{
 		    CppFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
 	    this.assertContainsRelation(this.repo.getEntity("foo"), DependencyType.CALL, "bar");
 	    this.assertNotContainsRelation(this.repo.getEntity("foo2"), DependencyType.CALL, "bar");
 	}
@@ -102,7 +102,7 @@ public class IncludeRelationTest extends CppParserTest{
 		    CppFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
 	    this.assertContainsRelation(this.repo.getEntity(FileUtil.uniqFilePath(srcs[0])), DependencyType.IMPORT, FileUtil.uniqFilePath(srcs[1]));
 	    this.assertContainsRelation(this.repo.getEntity(FileUtil.uniqFilePath(srcs[0])), DependencyType.IMPORT, FileUtil.uniqFilePath(srcs[2]));
 	} 

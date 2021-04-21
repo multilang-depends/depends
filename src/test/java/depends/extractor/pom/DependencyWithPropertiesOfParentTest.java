@@ -1,13 +1,12 @@
 package depends.extractor.pom;
-import static org.junit.Assert.assertFalse;
-
-import java.io.IOException;
-
+import depends.deptypes.DependencyType;
+import depends.entity.MultiDeclareEntities;
 import org.junit.Before;
 import org.junit.Test;
 
-import depends.deptypes.DependencyType;
-import depends.entity.MultiDeclareEntities;
+import java.io.IOException;
+
+import static org.junit.Assert.assertFalse;
 
 public class DependencyWithPropertiesOfParentTest extends MavenParserTest{
     @Before
@@ -27,9 +26,9 @@ public class DependencyWithPropertiesOfParentTest extends MavenParserTest{
 		    PomFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
 	    assertFalse(repo.getEntity("parent-group.a-parent_1.0_") instanceof MultiDeclareEntities);
-	    this.assertContainsRelation(repo.getEntity("testgroup.test_1.0_"), DependencyType.CONTAIN, "a-dep-group.a-artifact_0.2_");
+	    this.assertContainsRelation(repo.getEntity("testgroup.test_1.0_"), DependencyType.PomDependency, "a-dep-group.a-artifact_0.2_");
 	}
 	
 	@Test
@@ -44,8 +43,8 @@ public class DependencyWithPropertiesOfParentTest extends MavenParserTest{
 		    PomFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
-	    this.assertContainsRelation(repo.getEntity("testgroup.test_1.0_"), DependencyType.USE, "aplugins.aplugin_0.1_");
+	    resolveAllBindings();
+	    this.assertContainsRelation(repo.getEntity("testgroup.test_1.0_"), DependencyType.PomPlugin, "aplugins.aplugin_0.1_");
 	}
 	
 	

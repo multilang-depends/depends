@@ -19,7 +19,7 @@ public class JavaComplexExpressionTest extends JavaParserTest {
         String src = "./src/test/resources/java-code-examples/ComplexExpressionTest.java";
         JavaFileParser parser = createParser(src);
         parser.parse();
-        inferer.resolveAllBindings();
+        resolveAllBindings();
         ContainerEntity entity  = (ContainerEntity)(entityRepo.getEntity("ComplexExpressionTest.other"));
         assertEquals(3,entity.getRelations().size());
 	}

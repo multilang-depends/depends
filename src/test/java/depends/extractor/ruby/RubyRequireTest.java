@@ -25,7 +25,7 @@ public class RubyRequireTest extends RubyParserTest {
 		    FileParser parser = createFileParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
         File f = new File(srcs[0]);
         File f2 = new File(srcs[1]);
         

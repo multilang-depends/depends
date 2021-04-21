@@ -23,7 +23,7 @@ public class JavaVarResolveTest extends JavaParserTest{
         String src = "./src/test/resources/java-code-examples/FieldVar.java";
         JavaFileParser parser = createParser(src);
         parser.parse();
-        inferer.resolveAllBindings();
+        resolveAllBindings();
         Entity classEntity = entityRepo.getEntity("FieldVar");
         assertEquals(3,((TypeEntity)classEntity).getVars().size()); 
 	}
@@ -33,7 +33,7 @@ public class JavaVarResolveTest extends JavaParserTest{
         String src = "./src/test/resources/java-code-examples/LocalVar.java";
         JavaFileParser parser = createParser(src);
         parser.parse();
-        inferer.resolveAllBindings();
+        resolveAllBindings();
         assertEquals(1,((TypeEntity)entityRepo.getEntity("LocalVar")).getVars().size());
         assertEquals(1,((FunctionEntity)entityRepo.getEntity("LocalVar.foo")).getVars().size());
 	}
@@ -43,7 +43,7 @@ public class JavaVarResolveTest extends JavaParserTest{
         String src = "./src/test/resources/java-code-examples/LocalVarInferExample.java";
         JavaFileParser parser = createParser(src);
         parser.parse();
-        inferer.resolveAllBindings();
+        resolveAllBindings();
         ContainerEntity e = (ContainerEntity) entityRepo.getEntity("LocalVarInferExample.setExample");
         this.assertContainsRelation(e, DependencyType.CONTAIN, "MyInteger");
 	}
@@ -53,7 +53,7 @@ public class JavaVarResolveTest extends JavaParserTest{
         String src = "./src/test/resources/java-code-examples/ComplexExpressionExample.java";
         JavaFileParser parser = createParser(src);
         parser.parse();
-        inferer.resolveAllBindings();
+        resolveAllBindings();
         Entity e = entityRepo.getEntity("test.ComplexExpressionExample.setExample");
         this.assertContainsRelation(e, DependencyType.PARAMETER, "test.ClassA");
         this.assertContainsRelation(e, DependencyType.CREATE, "test.ClassA");
@@ -73,7 +73,7 @@ public class JavaVarResolveTest extends JavaParserTest{
         String src = "./src/test/resources/java-code-examples/LongExpressionWithAbsolutePath.java";
         JavaFileParser parser = createParser(src);
         parser.parse();
-        inferer.resolveAllBindings();
+        resolveAllBindings();
         assertEquals(5,entityRepo.getEntity("x.LongExpressionWithAbsolutePath.setExample").getRelations().size());
 	}
 	
@@ -84,7 +84,7 @@ public class JavaVarResolveTest extends JavaParserTest{
         String src = "./src/test/resources/java-code-examples/ExpressionCallTest.java";
         JavaFileParser parser = createParser(src);
         parser.parse();
-        inferer.resolveAllBindings();
+        resolveAllBindings();
         assertEquals(10,entityRepo.getEntity("ValidateAll.validate").getRelations().size());
 	}
 	
@@ -93,7 +93,7 @@ public class JavaVarResolveTest extends JavaParserTest{
         String src = "./src/test/resources/java-code-examples/TypeArgument.java";
         JavaFileParser parser = createParser(src);
         parser.parse();
-        inferer.resolveAllBindings();
+        resolveAllBindings();
         this.assertContainsRelation(entityRepo.getEntity("JDepObject.cells"),DependencyType.PARAMETER, "JCellObject");
 	}
 	

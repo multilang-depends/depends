@@ -30,7 +30,7 @@ public class RubyParameterTypeDedudceTest extends RubyParserTest {
 		    FileParser parser = createFileParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
 	    FunctionEntity function = (FunctionEntity)(entityRepo.getEntity("test"));
 	    VarEntity var = function.lookupVarLocally("t1");
 	    TypeEntity type = var.getType();

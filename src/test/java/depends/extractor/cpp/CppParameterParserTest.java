@@ -17,7 +17,7 @@ public class CppParameterParserTest extends CppParserTest{
 	    String src = "./src/test/resources/cpp-code-examples/FunctionParameters.cpp";
 	    CppFileParser parser = createParser(src);
         parser.parse();
-        inferer.resolveAllBindings();
+        resolveAllBindings();
         assertEquals(4,repo.getEntity("FunctionParameters.function_with_parameters_same_type").getRelations().size());
 	}
 

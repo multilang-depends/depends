@@ -26,7 +26,7 @@ public class PythonFuncCallTest extends PythonParserTest {
 		    PythonFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
 	    FunctionEntity func = (FunctionEntity)repo.getEntity(withPackageName(srcs[0],"foo"));
 	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[0],"bar"));
 	}
@@ -41,7 +41,7 @@ public class PythonFuncCallTest extends PythonParserTest {
 		    PythonFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
 	    FunctionEntity func = (FunctionEntity)repo.getEntity(withPackageName(srcs[0],"baz"));
 	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[0],"A.foo"));
 	}
@@ -57,7 +57,7 @@ public class PythonFuncCallTest extends PythonParserTest {
 		    parser.parse();
 	    }
 
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
 	    FunctionEntity func = (FunctionEntity)repo.getEntity(withPackageName(srcs[0],"C.test"));
 	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[0],"A.fooA"));
 	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[0],"B.fooB"));

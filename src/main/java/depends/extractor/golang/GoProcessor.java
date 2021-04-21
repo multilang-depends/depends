@@ -38,7 +38,7 @@ public class GoProcessor extends AbstractLangProcessor {
 	private static final String LANG = "go";
 	private static final String[] SUFFIX = new String[] { ".go" };
 	public GoProcessor() {
-		super(false);
+		super();
 	}
 
 	@Override

@@ -25,7 +25,7 @@ public class RubyNameInfererTest extends RubyParserTest {
 		    FileParser parser = createFileParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
 	    FunctionEntity function = (FunctionEntity)(entityRepo.getEntity("M1.test"));
 	    this.assertContainsRelation(function, DependencyType.CALL, "M1.f1");
 	    this.assertContainsRelation(function, DependencyType.CALL, "M1.f2");
@@ -41,7 +41,7 @@ public class RubyNameInfererTest extends RubyParserTest {
 		    FileParser parser = createFileParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
 	    FunctionEntity function = (FunctionEntity)(entityRepo.getEntity("M2.M1.test2"));
 	    this.assertContainsRelation(function, DependencyType.CALL, "M2.M1.f1");
 	    function = (FunctionEntity)(entityRepo.getEntity("M2.M1.test1"));

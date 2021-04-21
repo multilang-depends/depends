@@ -26,7 +26,7 @@ public class JavaExpressionCreatorTest extends JavaParserTest{
 		    FileParser parser = createParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
 	    Entity entity = (entityRepo.getEntity("A.foo"));
 	    this.assertContainsRelation(entity, DependencyType.CREATE, "b.B");
 	}
@@ -43,7 +43,7 @@ public class JavaExpressionCreatorTest extends JavaParserTest{
 		    FileParser parser = createParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
 	    Entity entity = (entityRepo.getEntity("X.foo"));
 	    this.assertContainsRelation(entity, DependencyType.CREATE, "b.B");
 	}

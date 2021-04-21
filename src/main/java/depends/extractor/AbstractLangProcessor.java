@@ -97,9 +97,9 @@ abstract public class AbstractLangProcessor {
 	private List<String> includePaths;
 	private static Logger logger = LoggerFactory.getLogger(AbstractLangProcessor.class);
 	
-	public AbstractLangProcessor(boolean eagerExpressionResolve) {
+	public AbstractLangProcessor() {
 		entityRepo = new InMemoryEntityRepo();
-		inferer = new Inferer(entityRepo,  getImportLookupStrategy(), getBuiltInType(), eagerExpressionResolve);
+		inferer = new Inferer(entityRepo,  getImportLookupStrategy(), getBuiltInType());
 	}
 
 	/**
@@ -260,4 +260,7 @@ abstract public class AbstractLangProcessor {
 		return relation;
 	}
 
+	public boolean isEagerExpressionResolve(){
+		return false;
+	}
 }

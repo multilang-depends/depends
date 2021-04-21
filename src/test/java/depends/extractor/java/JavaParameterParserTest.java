@@ -18,7 +18,7 @@ public class JavaParameterParserTest extends JavaParserTest {
         String src = "./src/test/resources/java-code-examples/FunctionParameters.java";
         JavaFileParser parser = createParser(src);
         parser.parse();
-        inferer.resolveAllBindings();
+        resolveAllBindings();
         assertEquals(4,entityRepo.getEntity("FunctionParameters.function_with_parameters_same_type").getRelations().size());
 	}
 

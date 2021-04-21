@@ -50,12 +50,11 @@ public class Inferer {
 	private boolean isDuckTypingDeduce = true;
 	private static Logger logger = LoggerFactory.getLogger(Inferer.class);
 
-	public Inferer(EntityRepo repo, ImportLookupStrategy importLookupStrategy, BuiltInType buildInTypeManager, boolean eagerExpressionResolve) {
+	public Inferer(EntityRepo repo, ImportLookupStrategy importLookupStrategy, BuiltInType buildInTypeManager) {
 		this.repo = repo;
 		this.importLookupStrategy = importLookupStrategy;
 		this.buildInTypeManager = buildInTypeManager;
 		unsolvedSymbols= new HashSet<>();
-		this.eagerExpressionResolve = eagerExpressionResolve;
 		importLookupStrategy.setInferer(this);
 	}
 
@@ -70,7 +69,7 @@ public class Inferer {
 		if (logger.isInfoEnabled()) {
 			logger.info("Resolve type bindings...");
 		}
-		resolveTypes();
+		resolveTypes(langProcessor.isEagerExpressionResolve());
 		System.out.println("Dependency analaysing....");
 		if (logger.isInfoEnabled()) {
 			logger.info("Dependency analaysing...");
@@ -82,11 +81,9 @@ public class Inferer {
 		return unsolvedSymbols;		
 	}
 
-	public  Set<UnsolvedBindings> resolveAllBindings() {
-		return resolveAllBindings(false,null);		
-	}
-	
-	private void resolveTypes() {
+
+	private void resolveTypes(boolean eagerExpressionResolve) {
+		this.eagerExpressionResolve = eagerExpressionResolve;
 		Iterator<Entity> iterator = repo.sortedFileIterator();
 		while(iterator.hasNext()) {
 			Entity entity= iterator.next();

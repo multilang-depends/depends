@@ -23,7 +23,7 @@ public class RubyObjectCreationTest extends RubyParserTest {
 		    FileParser parser = createFileParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
 	    super.assertContainsRelation(entityRepo.getEntity("T.foo"), DependencyType.CREATE, "M");
 	}
 	

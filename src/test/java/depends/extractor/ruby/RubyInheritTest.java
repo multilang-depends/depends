@@ -27,7 +27,7 @@ public class RubyInheritTest extends RubyParserTest {
 		    FileParser parser = createFileParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
 	    this.assertContainsRelation(entityRepo.getEntity("Cat"), DependencyType.INHERIT, "Animal");
 	}
 	
@@ -42,7 +42,7 @@ public class RubyInheritTest extends RubyParserTest {
 		    FileParser parser = createFileParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
 	    this.assertContainsRelation(entityRepo.getEntity("Cat"), DependencyType.INHERIT, "Animal");
 	}
 	
@@ -57,7 +57,7 @@ public class RubyInheritTest extends RubyParserTest {
 		    FileParser parser = createFileParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
 	    super.assertContainsRelation(entityRepo.getEntity("Cat"), DependencyType.INHERIT, "Animal");
 	}
 	
@@ -71,7 +71,7 @@ public class RubyInheritTest extends RubyParserTest {
 		    FileParser parser = createFileParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
 	    super.assertContainsRelation(entityRepo.getEntity("ZooCat"), DependencyType.INHERIT, "Zoo.Animal");
 	}
 	
@@ -85,7 +85,7 @@ public class RubyInheritTest extends RubyParserTest {
 		    FileParser parser = createFileParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
 	    this.assertContainsRelation(entityRepo.getEntity("Zoo.Cow"), DependencyType.INHERIT, "Zoo.Animal");
 	}
 	
@@ -99,7 +99,7 @@ public class RubyInheritTest extends RubyParserTest {
 		    FileParser parser = createFileParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
         assertEquals(1,entityRepo.getEntity("Cat").getRelations().size());
         Relation r = entityRepo.getEntity("Cat").getRelations().get(0);
         assertEquals(DependencyType.INHERIT,r.getType());

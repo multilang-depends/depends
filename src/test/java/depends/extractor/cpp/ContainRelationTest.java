@@ -25,7 +25,7 @@ public class ContainRelationTest extends CppParserTest{
 		    CppFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
         assertEquals(1,repo.getEntity("UnderTest").getRelations().size());
 	}
 	
@@ -40,7 +40,7 @@ public class ContainRelationTest extends CppParserTest{
 		    CppFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
         assertEquals(2,repo.getEntity("UnderTest").getRelations().size());
 	}
 	
@@ -55,7 +55,7 @@ public class ContainRelationTest extends CppParserTest{
 		    CppFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
 	    this.assertContainsRelation(repo.getEntity("UnderTest"), DependencyType.CONTAIN, "Member");
 	}
 	
@@ -72,7 +72,7 @@ public class ContainRelationTest extends CppParserTest{
 		    CppFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
 	}
 	
 	

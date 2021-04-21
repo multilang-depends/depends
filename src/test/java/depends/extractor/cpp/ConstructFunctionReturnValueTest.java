@@ -22,7 +22,7 @@ public class ConstructFunctionReturnValueTest extends CppParserTest{
 		    CppFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
         //assertEquals(1,repo.getEntity("UnderTest").getRelations().size());
 	}
 	
@@ -36,7 +36,7 @@ public class ConstructFunctionReturnValueTest extends CppParserTest{
 		    CppFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
         //assertEquals(1,repo.getEntity("UnderTest").getRelations().size());
 	}
 		

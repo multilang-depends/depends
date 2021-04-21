@@ -19,7 +19,7 @@ public class CppExpressionTest extends CppParserTest{
 	    String src = "./src/test/resources/cpp-code-examples/Expressions.cpp";
 	    CppFileParser parser = createParser(src);
         parser.parse();
-        inferer.resolveAllBindings();
+        resolveAllBindings();
         Entity e = repo.getEntity("foo");
         this.assertContainsRelation(e, DependencyType.PARAMETER,"ClassA");
         this.assertContainsRelation(e, DependencyType.CAST,"ClassA");
@@ -37,7 +37,7 @@ public class CppExpressionTest extends CppParserTest{
         String src = "./src/test/resources/cpp-code-examples/DupExpressions.cpp";
         CppFileParser parser = createParser(src);
         parser.parse();
-        inferer.resolveAllBindings();
+        resolveAllBindings();
         Entity e = repo.getEntity("foo");
         assertEquals(4,e.getRelations().size());
     }

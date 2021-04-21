@@ -33,7 +33,7 @@ public class ImplementRelationTest extends CppParserTest{
 		    CppFileParser parser =createParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
 	    MultiDeclareEntities multiDeclare = (MultiDeclareEntities)( repo.getEntity("foo"));
 	    List<Entity> f = multiDeclare.getEntities().stream().filter(item->item.getClass().equals(FunctionEntityImpl.class)).collect(Collectors.toList());
         this.assertContainsRelation(f.get(0),DependencyType.IMPLEMENT,"foo");

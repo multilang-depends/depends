@@ -26,7 +26,7 @@ public class UsingTest extends CppParserTest{
 		    CppFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
         Entity e = repo.getEntity("foo");
         this.assertContainsRelation(e, DependencyType.RETURN, Inferer.buildInType.getQualifiedName());
         this.assertContainsRelation(e, DependencyType.CONTAIN, "A.C");
@@ -44,7 +44,7 @@ public class UsingTest extends CppParserTest{
 		    CppFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
         Entity e = repo.getEntity("bar");
         this.assertContainsRelation(e, DependencyType.RETURN, Inferer.buildInType.getQualifiedName());
         this.assertContainsRelation(e, DependencyType.CONTAIN, "A.C");

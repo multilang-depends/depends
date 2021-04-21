@@ -16,7 +16,7 @@ public class JavaCylicInheritTest extends JavaParserTest{
         String src = "./src/test/resources/java-code-examples/CyclicInherit.java";
         JavaFileParser parser = createParser(src);
         parser.parse();
-        inferer.resolveAllBindings();
+        resolveAllBindings();
 	}
 	
 	

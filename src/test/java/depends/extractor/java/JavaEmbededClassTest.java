@@ -17,7 +17,7 @@ public class JavaEmbededClassTest extends JavaParserTest{
         String src = "./src/test/resources/java-code-examples/EmbededTest.java";
         JavaFileParser parser = createParser(src);
         parser.parse();
-        inferer.resolveAllBindings();
+        resolveAllBindings();
         assertEquals(1,entityRepo.getEntity("x.EmbededTest").getRelations().size());
 	}
 
@@ -26,7 +26,7 @@ public class JavaEmbededClassTest extends JavaParserTest{
         String src = "./src/test/resources/java-code-examples/EmbededTest.java";
         JavaFileParser parser = createParser(src);
         parser.parse();
-        inferer.resolveAllBindings();
+        resolveAllBindings();
         assertEquals(1,entityRepo.getEntity("x.EmbededTest2").getRelations().size());
 	}
 }

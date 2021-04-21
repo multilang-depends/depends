@@ -1,13 +1,9 @@
 package depends.extractor.pom;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.io.IOException;
-
+import depends.deptypes.DependencyType;
 import org.junit.Before;
 import org.junit.Test;
 
-import depends.deptypes.DependencyType;
+import java.io.IOException;
 
 public class DependencyTest extends MavenParserTest{
     @Before
@@ -26,8 +22,8 @@ public class DependencyTest extends MavenParserTest{
 		    PomFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
-	    this.assertContainsRelation(repo.getEntity("testgroup.test_1.0_"), DependencyType.CONTAIN, "a-dep-group.a-artifact_0.2_");
+	    resolveAllBindings();
+	    this.assertContainsRelation(repo.getEntity("testgroup.test_1.0_"), DependencyType.PomDependency, "a-dep-group.a-artifact_0.2_");
 	}
 	
 	@Test
@@ -41,8 +37,8 @@ public class DependencyTest extends MavenParserTest{
 		    PomFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
-	    this.assertContainsRelation(repo.getEntity("testgroup.test_1.0_"), DependencyType.USE, "aplugins.aplugin_0.1_");
+	    resolveAllBindings();
+	    this.assertContainsRelation(repo.getEntity("testgroup.test_1.0_"), DependencyType.PomPlugin, "aplugins.aplugin_0.1_");
 	}
 	
 	

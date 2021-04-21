@@ -23,7 +23,7 @@ public class TypeDefTest extends CppParserTest{
 		    CppFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
         this.assertContainsRelation(repo.getEntity("foo"), DependencyType.PARAMETER, "MyInt");
 	}
 			

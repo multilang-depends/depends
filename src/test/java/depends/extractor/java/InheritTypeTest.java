@@ -19,7 +19,7 @@ public class InheritTypeTest extends JavaParserTest {
         String src = "./src/test/resources/java-code-examples/InheritTest.java";
         JavaFileParser parser =createParser(src);
         parser.parse();
-        inferer.resolveAllBindings();
+        resolveAllBindings();
         assertEquals(1,entityRepo.getEntity("InheritTest").getRelations().size());
 	}
 }

@@ -27,7 +27,7 @@ public class PythonFunctionTest extends PythonParserTest {
 		    PythonFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
         assertNotNull(repo.getEntity(withPackageName(srcs[0],"foo")));
 	}
 	
@@ -41,7 +41,7 @@ public class PythonFunctionTest extends PythonParserTest {
 		    PythonFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
 	    FunctionEntity func = (FunctionEntity)repo.getEntity(withPackageName(srcs[0],"foo"));
         assertEquals(2,func.getParameters().size());
 	}

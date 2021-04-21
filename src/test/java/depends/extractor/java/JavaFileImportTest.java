@@ -26,7 +26,7 @@ public class JavaFileImportTest extends JavaParserTest{
 		    FileParser parser = createParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
 	    TypeEntity type = (TypeEntity)(entityRepo.getEntity("a.Importing"));
 	    this.assertContainsRelation(type, DependencyType.INHERIT, "b.B");
 	}

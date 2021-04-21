@@ -25,7 +25,7 @@ public class RubyRaiseTypeDedudceTest extends RubyParserTest {
 		    FileParser parser = createFileParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
 	    FunctionEntity function = (FunctionEntity)(entityRepo.getEntity("Class.test"));
 	    this.assertContainsRelation(function, DependencyType.THROW, "Class1");
 	}

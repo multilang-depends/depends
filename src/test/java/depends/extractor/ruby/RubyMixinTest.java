@@ -23,7 +23,7 @@ public class RubyMixinTest extends RubyParserTest {
 		    FileParser parser = createFileParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
 	    assertContainsRelation(entityRepo.getEntity("MixedIn"),DependencyType.MIXIN,"ToBeMixin");
 
 	}

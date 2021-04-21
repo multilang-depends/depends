@@ -25,7 +25,7 @@ public class RubyVariableCallTest extends RubyParserTest {
 		    FileParser parser = createFileParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
 	    FunctionEntity function = (FunctionEntity)(entityRepo.getEntity("test"));
 	    this.assertContainsRelation(function, DependencyType.CALL, "Class.function");
 	}

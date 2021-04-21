@@ -19,7 +19,7 @@ public class JavaCallExpressionTest extends JavaParserTest {
         String src = "./src/test/resources/java-code-examples/SimpleExpressionCallTest.java";
         JavaFileParser parser = createParser(src);
         parser.parse();
-        inferer.resolveAllBindings();
+        resolveAllBindings();
 	}
 
 }

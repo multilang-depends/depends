@@ -21,7 +21,7 @@ public class JavaTypeInferUnderSamePackageTest extends JavaParserTest{
         src = "./src/test/resources/java-code-examples/TypeInferUnderSamePackageB.java";
         parser = createParser(src);
         parser.parse();
-        inferer.resolveAllBindings();
+        resolveAllBindings();
         assertEquals(1,entityRepo.getEntity("x.TypeInferUnderSamePackageA").getRelations().size());
 	}
 }

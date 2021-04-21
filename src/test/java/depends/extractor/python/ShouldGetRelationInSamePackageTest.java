@@ -26,7 +26,7 @@ public class ShouldGetRelationInSamePackageTest extends PythonParserTest {
 		    FileParser parser = createFileParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
 	    FunctionEntity function = (FunctionEntity)(repo.getEntity(withPackageName(srcs[0],"bar")));
 	    this.assertContainsRelation(function, DependencyType.CALL, withPackageName(srcs[0],"foo"));
 	}

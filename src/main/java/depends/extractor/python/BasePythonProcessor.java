@@ -12,10 +12,6 @@ import static depends.deptypes.DependencyType.*;
 public abstract class BasePythonProcessor extends AbstractLangProcessor{
 	private PythonImportLookupStrategy importedLookupStrategy;
 
-	public BasePythonProcessor(boolean eagerExpressionResolve) {
-		super(eagerExpressionResolve);
-	}
-
 	@Override
 	public String[] fileSuffixes() {
 		return new String[] {".py"};

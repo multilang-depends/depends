@@ -44,8 +44,7 @@ public class CppProcessor extends AbstractLangProcessor {
 	MacroRepo macroRepo = null;
 
 	public CppProcessor() {
-		super(false);
-
+		super();
 	}
 
 	@Override

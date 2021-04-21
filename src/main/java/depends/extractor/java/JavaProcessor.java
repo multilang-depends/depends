@@ -38,7 +38,6 @@ public class JavaProcessor extends AbstractLangProcessor {
     private static final String JAVA_SUFFIX = ".java";
     
     public JavaProcessor() {
-    	super(false);
     }
     
 	@Override

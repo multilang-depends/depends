@@ -21,7 +21,7 @@ public class GenericTypeTest extends CppParserTest {
 		String src = "./src/test/resources/cpp-code-examples/template/TempateStructure.cpp";
 		CppFileParser parser = createParser(src);
 		parser.parse();
-		inferer.resolveAllBindings();
+		resolveAllBindings();
 		assertNotNull(repo.getEntity("hash"));
 	}
 
@@ -30,7 +30,7 @@ public class GenericTypeTest extends CppParserTest {
 		String src = "./src/test/resources/cpp-code-examples/template/GenericTypes.cpp";
 		CppFileParser parser = createParser(src);
 		parser.parse();
-		inferer.resolveAllBindings();
+		resolveAllBindings();
 		this.assertContainsRelation(repo.getEntity("xStack"), DependencyType.PARAMETER, "X");
 	}
 
@@ -39,7 +39,7 @@ public class GenericTypeTest extends CppParserTest {
 		String src = "./src/test/resources/cpp-code-examples/template/GenericTypes.cpp";
 		CppFileParser parser = createParser(src);
 		parser.parse();
-		inferer.resolveAllBindings();
+		resolveAllBindings();
 		this.assertContainsRelation(repo.getEntity("XStack"), DependencyType.INHERIT, "Stack");
 	}
 
@@ -48,7 +48,7 @@ public class GenericTypeTest extends CppParserTest {
 		String src = "./src/test/resources/cpp-code-examples/template/EmbededTemplates.cpp";
 		CppFileParser parser = createParser(src);
 		parser.parse();
-		inferer.resolveAllBindings();
+		resolveAllBindings();
 		this.assertContainsRelation(repo.getEntity("GenericTypeEmbededTest"), DependencyType.CONTAIN, "MyHashMap");
 		this.assertContainsRelation(repo.getEntity("GenericTypeEmbededTest.data"), DependencyType.PARAMETER, "MyList");
 		this.assertContainsRelation(repo.getEntity("GenericTypeEmbededTest.data"), DependencyType.PARAMETER, "MyArray");
@@ -59,7 +59,7 @@ public class GenericTypeTest extends CppParserTest {
 		String src = "./src/test/resources/cpp-code-examples/template/TemplateWithDots.cpp";
 		CppFileParser parser = createParser(src);
 		parser.parse();
-		inferer.resolveAllBindings();
+		resolveAllBindings();
 		assertNotNull(repo.getEntity("foo.t2"));
 	}
 
@@ -68,7 +68,7 @@ public class GenericTypeTest extends CppParserTest {
 		String src = "./src/test/resources/cpp-code-examples/template/TemplateInReturnValue.cpp";
 		CppFileParser parser = createParser(src);
 		parser.parse();
-		inferer.resolveAllBindings();
+		resolveAllBindings();
 		FunctionEntity func = (FunctionEntity) repo.getEntity("get");
 		this.assertContainsRelation(func, DependencyType.RETURN, "std.tuple_element.type");
 		this.assertContainsRelation(repo.getEntity("get"), DependencyType.PARAMETER, "Index");

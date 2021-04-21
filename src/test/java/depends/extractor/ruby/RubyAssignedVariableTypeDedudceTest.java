@@ -29,7 +29,7 @@ public class RubyAssignedVariableTypeDedudceTest extends RubyParserTest {
 		    FileParser parser = createFileParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
 	    FunctionEntity function = (FunctionEntity)(entityRepo.getEntity("Class.test"));
 	    VarEntity var = function.lookupVarLocally("var_int");
 	    assertEquals(Inferer.buildInType.getRawName(),var.getType().getRawName());
@@ -56,7 +56,7 @@ public class RubyAssignedVariableTypeDedudceTest extends RubyParserTest {
 		    FileParser parser = createFileParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
 	    FunctionEntity function = (FunctionEntity)(entityRepo.getEntity("Class.operator_is_call"));
 	    VarEntity var = function.lookupVarLocally("var_compose");
 	    assertEquals(Inferer.buildInType.getRawName(),var.getType().getRawName());

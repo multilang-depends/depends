@@ -28,7 +28,7 @@ public class PythonDecoratorTest extends PythonParserTest {
 		    PythonFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
 	    FunctionEntity func = (FunctionEntity)repo.getEntity(withPackageName(srcs[0],"foo"));
 		this.assertContainsRelation(func, DependencyType.ANNOTATION	, withPackageName(srcs[0],"our_decorator"));
 	    assertEquals(1,func.getResolvedAnnotations().size());

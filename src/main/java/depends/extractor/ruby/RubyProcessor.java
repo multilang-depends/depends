@@ -42,9 +42,6 @@ public class RubyProcessor extends AbstractLangProcessor implements ParserCreato
     private static final String LANG = "ruby";
     private static final String[] SUFFIX = new String[] {".rb"};
 	private ExecutorService executor;
-    public RubyProcessor() {
-    	super(true);
-    }
 
 	@Override
 	public String supportedLanguage() {
@@ -97,5 +94,10 @@ public class RubyProcessor extends AbstractLangProcessor implements ParserCreato
 		depedencyTypes.add(THROW);
 		depedencyTypes.add(MIXIN);
 		return depedencyTypes;
-	}		
+	}
+
+	@Override
+	public boolean isEagerExpressionResolve(){
+		return true;
+	}
 }

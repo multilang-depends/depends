@@ -23,7 +23,7 @@ public class ParseErrorTest extends CppParserTest{
 		    CppFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
 	}
 
 	@Test
@@ -39,7 +39,7 @@ public class ParseErrorTest extends CppParserTest{
 			macroMap.put("AP_DECLARE(x)","x");
 			parser.parse(true,macroMap);
 		}
-		inferer.resolveAllBindings();
+		resolveAllBindings();
 	}
 	
 }

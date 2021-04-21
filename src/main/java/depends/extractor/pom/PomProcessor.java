@@ -38,10 +38,7 @@ import static depends.deptypes.DependencyType.*;
 
 public class PomProcessor extends AbstractLangProcessor {
 
-	public PomProcessor() {
-		super(false);
-	}
-	
+
 	@Override
 	public String supportedLanguage() {
 		return "pom";

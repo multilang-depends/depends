@@ -31,7 +31,7 @@ public class PythonParameterTypeDedudceTest extends PythonParserTest {
 		    FileParser parser = createFileParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
 	    String name = withPackageName(srcs[0],"test");
 	    FunctionEntity function = (FunctionEntity)( repo.getEntity(name));
 	    VarEntity var = function.lookupVarLocally("t1");
@@ -51,7 +51,7 @@ public class PythonParameterTypeDedudceTest extends PythonParserTest {
 		    FileParser parser = createFileParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
 	    String name = withPackageName(srcs[0],"test");
 	    FunctionEntity function = (FunctionEntity)( repo.getEntity(name));
 	    VarEntity var = function.lookupVarLocally("t1");
@@ -70,7 +70,7 @@ public class PythonParameterTypeDedudceTest extends PythonParserTest {
 		    FileParser parser = createFileParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
 	    String name = withPackageName(srcs[0],"test2");
 	    FunctionEntity function = (FunctionEntity)( repo.getEntity(name));
 	    VarEntity var = function.lookupVarLocally("t1");
@@ -90,7 +90,7 @@ public class PythonParameterTypeDedudceTest extends PythonParserTest {
 		    FileParser parser = createFileParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
 	    String name = withPackageName(srcs[0],"test");
 	    FunctionEntity function = (FunctionEntity)( repo.getEntity(name));
 	    VarEntity var = function.lookupVarLocally("t2");

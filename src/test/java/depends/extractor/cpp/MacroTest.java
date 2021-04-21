@@ -28,7 +28,7 @@ public class MacroTest extends CppParserTest{
 		    CppFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
 	    
         assertNotNull(this.repo.getEntity("Macro"));
 	}
@@ -44,7 +44,7 @@ public class MacroTest extends CppParserTest{
 		    CppFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
 	    
         assertFalse(repo.getEntity("foo") instanceof MultiDeclareEntities);
 	}
@@ -60,7 +60,7 @@ public class MacroTest extends CppParserTest{
 		    CppFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings();
+	    resolveAllBindings();
 	    
         assertNotNull(repo.getEntity("Macro3.bar"));
 	}
