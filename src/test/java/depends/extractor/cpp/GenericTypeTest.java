@@ -22,7 +22,7 @@ public class GenericTypeTest extends CppParserTest {
 		CppFileParser parser = createParser(src);
 		parser.parse();
 		resolveAllBindings();
-		assertNotNull(repo.getEntity("hash"));
+		assertNotNull(entityRepo.getEntity("hash"));
 	}
 
 	@Test
@@ -31,7 +31,7 @@ public class GenericTypeTest extends CppParserTest {
 		CppFileParser parser = createParser(src);
 		parser.parse();
 		resolveAllBindings();
-		this.assertContainsRelation(repo.getEntity("xStack"), DependencyType.PARAMETER, "X");
+		this.assertContainsRelation(entityRepo.getEntity("xStack"), DependencyType.PARAMETER, "X");
 	}
 
 	@Test
@@ -40,7 +40,7 @@ public class GenericTypeTest extends CppParserTest {
 		CppFileParser parser = createParser(src);
 		parser.parse();
 		resolveAllBindings();
-		this.assertContainsRelation(repo.getEntity("XStack"), DependencyType.INHERIT, "Stack");
+		this.assertContainsRelation(entityRepo.getEntity("XStack"), DependencyType.INHERIT, "Stack");
 	}
 
 	@Test
@@ -49,9 +49,9 @@ public class GenericTypeTest extends CppParserTest {
 		CppFileParser parser = createParser(src);
 		parser.parse();
 		resolveAllBindings();
-		this.assertContainsRelation(repo.getEntity("GenericTypeEmbededTest"), DependencyType.CONTAIN, "MyHashMap");
-		this.assertContainsRelation(repo.getEntity("GenericTypeEmbededTest.data"), DependencyType.PARAMETER, "MyList");
-		this.assertContainsRelation(repo.getEntity("GenericTypeEmbededTest.data"), DependencyType.PARAMETER, "MyArray");
+		this.assertContainsRelation(entityRepo.getEntity("GenericTypeEmbededTest"), DependencyType.CONTAIN, "MyHashMap");
+		this.assertContainsRelation(entityRepo.getEntity("GenericTypeEmbededTest.data"), DependencyType.PARAMETER, "MyList");
+		this.assertContainsRelation(entityRepo.getEntity("GenericTypeEmbededTest.data"), DependencyType.PARAMETER, "MyArray");
 	}
 
 	@Test
@@ -60,7 +60,7 @@ public class GenericTypeTest extends CppParserTest {
 		CppFileParser parser = createParser(src);
 		parser.parse();
 		resolveAllBindings();
-		assertNotNull(repo.getEntity("foo.t2"));
+		assertNotNull(entityRepo.getEntity("foo.t2"));
 	}
 
 	@Test
@@ -69,11 +69,11 @@ public class GenericTypeTest extends CppParserTest {
 		CppFileParser parser = createParser(src);
 		parser.parse();
 		resolveAllBindings();
-		FunctionEntity func = (FunctionEntity) repo.getEntity("get");
+		FunctionEntity func = (FunctionEntity) entityRepo.getEntity("get");
 		this.assertContainsRelation(func, DependencyType.RETURN, "std.tuple_element.type");
-		this.assertContainsRelation(repo.getEntity("get"), DependencyType.PARAMETER, "Index");
-		this.assertContainsRelation(repo.getEntity("get"), DependencyType.PARAMETER, "std.tuple");
-		this.assertContainsRelation(repo.getEntity("get"), DependencyType.PARAMETER, "Domains");
+		this.assertContainsRelation(entityRepo.getEntity("get"), DependencyType.PARAMETER, "Index");
+		this.assertContainsRelation(entityRepo.getEntity("get"), DependencyType.PARAMETER, "std.tuple");
+		this.assertContainsRelation(entityRepo.getEntity("get"), DependencyType.PARAMETER, "Domains");
 	}
 
 }

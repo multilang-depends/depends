@@ -1,19 +1,18 @@
 package depends.extractor.python;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-
 import depends.entity.CandidateTypes;
 import depends.entity.FunctionEntity;
 import depends.entity.TypeEntity;
 import depends.entity.VarEntity;
 import depends.extractor.FileParser;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class PythonParameterTypeDedudceTest extends PythonParserTest {
 	@Before
@@ -33,7 +32,7 @@ public class PythonParameterTypeDedudceTest extends PythonParserTest {
 	    }
 	    resolveAllBindings();
 	    String name = withPackageName(srcs[0],"test");
-	    FunctionEntity function = (FunctionEntity)( repo.getEntity(name));
+	    FunctionEntity function = (FunctionEntity)( entityRepo.getEntity(name));
 	    VarEntity var = function.lookupVarLocally("t1");
 	    TypeEntity type = var.getType();
 	    assertTrue(type instanceof CandidateTypes);
@@ -53,7 +52,7 @@ public class PythonParameterTypeDedudceTest extends PythonParserTest {
 	    }
 	    resolveAllBindings();
 	    String name = withPackageName(srcs[0],"test");
-	    FunctionEntity function = (FunctionEntity)( repo.getEntity(name));
+	    FunctionEntity function = (FunctionEntity)( entityRepo.getEntity(name));
 	    VarEntity var = function.lookupVarLocally("t1");
 	    TypeEntity type = var.getType();
 	    assertTrue(type == null);
@@ -72,7 +71,7 @@ public class PythonParameterTypeDedudceTest extends PythonParserTest {
 	    }
 	    resolveAllBindings();
 	    String name = withPackageName(srcs[0],"test2");
-	    FunctionEntity function = (FunctionEntity)( repo.getEntity(name));
+	    FunctionEntity function = (FunctionEntity)( entityRepo.getEntity(name));
 	    VarEntity var = function.lookupVarLocally("t1");
 	    TypeEntity type = var.getType();
 	    assertTrue(type instanceof CandidateTypes);
@@ -92,7 +91,7 @@ public class PythonParameterTypeDedudceTest extends PythonParserTest {
 	    }
 	    resolveAllBindings();
 	    String name = withPackageName(srcs[0],"test");
-	    FunctionEntity function = (FunctionEntity)( repo.getEntity(name));
+	    FunctionEntity function = (FunctionEntity)( entityRepo.getEntity(name));
 	    VarEntity var = function.lookupVarLocally("t2");
 	    TypeEntity type = var.getType();
 	    assertTrue(type instanceof CandidateTypes);

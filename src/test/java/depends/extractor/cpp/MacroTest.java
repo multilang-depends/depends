@@ -9,7 +9,6 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
-import depends.deptypes.DependencyType;
 import depends.entity.MultiDeclareEntities;
 
 public class MacroTest extends CppParserTest{
@@ -30,7 +29,7 @@ public class MacroTest extends CppParserTest{
 	    }
 	    resolveAllBindings();
 	    
-        assertNotNull(this.repo.getEntity("Macro"));
+        assertNotNull(this.entityRepo.getEntity("Macro"));
 	}
 
 	@Test
@@ -46,7 +45,7 @@ public class MacroTest extends CppParserTest{
 	    }
 	    resolveAllBindings();
 	    
-        assertFalse(repo.getEntity("foo") instanceof MultiDeclareEntities);
+        assertFalse(entityRepo.getEntity("foo") instanceof MultiDeclareEntities);
 	}
 	
 	
@@ -62,7 +61,7 @@ public class MacroTest extends CppParserTest{
 	    }
 	    resolveAllBindings();
 	    
-        assertNotNull(repo.getEntity("Macro3.bar"));
+        assertNotNull(entityRepo.getEntity("Macro3.bar"));
 	}
 	
 	

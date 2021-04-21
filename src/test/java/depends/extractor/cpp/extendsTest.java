@@ -25,7 +25,7 @@ public class extendsTest extends CppParserTest{
 		    parser.parse();
 	    }
 	    resolveAllBindings();
-        Entity e = repo.getEntity("B");
+        Entity e = entityRepo.getEntity("B");
         assertEquals(2,e.getRelations().size());
 	}
 	

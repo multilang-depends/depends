@@ -81,7 +81,7 @@ abstract public class AbstractLangProcessor {
 	 * @param fileFullPath
 	 * @return
 	 */
-	protected abstract FileParser createFileParser(String fileFullPath);
+	public abstract FileParser createFileParser(String fileFullPath);
 
 	public Inferer inferer;
 	protected EntityRepo entityRepo;
@@ -93,7 +93,6 @@ abstract public class AbstractLangProcessor {
 	
 	public AbstractLangProcessor() {
 		entityRepo = new InMemoryEntityRepo();
-		inferer = new Inferer(entityRepo,  getImportLookupStrategy(), getBuiltInType());
 	}
 
 	/**
@@ -103,13 +102,13 @@ abstract public class AbstractLangProcessor {
 	 *
 	 * @param inputDir
 	 * @param includeDir
+	 * @param inferer
 	 * @return
 	 */
-	public EntityRepo buildDependencies(String inputDir, String[] includeDir, boolean callAsImpl, boolean isCollectUnsolvedBindings, boolean isDuckTypingDeduce) {
+	public EntityRepo buildDependencies(String inputDir, String[] includeDir, Inferer inferer) {
 		this.inputSrcPath = inputDir;
 		this.includeDirs = includeDir;
-		this.inferer.setCollectUnsolvedBindings(isCollectUnsolvedBindings);
-		this.inferer.setDuckTypingDeduce(isDuckTypingDeduce);
+		this.inferer = inferer;
 		logger.info("Start parsing files...");
 		parseAllFiles();
 		markAllEntitiesScope();
@@ -117,7 +116,7 @@ abstract public class AbstractLangProcessor {
 			logger.info("Resolve types and bindings of variables, methods and expressions.... " + this.inputSrcPath);
 			logger.info("Heap Information: " + ManagementFactory.getMemoryMXBean().getHeapMemoryUsage());
 		}
-		resolveBindings(callAsImpl);
+		resolveBindings();
 		if (logger.isInfoEnabled()) {
 			System.gc();
 			logger.info("Heap Information: " + ManagementFactory.getMemoryMXBean().getHeapMemoryUsage());
@@ -143,9 +142,9 @@ abstract public class AbstractLangProcessor {
 	 * @param callAsImpl
 	 * @return unsolved bindings
 	 */
-	public void resolveBindings(boolean callAsImpl) {
+	public void resolveBindings() {
 		System.out.println("Resolve types and bindings of variables, methods and expressions....");
-		this.potentialExternalDependencies = inferer.resolveAllBindings(callAsImpl,this);
+		this.potentialExternalDependencies = inferer.resolveAllBindings(this);
 		if (getExternalDependencies().size() > 0) {
 			System.out.println("There are " + getExternalDependencies().size() + " items are potential external dependencies.");
 		}

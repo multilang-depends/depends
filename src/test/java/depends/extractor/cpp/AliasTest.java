@@ -1,13 +1,12 @@
 package depends.extractor.cpp;
-import static org.junit.Assert.fail;
-
-import java.io.IOException;
-
+import depends.deptypes.DependencyType;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import depends.deptypes.DependencyType;
+import java.io.IOException;
+
+import static org.junit.Assert.fail;
 
 public class AliasTest extends CppParserTest{
     @Before
@@ -21,7 +20,7 @@ public class AliasTest extends CppParserTest{
 	    CppFileParser parser = createParser(src);
         parser.parse();
         resolveAllBindings();
-        this.assertContainsRelation(repo.getEntity("bar"), DependencyType.CALL, "F.foo");
+        this.assertContainsRelation(entityRepo.getEntity("bar"), DependencyType.CALL, "F.foo");
 	}
 	
 	@Test
@@ -30,7 +29,7 @@ public class AliasTest extends CppParserTest{
 	    CppFileParser parser = createParser(src);
         parser.parse();
         resolveAllBindings();
-        this.assertContainsRelation(repo.getEntity("C"), DependencyType.INHERIT, "A");
+        this.assertContainsRelation(entityRepo.getEntity("C"), DependencyType.INHERIT, "A");
 	}
 	
 	@Test
@@ -45,7 +44,7 @@ public class AliasTest extends CppParserTest{
 		    parser.parse();
 	    }
         resolveAllBindings();
-        this.assertContainsRelation(repo.getEntity("bar"), DependencyType.CALL, "foo");
+        this.assertContainsRelation(entityRepo.getEntity("bar"), DependencyType.CALL, "foo");
 	}
 	
 	@Ignore

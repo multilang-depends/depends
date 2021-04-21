@@ -25,7 +25,7 @@ public class MacroRelationTest extends CppParserTest{
 		    parser.parse();
 	    }
 	    resolveAllBindings();
-	    Entity e = repo.getEntity("foo");
+	    Entity e = entityRepo.getEntity("foo");
 	    this.assertContainsRelation(e, DependencyType.RETURN, Inferer.buildInType.getQualifiedName());
 	    this.assertContainsRelation(e, DependencyType.CONTAIN, Inferer.buildInType.getQualifiedName());
 	}

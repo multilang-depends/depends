@@ -37,6 +37,8 @@ import depends.generator.FunctionDependencyGenerator;
 import depends.generator.StructureDependencyGenerator;
 import depends.matrix.core.DependencyMatrix;
 import depends.matrix.transform.MatrixLevelReducer;
+import depends.relations.Inferer;
+import depends.relations.RelationCounter;
 import edu.emory.mathcs.backport.java.util.Arrays;
 import multilang.depends.util.file.FileUtil;
 import multilang.depends.util.file.FolderCollector;
@@ -102,61 +104,20 @@ public class Main {
 			System.err.println("Not support this language: " + lang);
 			return;
 		}
+		Inferer inferer = new Inferer(langProcessor.getEntityRepo(), langProcessor.getImportLookupStrategy(), langProcessor.getBuiltInType()
+				, app.isOutputExternalDependencies(), app.isDuckTypingDeduce());
 
-		if ( app.isDv8map()) {
-			DV8MappingFileBuilder dv8MapfileBuilder = new DV8MappingFileBuilder(langProcessor.supportedRelations());
-			dv8MapfileBuilder.create(outputDir+File.separator+"depends-dv8map.mapping");
-		}
-		
 		long startTime = System.currentTimeMillis();
-		
-		FilenameWritter filenameWritter = new EmptyFilenameWritter();
-		if (!StringUtils.isEmpty(app.getNamePathPattern())) {
-			if (app.getNamePathPattern().equals("dot")||
-					app.getNamePathPattern().equals(".")) {
-				filenameWritter = new DotPathFilenameWritter();
-			}else if (app.getNamePathPattern().equals("unix")||
-					app.getNamePathPattern().equals("/")) {
-				filenameWritter = new UnixPathFilenameWritter();
-			}else if (app.getNamePathPattern().equals("windows")||
-					app.getNamePathPattern().equals("\\")) {
-				filenameWritter = new WindowsPathFilenameWritter();
-			}else{
-				throw new ParameterException("Unknown name pattern paremater:" + app.getNamePathPattern());
-			}
-		}
+		//step1: build data
+		EntityRepo entityRepo = langProcessor.buildDependencies(inputDir, includeDir,  inferer);
 
-		
-		/* by default use file dependency generator */
-		DependencyGenerator dependencyGenerator = new FileDependencyGenerator();
-		if (!StringUtils.isEmpty(app.getGranularity())) {
-			/* method parameter means use method generator */
-			if (app.getGranularity().equals("method"))
-				dependencyGenerator = new FunctionDependencyGenerator();
-			else if (app.getGranularity().equals("structure"))
-				dependencyGenerator = new StructureDependencyGenerator();
-			else if (app.getGranularity().equals("file"))
-				/*no action*/;
-			else if (app.getGranularity().startsWith("L"))
-				/*no action*/;
-			else
-				throw new ParameterException("Unknown granularity parameter:" + app.getGranularity());
-		}
-		
-		if (app.isStripLeadingPath() ||
-				app.getStrippedPaths().length>0) {
-			dependencyGenerator.setLeadingStripper(new LeadingNameStripper(app.isStripLeadingPath(),inputDir,app.getStrippedPaths()));
-		}
-		
-		if (app.isDetail()) {
-			dependencyGenerator.setGenerateDetail(true);
-		}
-		
-		dependencyGenerator.setFilenameRewritter(filenameWritter);
+		new RelationCounter(entityRepo,supportImplLink,langProcessor,inferer).computeRelations();
+		System.out.println("Dependency done....");
 
-		EntityRepo entityRepo = langProcessor.buildDependencies(inputDir, includeDir,  supportImplLink, app.isOutputExternalDependencies(), app.isDuckTypingDeduce());
+		//step2: generate dependencies matrix
+		DependencyGenerator dependencyGenerator = getDependencyGenerator(app, inputDir);
 		DependencyMatrix matrix = dependencyGenerator.identifyDependencies(entityRepo,app.getTypeFilter());
-		
+		//step3: output
 		if (app.getGranularity().startsWith("L")) {
 			matrix = new MatrixLevelReducer(matrix,app.getGranularity().substring(1)).shrinkToLevel();
 		}
@@ -173,6 +134,58 @@ public class Main {
 		CacheManager.create().shutdown();
 		System.out.println("Consumed time: " + (float) ((endTime - startTime) / 1000.00) + " s,  or "
 				+ (float) ((endTime - startTime) / 60000.00) + " min.");
+		if ( app.isDv8map()) {
+			DV8MappingFileBuilder dv8MapfileBuilder = new DV8MappingFileBuilder(langProcessor.supportedRelations());
+			dv8MapfileBuilder.create(outputDir+ File.separator+"depends-dv8map.mapping");
+		}
+
+	}
+
+	private static DependencyGenerator getDependencyGenerator(DependsCommand app, String inputDir) throws ParameterException {
+		FilenameWritter filenameWritter = new EmptyFilenameWritter();
+		if (!StringUtils.isEmpty(app.getNamePathPattern())) {
+			if (app.getNamePathPattern().equals("dot")||
+					app.getNamePathPattern().equals(".")) {
+				filenameWritter = new DotPathFilenameWritter();
+			}else if (app.getNamePathPattern().equals("unix")||
+					app.getNamePathPattern().equals("/")) {
+				filenameWritter = new UnixPathFilenameWritter();
+			}else if (app.getNamePathPattern().equals("windows")||
+					app.getNamePathPattern().equals("\\")) {
+				filenameWritter = new WindowsPathFilenameWritter();
+			}else{
+				throw new ParameterException("Unknown name pattern paremater:" + app.getNamePathPattern());
+			}
+		}
+
+
+		/* by default use file dependency generator */
+		DependencyGenerator dependencyGenerator = new FileDependencyGenerator();
+		if (!StringUtils.isEmpty(app.getGranularity())) {
+			/* method parameter means use method generator */
+			if (app.getGranularity().equals("method"))
+				dependencyGenerator = new FunctionDependencyGenerator();
+			else if (app.getGranularity().equals("structure"))
+				dependencyGenerator = new StructureDependencyGenerator();
+			else if (app.getGranularity().equals("file"))
+				/*no action*/;
+			else if (app.getGranularity().startsWith("L"))
+				/*no action*/;
+			else
+				throw new ParameterException("Unknown granularity parameter:" + app.getGranularity());
+		}
+
+		if (app.isStripLeadingPath() ||
+				app.getStrippedPaths().length>0) {
+			dependencyGenerator.setLeadingStripper(new LeadingNameStripper(app.isStripLeadingPath(), inputDir, app.getStrippedPaths()));
+		}
+
+		if (app.isDetail()) {
+			dependencyGenerator.setGenerateDetail(true);
+		}
+
+		dependencyGenerator.setFilenameRewritter(filenameWritter);
+		return dependencyGenerator;
 	}
 
 }

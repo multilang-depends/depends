@@ -1,20 +1,14 @@
 package depends.extractor.cpp;
-import static org.junit.Assert.assertEquals;
+import depends.deptypes.DependencyType;
+import depends.entity.Entity;
+import depends.entity.FunctionEntityImpl;
+import depends.entity.MultiDeclareEntities;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import org.junit.Before;
-import org.junit.Test;
-
-import depends.deptypes.DependencyType;
-import depends.entity.ContainerEntity;
-import depends.entity.Entity;
-import depends.entity.FunctionEntityImpl;
-import depends.entity.MultiDeclareEntities;
-import depends.extractor.cpp.cdt.CdtCppFileParser;
 
 public class ImplementRelationTest extends CppParserTest{
     @Before
@@ -34,7 +28,7 @@ public class ImplementRelationTest extends CppParserTest{
 		    parser.parse();
 	    }
 	    resolveAllBindings();
-	    MultiDeclareEntities multiDeclare = (MultiDeclareEntities)( repo.getEntity("foo"));
+	    MultiDeclareEntities multiDeclare = (MultiDeclareEntities)( entityRepo.getEntity("foo"));
 	    List<Entity> f = multiDeclare.getEntities().stream().filter(item->item.getClass().equals(FunctionEntityImpl.class)).collect(Collectors.toList());
         this.assertContainsRelation(f.get(0),DependencyType.IMPLEMENT,"foo");
 	}

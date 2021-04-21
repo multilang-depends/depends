@@ -1,16 +1,15 @@
 package depends.extractor.python;
 
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import depends.entity.FunctionEntity;
 import depends.entity.TypeEntity;
 import depends.entity.VarEntity;
 import depends.extractor.FileParser;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.io.IOException;
+
+import static org.junit.Assert.assertTrue;
 
 public class SelfShouldBeThisTypeTest extends PythonParserTest {
 	@Before
@@ -29,7 +28,7 @@ public class SelfShouldBeThisTypeTest extends PythonParserTest {
 		    parser.parse();
 	    }
 	    resolveAllBindings();
-	    FunctionEntity function = (FunctionEntity)(repo.getEntity(withPackageName(srcs[0],"A.foo")));
+	    FunctionEntity function = (FunctionEntity)(entityRepo.getEntity(withPackageName(srcs[0],"A.foo")));
 	    VarEntity var = function.lookupVarLocally("self");
 	    TypeEntity type = var.getType();
 	    assertTrue(type.getQualifiedName().equals(withPackageName(srcs[0],"A")));

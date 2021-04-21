@@ -25,7 +25,7 @@ public class DuplicateDeclarationTest extends CppParserTest {
 				    parser.parse();
 			    }
 			    resolveAllBindings();
-			    Entity e = repo.getEntity("X.invoke");
+			    Entity e = entityRepo.getEntity("X.invoke");
 			    this.assertContainsRelation(e, DependencyType.CONTAIN,"DupClass");
 			    this.assertContainsRelation(e, DependencyType.CALL,"DupClass");
 			    this.assertContainsRelation(e, DependencyType.CREATE,"DupClass");

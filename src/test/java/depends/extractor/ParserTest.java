@@ -1,17 +1,52 @@
 package depends.extractor;
 
-import static org.junit.Assert.fail;
-
-import java.util.ArrayList;
-import java.util.Collection;
-
 import depends.entity.ContainerEntity;
 import depends.entity.Entity;
 import depends.entity.FunctionEntity;
 import depends.entity.VarEntity;
+import depends.entity.repo.EntityRepo;
+import depends.relations.Inferer;
 import depends.relations.Relation;
+import depends.relations.RelationCounter;
+import multilang.depends.util.file.TemporaryFile;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Set;
+
+import static org.junit.Assert.fail;
 
 public abstract class ParserTest {
+	protected EntityRepo entityRepo ;
+	protected Inferer inferer ;
+	protected AbstractLangProcessor langProcessor;
+
+	protected  void init(){
+		entityRepo = langProcessor.getEntityRepo();
+		inferer = new Inferer(langProcessor.getEntityRepo(),langProcessor.getImportLookupStrategy(),langProcessor.getBuiltInType(),false,false);
+		langProcessor.inferer = inferer;
+		TemporaryFile.reset();
+	}
+
+	protected  void init(boolean duckTypingDeduce){
+		entityRepo = langProcessor.getEntityRepo();
+		inferer = new Inferer(langProcessor.getEntityRepo(),langProcessor.getImportLookupStrategy(),langProcessor.getBuiltInType(),false,duckTypingDeduce);
+		langProcessor.inferer = inferer;
+		TemporaryFile.reset();
+	}
+
+	public Set<UnsolvedBindings> resolveAllBindings() {
+		Set<UnsolvedBindings> result = inferer.resolveAllBindings(langProcessor);
+		new RelationCounter(entityRepo,false,langProcessor,inferer).computeRelations();
+		return result;
+	}
+
+	protected Set<UnsolvedBindings>  resolveAllBindings(boolean callAsImpl) {
+		Set<UnsolvedBindings> result = inferer.resolveAllBindings(langProcessor);
+		new RelationCounter(entityRepo,callAsImpl,langProcessor,inferer).computeRelations();
+		return result;
+	}
+
 	protected void assertNotContainsRelation(Entity inEntity, String dependencyType, String dependedEntityFullName) {
 		for (Relation r:inEntity.getRelations()) {
 			if (r.getType().equals(dependencyType)) {
@@ -69,4 +104,5 @@ public abstract class ParserTest {
 	    }
 	    fail("cannot found return type with rawname " + name);			
 	}
+
 }

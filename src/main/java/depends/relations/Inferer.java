@@ -50,10 +50,13 @@ public class Inferer {
 	private boolean isDuckTypingDeduce = true;
 	private static Logger logger = LoggerFactory.getLogger(Inferer.class);
 
-	public Inferer(EntityRepo repo, ImportLookupStrategy importLookupStrategy, BuiltInType buildInTypeManager) {
+	public Inferer(EntityRepo repo, ImportLookupStrategy importLookupStrategy, BuiltInType buildInTypeManager,
+				   boolean isCollectUnsolvedBindings, boolean isDuckTypingDeduce) {
 		this.repo = repo;
 		this.importLookupStrategy = importLookupStrategy;
 		this.buildInTypeManager = buildInTypeManager;
+		this.isCollectUnsolvedBindings = isCollectUnsolvedBindings;
+		this.isDuckTypingDeduce = isDuckTypingDeduce;
 		unsolvedSymbols= new HashSet<>();
 		importLookupStrategy.setInferer(this);
 	}
@@ -64,7 +67,7 @@ public class Inferer {
 	 * - Secondly, we resolve all expressions (expression will use type infomation of previous step
 	 * @param langProcessor 
 	 */
-	public  Set<UnsolvedBindings> resolveAllBindings(boolean callAsImpl, AbstractLangProcessor langProcessor) {
+	public  Set<UnsolvedBindings> resolveAllBindings(AbstractLangProcessor langProcessor) {
 		System.out.println("Resolve type bindings....");
 		if (logger.isInfoEnabled()) {
 			logger.info("Resolve type bindings...");
@@ -75,10 +78,7 @@ public class Inferer {
 			logger.info("Dependency analaysing...");
 		}
 		logger.info("Heap Information: " + ManagementFactory.getMemoryMXBean().getHeapMemoryUsage());
-		
-		new RelationCounter(repo.getFileEntities(),this,repo,callAsImpl,langProcessor).computeRelations();
-		System.out.println("Dependency done....");
-		return unsolvedSymbols;		
+		return unsolvedSymbols;
 	}
 
 
@@ -328,19 +328,12 @@ public class Inferer {
 		return eagerExpressionResolve;
 	}
 
-	public void setCollectUnsolvedBindings(boolean isCollectUnsolvedBindings) {
-		this.isCollectUnsolvedBindings  = isCollectUnsolvedBindings;
-	}
 
 	public EntityRepo getRepo() {
 		return repo;
 	}
 
-	public void setDuckTypingDeduce(boolean isDuckTypingDeduce) {
-		this.isDuckTypingDeduce = isDuckTypingDeduce;
+	public void setCollectUnsolvedBindings(boolean isCollectUnsolvedBindings) {
+		this.isCollectUnsolvedBindings = isCollectUnsolvedBindings;
 	}
-	
-
-
-
 }

@@ -1,10 +1,5 @@
 package depends.extractor.python;
 
-import java.io.IOException;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import depends.deptypes.DependencyType;
 import depends.entity.Entity;
 import depends.entity.FileEntity;
@@ -12,6 +7,10 @@ import depends.entity.FunctionEntity;
 import depends.entity.MultiDeclareEntities;
 import depends.extractor.python.union.PythonFileParser;
 import multilang.depends.util.file.FileUtil;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.io.IOException;
 
 public class PythonImportTest extends PythonParserTest {
     @Before
@@ -31,7 +30,7 @@ public class PythonImportTest extends PythonParserTest {
 		    parser.parse();
 	    }
 	    resolveAllBindings();
-	    Entity file = repo.getEntity(FileUtil.uniqFilePath(srcs[1]));
+	    Entity file = entityRepo.getEntity(FileUtil.uniqFilePath(srcs[1]));
 		this.assertContainsRelation(file, DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[0]));
 	}
 	
@@ -48,7 +47,7 @@ public class PythonImportTest extends PythonParserTest {
 		    parser.parse();
 	    }
 	    resolveAllBindings();
-	    Entity file = repo.getEntity(FileUtil.uniqFilePath(srcs[0]));
+	    Entity file = entityRepo.getEntity(FileUtil.uniqFilePath(srcs[0]));
 		this.assertContainsRelation(file, DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[1]));
 		this.assertContainsRelation(file, DependencyType.CALL,withPackageName(srcs[0],"foo"));
 	}
@@ -65,7 +64,7 @@ public class PythonImportTest extends PythonParserTest {
 		    parser.parse();
 	    }
 	    resolveAllBindings();
-	    Entity file = repo.getEntity(FileUtil.uniqFilePath(srcs[0]));
+	    Entity file = entityRepo.getEntity(FileUtil.uniqFilePath(srcs[0]));
 		this.assertContainsRelation(file, DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[1]));
 		this.assertContainsRelation(file, DependencyType.CALL,withPackageName(srcs[0],"foo"));
 	}
@@ -82,7 +81,7 @@ public class PythonImportTest extends PythonParserTest {
 		    parser.parse();
 	    }
 	    resolveAllBindings();
-	    Entity file = repo.getEntity(FileUtil.uniqFilePath(srcs[0]));
+	    Entity file = entityRepo.getEntity(FileUtil.uniqFilePath(srcs[0]));
 		this.assertContainsRelation(file, DependencyType.CALL,withPackageName(srcs[0],"foo"));
 		this.assertContainsRelation(file, DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[1]));
 	}
@@ -100,7 +99,7 @@ public class PythonImportTest extends PythonParserTest {
 		    parser.parse();
 	    }
 	    resolveAllBindings();
-	    Entity file = repo.getEntity(FileUtil.uniqFilePath(srcs[0]));
+	    Entity file = entityRepo.getEntity(FileUtil.uniqFilePath(srcs[0]));
 		this.assertContainsRelation(file, DependencyType.CALL,withPackageName(srcs[0],"foo"));
 		this.assertContainsRelation(file, DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[1]));
 	}
@@ -118,7 +117,7 @@ public class PythonImportTest extends PythonParserTest {
 		    parser.parse();
 	    }
 	    resolveAllBindings();
-	    Entity file = repo.getEntity(FileUtil.uniqFilePath(srcs[0]));
+	    Entity file = entityRepo.getEntity(FileUtil.uniqFilePath(srcs[0]));
 		this.assertContainsRelation(file, DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[1]));
 		this.assertContainsRelation(file, DependencyType.CALL,withPackageName(srcs[1],"foo"));
 	}
@@ -137,9 +136,9 @@ public class PythonImportTest extends PythonParserTest {
 		    parser.parse();
 	    }
 	    resolveAllBindings();
-		this.assertContainsRelation(repo.getEntity(FileUtil.uniqFilePath(srcs[0])), DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[1]));
-		this.assertContainsRelation(repo.getEntity(FileUtil.uniqFilePath(srcs[2])), DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[1]));
-		this.assertContainsRelation(repo.getEntity(FileUtil.uniqFilePath(srcs[3])), DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[1]));
+		this.assertContainsRelation(entityRepo.getEntity(FileUtil.uniqFilePath(srcs[0])), DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[1]));
+		this.assertContainsRelation(entityRepo.getEntity(FileUtil.uniqFilePath(srcs[2])), DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[1]));
+		this.assertContainsRelation(entityRepo.getEntity(FileUtil.uniqFilePath(srcs[3])), DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[1]));
 	}
 	
 	@Test
@@ -168,7 +167,7 @@ public class PythonImportTest extends PythonParserTest {
 		    parser.parse();
 	    }
 	    resolveAllBindings();
-		this.assertContainsRelation(repo.getEntity(FileUtil.uniqFilePath(srcs[0])), DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[1]));
+		this.assertContainsRelation(entityRepo.getEntity(FileUtil.uniqFilePath(srcs[0])), DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[1]));
 	}
 	
 	
@@ -184,7 +183,7 @@ public class PythonImportTest extends PythonParserTest {
 		    parser.parse();
 	    }
 	    resolveAllBindings();
-		this.assertContainsRelation(repo.getEntity(FileUtil.uniqFilePath(srcs[0])), DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[1]));
+		this.assertContainsRelation(entityRepo.getEntity(FileUtil.uniqFilePath(srcs[0])), DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[1]));
 	}
 	
 	
@@ -200,7 +199,7 @@ public class PythonImportTest extends PythonParserTest {
 		    parser.parse();
 	    }
 	    resolveAllBindings();
-	    FunctionEntity func = (FunctionEntity)repo.getEntity(withPackageName(srcs[0],"test"));
+	    FunctionEntity func = (FunctionEntity) entityRepo.getEntity(withPackageName(srcs[0],"test"));
 	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[1],"foo"));
 	}
 	
@@ -220,7 +219,7 @@ public class PythonImportTest extends PythonParserTest {
 	    }
 	    resolveAllBindings();
 	    
-	    MultiDeclareEntities funcs = (MultiDeclareEntities)repo.getEntity(withPackageName(srcs[1],"in_the_forest"));
+	    MultiDeclareEntities funcs = (MultiDeclareEntities) entityRepo.getEntity(withPackageName(srcs[1],"in_the_forest"));
 	    Entity func = funcs.getEntities().get(0);
 
 	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[1],"Duck.quack"));
@@ -242,7 +241,7 @@ public class PythonImportTest extends PythonParserTest {
 	    }
 	    resolveAllBindings();
 	    
-	    MultiDeclareEntities funcs = (MultiDeclareEntities)repo.getEntity(withPackageName(srcs[1],"in_the_forest"));
+	    MultiDeclareEntities funcs = (MultiDeclareEntities) entityRepo.getEntity(withPackageName(srcs[1],"in_the_forest"));
 	    Entity func = funcs.getEntities().get(0);
 	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[0],"Duck.quack"));
 	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[0],"Bird.quack"));
@@ -262,7 +261,7 @@ public class PythonImportTest extends PythonParserTest {
 		    parser.parse();
 	    }
 	    resolveAllBindings();
-	    FunctionEntity func = (FunctionEntity)repo.getEntity(withPackageName(srcs[0],"bar"));
+	    FunctionEntity func = (FunctionEntity) entityRepo.getEntity(withPackageName(srcs[0],"bar"));
 	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[2],"C"));
 	}
 
@@ -278,7 +277,7 @@ public class PythonImportTest extends PythonParserTest {
 		    parser.parse();
 	    }
 	    resolveAllBindings();
-	    FileEntity f = (FileEntity)repo.getEntity(FileUtil.uniqFilePath(srcs[0]));
+	    FileEntity f = (FileEntity) entityRepo.getEntity(FileUtil.uniqFilePath(srcs[0]));
 	    this.assertContainsRelation(f, DependencyType.CALL, withPackageName(srcs[1],"Core.foo"));
 	}
 

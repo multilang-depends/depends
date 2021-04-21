@@ -5,7 +5,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import depends.deptypes.DependencyType;
-import depends.extractor.cpp.cdt.CdtCppFileParser;
 
 public class TypeDefTest extends CppParserTest{
     @Before
@@ -24,7 +23,7 @@ public class TypeDefTest extends CppParserTest{
 		    parser.parse();
 	    }
 	    resolveAllBindings();
-        this.assertContainsRelation(repo.getEntity("foo"), DependencyType.PARAMETER, "MyInt");
+        this.assertContainsRelation(entityRepo.getEntity("foo"), DependencyType.PARAMETER, "MyInt");
 	}
 			
 }

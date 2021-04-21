@@ -1,13 +1,11 @@
 package depends.extractor.cpp;
-import static org.junit.Assert.assertEquals;
-
-import java.io.IOException;
-
+import depends.deptypes.DependencyType;
 import org.junit.Before;
 import org.junit.Test;
 
-import depends.deptypes.DependencyType;
-import depends.extractor.cpp.cdt.CdtCppFileParser;
+import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
 
 public class ContainRelationTest extends CppParserTest{
     @Before
@@ -26,7 +24,7 @@ public class ContainRelationTest extends CppParserTest{
 		    parser.parse();
 	    }
 	    resolveAllBindings();
-        assertEquals(1,repo.getEntity("UnderTest").getRelations().size());
+        assertEquals(1, entityRepo.getEntity("UnderTest").getRelations().size());
 	}
 	
 	@Test
@@ -41,7 +39,7 @@ public class ContainRelationTest extends CppParserTest{
 		    parser.parse();
 	    }
 	    resolveAllBindings();
-        assertEquals(2,repo.getEntity("UnderTest").getRelations().size());
+        assertEquals(2, entityRepo.getEntity("UnderTest").getRelations().size());
 	}
 	
 	@Test
@@ -56,7 +54,7 @@ public class ContainRelationTest extends CppParserTest{
 		    parser.parse();
 	    }
 	    resolveAllBindings();
-	    this.assertContainsRelation(repo.getEntity("UnderTest"), DependencyType.CONTAIN, "Member");
+	    this.assertContainsRelation(entityRepo.getEntity("UnderTest"), DependencyType.CONTAIN, "Member");
 	}
 	
 	

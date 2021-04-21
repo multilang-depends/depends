@@ -41,8 +41,8 @@ public class RelationCounter {
 	private boolean callAsImpl;
 	private AbstractLangProcessor langProcessor;
 
-	public RelationCounter(Collection<Entity> iterator, Inferer inferer, EntityRepo repo, boolean callAsImpl, AbstractLangProcessor langProcessor) {
-		this.entities = iterator;
+	public RelationCounter( EntityRepo repo, boolean callAsImpl, AbstractLangProcessor langProcessor,Inferer inferer) {
+		this.entities = repo.getFileEntities();
 		this.inferer = inferer;
 		this.repo = repo;
 		this.callAsImpl = callAsImpl;

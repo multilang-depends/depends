@@ -20,7 +20,7 @@ public class CppExpressionTest extends CppParserTest{
 	    CppFileParser parser = createParser(src);
         parser.parse();
         resolveAllBindings();
-        Entity e = repo.getEntity("foo");
+        Entity e = entityRepo.getEntity("foo");
         this.assertContainsRelation(e, DependencyType.PARAMETER,"ClassA");
         this.assertContainsRelation(e, DependencyType.CAST,"ClassA");
         this.assertContainsRelation(e, DependencyType.CALL,"ClassA");
@@ -38,7 +38,7 @@ public class CppExpressionTest extends CppParserTest{
         CppFileParser parser = createParser(src);
         parser.parse();
         resolveAllBindings();
-        Entity e = repo.getEntity("foo");
+        Entity e = entityRepo.getEntity("foo");
         assertEquals(4,e.getRelations().size());
     }
 }

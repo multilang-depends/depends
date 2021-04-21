@@ -25,10 +25,11 @@ public class PythonGlobalVarTest extends PythonParserTest {
 		    PythonFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings(true,langProcessor);
-        Entity foo = repo.getEntity(withPackageName(srcs[0],"foo"));
+	    resolveAllBindings(true);
+        Entity foo = entityRepo.getEntity(withPackageName(srcs[0],"foo"));
         this.assertContainsRelation(foo, DependencyType.USE, "global_var");
 	}
-	
+
+
 
 }

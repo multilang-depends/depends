@@ -29,8 +29,8 @@ public class RelationToImplementationTest extends CppParserTest{
 		    CppFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings(true,langProcessor);
-	    Entity bar = repo.getEntity("bar");
+	    resolveAllBindings(true);
+	    Entity bar = entityRepo.getEntity("bar");
 	    int matchCount = 0;
 	    for (Relation relation:bar.getRelations()) {
 	    	if (relation.getEntity() instanceof FunctionEntityProto) {
@@ -56,8 +56,8 @@ public class RelationToImplementationTest extends CppParserTest{
 		    CppFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings(true,langProcessor);
-	    Entity bar = repo.getEntity("baz");
+	    resolveAllBindings(true);
+	    Entity bar = entityRepo.getEntity("baz");
 	    int matchCount = 0;
 	    for (Relation relation:bar.getRelations()) {
 	    	if (relation.getEntity() instanceof VarEntity) {
@@ -80,8 +80,8 @@ public class RelationToImplementationTest extends CppParserTest{
 		    CppFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings(true,langProcessor);
-	    Entity bar = repo.getEntity("qux");
+	    resolveAllBindings(true);
+	    Entity bar = entityRepo.getEntity("qux");
 	    int matchCount = 0;
 	    for (Relation relation:bar.getRelations()) {
 	    	if (relation.getEntity() instanceof VarEntity) {

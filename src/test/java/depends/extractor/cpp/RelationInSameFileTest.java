@@ -29,8 +29,8 @@ public class RelationInSameFileTest extends CppParserTest{
 		    CppFileParser parser = createParser(src);
 		    parser.parse();
 	    }
-	    inferer.resolveAllBindings(true,langProcessor);
-	    Entity bar = repo.getEntity(FileUtil.uniqFilePath(srcs[0]));
+	    resolveAllBindings(true);
+	    Entity bar = entityRepo.getEntity(FileUtil.uniqFilePath(srcs[0]));
 	    int matchCount = 0;
 	    for (Relation relation:bar.getRelations()) {
 	    	if (relation.getEntity() instanceof FunctionEntityProto) {

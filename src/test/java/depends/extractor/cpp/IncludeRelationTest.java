@@ -35,7 +35,7 @@ public class IncludeRelationTest extends CppParserTest{
 	    }
 	    resolveAllBindings();
         File f = new File(srcs[0]);
-        assertEquals(3,repo.getEntity(f.getCanonicalPath()).getRelations().size());
+        assertEquals(3, entityRepo.getEntity(f.getCanonicalPath()).getRelations().size());
 	}
 	
 	
@@ -54,7 +54,7 @@ public class IncludeRelationTest extends CppParserTest{
 	    }
 	    resolveAllBindings();
         File f = new File(srcs[0]);
-        assertEquals(1,repo.getEntity(f.getCanonicalPath()).getRelations().size());
+        assertEquals(1, entityRepo.getEntity(f.getCanonicalPath()).getRelations().size());
 	}
 	
 	
@@ -69,7 +69,7 @@ public class IncludeRelationTest extends CppParserTest{
 		    parser.parse();
 	    }
 	    resolveAllBindings();
-        assertEquals("abc",((AliasEntity)repo.getEntity("abc_t")).getOriginType().getRawName().uniqName());
+        assertEquals("abc",((AliasEntity) entityRepo.getEntity("abc_t")).getOriginType().getRawName().uniqName());
         
 	}
 	
@@ -86,8 +86,8 @@ public class IncludeRelationTest extends CppParserTest{
 		    parser.parse();
 	    }
 	    resolveAllBindings();
-	    this.assertContainsRelation(this.repo.getEntity("foo"), DependencyType.CALL, "bar");
-	    this.assertNotContainsRelation(this.repo.getEntity("foo2"), DependencyType.CALL, "bar");
+	    this.assertContainsRelation(this.entityRepo.getEntity("foo"), DependencyType.CALL, "bar");
+	    this.assertNotContainsRelation(this.entityRepo.getEntity("foo2"), DependencyType.CALL, "bar");
 	}
 	
 	@Test
@@ -103,7 +103,7 @@ public class IncludeRelationTest extends CppParserTest{
 		    parser.parse();
 	    }
 	    resolveAllBindings();
-	    this.assertContainsRelation(this.repo.getEntity(FileUtil.uniqFilePath(srcs[0])), DependencyType.IMPORT, FileUtil.uniqFilePath(srcs[1]));
-	    this.assertContainsRelation(this.repo.getEntity(FileUtil.uniqFilePath(srcs[0])), DependencyType.IMPORT, FileUtil.uniqFilePath(srcs[2]));
+	    this.assertContainsRelation(this.entityRepo.getEntity(FileUtil.uniqFilePath(srcs[0])), DependencyType.IMPORT, FileUtil.uniqFilePath(srcs[1]));
+	    this.assertContainsRelation(this.entityRepo.getEntity(FileUtil.uniqFilePath(srcs[0])), DependencyType.IMPORT, FileUtil.uniqFilePath(srcs[2]));
 	} 
 }

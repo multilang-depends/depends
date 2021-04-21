@@ -27,8 +27,8 @@ public class DependencyWithPropertiesOfParentTest extends MavenParserTest{
 		    parser.parse();
 	    }
 	    resolveAllBindings();
-	    assertFalse(repo.getEntity("parent-group.a-parent_1.0_") instanceof MultiDeclareEntities);
-	    this.assertContainsRelation(repo.getEntity("testgroup.test_1.0_"), DependencyType.PomDependency, "a-dep-group.a-artifact_0.2_");
+	    assertFalse(entityRepo.getEntity("parent-group.a-parent_1.0_") instanceof MultiDeclareEntities);
+	    this.assertContainsRelation(entityRepo.getEntity("testgroup.test_1.0_"), DependencyType.PomDependency, "a-dep-group.a-artifact_0.2_");
 	}
 	
 	@Test
@@ -44,7 +44,7 @@ public class DependencyWithPropertiesOfParentTest extends MavenParserTest{
 		    parser.parse();
 	    }
 	    resolveAllBindings();
-	    this.assertContainsRelation(repo.getEntity("testgroup.test_1.0_"), DependencyType.PomPlugin, "aplugins.aplugin_0.1_");
+	    this.assertContainsRelation(entityRepo.getEntity("testgroup.test_1.0_"), DependencyType.PomPlugin, "aplugins.aplugin_0.1_");
 	}
 	
 	

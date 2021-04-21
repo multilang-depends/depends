@@ -29,7 +29,7 @@ public class PythonDecoratorTest extends PythonParserTest {
 		    parser.parse();
 	    }
 	    resolveAllBindings();
-	    FunctionEntity func = (FunctionEntity)repo.getEntity(withPackageName(srcs[0],"foo"));
+	    FunctionEntity func = (FunctionEntity) entityRepo.getEntity(withPackageName(srcs[0],"foo"));
 		this.assertContainsRelation(func, DependencyType.ANNOTATION	, withPackageName(srcs[0],"our_decorator"));
 	    assertEquals(1,func.getResolvedAnnotations().size());
 	}

@@ -27,7 +27,7 @@ public class UsingTest extends CppParserTest{
 		    parser.parse();
 	    }
 	    resolveAllBindings();
-        Entity e = repo.getEntity("foo");
+        Entity e = entityRepo.getEntity("foo");
         this.assertContainsRelation(e, DependencyType.RETURN, Inferer.buildInType.getQualifiedName());
         this.assertContainsRelation(e, DependencyType.CONTAIN, "A.C");
         this.assertContainsRelation(e, DependencyType.CONTAIN, "B.X");
@@ -45,7 +45,7 @@ public class UsingTest extends CppParserTest{
 		    parser.parse();
 	    }
 	    resolveAllBindings();
-        Entity e = repo.getEntity("bar");
+        Entity e = entityRepo.getEntity("bar");
         this.assertContainsRelation(e, DependencyType.RETURN, Inferer.buildInType.getQualifiedName());
         this.assertContainsRelation(e, DependencyType.CONTAIN, "A.C");
         this.assertContainsRelation(e, DependencyType.CONTAIN, "B.X");

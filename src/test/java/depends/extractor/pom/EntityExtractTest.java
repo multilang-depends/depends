@@ -1,11 +1,11 @@
 package depends.extractor.pom;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.IOException;
 
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class EntityExtractTest extends MavenParserTest{
     @Before
@@ -24,7 +24,7 @@ public class EntityExtractTest extends MavenParserTest{
 		    parser.parse();
 	    }
 	    resolveAllBindings();
-        assertEquals(0,repo.getEntity("org.log4j-test.log4j_1.2.12_").getRelations().size());
+        assertEquals(0,entityRepo.getEntity("org.log4j-test.log4j_1.2.12_").getRelations().size());
 	}
 	
 	
@@ -39,7 +39,7 @@ public class EntityExtractTest extends MavenParserTest{
 		    parser.parse();
 	    }
 	    resolveAllBindings();
-        assertNotNull(repo.getEntity("org.apache.maven.surefire.surefire-junit4_2.12.4_"));
+        assertNotNull(entityRepo.getEntity("org.apache.maven.surefire.surefire-junit4_2.12.4_"));
 	}
 	
 	@Test
@@ -53,7 +53,7 @@ public class EntityExtractTest extends MavenParserTest{
 		    parser.parse();
 	    }
 	    resolveAllBindings();
-        PomArtifactEntity entity = (PomArtifactEntity)(repo.getEntity("properties-test.test_1_"));
+        PomArtifactEntity entity = (PomArtifactEntity)(entityRepo.getEntity("properties-test.test_1_"));
     	/*
         <project.version>1.00</project.version>
         <activeio-version>3.1.4</activeio-version>
@@ -75,7 +75,7 @@ public class EntityExtractTest extends MavenParserTest{
 		    parser.parse();
 	    }
 	    resolveAllBindings();
-        PomArtifactEntity entity = (PomArtifactEntity)(repo.getEntity("properties-test.test_1_"));
+        PomArtifactEntity entity = (PomArtifactEntity)(entityRepo.getEntity("properties-test.test_1_"));
     	/*
         <project.version>1.00</project.version>
         <activeio-version>3.1.4</activeio-version>
@@ -95,7 +95,7 @@ public class EntityExtractTest extends MavenParserTest{
 		    parser.parse();
 	    }
 	    resolveAllBindings();
-        PomArtifactEntity entity = (PomArtifactEntity)(repo.getEntity("properties-test.test_1_"));
+        PomArtifactEntity entity = (PomArtifactEntity)(entityRepo.getEntity("properties-test.test_1_"));
         assertEquals("13",entity.getProperty("project.version"));
 	}
 }
