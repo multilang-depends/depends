@@ -24,13 +24,15 @@ SOFTWARE.
 
 package depends.entity;
 
+import depends.relations.Inferer;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
-import depends.relations.Inferer;
-
 public class TypeEntity extends ContainerEntity {
+	static final public TypeEntity buildInType = new TypeEntity(GenericName.build("built-in"), null, -1);
+	static final public TypeEntity genericParameterType = new TypeEntity(GenericName.build("T"), null, -3);
 	Collection<TypeEntity> inheritedTypes = new ArrayList<>();
 	Collection<TypeEntity> implementedTypes = new ArrayList<>();
 	Collection<GenericName> inhertedTypeIdentifiers;

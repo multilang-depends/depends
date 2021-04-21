@@ -67,7 +67,7 @@ public class VarEntity extends ContainerEntity {
 			type = entity.getType();
 			if (type==null) {
 				if (((ContainerEntity)getParent()).isGenericTypeParameter(rawType)) {
-					type = Inferer.genericParameterType;
+					type = TypeEntity.genericParameterType;
 				}
 			}
 		}

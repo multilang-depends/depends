@@ -24,12 +24,12 @@ SOFTWARE.
 
 package depends.entity.repo;
 
+import depends.entity.FunctionCall;
+import depends.entity.TypeEntity;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import depends.entity.FunctionCall;
-import depends.relations.Inferer;
 
 public abstract class BuiltInType {
 
@@ -55,7 +55,7 @@ public abstract class BuiltInType {
 	private Set<String> builtInMethod = new HashSet<>();
 
 	public boolean isBuiltInType(String type) {
-		if (Inferer.buildInType.getRawName().uniqName().equals(type)) return true;
+		if (TypeEntity.buildInType.getRawName().uniqName().equals(type)) return true;
 		return builtInType.contains(type); 
 	}
 

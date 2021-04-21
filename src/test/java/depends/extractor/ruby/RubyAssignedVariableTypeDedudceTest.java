@@ -32,7 +32,7 @@ public class RubyAssignedVariableTypeDedudceTest extends RubyParserTest {
 	    resolveAllBindings();
 	    FunctionEntity function = (FunctionEntity)(entityRepo.getEntity("Class.test"));
 	    VarEntity var = function.lookupVarLocally("var_int");
-	    assertEquals(Inferer.buildInType.getRawName(),var.getType().getRawName());
+	    assertEquals(TypeEntity.buildInType.getRawName(),var.getType().getRawName());
 
 	    var = function.lookupVarLocally("var_c");
 	    assertEquals("Class",var.getType().getRawName().uniqName());
@@ -59,25 +59,25 @@ public class RubyAssignedVariableTypeDedudceTest extends RubyParserTest {
 	    resolveAllBindings();
 	    FunctionEntity function = (FunctionEntity)(entityRepo.getEntity("Class.operator_is_call"));
 	    VarEntity var = function.lookupVarLocally("var_compose");
-	    assertEquals(Inferer.buildInType.getRawName(),var.getType().getRawName());
+	    assertEquals(TypeEntity.buildInType.getRawName(),var.getType().getRawName());
 	    
 	    var = function.lookupVarLocally("var_1");
-	    assertEquals(Inferer.buildInType.getRawName(),var.getType().getRawName());
+	    assertEquals(TypeEntity.buildInType.getRawName(),var.getType().getRawName());
 
 	    var = function.lookupVarLocally("var_2");
-	    assertEquals(Inferer.buildInType.getRawName(),var.getType().getRawName());
+	    assertEquals(TypeEntity.buildInType.getRawName(),var.getType().getRawName());
 
 	    var = function.lookupVarLocally("var_3");
-	    assertEquals(Inferer.buildInType.getRawName(),var.getType().getRawName());
+	    assertEquals(TypeEntity.buildInType.getRawName(),var.getType().getRawName());
 
 	    var = function.lookupVarLocally("var_4");
-	    assertEquals(Inferer.buildInType.getRawName(),var.getType().getRawName());
+	    assertEquals(TypeEntity.buildInType.getRawName(),var.getType().getRawName());
 
 	    var = function.lookupVarLocally("var_5");
-	    assertEquals(Inferer.buildInType.getRawName(),var.getType().getRawName());
+	    assertEquals(TypeEntity.buildInType.getRawName(),var.getType().getRawName());
 
 	    var = function.lookupVarLocally("var_6");
-	    assertEquals(Inferer.buildInType.getRawName(),var.getType().getRawName());
+	    assertEquals(TypeEntity.buildInType.getRawName(),var.getType().getRawName());
 
 	}
 }

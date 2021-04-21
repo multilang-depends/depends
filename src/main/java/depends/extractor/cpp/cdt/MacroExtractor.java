@@ -25,9 +25,9 @@ SOFTWARE.
 package depends.extractor.cpp.cdt;
 
 import depends.entity.FunctionEntity;
+import depends.entity.TypeEntity;
 import depends.entity.VarEntity;
 import depends.extractor.cpp.CppHandlerContext;
-import depends.relations.Inferer;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorFunctionStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorObjectStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
@@ -51,7 +51,7 @@ public class MacroExtractor {
 				if (!funcMacro.getFileLocation().getFileName().equals(fileLocation))
 					continue;
 				String func = funcMacro.getName().getRawSignature();
-				FunctionEntity funcEntity = context.foundMethodDeclarator(func, Inferer.buildInType.getRawName().uniqName(), new ArrayList<>(),funcMacro.getFileLocation().getStartingLineNumber());
+				FunctionEntity funcEntity = context.foundMethodDeclarator(func, TypeEntity.buildInType.getRawName().uniqName(), new ArrayList<>(),funcMacro.getFileLocation().getStartingLineNumber());
 				funcEntity.setLine(funcMacro.getFileLocation().getStartingLineNumber());
 				context.exitLastedEntity();
 			}else if (statements[statementIndex] instanceof IASTPreprocessorObjectStyleMacroDefinition) {
@@ -59,7 +59,7 @@ public class MacroExtractor {
 				if (!varMacro.getFileLocation().getFileName().equals(fileLocation))
 					continue;
 				String var = varMacro.getName().getRawSignature();
-				VarEntity varEntity = context.foundVarDefinition(var, Inferer.buildInType.getRawName(), new ArrayList<>(),varMacro.getFileLocation().getStartingLineNumber());
+				VarEntity varEntity = context.foundVarDefinition(var, TypeEntity.buildInType.getRawName(), new ArrayList<>(),varMacro.getFileLocation().getStartingLineNumber());
 				varEntity.setLine(varMacro.getFileLocation().getStartingLineNumber());
 			}
 		}

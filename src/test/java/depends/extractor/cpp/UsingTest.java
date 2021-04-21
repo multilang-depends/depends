@@ -1,14 +1,12 @@
 package depends.extractor.cpp;
-import static org.junit.Assert.assertEquals;
-
-import java.io.IOException;
-
-import org.junit.Before;
-import org.junit.Test;
 
 import depends.deptypes.DependencyType;
 import depends.entity.Entity;
-import depends.relations.Inferer;
+import depends.entity.TypeEntity;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.io.IOException;
 
 public class UsingTest extends CppParserTest{
     @Before
@@ -28,7 +26,7 @@ public class UsingTest extends CppParserTest{
 	    }
 	    resolveAllBindings();
         Entity e = entityRepo.getEntity("foo");
-        this.assertContainsRelation(e, DependencyType.RETURN, Inferer.buildInType.getQualifiedName());
+        this.assertContainsRelation(e, DependencyType.RETURN, TypeEntity.buildInType.getQualifiedName());
         this.assertContainsRelation(e, DependencyType.CONTAIN, "A.C");
         this.assertContainsRelation(e, DependencyType.CONTAIN, "B.X");
         
@@ -46,7 +44,7 @@ public class UsingTest extends CppParserTest{
 	    }
 	    resolveAllBindings();
         Entity e = entityRepo.getEntity("bar");
-        this.assertContainsRelation(e, DependencyType.RETURN, Inferer.buildInType.getQualifiedName());
+        this.assertContainsRelation(e, DependencyType.RETURN, TypeEntity.buildInType.getQualifiedName());
         this.assertContainsRelation(e, DependencyType.CONTAIN, "A.C");
         this.assertContainsRelation(e, DependencyType.CONTAIN, "B.X");
 	}

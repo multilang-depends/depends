@@ -1,7 +1,8 @@
 package depends.extractor.cpp;
+
 import depends.deptypes.DependencyType;
 import depends.entity.Entity;
-import depends.relations.Inferer;
+import depends.entity.TypeEntity;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -26,8 +27,8 @@ public class MacroRelationTest extends CppParserTest{
 	    }
 	    resolveAllBindings();
 	    Entity e = entityRepo.getEntity("foo");
-	    this.assertContainsRelation(e, DependencyType.RETURN, Inferer.buildInType.getQualifiedName());
-	    this.assertContainsRelation(e, DependencyType.CONTAIN, Inferer.buildInType.getQualifiedName());
+	    this.assertContainsRelation(e, DependencyType.RETURN, TypeEntity.buildInType.getQualifiedName());
+	    this.assertContainsRelation(e, DependencyType.CONTAIN, TypeEntity.buildInType.getQualifiedName());
 	}
 	
 	

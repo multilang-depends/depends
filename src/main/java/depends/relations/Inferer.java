@@ -38,8 +38,7 @@ import java.lang.management.ManagementFactory;
 import java.util.*;
 
 public class Inferer {
-	static final public TypeEntity buildInType = new TypeEntity(GenericName.build("built-in"), null, -1);
-	static final public TypeEntity genericParameterType = new TypeEntity(GenericName.build("T"), null, -3);
+
 	private BuiltInType buildInTypeManager = new NullBuiltInType();
 	private ImportLookupStrategy importLookupStrategy;
 	private Set<UnsolvedBindings> unsolvedSymbols = new HashSet<>();
@@ -170,10 +169,10 @@ public class Inferer {
 		if (rawName==null || rawName.getName()==null)
 			return null;
 		if (buildInTypeManager.isBuiltInType(rawName.getName())) {
-			return buildInType;
+			return TypeEntity.buildInType;
 		}
 		if (buildInTypeManager.isBuiltInTypePrefix(rawName.getName())) {
-			return buildInType;
+			return TypeEntity.buildInType;
 		}
 		// qualified name will first try global name directly
 		if (rawName.startsWith(".")) {

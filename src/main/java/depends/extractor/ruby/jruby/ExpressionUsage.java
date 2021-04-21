@@ -24,10 +24,7 @@ SOFTWARE.
 
 package depends.extractor.ruby.jruby;
 
-import depends.entity.ContainerEntity;
-import depends.entity.Expression;
-import depends.entity.FunctionEntity;
-import depends.entity.VarEntity;
+import depends.entity.*;
 import depends.entity.repo.IdGenerator;
 import depends.extractor.ruby.RubyHandlerContext;
 import depends.relations.Inferer;
@@ -70,13 +67,13 @@ public class ExpressionUsage {
 		context.lastContainer().addExpression(ctx, expression);
 		if (ctx instanceof ILiteralNode && !(ctx instanceof ListNode)) {
 			expression.setIdentifier("<literal>");
-			expression.setRawType(Inferer.buildInType.getQualifiedName());
+			expression.setRawType(TypeEntity.buildInType.getQualifiedName());
 		} else if (ctx instanceof TrueNode || ctx instanceof FalseNode) {
 			expression.setIdentifier("<boolean>");
-			expression.setRawType(Inferer.buildInType.getQualifiedName());
+			expression.setRawType(TypeEntity.buildInType.getQualifiedName());
 		} else if (ctx instanceof AndNode || ctx instanceof OrNode) {
 			expression.setIdentifier("<logical>");
-			expression.setRawType(Inferer.buildInType.getQualifiedName());
+			expression.setRawType(TypeEntity.buildInType.getQualifiedName());
 		} else if (ctx instanceof ConstNode) {
 			expression.setRawType(helper.getName(ctx));
 			expression.setIdentifier(helper.getName(ctx));
@@ -103,7 +100,7 @@ public class ExpressionUsage {
 				expression.setThrow (true);
 			} else if (helper.isArithMeticOperator(name)) {
 				expression.setIdentifier("<operator>");
-				expression.setRawType(Inferer.buildInType.getQualifiedName());
+				expression.setRawType(TypeEntity.buildInType.getQualifiedName());
 			} else {
 				expression.setIdentifier(name);
 				expression.setRawType(helper.getReciever(ctx));

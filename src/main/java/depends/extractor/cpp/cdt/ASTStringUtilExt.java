@@ -1,32 +1,18 @@
 package depends.extractor.cpp.cdt;
 
+import depends.entity.GenericName;
+import depends.entity.TypeEntity;
+import org.eclipse.cdt.core.dom.ast.*;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplateId;
+import org.eclipse.cdt.internal.core.model.ASTStringUtil;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
-import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTTypeId;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplateId;
-import org.eclipse.cdt.internal.core.model.ASTStringUtil;
-
-import depends.entity.GenericName;
-import depends.relations.Inferer;
 
 /**
  * This extends the CDT ASTStringUtil class.
@@ -73,7 +59,7 @@ public class ASTStringUtilExt extends ASTStringUtil {
 			final IASTEnumerationSpecifier enumerationSpec = (IASTEnumerationSpecifier) declSpecifier;
 			appendBareNameString(buffer, enumerationSpec.getName());
 		} else if (declSpecifier instanceof IASTSimpleDeclSpecifier) {
-			buffer.append(Inferer.buildInType.getRawName());
+			buffer.append(TypeEntity.buildInType.getRawName());
 		} else if (declSpecifier instanceof IASTNamedTypeSpecifier) {
 			final IASTNamedTypeSpecifier namedTypeSpec = (IASTNamedTypeSpecifier) declSpecifier;
 			appendBareNameString(buffer, namedTypeSpec.getName());

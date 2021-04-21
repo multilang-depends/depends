@@ -166,14 +166,14 @@ public class Expression implements Serializable{
 		if (parent.deduceTypeBasedId!=this.id) return;
 		
 		//if child is a built-in/external type, then parent must also a built-in/external type
-		if (this.type.equals(Inferer.buildInType)) {
-			parent.setType(Inferer.buildInType,Inferer.buildInType,inferer);
+		if (this.type.equals(TypeEntity.buildInType)) {
+			parent.setType(TypeEntity.buildInType,TypeEntity.buildInType,inferer);
 			return;
 		}
 		
 		/* if it is a logic expression, the return type/type is boolean. */
 		if (parent.isLogic) {
-			parent.setType(Inferer.buildInType,null,inferer);
+			parent.setType(TypeEntity.buildInType,null,inferer);
 		}
 		/* if it is a.b, and we already get a's type, b's type could be identified easily  */
 		else if (parent.isDot) {

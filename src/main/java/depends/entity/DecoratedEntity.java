@@ -24,11 +24,11 @@ SOFTWARE.
 
 package depends.entity;
 
+import depends.relations.Inferer;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import depends.relations.Inferer;
 
 public abstract class DecoratedEntity extends Entity{
 	private Collection<GenericName> annotations;
@@ -140,7 +140,7 @@ public abstract class DecoratedEntity extends Entity{
 		Entity entity = inferer.resolveName(this, name, true);
 		if (entity==null) {
 			if (((ContainerEntity)getParent()).isGenericTypeParameter(name)) {
-				entity = Inferer.genericParameterType;
+				entity = TypeEntity.genericParameterType;
 			}
 		}
 		return entity;
