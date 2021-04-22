@@ -28,7 +28,7 @@ import depends.entity.*;
 import depends.entity.repo.EntityRepo;
 import depends.entity.repo.IdGenerator;
 import depends.importtypes.Import;
-import depends.relations.Inferer;
+import depends.relations.IBindingResolver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,14 +40,14 @@ public abstract class HandlerContext {
 	protected IdGenerator idGenerator;
 
 	protected FileEntity currentFileEntity;
-	protected Inferer inferer;
+	protected IBindingResolver bindingResolver;
 
 	
-	public HandlerContext(EntityRepo entityRepo, Inferer inferer) {
+	public HandlerContext(EntityRepo entityRepo, IBindingResolver bindingResolver) {
 		this.entityRepo = entityRepo;
 		this.idGenerator = entityRepo;
 		entityStack = new Stack<Entity>();
-		this.inferer = inferer;
+		this.bindingResolver = bindingResolver;
 	}
 
 	public FileEntity startFile(String fileName) {
@@ -312,7 +312,7 @@ public abstract class HandlerContext {
 	}
 	
 	private VarEntity getVarInLocalFile(ContainerEntity container, GenericName varName) {
-		Entity entity = inferer.resolveName(container, varName, false); 
+		Entity entity = bindingResolver.resolveName(container, varName, false);
 		if (entity ==null ) return null;
 		if (!entity.getAncestorOfType(FileEntity.class).equals(currentFileEntity)) return null;
 		if (entity instanceof VarEntity) return (VarEntity)entity;
@@ -320,7 +320,7 @@ public abstract class HandlerContext {
 	}
 
 	public Entity foundEntityWithName(GenericName rawName) {
-		return inferer.resolveName(lastContainer(), rawName, true);
+		return bindingResolver.resolveName(lastContainer(), rawName, true);
 	}
 	
 	public void addToRepo(Entity entity) {

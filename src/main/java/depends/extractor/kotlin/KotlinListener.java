@@ -4,14 +4,14 @@ import depends.entity.repo.EntityRepo;
 import depends.extractor.kotlin.KotlinParser.ImportHeaderContext;
 import depends.extractor.kotlin.KotlinParser.PackageHeaderContext;
 import depends.importtypes.ExactMatchImport;
-import depends.relations.Inferer;
+import depends.relations.IBindingResolver;
 
 public class KotlinListener extends KotlinParserBaseListener {
 
 	private KotlinHandlerContext context;
 
-	public KotlinListener(String fileFullPath, EntityRepo entityRepo, Inferer inferer) {
-		this.context = new KotlinHandlerContext(entityRepo,inferer);
+	public KotlinListener(String fileFullPath, EntityRepo entityRepo, IBindingResolver bindingResolver) {
+		this.context = new KotlinHandlerContext(entityRepo, bindingResolver);
 		context.startFile(fileFullPath);
 	}
 

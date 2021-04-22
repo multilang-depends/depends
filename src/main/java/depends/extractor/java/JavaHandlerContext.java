@@ -28,12 +28,12 @@ import depends.entity.Entity;
 import depends.entity.PackageEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.HandlerContext;
-import depends.relations.Inferer;
+import depends.relations.IBindingResolver;
 
 public class JavaHandlerContext extends HandlerContext {
 
-	public JavaHandlerContext(EntityRepo entityRepo,Inferer inferer) {
-		super(entityRepo,inferer);
+	public JavaHandlerContext(EntityRepo entityRepo, IBindingResolver bindingResolver) {
+		super(entityRepo, bindingResolver);
 	}
 
 	public Entity foundNewPackage(String packageName) {

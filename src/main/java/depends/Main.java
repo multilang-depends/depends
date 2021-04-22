@@ -37,7 +37,8 @@ import depends.generator.FunctionDependencyGenerator;
 import depends.generator.StructureDependencyGenerator;
 import depends.matrix.core.DependencyMatrix;
 import depends.matrix.transform.MatrixLevelReducer;
-import depends.relations.Inferer;
+import depends.relations.BindingResolver;
+import depends.relations.IBindingResolver;
 import depends.relations.RelationCounter;
 import edu.emory.mathcs.backport.java.util.Arrays;
 import multilang.depends.util.file.FileUtil;
@@ -104,14 +105,14 @@ public class Main {
 			System.err.println("Not support this language: " + lang);
 			return;
 		}
-		Inferer inferer = new Inferer(langProcessor.getEntityRepo(), langProcessor.getImportLookupStrategy(), langProcessor.getBuiltInType()
+		IBindingResolver bindingResolver = new BindingResolver(langProcessor.getEntityRepo(), langProcessor.getImportLookupStrategy(), langProcessor.getBuiltInType()
 				, app.isOutputExternalDependencies(), app.isDuckTypingDeduce());
 
 		long startTime = System.currentTimeMillis();
 		//step1: build data
-		EntityRepo entityRepo = langProcessor.buildDependencies(inputDir, includeDir,  inferer);
+		EntityRepo entityRepo = langProcessor.buildDependencies(inputDir, includeDir, bindingResolver);
 
-		new RelationCounter(entityRepo,supportImplLink,langProcessor,inferer).computeRelations();
+		new RelationCounter(entityRepo,supportImplLink,langProcessor, bindingResolver).computeRelations();
 		System.out.println("Dependency done....");
 
 		//step2: generate dependencies matrix

@@ -6,12 +6,12 @@ import depends.entity.GenericName;
 import depends.entity.PackageEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.HandlerContext;
-import depends.relations.Inferer;
+import depends.relations.IBindingResolver;
 
 public class PythonHandlerContext extends HandlerContext {
 
-	public PythonHandlerContext(EntityRepo entityRepo, Inferer inferer) {
-		super(entityRepo, inferer);
+	public PythonHandlerContext(EntityRepo entityRepo, IBindingResolver bindingResolver) {
+		super(entityRepo, bindingResolver);
 	}
 
 	@Override

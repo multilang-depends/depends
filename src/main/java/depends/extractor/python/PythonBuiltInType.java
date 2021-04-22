@@ -1,11 +1,8 @@
 package depends.extractor.python;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import depends.entity.FileEntity;
 import depends.entity.FunctionCall;
 import depends.entity.FunctionEntity;
 import depends.entity.GenericName;

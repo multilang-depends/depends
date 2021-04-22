@@ -24,14 +24,10 @@ SOFTWARE.
 
 package depends.entity;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import depends.importtypes.Import;
-import depends.relations.Inferer;
+import depends.relations.IBindingResolver;
+
+import java.util.*;
 
 public class FileEntity extends TypeEntity {
 	private List<Import> importedNames = new ArrayList<>();
@@ -95,12 +91,12 @@ public class FileEntity extends TypeEntity {
 	}
 
 	@Override
-	public void inferLocalLevelEntities(Inferer inferer) {
-		this.importedRelationEntities = inferer.getImportedRelationEntities(importedNames);
-		this.importedTypes = inferer.getImportedTypes(importedNames,this);
-		this.importedFiles = inferer.getImportedFiles(importedNames);
+	public void inferLocalLevelEntities(IBindingResolver bindingResolver) {
+		this.importedRelationEntities = bindingResolver.getImportedRelationEntities(importedNames);
+		this.importedTypes = bindingResolver.getImportedTypes(importedNames,this);
+		this.importedFiles = bindingResolver.getImportedFiles(importedNames);
 
-		super.inferLocalLevelEntities(inferer);
+		super.inferLocalLevelEntities(bindingResolver);
 	}
 
 	public boolean isInProjectScope() {

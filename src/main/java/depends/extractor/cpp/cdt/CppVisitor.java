@@ -31,7 +31,7 @@ import depends.extractor.cpp.CppHandlerContext;
 import depends.importtypes.ExactMatchImport;
 import depends.importtypes.FileImport;
 import depends.importtypes.PackageWildCardImport;
-import depends.relations.Inferer;
+import depends.relations.IBindingResolver;
 import org.codehaus.plexus.util.StringUtils;
 import org.eclipse.cdt.core.dom.ast.*;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
@@ -50,17 +50,17 @@ public class CppVisitor  extends ASTVisitor {
 	private CppHandlerContext context;
 	private IdGenerator idGenerator;
 	private PreprocessorHandler preprocessorHandler;
-	Inferer inferer;
+	IBindingResolver bindingResolver;
 	private ExpressionUsage expressionUsage;
 	HashSet<String> file;
-	public CppVisitor(String fileFullPath, EntityRepo entityRepo, PreprocessorHandler preprocessorHandler,Inferer inferer) {
+	public CppVisitor(String fileFullPath, EntityRepo entityRepo, PreprocessorHandler preprocessorHandler, IBindingResolver bindingResolver) {
 		super(true);
 		this.shouldVisitAmbiguousNodes = true;
 		this.shouldVisitImplicitNames = true;
 		this.includeInactiveNodes = true;
-		this.context = new CppHandlerContext(entityRepo,inferer);
+		this.context = new CppHandlerContext(entityRepo, bindingResolver);
 		idGenerator = entityRepo;
-		this.inferer = inferer;
+		this.bindingResolver = bindingResolver;
 		this.preprocessorHandler = preprocessorHandler;
 		expressionUsage = new ExpressionUsage(context,entityRepo);
 		file = new HashSet<>();

@@ -86,7 +86,7 @@ For example, the implementation of FileParser is as follows:
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         Python3Parser parser = new Python3Parser(tokens);
         Python3CodeListener bridge = new Python3CodeListener(fileFullPath,
-                 entityRepo,inferer);
+                 entityRepo,IBindingResolver);
         ParseTreeWalker walker = new ParseTreeWalker();
         walker.walk(bridge, parser.file_input());
     }
@@ -99,8 +99,8 @@ Create a Lexer, create a Parse, create a Listener, and start traversing each of 
 First, create a context for the file:
 
     public Python3CodeListener(String fileFullPath, EntityRepo entityRepo, 
-                                Inferer inferer) {
-        this.context = new PythonHandlerContext(entityRepo,inferer);
+                                Inferer IBindingResolver) {
+        this.context = new PythonHandlerContext(entityRepo,IBindingResolver);
         this.expressionUsage = new ExpressionUsage();
         context.startFile(fileFullPath);
     }
@@ -120,7 +120,7 @@ We already succefully make the depends knows that a function entity is created.
 ImportStrategy is a strategy class named *Lang*ImportLookupStrategy that inherits the ImportLookupStrategy interface. Its role is to establish the relationship between different compilation units. Specifically, how to find a specific name in another compilation unit.
 
 The core method of ImportStrategy is lookupImportedType(String name, FileEntity
-fileEntity, EntityRepo repo, Inferer inferer). Its description is as follows:
+fileEntity, EntityRepo repo, Inferer IBindingResolver). Its description is as follows:
 
 How to find the corresponding entity out of current scope
 
@@ -132,7 +132,7 @@ How to find the corresponding entity out of current scope
 >
 > **repo** - the whole entity repo, which could be used when necessary
 >
-> **inferer** - the inferer object, which could be used when necessary
+> **IBindingResolver** - the IBindingResolver object, which could be used when necessary
 
 **Returns:**
 
@@ -174,7 +174,7 @@ Relation is simpler, just contains the type of the dependency and the Entity poi
 Entity provides several important methods. Includes addRelation and inferEntities.
 The responsibilities of addRelation are easy to understand.
 inferEntities is an important method that is responsible for completing all types of bindings starting from this entity.
-Resolve and type inferer.
+Resolve and type IBindingResolver.
 
 ### Expression Expression
 

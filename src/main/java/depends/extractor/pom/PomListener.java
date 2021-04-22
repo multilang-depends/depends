@@ -31,7 +31,7 @@ import depends.entity.repo.EntityRepo;
 import depends.extractor.FileParser;
 import depends.extractor.xml.XMLParser.ElementContext;
 import depends.extractor.xml.XMLParserBaseListener;
-import depends.relations.Inferer;
+import depends.relations.IBindingResolver;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.List;
@@ -46,16 +46,16 @@ public class PomListener extends XMLParserBaseListener {
 	private PomParent pomParent;
 	private PomProcessor parseCreator;
 	private List<String> includePaths;
-	private Inferer inferer;
+	private IBindingResolver IBindingResolver;
 	private Stack<PomCoords> pomCoords= new Stack<>();
 
 	public PomListener(String fileFullPath, EntityRepo entityRepo, List<String> includePaths, PomProcessor parseCreator,
-			Inferer inferer) {
+			IBindingResolver bindingResolver) {
 		this.context = new PomHandlerContext(entityRepo);
 		this.entityRepo = entityRepo;
 		this.parseCreator = parseCreator;
 		this.includePaths = includePaths;
-		this.inferer = inferer;
+		this.IBindingResolver = bindingResolver;
 		context.startFile(fileFullPath);
 	}
 
@@ -144,7 +144,7 @@ public class PomListener extends XMLParserBaseListener {
 				}
 			}
 			pomCoords.pop();
-			context.currentFile().inferLocalLevelEntities(inferer);
+			context.currentFile().inferLocalLevelEntities(IBindingResolver);
 		}
 		super.exitElement(ctx);
 	}

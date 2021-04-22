@@ -24,13 +24,9 @@ SOFTWARE.
 
 package depends.entity;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import depends.relations.IBindingResolver;
 
-import depends.relations.Inferer;
+import java.util.*;
 
 public class AliasEntity extends Entity {
 	private Entity referToEntity = new EmptyTypeEntity();
@@ -45,9 +41,9 @@ public class AliasEntity extends Entity {
 		this.originName = originTypeName;
 	}
 
-	public void inferLocalLevelEntities(Inferer inferer) {
+	public void inferLocalLevelEntities(IBindingResolver bindingResolver) {
 		if (!(referToEntity instanceof EmptyTypeEntity)) return;
-		Entity entity = inferer.resolveName(this, originName, true);
+		Entity entity = bindingResolver.resolveName(this, originName, true);
 		while(entity instanceof AliasEntity) {
 			AliasEntity aliasEntity = (AliasEntity)entity;
 			if (this.referPath.contains(aliasEntity)) {
@@ -55,7 +51,7 @@ public class AliasEntity extends Entity {
 				break;
 			}
 			this.referPath.add(aliasEntity);
-			entity = inferer.resolveName(aliasEntity, aliasEntity.originName,true);
+			entity = bindingResolver.resolveName(aliasEntity, aliasEntity.originName,true);
 			if (entity==null) break;
 			if (entity.equals(this)) {
 				entity = null;

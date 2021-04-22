@@ -9,7 +9,7 @@ import depends.deptypes.DependencyType;
 import depends.entity.FunctionEntity;
 import depends.extractor.FileParser;
 
-public class RubyNameInfererTest extends RubyParserTest {
+public class RubyNameIBindingResolverTest extends RubyParserTest {
 	@Before
 	public void setUp() {
 		super.init();

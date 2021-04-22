@@ -24,23 +24,22 @@ SOFTWARE.
 
 package depends.extractor.pom;
 
-import java.io.IOException;
-import java.util.List;
-
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.Lexer;
-import org.antlr.v4.runtime.tree.ParseTreeWalker;
-
 import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.FileParser;
 import depends.extractor.xml.XMLLexer;
 import depends.extractor.xml.XMLParser;
-import depends.relations.Inferer;
+import depends.relations.IBindingResolver;
 import multilang.depends.util.file.FileUtil;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.Lexer;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
+
+import java.io.IOException;
+import java.util.List;
 
 public class PomFileParser implements FileParser {
 
@@ -48,14 +47,14 @@ public class PomFileParser implements FileParser {
 	private EntityRepo entityRepo;
 	private PomProcessor parseCreator;
 	private List<String> includePaths;
-	private Inferer inferer;
+	private IBindingResolver bindingResolver;
 
-	public PomFileParser(String fileFullPath, EntityRepo entityRepo, List<String> includePaths, PomProcessor pomProcessor,Inferer inferer) {
+	public PomFileParser(String fileFullPath, EntityRepo entityRepo, List<String> includePaths, PomProcessor pomProcessor, IBindingResolver bindingResolver) {
         this.fileFullPath = FileUtil.uniqFilePath(fileFullPath);
         this.entityRepo = entityRepo;
         this.parseCreator = pomProcessor;
         this.includePaths = includePaths;
-        this.inferer = inferer;
+        this.bindingResolver = bindingResolver;
 	}
 
 	@Override
@@ -70,7 +69,7 @@ public class PomFileParser implements FileParser {
         Lexer lexer = new XMLLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         XMLParser parser = new XMLParser(tokens);
-        PomListener bridge = new PomListener(fileFullPath, entityRepo, includePaths,parseCreator,inferer);
+        PomListener bridge = new PomListener(fileFullPath, entityRepo, includePaths,parseCreator, bindingResolver);
 	    ParseTreeWalker walker = new ParseTreeWalker();
 	    walker.walk(bridge, parser.document());
 		fileEntity = entityRepo.getEntity(fileFullPath);

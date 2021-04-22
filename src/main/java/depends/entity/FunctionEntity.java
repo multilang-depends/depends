@@ -24,11 +24,11 @@ SOFTWARE.
 
 package depends.entity;
 
+import depends.relations.IBindingResolver;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import depends.relations.Inferer;
 
 public class FunctionEntity extends ContainerEntity{
 	private List<GenericName> returnTypeIdentifiers = new ArrayList<>();
@@ -79,28 +79,28 @@ public class FunctionEntity extends ContainerEntity{
 	}
 	
 	@Override
-	public void inferLocalLevelEntities(Inferer inferer) {
+	public void inferLocalLevelEntities(IBindingResolver bindingResolver) {
 		for (VarEntity param:parameters) {
-			param.fillCandidateTypes(inferer);
-			param.inferLocalLevelEntities(inferer);
+			param.fillCandidateTypes(bindingResolver);
+			param.inferLocalLevelEntities(bindingResolver);
 		}
 		if (returnTypes.size()<returnTypeIdentifiers.size()) {
-			returnTypes = identiferToEntities(inferer,this.returnTypeIdentifiers);
+			returnTypes = identiferToEntities(bindingResolver,this.returnTypeIdentifiers);
 			for ( GenericName returnTypeName: returnTypeIdentifiers) {
-				Collection<Entity> typeEntities = typeParametersToEntities(inferer, returnTypeName);
+				Collection<Entity> typeEntities = typeParametersToEntities(bindingResolver, returnTypeName);
 				this.appendTypeParameters(typeEntities);
 			}
 		}
 		if (throwTypes.size()<throwTypesIdentifiers.size())
-			throwTypes = identiferToEntities(inferer,this.throwTypesIdentifiers);
-		super.inferLocalLevelEntities(inferer);
+			throwTypes = identiferToEntities(bindingResolver,this.throwTypesIdentifiers);
+		super.inferLocalLevelEntities(bindingResolver);
 	}
 	
 
-	private Collection<Entity> typeParametersToEntities(Inferer inferer,GenericName name) {
+	private Collection<Entity> typeParametersToEntities(IBindingResolver bindingResolver, GenericName name) {
 		ArrayList<Entity> r = new ArrayList<>();
 		for (GenericName typeParameter:name.getArguments()) {
-			toEntityList(inferer, r,typeParameter);
+			toEntityList(bindingResolver, r,typeParameter);
 		}
 		return r;
 	}

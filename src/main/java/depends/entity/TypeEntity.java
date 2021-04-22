@@ -24,7 +24,7 @@ SOFTWARE.
 
 package depends.entity;
 
-import depends.relations.Inferer;
+import depends.relations.IBindingResolver;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -46,9 +46,9 @@ public class TypeEntity extends ContainerEntity {
 	}
 
 	@Override
-	public void inferLocalLevelEntities(Inferer inferer) {
+	public void inferLocalLevelEntities(IBindingResolver bindingResolver) {
 		inheritedTypes = new ArrayList<>();
-		Collection<Entity> r = identiferToEntities(inferer, this.inhertedTypeIdentifiers);
+		Collection<Entity> r = identiferToEntities(bindingResolver, this.inhertedTypeIdentifiers);
 		if (r!=null) {
 			r.forEach(item -> {
 				Entity typeItem = getTypeEntity(item);
@@ -62,7 +62,7 @@ public class TypeEntity extends ContainerEntity {
 		inheritedTypes.remove(this);
 
 		implementedTypes = new ArrayList<>();
-		r = identiferToEntities(inferer, this.implementedIdentifiers);
+		r = identiferToEntities(bindingResolver, this.implementedIdentifiers);
 		if (r!=null) {
 				r.forEach(item -> {
 					Entity typeItem = getTypeEntity(item);
@@ -76,7 +76,7 @@ public class TypeEntity extends ContainerEntity {
 		implementedTypes.remove(this);
 		if (inheritedTypes.size() > 0)
 			inheritedType = inheritedTypes.iterator().next();
-		super.inferLocalLevelEntities(inferer);
+		super.inferLocalLevelEntities(bindingResolver);
 	}
 
 	private Entity getTypeEntity(Entity item) {

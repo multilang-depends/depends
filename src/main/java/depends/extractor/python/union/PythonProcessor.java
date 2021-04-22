@@ -20,7 +20,7 @@ public class PythonProcessor extends BasePythonProcessor {
 	@Override
 	public FileParser createFileParser(String fileFullPath) {
 		IncludedFileLocator includeFileLocator = new IncludedFileLocator(super.includePaths());
-		return new PythonFileParser(fileFullPath,entityRepo,includeFileLocator,inferer,this);
+		return new PythonFileParser(fileFullPath,entityRepo,includeFileLocator, bindingResolver,this);
 	}
 
 	

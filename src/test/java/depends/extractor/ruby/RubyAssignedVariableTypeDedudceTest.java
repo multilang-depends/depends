@@ -11,7 +11,6 @@ import depends.entity.FunctionEntity;
 import depends.entity.TypeEntity;
 import depends.entity.VarEntity;
 import depends.extractor.FileParser;
-import depends.relations.Inferer;
 
 public class RubyAssignedVariableTypeDedudceTest extends RubyParserTest {
 	@Before

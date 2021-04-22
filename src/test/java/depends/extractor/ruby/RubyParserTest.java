@@ -17,7 +17,7 @@ public abstract class RubyParserTest extends ParserTest implements ParserCreator
 	
 	public FileParser createFileParser(String src) {
 		ExecutorService executor = Executors.newSingleThreadExecutor();
-		return new JRubyFileParser(src,entityRepo, executor,new IncludedFileLocator(includePaths()), inferer, this);
+		return new JRubyFileParser(src,entityRepo, executor,new IncludedFileLocator(includePaths()), bindingResolver, this);
 	}
 
 	private List<String> includePaths() {

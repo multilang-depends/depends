@@ -6,7 +6,7 @@ import depends.extractor.HandlerContext;
 import depends.extractor.python.PythonHandlerContext;
 import depends.extractor.python.PythonParser.*;
 import depends.extractor.python.PythonParserBaseVisitor;
-import depends.relations.Inferer;
+import depends.relations.IBindingResolver;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.RuleContext;
 
@@ -18,11 +18,11 @@ public class ExpressionUsage {
 	HandlerContext context;
 	IdGenerator idGenerator;
 	private boolean exprStarted=false;
-	private Inferer inferer;
-	public ExpressionUsage(PythonHandlerContext context, IdGenerator idGenerator, Inferer inferer) {
+	private IBindingResolver bindingResolver;
+	public ExpressionUsage(PythonHandlerContext context, IdGenerator idGenerator, IBindingResolver bindingResolver) {
 		this.context = context;
 		this.idGenerator = idGenerator;
-		this.inferer = inferer;
+		this.bindingResolver = bindingResolver;
 	}
 
 	/**
@@ -207,7 +207,7 @@ public class ExpressionUsage {
 		Entity typeEntity = context.foundEntityWithName(funcName);
 		if (typeEntity instanceof TypeEntity && typeEntity.getId() > 0) {
 			theExpression.setCreate(true);
-			theExpression.setType(typeEntity.getType(), typeEntity, inferer);
+			theExpression.setType(typeEntity.getType(), typeEntity, bindingResolver);
 			theExpression.setRawType(typeEntity.getRawName());
 			return;
 		} 
@@ -221,7 +221,7 @@ public class ExpressionUsage {
 		Entity typeEntity = context.foundEntityWithName(funcName);
 		if (typeEntity instanceof TypeEntity && typeEntity.getId() > 0) {
 			theExpression.getParent().setCreate(true);
-			theExpression.setType(typeEntity.getType(), typeEntity, inferer);
+			theExpression.setType(typeEntity.getType(), typeEntity, bindingResolver);
 			theExpression.getParent().setRawType(typeEntity.getRawName());
 			return;
 		} 

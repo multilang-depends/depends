@@ -56,12 +56,12 @@ public class CppImportLookupStrategy extends ImportLookupStrategy {
 			if (importedItem instanceof FileEntity) {
 				FileEntity importedFile = (FileEntity) repo.getEntity(file);
 				if (importedFile==null) continue;
-				 Entity entity = inferer.resolveName(importedFile,GenericName.build(name), false);
+				 Entity entity = bindingResolver.resolveName(importedFile,GenericName.build(name), false);
 				if (entity!=null) return entity;
 				Collection<Entity> namespaces = fileEntity.getImportedTypes();
 				for (Entity ns:namespaces) {
 					String nameWithPrefix = ns.getQualifiedName() + "." + name;
-					entity = inferer.resolveName(importedFile,GenericName.build(nameWithPrefix), false);
+					entity = bindingResolver.resolveName(importedFile,GenericName.build(nameWithPrefix), false);
 					if (entity!=null) return entity;				
 				}
 			}	

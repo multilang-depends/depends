@@ -29,7 +29,7 @@ import depends.entity.repo.EntityRepo;
 import depends.extractor.java.JavaParser.*;
 import depends.extractor.java.context.*;
 import depends.importtypes.ExactMatchImport;
-import depends.relations.Inferer;
+import depends.relations.IBindingResolver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,8 +40,8 @@ public class JavaListener extends JavaParserBaseListener {
 	private final ExpressionUsage expressionUsage;
 	private final EntityRepo entityRepo;
 
-	public JavaListener(String fileFullPath, EntityRepo entityRepo,Inferer inferer) {
-		this.context = new JavaHandlerContext(entityRepo,inferer);
+	public JavaListener(String fileFullPath, EntityRepo entityRepo, IBindingResolver bindingResolver) {
+		this.context = new JavaHandlerContext(entityRepo, bindingResolver);
 		this.entityRepo = entityRepo;
 		annotationProcessor = new AnnotationProcessor();
 		expressionUsage = new ExpressionUsage(context,entityRepo);

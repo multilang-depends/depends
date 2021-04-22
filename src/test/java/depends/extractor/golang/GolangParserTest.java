@@ -10,7 +10,7 @@ public abstract class GolangParserTest extends ParserTest{
 	}
 	
 	public GoFileParser createParser(String src) {
-		return new GoFileParser(src,entityRepo, inferer);
+		return new GoFileParser(src,entityRepo, bindingResolver);
 	}
 
 }

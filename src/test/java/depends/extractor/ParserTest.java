@@ -5,7 +5,8 @@ import depends.entity.Entity;
 import depends.entity.FunctionEntity;
 import depends.entity.VarEntity;
 import depends.entity.repo.EntityRepo;
-import depends.relations.Inferer;
+import depends.relations.BindingResolver;
+import depends.relations.IBindingResolver;
 import depends.relations.Relation;
 import depends.relations.RelationCounter;
 import multilang.depends.util.file.TemporaryFile;
@@ -18,32 +19,32 @@ import static org.junit.Assert.fail;
 
 public abstract class ParserTest {
 	protected EntityRepo entityRepo ;
-	protected Inferer inferer ;
+	protected IBindingResolver bindingResolver;
 	protected AbstractLangProcessor langProcessor;
 
 	protected  void init(){
 		entityRepo = langProcessor.getEntityRepo();
-		inferer = new Inferer(langProcessor.getEntityRepo(),langProcessor.getImportLookupStrategy(),langProcessor.getBuiltInType(),false,false);
-		langProcessor.inferer = inferer;
+		bindingResolver = new BindingResolver(langProcessor.getEntityRepo(),langProcessor.getImportLookupStrategy(),langProcessor.getBuiltInType(),true,false);
+		langProcessor.bindingResolver = bindingResolver;
 		TemporaryFile.reset();
 	}
 
 	protected  void init(boolean duckTypingDeduce){
 		entityRepo = langProcessor.getEntityRepo();
-		inferer = new Inferer(langProcessor.getEntityRepo(),langProcessor.getImportLookupStrategy(),langProcessor.getBuiltInType(),false,duckTypingDeduce);
-		langProcessor.inferer = inferer;
+		bindingResolver = new BindingResolver(langProcessor.getEntityRepo(),langProcessor.getImportLookupStrategy(),langProcessor.getBuiltInType(),false,duckTypingDeduce);
+		langProcessor.bindingResolver = bindingResolver;
 		TemporaryFile.reset();
 	}
 
 	public Set<UnsolvedBindings> resolveAllBindings() {
-		Set<UnsolvedBindings> result = inferer.resolveAllBindings(langProcessor);
-		new RelationCounter(entityRepo,false,langProcessor,inferer).computeRelations();
+		Set<UnsolvedBindings> result = bindingResolver.resolveAllBindings(langProcessor.isEagerExpressionResolve());
+		new RelationCounter(entityRepo,false,langProcessor, bindingResolver).computeRelations();
 		return result;
 	}
 
 	protected Set<UnsolvedBindings>  resolveAllBindings(boolean callAsImpl) {
-		Set<UnsolvedBindings> result = inferer.resolveAllBindings(langProcessor);
-		new RelationCounter(entityRepo,callAsImpl,langProcessor,inferer).computeRelations();
+		Set<UnsolvedBindings> result = bindingResolver.resolveAllBindings(langProcessor.isEagerExpressionResolve());
+		new RelationCounter(entityRepo,callAsImpl,langProcessor, bindingResolver).computeRelations();
 		return result;
 	}
 

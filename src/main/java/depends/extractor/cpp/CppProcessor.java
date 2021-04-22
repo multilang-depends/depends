@@ -66,7 +66,7 @@ public class CppProcessor extends AbstractLangProcessor {
 		if (preprocessorHandler==null) {
 			preprocessorHandler = new PreprocessorHandler(super.inputSrcPath,super.includePaths());
 		}
-		return new CdtCppFileParser(fileFullPath, entityRepo, preprocessorHandler, inferer, macroRepo);
+		return new CdtCppFileParser(fileFullPath, entityRepo, preprocessorHandler, bindingResolver, macroRepo);
 	}
 
 	@Override

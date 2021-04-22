@@ -18,6 +18,6 @@ public abstract class CppParserTest extends ParserTest{
     }
 	
 	public CppFileParser createParser(String src) {
-		return new  CdtCppFileParser(src, entityRepo, preprocessorHandler,inferer,macroRepo );
+		return new  CdtCppFileParser(src, entityRepo, preprocessorHandler, bindingResolver,macroRepo );
 	}
 }

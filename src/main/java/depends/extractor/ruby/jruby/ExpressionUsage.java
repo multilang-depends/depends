@@ -27,7 +27,7 @@ package depends.extractor.ruby.jruby;
 import depends.entity.*;
 import depends.entity.repo.IdGenerator;
 import depends.extractor.ruby.RubyHandlerContext;
-import depends.relations.Inferer;
+import depends.relations.IBindingResolver;
 import org.jrubyparser.ast.*;
 
 import java.util.List;
@@ -35,14 +35,14 @@ import java.util.List;
 public class ExpressionUsage {
 	RubyHandlerContext context;
 	IdGenerator idGenerator;
-	Inferer inferer;
+	IBindingResolver bindingResolver;
 	private RubyParserHelper helper;
 
 	public ExpressionUsage(RubyHandlerContext context, IdGenerator idGenerator, RubyParserHelper helper,
-			Inferer inferer) {
+			IBindingResolver bindingResolver) {
 		this.context = context;
 		this.idGenerator = idGenerator;
-		this.inferer = inferer;
+		this.bindingResolver = bindingResolver;
 		this.helper = helper;
 	}
 

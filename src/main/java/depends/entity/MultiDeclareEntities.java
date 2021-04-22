@@ -29,7 +29,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
-import depends.relations.Inferer;
+import depends.relations.IBindingResolver;
 
 /**
  * MultiDeclareEntity is a special container, which is used as a wrapper
@@ -47,9 +47,9 @@ public class MultiDeclareEntities extends ContainerEntity {
 	}
 
 	@Override
-	public void inferLocalLevelEntities(Inferer inferer) {
+	public void inferLocalLevelEntities(IBindingResolver bindingResolver) {
 		for (Entity entity:entities) {
-			entity.inferLocalLevelEntities(inferer);
+			entity.inferLocalLevelEntities(bindingResolver);
 		}
 	}
 

@@ -24,8 +24,10 @@ SOFTWARE.
 
 package depends.extractor.java;
 
-import java.io.IOException;
-
+import depends.entity.Entity;
+import depends.entity.FileEntity;
+import depends.entity.repo.EntityRepo;
+import depends.relations.IBindingResolver;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -35,22 +37,17 @@ import org.antlr.v4.runtime.atn.ParserATNSimulator;
 import org.antlr.v4.runtime.atn.PredictionContextCache;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
-import depends.entity.Entity;
-import depends.entity.FileEntity;
-import depends.entity.repo.EntityRepo;
-import depends.extractor.java.JavaLexer;
-import depends.extractor.java.JavaParser;
-import depends.relations.Inferer;
+import java.io.IOException;
 
 
 public class JavaFileParser implements depends.extractor.FileParser{
 	private String fileFullPath;
 	private EntityRepo entityRepo;
-	private Inferer inferer;
-	public JavaFileParser(String fileFullPath,EntityRepo entityRepo, Inferer inferer) {
+	private IBindingResolver bindingResolver;
+	public JavaFileParser(String fileFullPath,EntityRepo entityRepo, IBindingResolver bindingResolver) {
         this.fileFullPath = fileFullPath;
         this.entityRepo = entityRepo;
-        this.inferer = inferer;
+        this.bindingResolver = bindingResolver;
 	}
 
 	@Override
@@ -62,7 +59,7 @@ public class JavaFileParser implements depends.extractor.FileParser{
         JavaParser parser = new JavaParser(tokens);
         ParserATNSimulator interpreter = new ParserATNSimulator(parser, parser.getATN(), parser.getInterpreter().decisionToDFA, new PredictionContextCache());
         parser.setInterpreter(interpreter);
-        JavaListener bridge = new JavaListener(fileFullPath, entityRepo,inferer);
+        JavaListener bridge = new JavaListener(fileFullPath, entityRepo, bindingResolver);
 	    ParseTreeWalker walker = new ParseTreeWalker();
 	    try {
 	    	walker.walk(bridge, parser.compilationUnit());

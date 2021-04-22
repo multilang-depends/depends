@@ -25,7 +25,7 @@ SOFTWARE.
 package depends.entity;
 
 import depends.entity.repo.EntityRepo;
-import depends.relations.Inferer;
+import depends.relations.IBindingResolver;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -121,9 +121,9 @@ public class Expression implements Serializable{
 	 * Set type of the expression
 	 * @param type
 	 * @param referredEntity
-	 * @param inferer
+	 * @param bindingResolver
 	 */
-	public void setType(TypeEntity type, Entity referredEntity, Inferer inferer) {
+	public void setType(TypeEntity type, Entity referredEntity, IBindingResolver bindingResolver) {
 		if (this.getReferredEntity()==null && referredEntity!=null) {
 			this.setReferredEntity(referredEntity);
 		}
@@ -147,16 +147,15 @@ public class Expression implements Serializable{
 			this.setReferredEntity(this.type);
 
 		if (changedType)
-			deduceTheParentType(inferer);
+			deduceTheParentType(bindingResolver);
 	}
 	
 
 	/**
 	 * deduce type of parent based on child's type
-	 * @param expressionList
-	 * @param inferer
+	 * @param bindingResolver
 	 */
-	private void deduceTheParentType(Inferer inferer) {
+	private void deduceTheParentType(IBindingResolver bindingResolver) {
 		if (this.type==null) return;
 		if (this.parent==null) return;
 		Expression parent = this.parent;
@@ -167,13 +166,13 @@ public class Expression implements Serializable{
 		
 		//if child is a built-in/external type, then parent must also a built-in/external type
 		if (this.type.equals(TypeEntity.buildInType)) {
-			parent.setType(TypeEntity.buildInType,TypeEntity.buildInType,inferer);
+			parent.setType(TypeEntity.buildInType,TypeEntity.buildInType, bindingResolver);
 			return;
 		}
 		
 		/* if it is a logic expression, the return type/type is boolean. */
 		if (parent.isLogic) {
-			parent.setType(TypeEntity.buildInType,null,inferer);
+			parent.setType(TypeEntity.buildInType,null, bindingResolver);
 		}
 		/* if it is a.b, and we already get a's type, b's type could be identified easily  */
 		else if (parent.isDot) {
@@ -184,15 +183,15 @@ public class Expression implements Serializable{
 					if (funcs.size()>0) {
 						Entity func = funcs.get(0);
 						if (funcs.size()>1) {
-							MultiDeclareEntities m = new MultiDeclareEntities(func, inferer.getRepo().generateId());
-							inferer.getRepo().add(m);
+							MultiDeclareEntities m = new MultiDeclareEntities(func, bindingResolver.getRepo().generateId());
+							bindingResolver.getRepo().add(m);
 							for (int i=1;i<funcs.size();i++) {
 								m.add(funcs.get(i));
 							}
-							parent.setType(func.getType(), m,inferer);
+							parent.setType(func.getType(), m, bindingResolver);
 							parent.setReferredEntity(m);
 						}else {
-							parent.setType(func.getType(), func,inferer);
+							parent.setType(func.getType(), func, bindingResolver);
 							parent.setReferredEntity(func);
 						}
 					}
@@ -200,35 +199,35 @@ public class Expression implements Serializable{
 			}else {
 				Entity var = this.getType().lookupVarInVisibleScope(parent.identifier);
 				if (var!=null) {
-					parent.setType(var.getType(),var, inferer);
+					parent.setType(var.getType(),var, bindingResolver);
 					parent.setReferredEntity(var);
 				}else {
 					List<Entity> funcs = this.getType().lookupFunctionInVisibleScope(parent.identifier);
 					if (funcs!=null) {
 						Entity func = funcs.get(0);
 						if (funcs.size()>1) {
-							MultiDeclareEntities m = new MultiDeclareEntities(func, inferer.getRepo().generateId());
-							inferer.getRepo().add(m);
+							MultiDeclareEntities m = new MultiDeclareEntities(func, bindingResolver.getRepo().generateId());
+							bindingResolver.getRepo().add(m);
 
 							for (int i=1;i<funcs.size();i++) {
 								m.add(funcs.get(i));
 							}
-							parent.setType(func.getType(), m,inferer);
+							parent.setType(func.getType(), m, bindingResolver);
 							parent.setReferredEntity(m);
 						}else {
-							parent.setType(func.getType(), func,inferer);
+							parent.setType(func.getType(), func, bindingResolver);
 							parent.setReferredEntity(func);
 						}
 					}
 				}
 			}
 			if (parent.getType()==null) {
-				parent.setType(inferer.inferTypeFromName(this.getType(), parent.identifier),null,inferer);
+				parent.setType(bindingResolver.inferTypeFromName(this.getType(), parent.identifier),null, bindingResolver);
 			}
 		}
 		/* if other situation, simple make the parent and child type same */
 		else {
-			parent.setType(type, null, inferer);
+			parent.setType(type, null, bindingResolver);
 		}
 		if (parent.getReferredEntity()==null)
 			parent.setReferredEntity(parent.type);

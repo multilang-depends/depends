@@ -8,7 +8,7 @@ import depends.extractor.python.PythonParser.*;
 import depends.extractor.python.PythonParserBaseListener;
 import depends.extractor.ruby.IncludedFileLocator;
 import depends.importtypes.FileImport;
-import depends.relations.Inferer;
+import depends.relations.IBindingResolver;
 import multilang.depends.util.file.FileUtil;
 import org.antlr.v4.runtime.ParserRuleContext;
 
@@ -23,15 +23,15 @@ public class PythonCodeListener extends PythonParserBaseListener{
 	private final EntityRepo entityRepo;
 	private final IncludedFileLocator  includeFileLocator;
 	private final PythonProcessor pythonProcessor;
-	private final Inferer inferer;
-	public PythonCodeListener(String fileFullPath, EntityRepo entityRepo, Inferer inferer,
+	private final IBindingResolver bindingResolver;
+	public PythonCodeListener(String fileFullPath, EntityRepo entityRepo, IBindingResolver bindingResolver,
 			IncludedFileLocator includeFileLocator, PythonProcessor pythonProcessor) {
-		this.context = new PythonHandlerContext(entityRepo, inferer);
-		this.expressionUsage = new ExpressionUsage(context, entityRepo, inferer);
+		this.context = new PythonHandlerContext(entityRepo, bindingResolver);
+		this.expressionUsage = new ExpressionUsage(context, entityRepo, bindingResolver);
 		FileEntity fileEntity = context.startFile(fileFullPath);
 		this.entityRepo = entityRepo;
 		this.includeFileLocator = includeFileLocator;
-		this.inferer = inferer;
+		this.bindingResolver = bindingResolver;
 		this.pythonProcessor = pythonProcessor;
 
 		String dir = FileUtil.uniqFilePath(FileUtil.getLocatedDir(fileFullPath));
@@ -117,7 +117,7 @@ public class PythonCodeListener extends PythonParserBaseListener{
 					if (FileUtil.existFile(fullName) && !(FileUtil.isDirectory(fullName))) {
 						context.foundNewImport(new FileImport(fullName));
 					}
-					Entity itemEntity = inferer.resolveName(entityRepo.getEntity(fullName), GenericName.build(name), true);
+					Entity itemEntity = bindingResolver.resolveName(entityRepo.getEntity(fullName), GenericName.build(name), true);
 					if (itemEntity != null) {
 						context.foundNewAlias(GenericName.build(alias), itemEntity);
 						context.foundNewImport(new NameAliasImport(itemEntity.getQualifiedName(), itemEntity, alias));
@@ -183,7 +183,7 @@ public class PythonCodeListener extends PythonParserBaseListener{
 	}
 
 	private void visitIncludedFile(String fullName) {
-		PythonFileParser importedParser = new PythonFileParser(fullName, entityRepo, includeFileLocator, inferer,
+		PythonFileParser importedParser = new PythonFileParser(fullName, entityRepo, includeFileLocator, bindingResolver,
 				pythonProcessor);
 		try {
 			importedParser.parse();

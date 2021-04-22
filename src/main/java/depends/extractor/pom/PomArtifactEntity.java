@@ -33,7 +33,6 @@ import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.GenericName;
 import depends.entity.TypeEntity;
-import depends.relations.Inferer;
 
 public class PomArtifactEntity extends TypeEntity {
 	HashMap<String,String> properties;

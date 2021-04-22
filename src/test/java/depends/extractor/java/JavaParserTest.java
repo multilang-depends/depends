@@ -9,6 +9,6 @@ public abstract class JavaParserTest  extends ParserTest{
 	}
 	
 	public JavaFileParser createParser(String src) {
-		return new JavaFileParser(src,entityRepo, inferer);
+		return new JavaFileParser(src,entityRepo, bindingResolver);
 	}
 }

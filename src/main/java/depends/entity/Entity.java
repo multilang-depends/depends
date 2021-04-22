@@ -24,7 +24,7 @@ SOFTWARE.
 
 package depends.entity;
 
-import depends.relations.Inferer;
+import depends.relations.IBindingResolver;
 import depends.relations.Relation;
 
 import java.util.*;
@@ -177,13 +177,13 @@ public abstract class Entity {
 	/**
 	 * Invoke inferer to resolve the entity type etc. 
 	 * */
-	public void inferEntities(Inferer inferer) {
-		inferLocalLevelEntities(inferer);
+	public void inferEntities(IBindingResolver bindingResolver) {
+		inferLocalLevelEntities(bindingResolver);
 		for (Entity child:this.getChildren()) {
-			child.inferEntities(inferer);
+			child.inferEntities(bindingResolver);
 		}
 	}
-	public abstract void inferLocalLevelEntities(Inferer inferer);
+	public abstract void inferLocalLevelEntities(IBindingResolver bindingResolver);
 	
 	public TypeEntity getType() {
 		return null;

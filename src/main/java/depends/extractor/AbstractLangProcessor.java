@@ -30,7 +30,7 @@ import depends.entity.repo.BuiltInType;
 import depends.entity.repo.EntityRepo;
 import depends.entity.repo.InMemoryEntityRepo;
 import depends.relations.ImportLookupStrategy;
-import depends.relations.Inferer;
+import depends.relations.IBindingResolver;
 import multilang.depends.util.file.FileTraversal;
 import multilang.depends.util.file.FileUtil;
 import org.codehaus.plexus.util.FileUtils;
@@ -83,7 +83,7 @@ abstract public class AbstractLangProcessor {
 	 */
 	public abstract FileParser createFileParser(String fileFullPath);
 
-	public Inferer inferer;
+	public IBindingResolver bindingResolver;
 	protected EntityRepo entityRepo;
 	protected String inputSrcPath;
 	public String[] includeDirs;
@@ -102,13 +102,13 @@ abstract public class AbstractLangProcessor {
 	 *
 	 * @param inputDir
 	 * @param includeDir
-	 * @param inferer
+	 * @param bindingResolver
 	 * @return
 	 */
-	public EntityRepo buildDependencies(String inputDir, String[] includeDir, Inferer inferer) {
+	public EntityRepo buildDependencies(String inputDir, String[] includeDir, IBindingResolver bindingResolver) {
 		this.inputSrcPath = inputDir;
 		this.includeDirs = includeDir;
-		this.inferer = inferer;
+		this.bindingResolver = bindingResolver;
 		logger.info("Start parsing files...");
 		parseAllFiles();
 		markAllEntitiesScope();
@@ -144,7 +144,7 @@ abstract public class AbstractLangProcessor {
 	 */
 	public void resolveBindings() {
 		System.out.println("Resolve types and bindings of variables, methods and expressions....");
-		this.potentialExternalDependencies = inferer.resolveAllBindings(this);
+		this.potentialExternalDependencies = bindingResolver.resolveAllBindings(this.isEagerExpressionResolve());
 		if (getExternalDependencies().size() > 0) {
 			System.out.println("There are " + getExternalDependencies().size() + " items are potential external dependencies.");
 		}

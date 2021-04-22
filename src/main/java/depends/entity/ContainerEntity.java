@@ -25,7 +25,7 @@ SOFTWARE.
 package depends.entity;
 
 import depends.entity.repo.EntityRepo;
-import depends.relations.Inferer;
+import depends.relations.IBindingResolver;
 import depends.relations.Relation;
 import multilang.depends.util.file.TemporaryFile;
 import org.slf4j.Logger;
@@ -119,24 +119,24 @@ public abstract class ContainerEntity extends DecoratedEntity {
 	 * For all data in the class, infer their types. Should be override in
 	 * sub-classes
 	 */
-	public void inferLocalLevelEntities(Inferer inferer) {
-		super.inferLocalLevelEntities(inferer);
+	public void inferLocalLevelEntities(IBindingResolver bindingResolver) {
+		super.inferLocalLevelEntities(bindingResolver);
 		for (VarEntity var : this.vars()) {
 			if (var.getParent()!=this) {
-				var.inferLocalLevelEntities(inferer);
+				var.inferLocalLevelEntities(bindingResolver);
 			}
 		}
 		for (FunctionEntity func : this.getFunctions()) {
 			if (func.getParent()!=this) {
-				func.inferLocalLevelEntities(inferer);
+				func.inferLocalLevelEntities(bindingResolver);
 			}
 		}
-		if (inferer.isEagerExpressionResolve()) {
-			reloadExpression(inferer.getRepo());
-			resolveExpressions(inferer);
+		if (bindingResolver.isEagerExpressionResolve()) {
+			reloadExpression(bindingResolver.getRepo());
+			resolveExpressions(bindingResolver);
 			cacheExpressions();
 		}
-		resolvedMixins = identiferToContainerEntity(inferer, getMixins());
+		resolvedMixins = identiferToContainerEntity(bindingResolver, getMixins());
 	}
 
 	private Collection<GenericName> getMixins() {
@@ -145,11 +145,11 @@ public abstract class ContainerEntity extends DecoratedEntity {
 		return mixins;
 	}
 
-	private Collection<ContainerEntity> identiferToContainerEntity(Inferer inferer, Collection<GenericName> identifiers) {
+	private Collection<ContainerEntity> identiferToContainerEntity(IBindingResolver bindingResolver, Collection<GenericName> identifiers) {
 		if (identifiers.size()==0) return null;
 		ArrayList<ContainerEntity> r = new ArrayList<>();
 		for (GenericName identifier : identifiers) {
-			Entity entity = inferer.resolveName(this, identifier, true);
+			Entity entity = bindingResolver.resolveName(this, identifier, true);
 			if (entity == null) {
 				continue;
 			}
@@ -162,10 +162,9 @@ public abstract class ContainerEntity extends DecoratedEntity {
 	/**
 	 * Resolve all expression's type
 	 * 
-	 * @param inferer
+	 * @param bindingResolver
 	 */
-	public void resolveExpressions(Inferer inferer) {
-		
+	public void resolveExpressions(IBindingResolver bindingResolver) {
 		if (this instanceof FunctionEntity) {
 			((FunctionEntity)this).linkReturnToLastExpression();
 		}
@@ -187,20 +186,13 @@ public abstract class ContainerEntity extends DecoratedEntity {
 			// 2. if expression's rawType existed, directly infer type by rawType
 			// if expression's rawType does not existed, infer type based on identifiers
 			if (expression.getRawType() != null) {
-				expression.setType(inferer.inferTypeFromName(this, expression.getRawType()), null, inferer);
+				expression.setType(bindingResolver.inferTypeFromName(this, expression.getRawType()), null, bindingResolver);
 				if (expression.getType() != null) {
 					continue;
 				}
 			}
 			if (expression.getIdentifier() != null) {
-
-//				if (this.getAncestorOfType(FileEntity.class).getRawName().contains("/examples/usersession/server.py") &&
-//						expression.getIdentifier().contains("config")) {
-//					System.out.print("dd");
-//				}
-				
-				
-				Entity entity = inferer.resolveName(this, expression.getIdentifier(), true);
+				Entity entity = bindingResolver.resolveName(this, expression.getIdentifier(), true);
 				String composedName = expression.getIdentifier().toString();
 				Expression theExpr = expression;
 				if (entity==null) {
@@ -208,27 +200,27 @@ public abstract class ContainerEntity extends DecoratedEntity {
 						theExpr = theExpr.getParent();
 						if (theExpr.getIdentifier()==null) break;
 						composedName = composedName + "." + theExpr.getIdentifier().toString();
-						entity = inferer.resolveName(this, GenericName.build(composedName), true);
+						entity = bindingResolver.resolveName(this, GenericName.build(composedName), true);
 						if (entity!=null)
 							break;
 					}
 				}
 				if (entity != null) {
-					expression.setType(entity.getType(), entity, inferer);
+					expression.setType(entity.getType(), entity, bindingResolver);
 					continue;
 				}
 				if (expression.isCall()) {
 					List<Entity> funcs = this.lookupFunctionInVisibleScope(expression.getIdentifier());
 					if (funcs != null) {
 						for (Entity func:funcs) {
-							expression.setType(func.getType(), func, inferer);
+							expression.setType(func.getType(), func, bindingResolver);
 						}
 					}
 				} else {
 
 					Entity varEntity = this.lookupVarInVisibleScope(expression.getIdentifier());
 					if (varEntity != null) {
-						expression.setType(varEntity.getType(), varEntity, inferer);
+						expression.setType(varEntity.getType(), varEntity, bindingResolver);
 					}
 				}
 			}

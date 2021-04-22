@@ -4,7 +4,7 @@ import depends.entity.FunctionEntity;
 import depends.entity.GenericName;
 import depends.entity.VarEntity;
 import depends.entity.repo.EntityRepo;
-import depends.relations.Inferer;
+import depends.relations.IBindingResolver;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.ArrayList;
@@ -17,8 +17,8 @@ public class GoListener extends  GoParserBaseListener {
         super.enterSourceFile(ctx);
     }
 
-    public GoListener(String fileFullPath, EntityRepo entityRepo, Inferer inferer) {
-        context = new GoHandlerContext(entityRepo,inferer);
+    public GoListener(String fileFullPath, EntityRepo entityRepo, IBindingResolver bindingResolver) {
+        context = new GoHandlerContext(entityRepo, bindingResolver);
         context.startFile(fileFullPath);
         this.entityRepo = entityRepo;
     }

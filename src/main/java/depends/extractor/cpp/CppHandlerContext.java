@@ -27,12 +27,12 @@ package depends.extractor.cpp;
 import depends.entity.*;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.HandlerContext;
-import depends.relations.Inferer;
+import depends.relations.IBindingResolver;
 
 public class CppHandlerContext extends HandlerContext {
 
-	public CppHandlerContext(EntityRepo entityRepo,Inferer inferer) {
-		super(entityRepo,inferer);
+	public CppHandlerContext(EntityRepo entityRepo, IBindingResolver IBindingResolver) {
+		super(entityRepo, IBindingResolver);
 	}
 
 	public Entity foundNamespace(String nampespaceName, int startingLineNumber) {

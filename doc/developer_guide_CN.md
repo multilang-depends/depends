@@ -68,7 +68,7 @@ height="2.8465277777777778in"}
 ImportStrategy是一个策略类，命名为*Lang*ImportLookupStrategy，它继承ImportLookupStrategy接口。其的职责是负责建立起不同编译单元之间的关系。具体来说，是如何查找到位于其他编译单元的特定名字。
 
 ImportStrategy的核心方法是lookupImportedType(String name, FileEntity
-fileEntity, EntityRepo repo, Inferer inferer)。其说明如下：
+fileEntity, EntityRepo repo, Inferer IBindingResolver)。其说明如下：
 
 How to find the corresponding entity out of current scope
 
@@ -80,7 +80,7 @@ How to find the corresponding entity out of current scope
 >
 > **repo** - the whole entity repo, which could be used when necessary
 >
-> **inferer** - the inferer object, which could be used when necessary
+> **IBindingResolver** - the IBindingResolver object, which could be used when necessary
 
 **Returns:**
 
@@ -122,7 +122,7 @@ Relation更简单，仅仅包含依赖关系的类型以及指向的Entity。Rel
 Entity提供了几个重要的方法。包括addRelation和inferEntities。
 addRelation的职责很容易理解。
 inferEntities是一个重要的方法，它负责完成自本实体开始的所有的类型的binding
-resolve和type inferer。
+resolve和type IBindingResolver。
 
 ### 表达式Expression
 
@@ -354,7 +354,7 @@ height="2.8465277777777778in"}
 ImportStrategy是一个策略类，命名为*Lang*ImportLookupStrategy，它继承ImportLookupStrategy接口。其的职责是负责建立起不同编译单元之间的关系。具体来说，是如何查找到位于其他编译单元的特定名字。
 
 ImportStrategy的核心方法是lookupImportedType(String name, FileEntity
-fileEntity, EntityRepo repo, Inferer inferer)。其说明如下：
+fileEntity, EntityRepo repo, Inferer IBindingResolver)。其说明如下：
 
 How to find the corresponding entity out of current scope
 
@@ -366,7 +366,7 @@ How to find the corresponding entity out of current scope
 >
 > **repo** - the whole entity repo, which could be used when necessary
 >
-> **inferer** - the inferer object, which could be used when necessary
+> **IBindingResolver** - the IBindingResolver object, which could be used when necessary
 
 **Returns:**
 
@@ -408,7 +408,7 @@ Relation更简单，仅仅包含依赖关系的类型以及指向的Entity。Rel
 Entity提供了几个重要的方法。包括addRelation和inferEntities。
 addRelation的职责很容易理解。
 inferEntities是一个重要的方法，它负责完成自本实体开始的所有的类型的binding
-resolve和type inferer。
+resolve和type IBindingResolver。
 
 ### 表达式Expression {#表达式expression}
 

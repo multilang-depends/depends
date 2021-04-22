@@ -24,10 +24,14 @@ SOFTWARE.
 
 package depends.extractor.ruby.jruby;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.concurrent.ExecutorService;
-
+import depends.entity.Entity;
+import depends.entity.FileEntity;
+import depends.entity.repo.EntityRepo;
+import depends.extractor.FileParser;
+import depends.extractor.ParserCreator;
+import depends.extractor.ruby.IncludedFileLocator;
+import depends.relations.IBindingResolver;
+import multilang.depends.util.file.FileUtil;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.jrubyparser.CompatVersion;
@@ -35,31 +39,26 @@ import org.jrubyparser.Parser;
 import org.jrubyparser.ast.Node;
 import org.jrubyparser.parser.ParserConfiguration;
 
-import depends.entity.Entity;
-import depends.entity.FileEntity;
-import depends.entity.repo.EntityRepo;
-import depends.extractor.FileParser;
-import depends.extractor.ParserCreator;
-import depends.extractor.ruby.IncludedFileLocator;
-import depends.relations.Inferer;
-import multilang.depends.util.file.FileUtil;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.concurrent.ExecutorService;
 public class JRubyFileParser implements FileParser {
 	private String fileFullPath;
 	private EntityRepo entityRepo;
 	private ExecutorService executor;
 	private IncludedFileLocator includesFileLocator;
-	private Inferer inferer;
+	private IBindingResolver bindingResolver;
 	private ParserCreator parserCreator;
 
-	public JRubyFileParser(String fileFullPath, EntityRepo entityRepo, 
-			ExecutorService executorService, 
-			IncludedFileLocator includesFileLocator, 
-			Inferer inferer, ParserCreator parserCreator) {
+	public JRubyFileParser(String fileFullPath, EntityRepo entityRepo,
+                           ExecutorService executorService,
+                           IncludedFileLocator includesFileLocator,
+                           IBindingResolver bindingResolver, ParserCreator parserCreator) {
         this.fileFullPath  = FileUtil.uniqFilePath(fileFullPath);
         this.entityRepo = entityRepo;
         this.executor = executorService;
         this.includesFileLocator = includesFileLocator;
-        this.inferer = inferer;
+        this.bindingResolver = bindingResolver;
         this.parserCreator = parserCreator;
     }
 
@@ -79,7 +78,7 @@ public class JRubyFileParser implements FileParser {
 		ParserConfiguration config = new ParserConfiguration(0, version);
 		try {
 			Node node = rubyParser.parse("<code>", in, config);
-			JRubyVisitor parser = new JRubyVisitor(fileFullPath, entityRepo, includesFileLocator,executor,inferer,parserCreator);
+			JRubyVisitor parser = new JRubyVisitor(fileFullPath, entityRepo, includesFileLocator,executor, bindingResolver,parserCreator);
 			node.accept(parser);
 			fileEntity = entityRepo.getEntity(fileFullPath);
 			((FileEntity)fileEntity).cacheAllExpressions();

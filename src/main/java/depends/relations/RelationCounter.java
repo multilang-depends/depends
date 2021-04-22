@@ -36,14 +36,14 @@ import java.util.stream.Collectors;
 public class RelationCounter {
 
 	private Collection<Entity> entities;
-	private Inferer inferer;
+	private IBindingResolver bindingResolver;
 	private EntityRepo repo;
 	private boolean callAsImpl;
 	private AbstractLangProcessor langProcessor;
 
-	public RelationCounter( EntityRepo repo, boolean callAsImpl, AbstractLangProcessor langProcessor,Inferer inferer) {
+	public RelationCounter(EntityRepo repo, boolean callAsImpl, AbstractLangProcessor langProcessor, IBindingResolver bindingResolver) {
 		this.entities = repo.getFileEntities();
-		this.inferer = inferer;
+		this.bindingResolver = bindingResolver;
 		this.repo = repo;
 		this.callAsImpl = callAsImpl;
 		this.langProcessor = langProcessor;
@@ -93,9 +93,9 @@ public class RelationCounter {
 		}
 		
 		entity.reloadExpression(repo);
-		if (!inferer.isEagerExpressionResolve())
+		if (!bindingResolver.isEagerExpressionResolve())
 		{
-			entity.resolveExpressions(inferer);
+			entity.resolveExpressions(bindingResolver);
 		}
 		for (Expression expression:entity.expressionList()){
 			if (expression.isStatement()) {

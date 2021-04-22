@@ -23,12 +23,10 @@ SOFTWARE.
 */
 
 package depends.relations;
-
 import depends.entity.*;
 import depends.entity.repo.BuiltInType;
 import depends.entity.repo.EntityRepo;
 import depends.entity.repo.NullBuiltInType;
-import depends.extractor.AbstractLangProcessor;
 import depends.extractor.UnsolvedBindings;
 import depends.importtypes.Import;
 import org.slf4j.Logger;
@@ -37,7 +35,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.management.ManagementFactory;
 import java.util.*;
 
-public class Inferer {
+public class BindingResolver implements IBindingResolver{
 
 	private BuiltInType buildInTypeManager = new NullBuiltInType();
 	private ImportLookupStrategy importLookupStrategy;
@@ -47,31 +45,26 @@ public class Inferer {
 	private boolean eagerExpressionResolve = false;
 	private boolean isCollectUnsolvedBindings = false;
 	private boolean isDuckTypingDeduce = true;
-	private static Logger logger = LoggerFactory.getLogger(Inferer.class);
+	private static Logger logger = LoggerFactory.getLogger(IBindingResolver.class);
 
-	public Inferer(EntityRepo repo, ImportLookupStrategy importLookupStrategy, BuiltInType buildInTypeManager,
-				   boolean isCollectUnsolvedBindings, boolean isDuckTypingDeduce) {
+	public BindingResolver(EntityRepo repo, ImportLookupStrategy importLookupStrategy, BuiltInType buildInTypeManager,
+							boolean isCollectUnsolvedBindings, boolean isDuckTypingDeduce) {
 		this.repo = repo;
 		this.importLookupStrategy = importLookupStrategy;
 		this.buildInTypeManager = buildInTypeManager;
 		this.isCollectUnsolvedBindings = isCollectUnsolvedBindings;
 		this.isDuckTypingDeduce = isDuckTypingDeduce;
 		unsolvedSymbols= new HashSet<>();
-		importLookupStrategy.setInferer(this);
+		importLookupStrategy.setBindingResolver(this);
 	}
 
-	/**
-	 * Resolve all bindings
-	 * - Firstly, we resolve all types from there names.
-	 * - Secondly, we resolve all expressions (expression will use type infomation of previous step
-	 * @param langProcessor 
-	 */
-	public  Set<UnsolvedBindings> resolveAllBindings(AbstractLangProcessor langProcessor) {
+	@Override
+	public  Set<UnsolvedBindings> resolveAllBindings(boolean isEagerExpressionResolve) {
 		System.out.println("Resolve type bindings....");
 		if (logger.isInfoEnabled()) {
 			logger.info("Resolve type bindings...");
 		}
-		resolveTypes(langProcessor.isEagerExpressionResolve());
+		resolveTypes(isEagerExpressionResolve);
 		System.out.println("Dependency analaysing....");
 		if (logger.isInfoEnabled()) {
 			logger.info("Dependency analaysing...");
@@ -90,26 +83,13 @@ public class Inferer {
 		}
 	}
 	
-	/**
-	 * For types start with the prefix, it will be treated as built-in type
-	 * For example, java.io.* in Java, or __ in C/C++
-	 * @param prefix
-	 * @return
-	 */
-	public boolean isBuiltInTypePrefix(String prefix) {
-		return buildInTypeManager.isBuiltInTypePrefix(prefix);
-	}
-	
-	/**
-	 * Different languages have different strategy on how to compute the imported types
-	 * and the imported files.
-	 * For example, in C/C++, both imported types (using namespace, using <type>) and imported files exists. 
-	 * while in java, only 'import class/function, or import wildcard class.* package.* exists. 
-	 */
+
+	@Override
 	public Collection<Entity> getImportedRelationEntities(List<Import> importedNames) {
 		return importLookupStrategy.getImportedRelationEntities(importedNames);
 	}
 
+	@Override
 	public Collection<Entity> getImportedTypes(List<Import> importedNames, FileEntity fileEntity) {
 		HashSet<UnsolvedBindings> unsolved = new HashSet<UnsolvedBindings>();
 		Collection<Entity> result = importLookupStrategy.getImportedTypes(importedNames,unsolved);
@@ -124,22 +104,13 @@ public class Inferer {
 		if (!isCollectUnsolvedBindings) return;
 		 	this.unsolvedSymbols.add(item);
 	}
-
+	@Override
 	public Collection<Entity> getImportedFiles(List<Import> importedNames) {
 		return importLookupStrategy.getImportedFiles(importedNames);
 	}
 
-	/**
-	 * By given raw name, to infer the type of the name
-	 * for example
-	 * (It is just a wrapper of resolve name)
-	 *   if it is a class, the class is the type
-	 *   if it is a function, the return type is the type
-	 *   if it is a variable, type of variable is the type 
-	 * @param fromEntity
-	 * @param rawName
-	 * @return
-	 */
+
+	@Override
 	public TypeEntity inferTypeFromName(Entity fromEntity, GenericName rawName) {
 		Entity data = resolveName(fromEntity, rawName, true);
 		if (data == null)
@@ -147,13 +118,8 @@ public class Inferer {
 		return data.getType();
 	}
 
-	/**
-	 * By given raw name, to infer the entity of the name
-	 * @param fromEntity
-	 * @param rawName
-	 * @param searchImport
-	 * @return
-	 */
+
+	@Override
 	public Entity resolveName(Entity fromEntity, GenericName rawName, boolean searchImport) {
 		if (rawName==null) return null;
 		Entity entity = resolveNameInternal(fromEntity,rawName,searchImport);
@@ -262,6 +228,7 @@ public class Inferer {
 		return null;
 	}
 
+	@Override
 	public Entity lookupTypeInImported(FileEntity fileEntity, String name) {
 		if (fileEntity == null)
 			return null;
@@ -290,13 +257,8 @@ public class Inferer {
 		return null;
 	}
 	
-	/**
-	 * Deduce type based on function calls
-	 * If the function call is a subset of a type, then the type could be a candidate of the var's type 
-	 * @param fromEntity
-	 * @param functionCalls
-	 * @return
-	 */
+
+	@Override
 	public List<TypeEntity> calculateCandidateTypes(VarEntity fromEntity, List<FunctionCall> functionCalls) {
 		if (buildInTypeManager.isBuildInTypeMethods(functionCalls)) {
 			return new ArrayList<>();
@@ -323,16 +285,14 @@ public class Inferer {
 		return types;
 	}
 
+	@Override
 	public boolean isEagerExpressionResolve() {
 		return eagerExpressionResolve;
 	}
 
-
+	@Override
 	public EntityRepo getRepo() {
 		return repo;
 	}
 
-	public void setCollectUnsolvedBindings(boolean isCollectUnsolvedBindings) {
-		this.isCollectUnsolvedBindings = isCollectUnsolvedBindings;
-	}
 }

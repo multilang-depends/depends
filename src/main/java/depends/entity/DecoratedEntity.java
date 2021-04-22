@@ -24,7 +24,7 @@ SOFTWARE.
 
 package depends.entity;
 
-import depends.relations.Inferer;
+import depends.relations.IBindingResolver;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -67,33 +67,33 @@ public abstract class DecoratedEntity extends Entity{
 	 * For all data in the class, infer their types.
 	 * Should be override in sub-classes 
 	 */
-	public void inferLocalLevelEntities(Inferer inferer) {
-		Collection<Entity> typeParameterEntities = typeParametersToEntities(inferer);
+	public void inferLocalLevelEntities(IBindingResolver bindingResolver) {
+		Collection<Entity> typeParameterEntities = typeParametersToEntities(bindingResolver);
 		appendTypeParameters(typeParameterEntities);
 //		if (this.getAncestorOfType(FileEntity.class).getRawName().contains("/examples/usersession/server.py")
 //				) {
 //			System.out.print("dd");
 //		}
-		resolvedAnnotations = identiferToEntities(inferer, annotations);
+		resolvedAnnotations = identiferToEntities(bindingResolver, annotations);
 	}
 
 
 	
 
-	private Collection<Entity> typeParametersToEntities(Inferer inferer) {
+	private Collection<Entity> typeParametersToEntities(IBindingResolver bindingResolver) {
 		ArrayList<Entity> r = new ArrayList<>();
 		for (GenericName typeParameter:this.getRawName().getArguments()) {
-			toEntityList(inferer, r,typeParameter);
+			toEntityList(bindingResolver, r,typeParameter);
 		}
 		return r;
 	}
 
-	protected void toEntityList(Inferer inferer, ArrayList<Entity> r, GenericName typeParameter) {
-		Entity entity = resolveEntity(inferer, typeParameter);
+	protected void toEntityList(IBindingResolver bindingResolver, ArrayList<Entity> r, GenericName typeParameter) {
+		Entity entity = resolveEntity(bindingResolver, typeParameter);
 		if (entity != null)
 			r.add(entity);
 		for (GenericName arg: typeParameter.getArguments()) {
-			toEntityList(inferer,r,arg);
+			toEntityList(bindingResolver,r,arg);
 		}
 	}
 
@@ -120,24 +120,24 @@ public abstract class DecoratedEntity extends Entity{
 	/**
 	 * A common utility function used to transfer the identifiers 
 	 * to types.
-	 * @param inferer - the inferer object 
+	 * @param bindingResolver - the inferer object
 	 * @param identifiers - the identifiers will be translated
 	 * @return The translated Types
 	 */
-	protected Collection<Entity> identiferToEntities(Inferer inferer, Collection<GenericName> identifiers) {
+	protected Collection<Entity> identiferToEntities(IBindingResolver bindingResolver, Collection<GenericName> identifiers) {
 		if (identifiers==null) return null;
 		if (identifiers.size()==0) return null;
 		ArrayList<Entity> r = new ArrayList<>();
 		for (GenericName name : identifiers) {
-			Entity entity = resolveEntity(inferer, name);
+			Entity entity = resolveEntity(bindingResolver, name);
 			if (entity != null)
 				r.add(entity);
 		}
 		return r;
 	}
 
-	private Entity resolveEntity(Inferer inferer, GenericName name) {
-		Entity entity = inferer.resolveName(this, name, true);
+	private Entity resolveEntity(IBindingResolver bindingResolver, GenericName name) {
+		Entity entity = bindingResolver.resolveName(this, name, true);
 		if (entity==null) {
 			if (((ContainerEntity)getParent()).isGenericTypeParameter(name)) {
 				entity = TypeEntity.genericParameterType;

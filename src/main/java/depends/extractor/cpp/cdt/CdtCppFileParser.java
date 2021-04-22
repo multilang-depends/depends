@@ -29,7 +29,7 @@ import depends.entity.FileEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.cpp.CppFileParser;
 import depends.extractor.cpp.MacroRepo;
-import depends.relations.Inferer;
+import depends.relations.IBindingResolver;
 import multilang.depends.util.file.FileUtil;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 
@@ -40,14 +40,14 @@ import java.util.Map;
 public class CdtCppFileParser extends CppFileParser {
 
 	private PreprocessorHandler preprocessorHandler ;
-	private Inferer inferer;
+	private IBindingResolver bindingResolver;
 	private MacroRepo macroRepo;
 
-	public CdtCppFileParser(String fileFullPath, EntityRepo entityRepo,PreprocessorHandler preprocessorHandler, Inferer inferer, MacroRepo macroRepo) {
-		super(fileFullPath, entityRepo,inferer);
+	public CdtCppFileParser(String fileFullPath, EntityRepo entityRepo, PreprocessorHandler preprocessorHandler, IBindingResolver bindingResolver, MacroRepo macroRepo) {
+		super(fileFullPath, entityRepo);
 		this.preprocessorHandler = preprocessorHandler;
 		this.fileFullPath = FileUtil.uniqFilePath(fileFullPath);
-		this.inferer = inferer;
+		this.bindingResolver = bindingResolver;
 		this.macroRepo= macroRepo;
 		}
 	@Override
@@ -73,11 +73,11 @@ public class CdtCppFileParser extends CppFileParser {
 		if (fileFullPath.contains("regex.h")){
 			System.out.println("stop");
 		}
-		CppVisitor bridge = new CppVisitor(fileFullPath, entityRepo, preprocessorHandler,inferer);
+		CppVisitor bridge = new CppVisitor(fileFullPath, entityRepo, preprocessorHandler, bindingResolver);
 		IASTTranslationUnit tu = (new CDTParser(preprocessorHandler.getIncludePaths())).parse(fileFullPath,macroMap);
 		boolean containsIncludes = false;
 		for (String incl:preprocessorHandler.getDirectIncludedFiles(tu.getAllPreprocessorStatements(),fileFullPath)) {
-			CdtCppFileParser importedParser = new CdtCppFileParser(incl, entityRepo, preprocessorHandler,inferer,macroRepo);
+			CdtCppFileParser importedParser = new CdtCppFileParser(incl, entityRepo, preprocessorHandler, bindingResolver,macroRepo);
 			importedParser.parse(false,macroMap);
 			Map<String, String> macros = macroRepo.get(incl);
 			if (macros!=null)

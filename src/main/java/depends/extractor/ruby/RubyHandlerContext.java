@@ -31,7 +31,7 @@ import depends.extractor.FileParser;
 import depends.extractor.HandlerContext;
 import depends.extractor.ParserCreator;
 import depends.importtypes.FileImport;
-import depends.relations.Inferer;
+import depends.relations.IBindingResolver;
 import multilang.depends.util.file.FileUtil;
 
 import java.util.Collection;
@@ -41,11 +41,11 @@ public class RubyHandlerContext extends HandlerContext {
 
 	private IncludedFileLocator includedFileLocator;
 	private ParserCreator parserCreator;
-	public RubyHandlerContext(EntityRepo entityRepo, 
-			IncludedFileLocator includedFileLocator,
-			ExecutorService executorService,
-			Inferer inferer, ParserCreator parserCreator) {
-		super(entityRepo,inferer);
+	public RubyHandlerContext(EntityRepo entityRepo,
+                              IncludedFileLocator includedFileLocator,
+                              ExecutorService executorService,
+                              IBindingResolver bindingResolver, ParserCreator parserCreator) {
+		super(entityRepo, bindingResolver);
 		this.includedFileLocator = includedFileLocator;
 		this.parserCreator = parserCreator;
 	}

@@ -29,7 +29,7 @@ import depends.entity.repo.EntityRepo;
 import depends.extractor.ParserCreator;
 import depends.extractor.ruby.IncludedFileLocator;
 import depends.extractor.ruby.RubyHandlerContext;
-import depends.relations.Inferer;
+import depends.relations.IBindingResolver;
 import org.jrubyparser.ast.*;
 import org.jrubyparser.util.NoopVisitor;
 
@@ -44,9 +44,9 @@ public class JRubyVisitor extends NoopVisitor {
 	private ExpressionUsage expressionUsage;
 
 	public JRubyVisitor(String fileFullPath, EntityRepo entityRepo, IncludedFileLocator includedFileLocator,
-			ExecutorService executorService, Inferer inferer, ParserCreator parserCreator) {
-		this.context = new RubyHandlerContext(entityRepo, includedFileLocator, executorService, inferer, parserCreator);
-		expressionUsage = new ExpressionUsage(context, entityRepo, helper, inferer);
+                        ExecutorService executorService, IBindingResolver bindingResolver, ParserCreator parserCreator) {
+		this.context = new RubyHandlerContext(entityRepo, includedFileLocator, executorService, bindingResolver, parserCreator);
+		expressionUsage = new ExpressionUsage(context, entityRepo, helper, bindingResolver);
 		context.startFile(fileFullPath);
 
 	}

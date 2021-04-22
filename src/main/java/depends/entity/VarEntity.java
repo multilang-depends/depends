@@ -24,10 +24,10 @@ SOFTWARE.
 
 package depends.entity;
 
+import depends.relations.IBindingResolver;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import depends.relations.Inferer;
 
 public class VarEntity extends ContainerEntity {
 	private GenericName rawType;
@@ -59,9 +59,9 @@ public class VarEntity extends ContainerEntity {
 	}
 
 	@Override
-	public void inferLocalLevelEntities(Inferer inferer) {
-		super.inferLocalLevelEntities(inferer);
-		Entity entity = inferer.resolveName(this, rawType, true);
+	public void inferLocalLevelEntities(IBindingResolver bindingResolver) {
+		super.inferLocalLevelEntities(bindingResolver);
+		Entity entity = bindingResolver.resolveName(this, rawType, true);
 		if (entity!=null) {
 			this.setActualReferTo(entity);
 			type = entity.getType();
@@ -72,7 +72,7 @@ public class VarEntity extends ContainerEntity {
 			}
 		}
 		if (type==null) {
-			fillCandidateTypes(inferer);
+			fillCandidateTypes(bindingResolver);
 		}
 	}
 
@@ -90,16 +90,16 @@ public class VarEntity extends ContainerEntity {
 		this.functionCalls.add(new FunctionCall(fname));
 	}
 
-	public void fillCandidateTypes(Inferer inferer) {
-		if (!inferer.isEagerExpressionResolve()) return;
+	public void fillCandidateTypes(IBindingResolver bindingResolver) {
+		if (!bindingResolver.isEagerExpressionResolve()) return;
 		if (type!=null && !(type instanceof CandidateTypes)) return ; //it is a strong type lang, do not need deduce candidate types
 		if (functionCalls==null) return;
 		if (functionCalls.size()==0) return; //no information avaliable for type deduction
 		if (this.rawType==null) {
-			List<TypeEntity> candidateTypes = inferer.calculateCandidateTypes(this,this.functionCalls);
+			List<TypeEntity> candidateTypes = bindingResolver.calculateCandidateTypes(this,this.functionCalls);
 			if (candidateTypes.size()>0) {
-				this.type = new CandidateTypes(candidateTypes,inferer.getRepo().generateId());
-				inferer.getRepo().add(this.type);
+				this.type = new CandidateTypes(candidateTypes, bindingResolver.getRepo().generateId());
+				bindingResolver.getRepo().add(this.type);
 			}
 		}
 	}

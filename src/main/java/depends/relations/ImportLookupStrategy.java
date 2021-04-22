@@ -40,8 +40,6 @@ public abstract class ImportLookupStrategy {
 	 * 
 	 * @param name - the entity name
 	 * @param fileEntity - the current file
-	 * @param repo - the whole entity repo, which could be used when necessary
-	 * @param inferer - the inferer object, which could be used when necessary
 	 * @return the founded entity, or null if not found.
 	 */
 	public abstract Entity lookupImportedType(String name, FileEntity fileEntity);
@@ -51,7 +49,6 @@ public abstract class ImportLookupStrategy {
 	 * In C/CPP, it is calculated by the file name
 	 * In Java, it is calculated by the imported types
 	 * @param importedNames - the original name of the import relation
-	 * @param repo - entity repo
 	 * @return the corresponding entities related with importedNames
 	 */
 	public abstract Collection<Entity> getImportedRelationEntities(List<Import> importedNames);
@@ -59,7 +56,6 @@ public abstract class ImportLookupStrategy {
 	/**
 	 * The types been imported
 	 * @param importedNames
-	 * @param repo
 	 * @return
 	 */
 	public abstract Collection<Entity> getImportedTypes(List<Import> importedNames,Set<UnsolvedBindings> unsolvedSymbols);
@@ -67,7 +63,6 @@ public abstract class ImportLookupStrategy {
 	/**
 	 * The files been imported
 	 * @param importedNames
-	 * @param repo
 	 * @return
 	 */
 	public abstract Collection<Entity> getImportedFiles(List<Import> importedNames);
@@ -78,12 +73,12 @@ public abstract class ImportLookupStrategy {
 	 */
 	public abstract boolean supportGlobalNameLookup();
 
-	public void setInferer(Inferer inferer){
-		this.inferer = inferer;
+	public void setBindingResolver(IBindingResolver bindingResolver){
+		this.bindingResolver = bindingResolver;
 	}
 	public  ImportLookupStrategy(EntityRepo repo){
 		this.repo = repo;
 	}
 	protected EntityRepo repo;
-	protected Inferer inferer;
+	protected IBindingResolver bindingResolver;
 }

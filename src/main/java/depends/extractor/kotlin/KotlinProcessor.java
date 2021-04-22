@@ -40,7 +40,7 @@ public class KotlinProcessor extends AbstractLangProcessor {
 
 	@Override
 	public FileParser createFileParser(String fileFullPath) {
-		return new KotlinFileParser(fileFullPath,entityRepo, inferer);
+		return new KotlinFileParser(fileFullPath,entityRepo, bindingResolver);
 	}
 
 	@Override

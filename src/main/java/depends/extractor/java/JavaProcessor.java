@@ -52,7 +52,7 @@ public class JavaProcessor extends AbstractLangProcessor {
 	
 	@Override
 	public FileParser createFileParser(String fileFullPath) {
-		return new JavaFileParser(fileFullPath,entityRepo, inferer);
+		return new JavaFileParser(fileFullPath,entityRepo, bindingResolver);
 	}
 	
 	@Override

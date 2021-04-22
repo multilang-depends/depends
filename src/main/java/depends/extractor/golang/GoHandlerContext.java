@@ -28,12 +28,12 @@ import depends.entity.Entity;
 import depends.entity.PackageEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.HandlerContext;
-import depends.relations.Inferer;
+import depends.relations.IBindingResolver;
 
 public class GoHandlerContext extends HandlerContext {
 
-	public GoHandlerContext(EntityRepo entityRepo, Inferer inferer) {
-		super(entityRepo,inferer);
+	public GoHandlerContext(EntityRepo entityRepo, IBindingResolver bindingResolver) {
+		super(entityRepo, bindingResolver);
 	}
 
 	public Entity foundPackageDeclaration(String packageName){

@@ -24,14 +24,10 @@ SOFTWARE.
 
 package depends.entity;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-
-import depends.relations.Inferer;
+import depends.relations.IBindingResolver;
 import depends.relations.Relation;
+
+import java.util.*;
 
 public class CandidateTypes extends TypeEntity {
 	private List<TypeEntity> candidateTypes;
@@ -119,9 +115,9 @@ public class CandidateTypes extends TypeEntity {
 	}
 
 	@Override
-	public void inferLocalLevelEntities(Inferer inferer) {
+	public void inferLocalLevelEntities(IBindingResolver bindingResolver) {
 		System.err.println("error: inferLocalLevelEntities should not been invoked");
-		super.inferLocalLevelEntities(inferer);
+		super.inferLocalLevelEntities(bindingResolver);
 	}
 
 	@Override
@@ -166,10 +162,9 @@ public class CandidateTypes extends TypeEntity {
 		super.addExpression(key, expression);
 	}
 
-	@Override
-	public void resolveExpressions(Inferer inferer) {
+	public void resolveExpressions(IBindingResolver bindingResolver) {
 		System.err.println("error: resolveExpressions should not been invoked");
-		super.resolveExpressions(inferer);
+		super.resolveExpressions(bindingResolver);
 	}
 
 
@@ -211,9 +206,9 @@ public class CandidateTypes extends TypeEntity {
 	}
 
 	@Override
-	protected Collection<Entity> identiferToEntities(Inferer inferer, Collection<GenericName> identifiers) {
+	protected Collection<Entity> identiferToEntities(IBindingResolver bindingResolver, Collection<GenericName> identifiers) {
 		System.err.println("error: identiferToTypes should not been invoked");
-		return super.identiferToEntities(inferer, identifiers);
+		return super.identiferToEntities(bindingResolver, identifiers);
 	}
 
 	@Override
@@ -289,9 +284,9 @@ public class CandidateTypes extends TypeEntity {
 	}
 
 	@Override
-	public void inferEntities(Inferer inferer) {
+	public void inferEntities(IBindingResolver bindingResolver) {
 		System.err.println("error: inferEntities should not been invoked");
-		super.inferEntities(inferer);
+		super.inferEntities(bindingResolver);
 	}
 
 	@Override

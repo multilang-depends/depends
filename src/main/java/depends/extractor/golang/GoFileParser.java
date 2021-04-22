@@ -27,7 +27,7 @@ package depends.extractor.golang;
 import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.repo.EntityRepo;
-import depends.relations.Inferer;
+import depends.relations.IBindingResolver;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -43,11 +43,11 @@ import java.io.IOException;
 public class GoFileParser implements depends.extractor.FileParser{
 	private String fileFullPath;
 	private EntityRepo entityRepo;
-	private Inferer inferer;
-	public GoFileParser(String fileFullPath, EntityRepo entityRepo, Inferer inferer) {
+	private IBindingResolver bindingResolver;
+	public GoFileParser(String fileFullPath, EntityRepo entityRepo, IBindingResolver bindingResolver) {
         this.fileFullPath = fileFullPath;
         this.entityRepo = entityRepo;
-        this.inferer = inferer;
+        this.bindingResolver = bindingResolver;
 	}
 
 	@Override
@@ -59,7 +59,7 @@ public class GoFileParser implements depends.extractor.FileParser{
         GoParser parser = new GoParser(tokens);
         ParserATNSimulator interpreter = new ParserATNSimulator(parser, parser.getATN(), parser.getInterpreter().decisionToDFA, new PredictionContextCache());
         parser.setInterpreter(interpreter);
-        GoListener bridge = new GoListener(fileFullPath, entityRepo,inferer);
+        GoListener bridge = new GoListener(fileFullPath, entityRepo, bindingResolver);
 	    ParseTreeWalker walker = new ParseTreeWalker();
 	    try {
 	    	walker.walk(bridge, parser.sourceFile());
