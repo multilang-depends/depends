@@ -1,6 +1,18 @@
 **Depends设计说明**
 
-**v20190215 **
+
+#下载和编译
+
+## java版本
+Depends使用Java8编写。如果您安装的是Java的其他版本，请首先安装Java8 JDK。并且把Java版本切换到Java8.
+
+## 依赖
+Depends使用了若干依赖。除了Pom文件中指定的依赖，还需要显式安装一些依赖。
+首先，你需要下载https://github.com/multilang-depends/utils并使用mvn install安装。
+此外，还需要运行源码下面的./install_lib.sh或.\install_lib.bat安装一些依赖。
+
+## 编译
+现在，你应该可以顺利的运行mvn package来获得编译的Jar包了。在此基础上，就可以对代码进行修改。
 
 语言扩展说明
 ============

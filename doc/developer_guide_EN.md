@@ -94,7 +94,7 @@ For example, the implementation of FileParser is as follows:
 The steps are:
 Create a Lexer, create a Parse, create a Listener, and start traversing each of the syntax elements of interest.
 
-### Impelemnt the listener/visitor:
+### Implement the listener/visitor:
 
 First, create a context for the file:
 
@@ -113,7 +113,7 @@ Then, for each code element, tell the context some information required. for exa
         super.enterFuncdef(ctx);
     }
 
-We already succefully make the depends knows that a function entity is created.    
+We already successfully make the depends on knows that a function entity is created.    
 
 ### Language-specific Import Locator
 
@@ -221,7 +221,7 @@ ContainerEntity. AliasEntity is essentially an alias, so it points directly to E
 ContainerEntity is the public parent class for most types, and its immediate subclasses include MultiDeclareEntity.
 FileEntity, AnonymousBlock, FunctionEntity, TypeEntity and VarEntity.
 
-PackageEntity is a subclass of TypeEnity. This concept is incorrect. In the subsequent stage, the design reason should be further investigated and reconstructed.
+PackageEntity is a subclass of TypeEntity. This concept is incorrect. In the subsequent stage, the design reason should be further investigated and reconstructed.
 
 ### How does EntityRepo maintain data?
 
