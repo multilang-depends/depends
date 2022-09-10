@@ -35,7 +35,6 @@ import depends.relations.IBindingResolver;
 import multilang.depends.util.file.FileUtil;
 
 import java.util.Collection;
-import java.util.concurrent.ExecutorService;
 
 public class RubyHandlerContext extends HandlerContext {
 
@@ -43,7 +42,6 @@ public class RubyHandlerContext extends HandlerContext {
 	private ParserCreator parserCreator;
 	public RubyHandlerContext(EntityRepo entityRepo,
                               IncludedFileLocator includedFileLocator,
-                              ExecutorService executorService,
                               IBindingResolver bindingResolver, ParserCreator parserCreator) {
 		super(entityRepo, bindingResolver);
 		this.includedFileLocator = includedFileLocator;

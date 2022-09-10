@@ -35,7 +35,6 @@ import org.jrubyparser.util.NoopVisitor;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.concurrent.ExecutorService;
 
 public class JRubyVisitor extends NoopVisitor {
 
@@ -44,8 +43,8 @@ public class JRubyVisitor extends NoopVisitor {
 	private ExpressionUsage expressionUsage;
 
 	public JRubyVisitor(String fileFullPath, EntityRepo entityRepo, IncludedFileLocator includedFileLocator,
-                        ExecutorService executorService, IBindingResolver bindingResolver, ParserCreator parserCreator) {
-		this.context = new RubyHandlerContext(entityRepo, includedFileLocator, executorService, bindingResolver, parserCreator);
+                        IBindingResolver bindingResolver, ParserCreator parserCreator) {
+		this.context = new RubyHandlerContext(entityRepo, includedFileLocator,  bindingResolver, parserCreator);
 		expressionUsage = new ExpressionUsage(context, entityRepo, helper, bindingResolver);
 		context.startFile(fileFullPath);
 

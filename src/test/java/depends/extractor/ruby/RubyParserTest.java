@@ -7,8 +7,6 @@ import depends.extractor.ruby.jruby.JRubyFileParser;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 public abstract class RubyParserTest extends ParserTest implements ParserCreator{
 	public void init() {
 		langProcessor = new RubyProcessor();
@@ -16,8 +14,7 @@ public abstract class RubyParserTest extends ParserTest implements ParserCreator
 	}
 	
 	public FileParser createFileParser(String src) {
-		ExecutorService executor = Executors.newSingleThreadExecutor();
-		return new JRubyFileParser(src,entityRepo, executor,new IncludedFileLocator(includePaths()), bindingResolver, this);
+		return new JRubyFileParser(src,entityRepo, new IncludedFileLocator(includePaths()), bindingResolver, this);
 	}
 
 	private List<String> includePaths() {

@@ -33,15 +33,12 @@ import depends.relations.ImportLookupStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static depends.deptypes.DependencyType.*;
 
 public class RubyProcessor extends AbstractLangProcessor implements ParserCreator{
     private static final String LANG = "ruby";
     private static final String[] SUFFIX = new String[] {".rb"};
-	private ExecutorService executor;
 
 	@Override
 	public String supportedLanguage() {
@@ -56,15 +53,7 @@ public class RubyProcessor extends AbstractLangProcessor implements ParserCreato
 
 	@Override
 	public FileParser createFileParser(String fileFullPath) {
-		executor = Executors.newSingleThreadExecutor();
-		return new JRubyFileParser(fileFullPath,entityRepo,executor,new IncludedFileLocator(super.includePaths()), bindingResolver,this);
-	}
-
-
-	@Override
-	protected void finalize() throws Throwable {
-		this.executor.shutdown();
-		super.finalize();
+		return new JRubyFileParser(fileFullPath,entityRepo,new IncludedFileLocator(super.includePaths()), bindingResolver,this);
 	}
 
 	@Override

@@ -1,9 +1,9 @@
 package depends.extractor.java;
 
-import java.io.IOException;
-
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.IOException;
 
 public class JavaCylicInheritTest extends JavaParserTest{
 	@Before
@@ -18,6 +18,4 @@ public class JavaCylicInheritTest extends JavaParserTest{
         parser.parse();
         resolveAllBindings();
 	}
-	
-	
 }

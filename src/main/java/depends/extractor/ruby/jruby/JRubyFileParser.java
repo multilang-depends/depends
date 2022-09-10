@@ -41,22 +41,18 @@ import org.jrubyparser.parser.ParserConfiguration;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.concurrent.ExecutorService;
 public class JRubyFileParser implements FileParser {
 	private String fileFullPath;
 	private EntityRepo entityRepo;
-	private ExecutorService executor;
 	private IncludedFileLocator includesFileLocator;
 	private IBindingResolver bindingResolver;
 	private ParserCreator parserCreator;
 
 	public JRubyFileParser(String fileFullPath, EntityRepo entityRepo,
-                           ExecutorService executorService,
                            IncludedFileLocator includesFileLocator,
                            IBindingResolver bindingResolver, ParserCreator parserCreator) {
         this.fileFullPath  = FileUtil.uniqFilePath(fileFullPath);
         this.entityRepo = entityRepo;
-        this.executor = executorService;
         this.includesFileLocator = includesFileLocator;
         this.bindingResolver = bindingResolver;
         this.parserCreator = parserCreator;
@@ -78,7 +74,7 @@ public class JRubyFileParser implements FileParser {
 		ParserConfiguration config = new ParserConfiguration(0, version);
 		try {
 			Node node = rubyParser.parse("<code>", in, config);
-			JRubyVisitor parser = new JRubyVisitor(fileFullPath, entityRepo, includesFileLocator,executor, bindingResolver,parserCreator);
+			JRubyVisitor parser = new JRubyVisitor(fileFullPath, entityRepo, includesFileLocator, bindingResolver,parserCreator);
 			node.accept(parser);
 			fileEntity = entityRepo.getEntity(fileFullPath);
 			((FileEntity)fileEntity).cacheAllExpressions();
