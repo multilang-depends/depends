@@ -22,18 +22,31 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-package depends.extractor.ruby;
+package depends.extractor;
+
+import multilang.depends.util.file.FileUtil;
 
 import java.io.File;
 import java.util.List;
 
-import multilang.depends.util.file.FileUtil;
-
+/**
+ * Search file in all included path
+ */
 public class IncludedFileLocator {
 	private List<String> includesPath;
 	public IncludedFileLocator(List<String> includedPath) {
 		this.includesPath = includedPath;
 	}
+
+	/**
+	 * Search file in all included path
+	 *    * search the filename directly
+	 *    * search the filename based in given start path (usually current working directory
+	 *    * search the filename in all included paths
+	 * @param dirPath
+	 * @param importedFilename
+	 * @return
+	 */
 	public String uniqFileName(String dirPath, String importedFilename) {
 		if (FileUtil.existFile(importedFilename)) return FileUtil.uniqFilePath(importedFilename);
 		if (dirPath!=null) {
