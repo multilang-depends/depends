@@ -28,12 +28,8 @@ import depends.entity.repo.BuiltInType;
 
 public class GoBuiltInType extends BuiltInType {
 
-    public GoBuiltInType() {
-        super.createBuiltInTypes();
-    }
-
     @Override
-    public String[] getBuiltInTypeStr() {
+    protected String[] getBuiltInTypeName() {
         return new String[]{
                 "<Built-in>",
                 "break", "default", "func", "interface",
@@ -49,16 +45,4 @@ public class GoBuiltInType extends BuiltInType {
 				"_"
         };
     }
-
-    @Override
-    public String[] getBuiltInPrefixStr() {
-        return new String[]{
-        };
-    }
-
-    @Override
-    public String[] getBuiltInMethods() {
-        return new String[]{};
-    }
-
 }

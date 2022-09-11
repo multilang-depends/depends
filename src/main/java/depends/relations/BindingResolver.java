@@ -26,8 +26,8 @@ package depends.relations;
 import depends.entity.*;
 import depends.entity.repo.BuiltInType;
 import depends.entity.repo.EntityRepo;
-import depends.entity.repo.NullBuiltInType;
 import depends.extractor.UnsolvedBindings;
+import depends.extractor.empty.EmptyBuiltInType;
 import depends.importtypes.Import;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +37,7 @@ import java.util.*;
 
 public class BindingResolver implements IBindingResolver{
 
-	private BuiltInType buildInTypeManager = new NullBuiltInType();
+	private BuiltInType buildInTypeManager = new EmptyBuiltInType();
 	private ImportLookupStrategy importLookupStrategy;
 	private Set<UnsolvedBindings> unsolvedSymbols = new HashSet<>();
 	private EntityRepo repo;
@@ -135,9 +135,6 @@ public class BindingResolver implements IBindingResolver{
 		if (rawName==null || rawName.getName()==null)
 			return null;
 		if (buildInTypeManager.isBuiltInType(rawName.getName())) {
-			return TypeEntity.buildInType;
-		}
-		if (buildInTypeManager.isBuiltInTypePrefix(rawName.getName())) {
 			return TypeEntity.buildInType;
 		}
 		// qualified name will first try global name directly

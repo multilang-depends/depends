@@ -1,14 +1,14 @@
 package depends.extractor.python;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import depends.entity.FunctionCall;
 import depends.entity.FunctionEntity;
 import depends.entity.GenericName;
 import depends.entity.TypeEntity;
 import depends.entity.repo.BuiltInType;
 import depends.relations.FunctionMatcher;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PythonBuiltInType extends BuiltInType {
 
@@ -82,25 +82,6 @@ public class PythonBuiltInType extends BuiltInType {
 		buildInTypes.add(type);
 	}
 
-	@Override
-	public String[] getBuiltInMethods() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String[] getBuiltInTypeStr() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String[] getBuiltInPrefixStr() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	
 	@Override
 	public  boolean isBuildInTypeMethods(List<FunctionCall> functionCalls) {
 		for (TypeEntity type:buildInTypes) {

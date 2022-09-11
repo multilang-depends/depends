@@ -28,11 +28,8 @@ import depends.entity.repo.BuiltInType;
 
 public class JavaBuiltInType extends BuiltInType{
 	
-	public JavaBuiltInType() {
-        super.createBuiltInTypes();
-	}
 	@Override
-	public String[] getBuiltInTypeStr() {
+	protected String[] getBuiltInTypeName() {
 		return new String[]{
 				"void","int","double","char","byte","boolean","long","short","float",
 				"BigDecimal","Integer","Double","Char","Byte","Boolean","Long","Short","Float",
@@ -79,14 +76,9 @@ public class JavaBuiltInType extends BuiltInType{
 		};
 	}
 	@Override
-	public String[] getBuiltInPrefixStr() {
+	protected String[] getBuiltInTypePrefix() {
 		return new String[]{
 				"java.","javax.","com.sun."
 		};
 	}
-	@Override
-	public String[] getBuiltInMethods() {
-		return new String[]{};
-	}
-	
 }

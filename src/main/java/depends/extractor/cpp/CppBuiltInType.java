@@ -28,12 +28,8 @@ import depends.entity.repo.BuiltInType;
 
 public class CppBuiltInType extends BuiltInType {
 
-	public CppBuiltInType() {
-		super.createBuiltInTypes();
-	}
-
 	@Override
-	public String[] getBuiltInTypeStr() {
+	protected String[] getBuiltInTypeName() {
 		return new String[] { "alignas", "alignof", "asm", "auto", "bool", "break", "case", "catch", "char",
 				"char16_t", "char32_t", "class", "const", "constexpr", "const_cast", "continue", "decltype",
 				"default", "delete", "do", "double", "dynamic_cast", "else", "enum", "explicit", "export", "extern",
@@ -64,12 +60,7 @@ public class CppBuiltInType extends BuiltInType {
 	}
 
 	@Override
-	public String[] getBuiltInPrefixStr() {
+	protected String[] getBuiltInTypePrefix() {
 		return new String[] {"__"};
 	}
-	@Override
-	public String[] getBuiltInMethods() {
-		return new String[]{};
-	}
-
 }
