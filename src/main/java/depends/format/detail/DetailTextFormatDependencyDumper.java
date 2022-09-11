@@ -24,16 +24,16 @@ SOFTWARE.
 
 package depends.format.detail;
 
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-
 import depends.format.AbstractFormatDependencyDumper;
 import depends.matrix.core.DependencyDetail;
 import depends.matrix.core.DependencyMatrix;
 import depends.matrix.core.DependencyPair;
 import depends.matrix.core.DependencyValue;
+
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class DetailTextFormatDependencyDumper extends AbstractFormatDependencyDumper{
 	ArrayList<String> files;
@@ -67,7 +67,7 @@ public class DetailTextFormatDependencyDumper extends AbstractFormatDependencyDu
         	writer.println("======="+files.get(src) + " -> " + files.get(dst) + "=========");
         	for (DependencyValue dependency:dependencyPair.getDependencies()) {
         		for (DependencyDetail item:dependency.getDetails()) {
-                	writer.println("["+dependency.getType()+"]"+item);
+                	writer.println("["+dependency.getType()+"]"+item.getSrc() + "->" + item.getDest());
         		}
         	}
         }		

@@ -66,7 +66,7 @@ public class JRubyFileParser extends FileParser {
 			JRubyVisitor parser = new JRubyVisitor(fileFullPath, entityRepo, includesFileLocator, bindingResolver,parserCreator);
 			node.accept(parser);
 		}catch(SyntaxException e) {
-			System.out.println("parsing error in "+fileFullPath + "(" + e.getMessage() +")");
+			System.out.println("parsing error in "+e.getPosition()  + "(" + e.getMessage() + ")");
 		}catch (Exception e){
 			e.printStackTrace();
 		}
