@@ -24,8 +24,8 @@ public class RubyInheritTest extends RubyParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    FileParser parser = createFileParser(src);
-		    parser.parse();
+		    FileParser parser = createFileParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	    this.assertContainsRelation(entityRepo.getEntity("Cat"), DependencyType.INHERIT, "Animal");
@@ -39,8 +39,8 @@ public class RubyInheritTest extends RubyParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    FileParser parser = createFileParser(src);
-		    parser.parse();
+		    FileParser parser = createFileParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	    this.assertContainsRelation(entityRepo.getEntity("Cat"), DependencyType.INHERIT, "Animal");
@@ -54,8 +54,8 @@ public class RubyInheritTest extends RubyParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    FileParser parser = createFileParser(src);
-		    parser.parse();
+		    FileParser parser = createFileParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	    super.assertContainsRelation(entityRepo.getEntity("Cat"), DependencyType.INHERIT, "Animal");
@@ -68,8 +68,8 @@ public class RubyInheritTest extends RubyParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    FileParser parser = createFileParser(src);
-		    parser.parse();
+		    FileParser parser = createFileParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	    super.assertContainsRelation(entityRepo.getEntity("ZooCat"), DependencyType.INHERIT, "Zoo.Animal");
@@ -82,8 +82,8 @@ public class RubyInheritTest extends RubyParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    FileParser parser = createFileParser(src);
-		    parser.parse();
+		    FileParser parser = createFileParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	    this.assertContainsRelation(entityRepo.getEntity("Zoo.Cow"), DependencyType.INHERIT, "Zoo.Animal");
@@ -96,8 +96,8 @@ public class RubyInheritTest extends RubyParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    FileParser parser = createFileParser(src);
-		    parser.parse();
+		    FileParser parser = createFileParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
         assertEquals(1,entityRepo.getEntity("Cat").getRelations().size());

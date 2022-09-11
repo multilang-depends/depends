@@ -20,8 +20,8 @@ public class RubyObjectCreationTest extends RubyParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    FileParser parser = createFileParser(src);
-		    parser.parse();
+		    FileParser parser = createFileParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	    super.assertContainsRelation(entityRepo.getEntity("T.foo"), DependencyType.CREATE, "M");

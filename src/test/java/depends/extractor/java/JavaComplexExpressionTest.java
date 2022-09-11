@@ -17,8 +17,8 @@ public class JavaComplexExpressionTest extends JavaParserTest {
 	@Test
 	public void test_complexExpression() throws IOException {
         String src = "./src/test/resources/java-code-examples/ComplexExpressionTest.java";
-        JavaFileParser parser = createParser(src);
-        parser.parse();
+        JavaFileParser parser = createParser();
+        parser.parse(src);
         resolveAllBindings();
         ContainerEntity entity  = (ContainerEntity)(entityRepo.getEntity("ComplexExpressionTest.other"));
         assertEquals(3,entity.getRelations().size());

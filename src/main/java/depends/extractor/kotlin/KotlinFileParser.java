@@ -3,6 +3,7 @@ package depends.extractor.kotlin;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.FileParser;
 import depends.relations.IBindingResolver;
+import multilang.depends.util.file.FileUtil;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -14,21 +15,20 @@ import java.io.IOException;
 public class KotlinFileParser implements FileParser {
 
 	@Override
-	public void parse() throws IOException {
-	       CharStream input = CharStreams.fromFileName(fileFullPath);
-	        Lexer lexer = new KotlinLexer(input);
-	        CommonTokenStream tokens = new CommonTokenStream(lexer);
-	        KotlinParser parser = new KotlinParser(tokens);
-	        KotlinListener bridge = new KotlinListener(fileFullPath, entityRepo, bindingResolver);
-		    ParseTreeWalker walker = new ParseTreeWalker();
-		    walker.walk(bridge, parser.kotlinFile());
+	public void parse(String fileFullPath) throws IOException {
+		fileFullPath = FileUtil.uniqFilePath(fileFullPath);
+		CharStream input = CharStreams.fromFileName(fileFullPath);
+		Lexer lexer = new KotlinLexer(input);
+		CommonTokenStream tokens = new CommonTokenStream(lexer);
+		KotlinParser parser = new KotlinParser(tokens);
+		KotlinListener bridge = new KotlinListener(fileFullPath, entityRepo, bindingResolver);
+		ParseTreeWalker walker = new ParseTreeWalker();
+		walker.walk(bridge, parser.kotlinFile());
 	}
 	
-	private String fileFullPath;
 	private EntityRepo entityRepo;
 	private IBindingResolver bindingResolver;
-	public KotlinFileParser(String fileFullPath,EntityRepo entityRepo, IBindingResolver bindingResolver) {
-        this.fileFullPath = fileFullPath;
+	public KotlinFileParser(EntityRepo entityRepo, IBindingResolver bindingResolver) {
         this.entityRepo = entityRepo;
         this.bindingResolver = bindingResolver;
 	}

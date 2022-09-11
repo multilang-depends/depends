@@ -19,8 +19,8 @@ public class TypeDefTest extends CppParserTest{
 	    	    };
 	    
 	    for (String src:srcs) {
-		    CppFileParser parser = createParser(src);
-		    parser.parse();
+		    CppFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
         this.assertContainsRelation(entityRepo.getEntity("foo"), DependencyType.PARAMETER, "MyInt");

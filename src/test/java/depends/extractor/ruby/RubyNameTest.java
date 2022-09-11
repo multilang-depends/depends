@@ -23,8 +23,8 @@ public class RubyNameTest extends RubyParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    FileParser parser = createFileParser(src);
-		    parser.parse();
+		    FileParser parser = createFileParser();
+		    parser.parse(src);
 	    }
 	    PackageEntity module = (PackageEntity)(entityRepo.getEntity("A.B.C"));
 	    assertNotNull(module);

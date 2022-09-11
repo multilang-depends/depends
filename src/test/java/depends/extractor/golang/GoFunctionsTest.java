@@ -18,8 +18,8 @@ public class GoFunctionsTest extends GolangParserTest {
 	@Test
 	public void test_could_parse_function() throws IOException {
         String src = "./src/test/resources/go-code-examples/func.go";
-        GoFileParser parser =createParser(src);
-        parser.parse();
+        GoFileParser parser =createParser();
+        parser.parse(src);
         resolveAllBindings();
         assertNotNull(entityRepo.getEntity("main"));
 	}
@@ -28,8 +28,8 @@ public class GoFunctionsTest extends GolangParserTest {
 	@Ignore
 	public void test_could_parse_struct_type() throws IOException {
 		String src = "./src/test/resources/go-code-examples/struct.go";
-		GoFileParser parser =createParser(src);
-		parser.parse();
+		GoFileParser parser =createParser();
+		parser.parse(src);
 		resolveAllBindings();
 		assertNotNull(entityRepo.getEntity("Books"));
 	}
@@ -37,8 +37,8 @@ public class GoFunctionsTest extends GolangParserTest {
 	@Ignore
 	public void test_could_parse_struct_members() throws IOException {
 		String src = "./src/test/resources/go-code-examples/struct.go";
-		GoFileParser parser =createParser(src);
-		parser.parse();
+		GoFileParser parser =createParser();
+		parser.parse(src);
 		resolveAllBindings();
 		assertNotNull(entityRepo.getEntity("Books"));
 		TypeEntity book = (TypeEntity)entityRepo.getEntity("Books");

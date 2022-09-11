@@ -26,8 +26,8 @@ public class RelationToImplementationTest extends CppParserTest{
 	    	    };
 	    
 	    for (String src:srcs) {
-		    CppFileParser parser = createParser(src);
-		    parser.parse();
+		    CppFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings(true);
 	    Entity bar = entityRepo.getEntity("bar");
@@ -53,8 +53,8 @@ public class RelationToImplementationTest extends CppParserTest{
 	    	    };
 	    
 	    for (String src:srcs) {
-		    CppFileParser parser = createParser(src);
-		    parser.parse();
+		    CppFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings(true);
 	    Entity bar = entityRepo.getEntity("baz");
@@ -77,8 +77,8 @@ public class RelationToImplementationTest extends CppParserTest{
 	    	    };
 	    
 	    for (String src:srcs) {
-		    CppFileParser parser = createParser(src);
-		    parser.parse();
+		    CppFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings(true);
 	    Entity bar = entityRepo.getEntity("qux");

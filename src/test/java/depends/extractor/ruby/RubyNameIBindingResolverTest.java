@@ -22,8 +22,8 @@ public class RubyNameIBindingResolverTest extends RubyParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    FileParser parser = createFileParser(src);
-		    parser.parse();
+		    FileParser parser = createFileParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	    FunctionEntity function = (FunctionEntity)(entityRepo.getEntity("M1.test"));
@@ -38,8 +38,8 @@ public class RubyNameIBindingResolverTest extends RubyParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    FileParser parser = createFileParser(src);
-		    parser.parse();
+		    FileParser parser = createFileParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	    FunctionEntity function = (FunctionEntity)(entityRepo.getEntity("M2.M1.test2"));

@@ -25,8 +25,8 @@ public class RubySingletonMethodTest extends RubyParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    FileParser parser = createFileParser(src);
-		    parser.parse();
+		    FileParser parser = createFileParser();
+		    parser.parse(src);
 	    }
 	    ContainerEntity file = (ContainerEntity)(entityRepo.getEntity(FileUtil.uniqFilePath(srcs[0])));
 	    VarEntity var = file.lookupVarLocally("var2");

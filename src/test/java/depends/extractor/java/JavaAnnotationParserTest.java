@@ -17,8 +17,8 @@ public class JavaAnnotationParserTest extends JavaParserTest {
 	@Test
 	public void test_could_parse_annotationType() throws IOException {
         String src = "./src/test/resources/java-code-examples/AnnotationTest.java";
-        JavaFileParser parser =createParser(src);
-        parser.parse();
+        JavaFileParser parser =createParser();
+        parser.parse(src);
         resolveAllBindings();
         assertEquals(1,entityRepo.getEntity("AnnotationTest.value").getRelations().size());
 	}
@@ -26,8 +26,8 @@ public class JavaAnnotationParserTest extends JavaParserTest {
 	@Test
 	public void test_could_detect_annotation_in_class_level() throws IOException {
         String src = "./src/test/resources/java-code-examples/AnnotationTest.java";
-        JavaFileParser parser =createParser(src);
-        parser.parse();
+        JavaFileParser parser =createParser();
+        parser.parse(src);
         resolveAllBindings();
         this.assertContainsRelation(entityRepo.getEntity("TheClass"), DependencyType.ANNOTATION, "AnnotationTest");
 	}
@@ -35,8 +35,8 @@ public class JavaAnnotationParserTest extends JavaParserTest {
 	@Test
 	public void test_could_detect_annotation_in_function_level() throws IOException {
         String src = "./src/test/resources/java-code-examples/AnnotationTest.java";
-        JavaFileParser parser =createParser(src);
-        parser.parse();
+        JavaFileParser parser =createParser();
+        parser.parse(src);
         resolveAllBindings();
         this.assertContainsRelation(entityRepo.getEntity("TheFunction.foo"), DependencyType.ANNOTATION, "AnnotationTest");
 	}
@@ -44,8 +44,8 @@ public class JavaAnnotationParserTest extends JavaParserTest {
 	@Test
 	public void test_could_detect_no_annotation_in_function_level() throws IOException {
         String src = "./src/test/resources/java-code-examples/AnnotationTest.java";
-        JavaFileParser parser =createParser(src);
-        parser.parse();
+        JavaFileParser parser =createParser();
+        parser.parse(src);
         resolveAllBindings();
         this.assertNotContainsRelation(entityRepo.getEntity("TheFunction.bar"), DependencyType.ANNOTATION, "AnnotationTest");
 	}
@@ -53,8 +53,8 @@ public class JavaAnnotationParserTest extends JavaParserTest {
 	@Test
 	public void test_could_detect_annotation_in_miscs() throws IOException {
         String src = "./src/test/resources/java-code-examples/AnnotationTest.java";
-        JavaFileParser parser =createParser(src);
-        parser.parse();
+        JavaFileParser parser =createParser();
+        parser.parse(src);
         resolveAllBindings();
         this.assertContainsRelation(entityRepo.getEntity("TheClass.TheClass"), DependencyType.ANNOTATION, "AnnotationTest");
         this.assertContainsRelation(entityRepo.getEntity("TheEnum"), DependencyType.ANNOTATION, "AnnotationTest");

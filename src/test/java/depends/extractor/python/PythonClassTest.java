@@ -25,8 +25,8 @@ public class PythonClassTest extends PythonParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    PythonFileParser parser = createParser(src);
-		    parser.parse();
+		    PythonFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
         assertNotNull(entityRepo.getEntity(withPackageName(srcs[0],"Foo")));
@@ -39,8 +39,8 @@ public class PythonClassTest extends PythonParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    PythonFileParser parser = createParser(src);
-		    parser.parse();
+		    PythonFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	    TypeEntity type = (TypeEntity) entityRepo.getEntity(withPackageName(srcs[0],"Foo"));
@@ -54,8 +54,8 @@ public class PythonClassTest extends PythonParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    PythonFileParser parser = createParser(src);
-		    parser.parse();
+		    PythonFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	    TypeEntity type = (TypeEntity) entityRepo.getEntity(withPackageName(srcs[0],"Bar"));

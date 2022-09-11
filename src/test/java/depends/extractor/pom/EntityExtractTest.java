@@ -20,8 +20,8 @@ public class EntityExtractTest extends MavenParserTest{
 	    	    };
 	    
 	    for (String src:srcs) {
-		    PomFileParser parser = createParser(src);
-		    parser.parse();
+		    PomFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
         assertEquals(0,entityRepo.getEntity("org.log4j-test.log4j_1.2.12_").getRelations().size());
@@ -35,8 +35,8 @@ public class EntityExtractTest extends MavenParserTest{
 	    	    };
 	    
 	    for (String src:srcs) {
-		    PomFileParser parser = createParser(src);
-		    parser.parse();
+		    PomFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
         assertNotNull(entityRepo.getEntity("org.apache.maven.surefire.surefire-junit4_2.12.4_"));
@@ -49,8 +49,8 @@ public class EntityExtractTest extends MavenParserTest{
 	    	    };
 	    
 	    for (String src:srcs) {
-		    PomFileParser parser = createParser(src);
-		    parser.parse();
+		    PomFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
         PomArtifactEntity entity = (PomArtifactEntity)(entityRepo.getEntity("properties-test.test_1_"));
@@ -71,8 +71,8 @@ public class EntityExtractTest extends MavenParserTest{
 	    	    };
 	    
 	    for (String src:srcs) {
-		    PomFileParser parser = createParser(src);
-		    parser.parse();
+		    PomFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
         PomArtifactEntity entity = (PomArtifactEntity)(entityRepo.getEntity("properties-test.test_1_"));
@@ -91,8 +91,8 @@ public class EntityExtractTest extends MavenParserTest{
 	    	    };
 	    
 	    for (String src:srcs) {
-		    PomFileParser parser = createParser(src);
-		    parser.parse();
+		    PomFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
         PomArtifactEntity entity = (PomArtifactEntity)(entityRepo.getEntity("properties-test.test_1_"));

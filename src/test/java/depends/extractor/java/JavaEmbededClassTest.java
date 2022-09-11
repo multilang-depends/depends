@@ -15,8 +15,8 @@ public class JavaEmbededClassTest extends JavaParserTest{
 	@Test
 	public void test_EmbededTypeWithImport() throws IOException {
         String src = "./src/test/resources/java-code-examples/EmbededTest.java";
-        JavaFileParser parser = createParser(src);
-        parser.parse();
+        JavaFileParser parser = createParser();
+        parser.parse(src);
         resolveAllBindings();
         assertEquals(1,entityRepo.getEntity("x.EmbededTest").getRelations().size());
 	}
@@ -24,8 +24,8 @@ public class JavaEmbededClassTest extends JavaParserTest{
 	@Test
 	public void test_EmbededTypeWithoutImport() throws IOException {
         String src = "./src/test/resources/java-code-examples/EmbededTest.java";
-        JavaFileParser parser = createParser(src);
-        parser.parse();
+        JavaFileParser parser = createParser();
+        parser.parse(src);
         resolveAllBindings();
         assertEquals(1,entityRepo.getEntity("x.EmbededTest2").getRelations().size());
 	}

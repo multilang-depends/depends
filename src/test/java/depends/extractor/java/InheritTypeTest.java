@@ -17,8 +17,8 @@ public class InheritTypeTest extends JavaParserTest {
 	@Test
 	public void should_handle_inherited_type_correctly() throws IOException {
         String src = "./src/test/resources/java-code-examples/InheritTest.java";
-        JavaFileParser parser =createParser(src);
-        parser.parse();
+        JavaFileParser parser =createParser();
+        parser.parse(src);
         resolveAllBindings();
         assertEquals(1,entityRepo.getEntity("InheritTest").getRelations().size());
 	}

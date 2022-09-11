@@ -17,8 +17,8 @@ public class AliasTest extends CppParserTest{
 	@Test
 	public void test_genericTypes() throws IOException {
 	    String src = "./src/test/resources/cpp-code-examples/Alias.cpp";
-	    CppFileParser parser = createParser(src);
-        parser.parse();
+	    CppFileParser parser = createParser();
+        parser.parse(src);
         resolveAllBindings();
         this.assertContainsRelation(entityRepo.getEntity("bar"), DependencyType.CALL, "F.foo");
 	}
@@ -26,8 +26,8 @@ public class AliasTest extends CppParserTest{
 	@Test
 	public void test_refer_to_alias_type_should_work() throws IOException {
 	    String src = "./src/test/resources/cpp-code-examples/AliasType.cpp";
-	    CppFileParser parser = createParser(src);
-        parser.parse();
+	    CppFileParser parser = createParser();
+        parser.parse(src);
         resolveAllBindings();
         this.assertContainsRelation(entityRepo.getEntity("C"), DependencyType.INHERIT, "A");
 	}
@@ -40,8 +40,8 @@ public class AliasTest extends CppParserTest{
 	    	    };
 	    
 	    for (String src:srcs) {
-		    CppFileParser parser = createParser(src);
-		    parser.parse();
+		    CppFileParser parser = createParser();
+		    parser.parse(src);
 	    }
         resolveAllBindings();
         this.assertContainsRelation(entityRepo.getEntity("bar"), DependencyType.CALL, "foo");

@@ -27,6 +27,6 @@ package depends.extractor;
 import java.io.IOException;
 
 public interface FileParser {
-	void parse() throws IOException;
+	void parse(String filePath) throws IOException;
 
 }

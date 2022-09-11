@@ -24,8 +24,8 @@ public class SelfShouldBeThisTypeTest extends PythonParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    FileParser parser = createFileParser(src);
-		    parser.parse();
+		    FileParser parser = createFileParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	    FunctionEntity function = (FunctionEntity)(entityRepo.getEntity(withPackageName(srcs[0],"A.foo")));

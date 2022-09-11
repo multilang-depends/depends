@@ -28,6 +28,7 @@ import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.repo.EntityRepo;
 import depends.relations.IBindingResolver;
+import multilang.depends.util.file.FileUtil;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -41,18 +42,17 @@ import java.io.IOException;
 
 
 public class GoFileParser implements depends.extractor.FileParser{
-	private String fileFullPath;
 	private EntityRepo entityRepo;
 	private IBindingResolver bindingResolver;
-	public GoFileParser(String fileFullPath, EntityRepo entityRepo, IBindingResolver bindingResolver) {
-        this.fileFullPath = fileFullPath;
+	public GoFileParser(EntityRepo entityRepo, IBindingResolver bindingResolver) {
         this.entityRepo = entityRepo;
         this.bindingResolver = bindingResolver;
 	}
 
 	@Override
-	public void parse() throws IOException {
-        CharStream input = CharStreams.fromFileName(fileFullPath);
+	public void parse(String fileFullPath) throws IOException {
+		fileFullPath = FileUtil.uniqFilePath(fileFullPath);
+		CharStream input = CharStreams.fromFileName(fileFullPath);
         Lexer lexer = new GoLexer(input);
         lexer.setInterpreter(new LexerATNSimulator(lexer, lexer.getATN(), lexer.getInterpreter().decisionToDFA, new PredictionContextCache()));
         CommonTokenStream tokens = new CommonTokenStream(lexer);

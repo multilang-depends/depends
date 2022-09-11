@@ -19,13 +19,13 @@ public abstract class PythonParserTest extends ParserTest implements ParserCreat
 		super.init(true);
     }
 	
-	public PythonFileParser createParser(String src) {
-		return (PythonFileParser)createFileParser(src);
+	public PythonFileParser createParser() {
+		return (PythonFileParser)createFileParser();
 	}
 	
 	@Override
-	public FileParser createFileParser(String src) {
-		return  langProcessor.createFileParser(FileUtil.uniqFilePath(src));
+	public FileParser createFileParser() {
+		return  langProcessor.createFileParser();
 	}
 	
 	protected String withPackageName(String theFile,String entityName) {

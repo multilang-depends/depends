@@ -16,8 +16,8 @@ public class JavaInternalClassTest extends JavaParserTest{
 	@Test
 	public void test_parameter() throws IOException {
         String src = "./src/test/resources/java-code-examples/InternalClass.java";
-        JavaFileParser parser = createParser(src);
-        parser.parse();
+        JavaFileParser parser = createParser();
+        parser.parse(src);
         assertNotNull(entityRepo.getEntity("a.InternalClass.Internal"));
 	}
 

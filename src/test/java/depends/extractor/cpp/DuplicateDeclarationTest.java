@@ -21,8 +21,8 @@ public class DuplicateDeclarationTest extends CppParserTest {
 			    	    };
 			    
 			    for (String src:srcs) {
-				    CppFileParser parser = createParser(src);
-				    parser.parse();
+				    CppFileParser parser = createParser();
+				    parser.parse(src);
 			    }
 			    resolveAllBindings();
 			    Entity e = entityRepo.getEntity("X.invoke");

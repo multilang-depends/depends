@@ -14,16 +14,16 @@ public class JavaParseErrorFileTest extends JavaParserTest{
 	@Test
 	public void test_incomplete_file_should_not_stop_process() throws IOException {
         String src = "./src/test/resources/java-code-examples/IncompleteFile.java";
-        JavaFileParser parser = createParser(src);
-        parser.parse();
+        JavaFileParser parser = createParser();
+        parser.parse(src);
         resolveAllBindings();
 	}
 	
 	@Test
 	public void test_should_resolve_types() throws IOException {
         String src = "./src/test/resources/java-code-examples/EclipseTestBase_No_ResponseDuirngTypeResolve.java";
-        JavaFileParser parser = createParser(src);
-        parser.parse();
+        JavaFileParser parser = createParser();
+        parser.parse(src);
         resolveAllBindings();
 	}
 	

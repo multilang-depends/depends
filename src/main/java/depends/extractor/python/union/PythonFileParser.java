@@ -8,6 +8,7 @@ import depends.extractor.python.PythonLexer;
 import depends.extractor.python.PythonParser;
 import depends.extractor.IncludedFileLocator;
 import depends.relations.IBindingResolver;
+import multilang.depends.util.file.FileUtil;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -17,16 +18,13 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import java.io.IOException;
 
 public class PythonFileParser implements FileParser {
-
-	private String fileFullPath;
 	private EntityRepo entityRepo;
 	private IBindingResolver bindingResolver;
 	private IncludedFileLocator includeFileLocator;
 	private PythonProcessor processor;
 
-	public PythonFileParser(String fileFullPath, EntityRepo entityRepo, IncludedFileLocator includeFileLocator,
+	public PythonFileParser(EntityRepo entityRepo, IncludedFileLocator includeFileLocator,
 							IBindingResolver bindingResolver, PythonProcessor pythonProcessor) {
-		this.fileFullPath = fileFullPath;
 		this.entityRepo = entityRepo;
 		this.bindingResolver = bindingResolver;
 		this.includeFileLocator = includeFileLocator;
@@ -34,7 +32,8 @@ public class PythonFileParser implements FileParser {
 	}
 
 	@Override
-	public void parse() throws IOException {
+	public void parse(String fileFullPath) throws IOException {
+		fileFullPath = FileUtil.uniqFilePath(fileFullPath);
 		/** If file already exist, skip it */
 		Entity fileEntity = entityRepo.getEntity(fileFullPath);
 		if (fileEntity!=null && fileEntity instanceof FileEntity) {

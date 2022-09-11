@@ -17,7 +17,7 @@ public abstract class CppParserTest extends ParserTest{
     	macroRepo = new MacroEhcacheRepo(entityRepo);
     }
 	
-	public CppFileParser createParser(String src) {
-		return new  CdtCppFileParser(src, entityRepo, preprocessorHandler, bindingResolver,macroRepo );
+	public CppFileParser createParser() {
+		return new  CdtCppFileParser(entityRepo, preprocessorHandler, bindingResolver,macroRepo );
 	}
 }

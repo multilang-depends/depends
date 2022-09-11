@@ -14,8 +14,8 @@ public class JavaCylicInheritTest extends JavaParserTest{
 	@Test(timeout=3000L)
 	public void test_cyclic_should_not_occur_inifinite_test() throws IOException {
         String src = "./src/test/resources/java-code-examples/CyclicInherit.java";
-        JavaFileParser parser = createParser(src);
-        parser.parse();
+        JavaFileParser parser = createParser();
+        parser.parse(src);
         resolveAllBindings();
 	}
 }

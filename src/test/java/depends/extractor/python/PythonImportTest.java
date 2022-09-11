@@ -26,8 +26,8 @@ public class PythonImportTest extends PythonParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    PythonFileParser parser = createParser(src);
-		    parser.parse();
+		    PythonFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	    Entity file = entityRepo.getEntity(FileUtil.uniqFilePath(srcs[1]));
@@ -43,8 +43,8 @@ public class PythonImportTest extends PythonParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    PythonFileParser parser = createParser(src);
-		    parser.parse();
+		    PythonFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	    Entity file = entityRepo.getEntity(FileUtil.uniqFilePath(srcs[0]));
@@ -60,8 +60,8 @@ public class PythonImportTest extends PythonParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    PythonFileParser parser = createParser(src);
-		    parser.parse();
+		    PythonFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	    Entity file = entityRepo.getEntity(FileUtil.uniqFilePath(srcs[0]));
@@ -77,8 +77,8 @@ public class PythonImportTest extends PythonParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    PythonFileParser parser = createParser(src);
-		    parser.parse();
+		    PythonFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	    Entity file = entityRepo.getEntity(FileUtil.uniqFilePath(srcs[0]));
@@ -95,8 +95,8 @@ public class PythonImportTest extends PythonParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    PythonFileParser parser = createParser(src);
-		    parser.parse();
+		    PythonFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	    Entity file = entityRepo.getEntity(FileUtil.uniqFilePath(srcs[0]));
@@ -113,8 +113,8 @@ public class PythonImportTest extends PythonParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    PythonFileParser parser = createParser(src);
-		    parser.parse();
+		    PythonFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	    Entity file = entityRepo.getEntity(FileUtil.uniqFilePath(srcs[0]));
@@ -132,8 +132,8 @@ public class PythonImportTest extends PythonParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    PythonFileParser parser = createParser(src);
-		    parser.parse();
+		    PythonFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 		this.assertContainsRelation(entityRepo.getEntity(FileUtil.uniqFilePath(srcs[0])), DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[1]));
@@ -148,8 +148,8 @@ public class PythonImportTest extends PythonParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    PythonFileParser parser = createParser(src);
-		    parser.parse();
+		    PythonFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	}
@@ -163,8 +163,8 @@ public class PythonImportTest extends PythonParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    PythonFileParser parser = createParser(src);
-		    parser.parse();
+		    PythonFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 		this.assertContainsRelation(entityRepo.getEntity(FileUtil.uniqFilePath(srcs[0])), DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[1]));
@@ -179,8 +179,8 @@ public class PythonImportTest extends PythonParserTest {
 	    	    };
 	   
 	    for (String src:srcs) {
-		    PythonFileParser parser = createParser(src);
-		    parser.parse();
+		    PythonFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 		this.assertContainsRelation(entityRepo.getEntity(FileUtil.uniqFilePath(srcs[0])), DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[1]));
@@ -195,8 +195,8 @@ public class PythonImportTest extends PythonParserTest {
 	    	    };
 	   
 	    for (String src:srcs) {
-		    PythonFileParser parser = createParser(src);
-		    parser.parse();
+		    PythonFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	    FunctionEntity func = (FunctionEntity) entityRepo.getEntity(withPackageName(srcs[0],"test"));
@@ -214,8 +214,8 @@ public class PythonImportTest extends PythonParserTest {
 	    	    };
 	   
 	    for (String src:srcs) {
-		    PythonFileParser parser = createParser(src);
-		    parser.parse();
+		    PythonFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	    
@@ -236,8 +236,8 @@ public class PythonImportTest extends PythonParserTest {
 	    	    };
 	   
 	    for (String src:srcs) {
-		    PythonFileParser parser = createParser(src);
-		    parser.parse();
+		    PythonFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	    
@@ -257,8 +257,8 @@ public class PythonImportTest extends PythonParserTest {
 	    	    };
 	   
 	    for (String src:srcs) {
-		    PythonFileParser parser = createParser(src);
-		    parser.parse();
+		    PythonFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	    FunctionEntity func = (FunctionEntity) entityRepo.getEntity(withPackageName(srcs[0],"bar"));
@@ -273,8 +273,8 @@ public class PythonImportTest extends PythonParserTest {
 	    	    };
 	   
 	    for (String src:srcs) {
-		    PythonFileParser parser = createParser(src);
-		    parser.parse();
+		    PythonFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	    FileEntity f = (FileEntity) entityRepo.getEntity(FileUtil.uniqFilePath(srcs[0]));

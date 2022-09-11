@@ -1,16 +1,15 @@
 package depends.extractor.ruby;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.IOException;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import depends.entity.ContainerEntity;
 import depends.entity.VarEntity;
 import depends.extractor.FileParser;
 import multilang.depends.util.file.FileUtil;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
 
 public class RubyVarInvocationRecordTest extends RubyParserTest {
 	@Before
@@ -25,8 +24,8 @@ public class RubyVarInvocationRecordTest extends RubyParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    FileParser parser = createFileParser(src);
-		    parser.parse();
+		    FileParser parser = createFileParser();
+		    parser.parse(src);
 	    }
 	    ContainerEntity file = (ContainerEntity)(entityRepo.getEntity(FileUtil.uniqFilePath(srcs[0])));
 	    VarEntity var = file.lookupVarLocally("var");

@@ -17,8 +17,8 @@ public abstract class MavenParserTest extends ParserTest{
 		super.init();
     }
 	
-	public PomFileParser createParser(String src) {
-		return (PomFileParser) langProcessor.createFileParser(src);
+	public PomFileParser createParser() {
+		return (PomFileParser) langProcessor.createFileParser();
 	}
 
 }

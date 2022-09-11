@@ -23,8 +23,8 @@ public class JavaFileImportTest extends JavaParserTest{
 	    	    };
 	    
 	    for (String src:srcs) {
-		    FileParser parser = createParser(src);
-		    parser.parse();
+		    FileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	    TypeEntity type = (TypeEntity)(entityRepo.getEntity("a.Importing"));

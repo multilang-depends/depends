@@ -26,8 +26,8 @@ public class RubyVarTest extends RubyParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    FileParser parser = createFileParser(src);
-		    parser.parse();
+		    FileParser parser = createFileParser();
+		    parser.parse(src);
 	    }
 	    FunctionEntity function = (FunctionEntity)(entityRepo.getEntity("method1"));
 	    assertEquals(1,function.getParameters().size());
@@ -42,8 +42,8 @@ public class RubyVarTest extends RubyParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    FileParser parser = createFileParser(src);
-		    parser.parse();
+		    FileParser parser = createFileParser();
+		    parser.parse(src);
 	    }
 	    FunctionEntity function = (FunctionEntity)(entityRepo.getEntity("method_with_local_var"));
 	    assertEquals(1,function.getVars().size());
@@ -58,8 +58,8 @@ public class RubyVarTest extends RubyParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    FileParser parser = createFileParser(src);
-		    parser.parse();
+		    FileParser parser = createFileParser();
+		    parser.parse(src);
 	    }
 	    FunctionEntity function = (FunctionEntity)(entityRepo.getEntity("method_with_local_var_2times"));
 	    assertEquals(1,function.getVars().size());
@@ -72,8 +72,8 @@ public class RubyVarTest extends RubyParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    FileParser parser = createFileParser(src);
-		    parser.parse();
+		    FileParser parser = createFileParser();
+		    parser.parse(src);
 	    }
 	    FunctionEntity function = (FunctionEntity)(entityRepo.getEntity("method_without_local_var_and_param"));
 	    assertEquals(0,function.getVars().size());
@@ -87,8 +87,8 @@ public class RubyVarTest extends RubyParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    FileParser parser = createFileParser(src);
-		    parser.parse();
+		    FileParser parser = createFileParser();
+		    parser.parse(src);
 	    }
 	    FunctionEntity function = (FunctionEntity)(entityRepo.getEntity("method_access_file_level_var"));
 	    assertEquals(0,function.getVars().size());
@@ -101,8 +101,8 @@ public class RubyVarTest extends RubyParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    FileParser parser = createFileParser(src);
-		    parser.parse();
+		    FileParser parser = createFileParser();
+		    parser.parse(src);
 	    }
 	    FunctionEntity function = (FunctionEntity)(entityRepo.getEntity("M.C.method"));
 	    assertEquals(1,function.getVars().size());
@@ -114,8 +114,8 @@ public class RubyVarTest extends RubyParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    FileParser parser = createFileParser(src);
-		    parser.parse();
+		    FileParser parser = createFileParser();
+		    parser.parse(src);
 	    }
 	    FunctionEntity function = (FunctionEntity)(entityRepo.getEntity("M.C.method2"));
 	    assertEquals(1,function.getVars().size());
@@ -129,8 +129,8 @@ public class RubyVarTest extends RubyParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    FileParser parser = createFileParser(src);
-		    parser.parse();
+		    FileParser parser = createFileParser();
+		    parser.parse(src);
 	    }
 	    TypeEntity c = (TypeEntity)(entityRepo.getEntity("M.C"));
 	    assertEquals(3,c.getVars().size());
@@ -146,8 +146,8 @@ public class RubyVarTest extends RubyParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    FileParser parser = createFileParser(src);
-		    parser.parse();
+		    FileParser parser = createFileParser();
+		    parser.parse(src);
 	    }
 	    ContainerEntity c = (ContainerEntity)(entityRepo.getEntity("Block"));
 	    assertEquals(1,c.getVars().size());
@@ -161,8 +161,8 @@ public class RubyVarTest extends RubyParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    FileParser parser = createFileParser(src);
-		    parser.parse();
+		    FileParser parser = createFileParser();
+		    parser.parse(src);
 	    }
 	    ContainerEntity c = (ContainerEntity)(entityRepo.getEntity(EntityRepo.GLOBAL_SCOPE_NAME));
 	    assertEquals(1,c.getVars().size());

@@ -52,8 +52,8 @@ public class GoProcessor extends AbstractLangProcessor {
 	}
 
 	@Override
-	public FileParser createFileParser(String fileFullPath) {
-		return new GoFileParser(fileFullPath, entityRepo, bindingResolver);
+	public FileParser createFileParser() {
+		return new GoFileParser( entityRepo, bindingResolver);
 	}
 
 	@Override

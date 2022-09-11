@@ -19,8 +19,8 @@ public class DependencyWithPropertiesTest extends MavenParserTest{
 	    	    };
 	    
 	    for (String src:srcs) {
-		    PomFileParser parser = createParser(src);
-		    parser.parse();
+		    PomFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	    this.assertContainsRelation(entityRepo.getEntity("testgroup.test_1.0_"), DependencyType.PomDependency, "a-dep-group.a-artifact_0.2_");
@@ -34,8 +34,8 @@ public class DependencyWithPropertiesTest extends MavenParserTest{
 	    	    };
 	    
 	    for (String src:srcs) {
-		    PomFileParser parser = createParser(src);
-		    parser.parse();
+		    PomFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	    this.assertContainsRelation(entityRepo.getEntity("testgroup.test_1.0_"), DependencyType.PomPlugin, "aplugins.aplugin_0.1_");

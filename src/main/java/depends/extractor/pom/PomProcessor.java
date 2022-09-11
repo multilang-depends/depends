@@ -60,8 +60,8 @@ public class PomProcessor extends AbstractLangProcessor {
 	}
 
 	@Override
-	public FileParser createFileParser(String fileFullPath) {
-		return new PomFileParser(fileFullPath,entityRepo,includePaths(),this, bindingResolver);
+	public FileParser createFileParser() {
+		return new PomFileParser(entityRepo,includePaths(),this, bindingResolver);
 	}
 	
 	@Override

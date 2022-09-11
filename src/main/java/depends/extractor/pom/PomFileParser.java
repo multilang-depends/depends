@@ -43,14 +43,12 @@ import java.util.List;
 
 public class PomFileParser implements FileParser {
 
-	private String fileFullPath;
 	private EntityRepo entityRepo;
 	private PomProcessor parseCreator;
 	private List<String> includePaths;
 	private IBindingResolver bindingResolver;
 
-	public PomFileParser(String fileFullPath, EntityRepo entityRepo, List<String> includePaths, PomProcessor pomProcessor, IBindingResolver bindingResolver) {
-        this.fileFullPath = FileUtil.uniqFilePath(fileFullPath);
+	public PomFileParser(EntityRepo entityRepo, List<String> includePaths, PomProcessor pomProcessor, IBindingResolver bindingResolver) {
         this.entityRepo = entityRepo;
         this.parseCreator = pomProcessor;
         this.includePaths = includePaths;
@@ -58,7 +56,8 @@ public class PomFileParser implements FileParser {
 	}
 
 	@Override
-	public void parse() throws IOException {
+	public void parse(String fileFullPath) throws IOException {
+		fileFullPath = FileUtil.uniqFilePath(fileFullPath);
 		/* If file already exist, skip it */
 		Entity fileEntity = entityRepo.getEntity(fileFullPath);
 		if (fileEntity!=null && fileEntity instanceof FileEntity) {

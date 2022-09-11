@@ -14,8 +14,8 @@ public abstract class RubyParserTest extends ParserTest implements ParserCreator
 		super.init(true);
 	}
 	
-	public FileParser createFileParser(String src) {
-		return new JRubyFileParser(src,entityRepo, new IncludedFileLocator(includePaths()), bindingResolver, this);
+	public FileParser createFileParser() {
+		return new JRubyFileParser(entityRepo, new IncludedFileLocator(includePaths()), bindingResolver, this);
 	}
 
 	private List<String> includePaths() {

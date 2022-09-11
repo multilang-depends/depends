@@ -81,7 +81,7 @@ abstract public class AbstractLangProcessor {
 	 * @param fileFullPath
 	 * @return
 	 */
-	public abstract FileParser createFileParser(String fileFullPath);
+	public abstract FileParser createFileParser();
 
 	public IBindingResolver bindingResolver;
 	protected EntityRepo entityRepo;
@@ -182,10 +182,10 @@ abstract public class AbstractLangProcessor {
 	}
 
 	protected void parseFile(String fileFullPath) {
-		FileParser fileParser = createFileParser(fileFullPath);
+		FileParser fileParser = createFileParser();
 		try {
 			System.out.println("parsing " + fileFullPath + "...");
-			fileParser.parse();
+			fileParser.parse(FileUtil.uniqFilePath(fileFullPath));
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (Exception e) {

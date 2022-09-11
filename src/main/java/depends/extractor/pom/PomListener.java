@@ -135,10 +135,10 @@ public class PomListener extends XMLParserBaseListener {
 			context.currentFile().addImport(pomParent);
 			String parentFileName = new PomLocator(includePaths, pomParent).getLocation();
 			if (parentFileName != null) {
-				FileParser importedParser = parseCreator.createFileParser(parentFileName);
+				FileParser importedParser = parseCreator.createFileParser();
 				try {
 					System.out.println("parsing " + parentFileName);
-					importedParser.parse();
+					importedParser.parse(parentFileName);
 				} catch (Exception e) {
 					System.err.println("parsing error in " + parentFileName);
 				}

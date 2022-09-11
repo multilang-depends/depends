@@ -1,13 +1,12 @@
 package depends.extractor.ruby;
 
-import java.io.IOException;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import depends.deptypes.DependencyType;
 import depends.entity.FunctionEntity;
 import depends.extractor.FileParser;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.io.IOException;
 
 public class RubyVariableCallTest extends RubyParserTest {
 	@Before
@@ -22,8 +21,8 @@ public class RubyVariableCallTest extends RubyParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    FileParser parser = createFileParser(src);
-		    parser.parse();
+		    FileParser parser = createFileParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	    FunctionEntity function = (FunctionEntity)(entityRepo.getEntity("test"));

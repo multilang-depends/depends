@@ -22,8 +22,8 @@ public class PythonGlobalVarTest extends PythonParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    PythonFileParser parser = createParser(src);
-		    parser.parse();
+		    PythonFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings(true);
         Entity foo = entityRepo.getEntity(withPackageName(srcs[0],"foo"));

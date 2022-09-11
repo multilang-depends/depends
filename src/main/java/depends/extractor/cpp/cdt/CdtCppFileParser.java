@@ -38,22 +38,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CdtCppFileParser extends CppFileParser {
-
 	private PreprocessorHandler preprocessorHandler ;
 	private IBindingResolver bindingResolver;
 	private MacroRepo macroRepo;
 
-	public CdtCppFileParser(String fileFullPath, EntityRepo entityRepo, PreprocessorHandler preprocessorHandler, IBindingResolver bindingResolver, MacroRepo macroRepo) {
-		super(fileFullPath, entityRepo);
+	public CdtCppFileParser(EntityRepo entityRepo, PreprocessorHandler preprocessorHandler, IBindingResolver bindingResolver, MacroRepo macroRepo) {
+		super(entityRepo);
 		this.preprocessorHandler = preprocessorHandler;
-		this.fileFullPath = FileUtil.uniqFilePath(fileFullPath);
 		this.bindingResolver = bindingResolver;
 		this.macroRepo= macroRepo;
 		}
 	@Override
-	public void parse() throws IOException {
+	public void parse(String fileFullPath) throws IOException {
+		fileFullPath = FileUtil.uniqFilePath(fileFullPath);
 		Map<String, String> macroMap = new HashMap<>(macroRepo.getDefaultMap());
-		parse(true,macroMap);
+		parse(FileUtil.uniqFilePath(fileFullPath),true,macroMap);
 	}
 	
 	/**
@@ -61,7 +60,7 @@ public class CdtCppFileParser extends CppFileParser {
 	 * @param isInScope whether the parse is invoked by project file or an 'indirect' included file
 	 * @return 
 	 */
-	public void parse(boolean isInScope,Map<String, String> macroMap) {
+	public void parse(String fileFullPath, boolean isInScope,Map<String, String> macroMap) {
 		/** If file already exist, skip it */
 		Entity fileEntity = entityRepo.getEntity(fileFullPath);
 		if (fileEntity!=null && fileEntity instanceof FileEntity) {
@@ -77,8 +76,8 @@ public class CdtCppFileParser extends CppFileParser {
 		IASTTranslationUnit tu = (new CDTParser(preprocessorHandler.getIncludePaths())).parse(fileFullPath,macroMap);
 		boolean containsIncludes = false;
 		for (String incl:preprocessorHandler.getDirectIncludedFiles(tu.getAllPreprocessorStatements(),fileFullPath)) {
-			CdtCppFileParser importedParser = new CdtCppFileParser(incl, entityRepo, preprocessorHandler, bindingResolver,macroRepo);
-			importedParser.parse(false,macroMap);
+			CdtCppFileParser importedParser = new CdtCppFileParser(entityRepo, preprocessorHandler, bindingResolver,macroRepo);
+			importedParser.parse(incl,false,macroMap);
 			Map<String, String> macros = macroRepo.get(incl);
 			if (macros!=null)
 				macroMap.putAll(macros);
@@ -87,7 +86,7 @@ public class CdtCppFileParser extends CppFileParser {
 		if (containsIncludes) {
 			tu = (new CDTParser(preprocessorHandler.getIncludePaths())).parse(fileFullPath,macroMap);
 		}
-		macroRepo.putMacros(this.fileFullPath,macroMap,tu.getMacroDefinitions());
+		macroRepo.putMacros(fileFullPath,macroMap,tu.getMacroDefinitions());
 		tu.accept(bridge);
 		fileEntity = entityRepo.getEntity(fileFullPath);
 		((FileEntity)fileEntity).cacheAllExpressions();

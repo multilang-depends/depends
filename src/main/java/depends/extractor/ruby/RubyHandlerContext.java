@@ -70,10 +70,10 @@ public class RubyHandlerContext extends HandlerContext {
 					System.err.println("Warning: cannot found included file " + importedFilename );
 					continue;
 				}
-				FileParser importedParser = parserCreator.createFileParser(inclFileName);
+				FileParser importedParser = parserCreator.createFileParser();
 				try {
 					System.out.println("parsing "+inclFileName);
-					importedParser.parse();
+					importedParser.parse(inclFileName);
 				} catch (Exception e) {
 					System.err.println("parsing error in "+inclFileName);
 				}

@@ -28,8 +28,8 @@ import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.FileParser;
-import depends.extractor.ParserCreator;
 import depends.extractor.IncludedFileLocator;
+import depends.extractor.ParserCreator;
 import depends.relations.IBindingResolver;
 import multilang.depends.util.file.FileUtil;
 import org.antlr.v4.runtime.CharStream;
@@ -42,16 +42,14 @@ import org.jrubyparser.parser.ParserConfiguration;
 import java.io.IOException;
 import java.io.StringReader;
 public class JRubyFileParser implements FileParser {
-	private String fileFullPath;
 	private EntityRepo entityRepo;
 	private IncludedFileLocator includesFileLocator;
 	private IBindingResolver bindingResolver;
 	private ParserCreator parserCreator;
 
-	public JRubyFileParser(String fileFullPath, EntityRepo entityRepo,
+	public JRubyFileParser( EntityRepo entityRepo,
                            IncludedFileLocator includesFileLocator,
                            IBindingResolver bindingResolver, ParserCreator parserCreator) {
-        this.fileFullPath  = FileUtil.uniqFilePath(fileFullPath);
         this.entityRepo = entityRepo;
         this.includesFileLocator = includesFileLocator;
         this.bindingResolver = bindingResolver;
@@ -60,7 +58,8 @@ public class JRubyFileParser implements FileParser {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void parse() throws IOException {
+	public void parse(String fileFullPath) throws IOException {
+		fileFullPath = FileUtil.uniqFilePath(fileFullPath);
 		/** If file already exist, skip it */
 		Entity fileEntity = entityRepo.getEntity(fileFullPath);
 		if (fileEntity!=null && fileEntity instanceof FileEntity) {

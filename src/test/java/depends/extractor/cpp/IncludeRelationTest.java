@@ -30,8 +30,8 @@ public class IncludeRelationTest extends CppParserTest{
 	    	    };
 	    
 	    for (String src:srcs) {
-		    CppFileParser parser = createParser(src);
-		    parser.parse();
+		    CppFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
         File f = new File(srcs[0]);
@@ -49,8 +49,8 @@ public class IncludeRelationTest extends CppParserTest{
 	    List<String> includePaths = new ArrayList<>();
 	    includePaths.add("./src/test/resources/cpp-code-examples/includesTest/path/");
 	    for (String src:srcs) {
-		    CppFileParser parser = createParser(src);
-		    parser.parse();
+		    CppFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
         File f = new File(srcs[0]);
@@ -65,8 +65,8 @@ public class IncludeRelationTest extends CppParserTest{
 	    	    };
 	    
 	    for (String src:srcs) {
-		    CppFileParser parser = createParser(src);
-		    parser.parse();
+		    CppFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
         assertEquals("abc",((AliasEntity) entityRepo.getEntity("abc_t")).getOriginType().getRawName().uniqName());
@@ -82,8 +82,8 @@ public class IncludeRelationTest extends CppParserTest{
 	    	    };
 	    
 	    for (String src:srcs) {
-		    CppFileParser parser = createParser(src);
-		    parser.parse();
+		    CppFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	    this.assertContainsRelation(this.entityRepo.getEntity("foo"), DependencyType.CALL, "bar");
@@ -99,8 +99,8 @@ public class IncludeRelationTest extends CppParserTest{
 	    	    };
 	    
 	    for (String src:srcs) {
-		    CppFileParser parser = createParser(src);
-		    parser.parse();
+		    CppFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	    this.assertContainsRelation(this.entityRepo.getEntity(FileUtil.uniqFilePath(srcs[0])), DependencyType.IMPORT, FileUtil.uniqFilePath(srcs[1]));

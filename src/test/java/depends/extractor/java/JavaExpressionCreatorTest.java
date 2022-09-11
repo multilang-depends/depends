@@ -23,8 +23,8 @@ public class JavaExpressionCreatorTest extends JavaParserTest{
 	    	    };
 	    
 	    for (String src:srcs) {
-		    FileParser parser = createParser(src);
-		    parser.parse();
+		    FileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	    Entity entity = (entityRepo.getEntity("A.foo"));
@@ -40,8 +40,8 @@ public class JavaExpressionCreatorTest extends JavaParserTest{
 	    	    };
 	    
 	    for (String src:srcs) {
-		    FileParser parser = createParser(src);
-		    parser.parse();
+		    FileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	    Entity entity = (entityRepo.getEntity("X.foo"));

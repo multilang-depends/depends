@@ -18,9 +18,9 @@ public class PythonProcessor extends BasePythonProcessor {
 
 
 	@Override
-	public FileParser createFileParser(String fileFullPath) {
+	public FileParser createFileParser() {
 		IncludedFileLocator includeFileLocator = new IncludedFileLocator(super.includePaths());
-		return new PythonFileParser(fileFullPath,entityRepo,includeFileLocator, bindingResolver,this);
+		return new PythonFileParser(entityRepo,includeFileLocator, bindingResolver,this);
 	}
 
 	

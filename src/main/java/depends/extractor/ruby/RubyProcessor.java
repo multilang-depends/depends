@@ -53,8 +53,8 @@ public class RubyProcessor extends AbstractLangProcessor implements ParserCreato
 
 
 	@Override
-	public FileParser createFileParser(String fileFullPath) {
-		return new JRubyFileParser(fileFullPath,entityRepo,new IncludedFileLocator(super.includePaths()), bindingResolver,this);
+	public FileParser createFileParser() {
+		return new JRubyFileParser(entityRepo,new IncludedFileLocator(super.includePaths()), bindingResolver,this);
 	}
 
 	@Override

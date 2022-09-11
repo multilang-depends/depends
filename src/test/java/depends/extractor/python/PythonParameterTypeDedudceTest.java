@@ -27,8 +27,8 @@ public class PythonParameterTypeDedudceTest extends PythonParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    FileParser parser = createFileParser(src);
-		    parser.parse();
+		    FileParser parser = createFileParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	    String name = withPackageName(srcs[0],"test");
@@ -47,8 +47,8 @@ public class PythonParameterTypeDedudceTest extends PythonParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    FileParser parser = createFileParser(src);
-		    parser.parse();
+		    FileParser parser = createFileParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	    String name = withPackageName(srcs[0],"test");
@@ -66,8 +66,8 @@ public class PythonParameterTypeDedudceTest extends PythonParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    FileParser parser = createFileParser(src);
-		    parser.parse();
+		    FileParser parser = createFileParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	    String name = withPackageName(srcs[0],"test2");
@@ -86,8 +86,8 @@ public class PythonParameterTypeDedudceTest extends PythonParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    FileParser parser = createFileParser(src);
-		    parser.parse();
+		    FileParser parser = createFileParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	    String name = withPackageName(srcs[0],"test");

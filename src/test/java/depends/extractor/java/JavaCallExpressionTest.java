@@ -17,8 +17,8 @@ public class JavaCallExpressionTest extends JavaParserTest {
 	@Test
 	public void test() throws IOException {
         String src = "./src/test/resources/java-code-examples/SimpleExpressionCallTest.java";
-        JavaFileParser parser = createParser(src);
-        parser.parse();
+        JavaFileParser parser = createParser();
+        parser.parse(src);
         resolveAllBindings();
 	}
 

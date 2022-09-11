@@ -17,8 +17,8 @@ public class CppExpressionTest extends CppParserTest{
 	@Test
 	public void test_expressions() throws IOException {
 	    String src = "./src/test/resources/cpp-code-examples/Expressions.cpp";
-	    CppFileParser parser = createParser(src);
-        parser.parse();
+	    CppFileParser parser = createParser();
+        parser.parse(src);
         resolveAllBindings();
         Entity e = entityRepo.getEntity("foo");
         this.assertContainsRelation(e, DependencyType.PARAMETER,"ClassA");
@@ -35,8 +35,8 @@ public class CppExpressionTest extends CppParserTest{
 	@Test
     public void test_should_not_count_expr_duplicated() throws IOException {
         String src = "./src/test/resources/cpp-code-examples/DupExpressions.cpp";
-        CppFileParser parser = createParser(src);
-        parser.parse();
+        CppFileParser parser = createParser();
+        parser.parse(src);
         resolveAllBindings();
         Entity e = entityRepo.getEntity("foo");
         assertEquals(4,e.getRelations().size());

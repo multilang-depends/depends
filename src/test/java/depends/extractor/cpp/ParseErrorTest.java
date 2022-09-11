@@ -20,8 +20,8 @@ public class ParseErrorTest extends CppParserTest{
 	    	    };
 	    
 	    for (String src:srcs) {
-		    CppFileParser parser = createParser(src);
-		    parser.parse();
+		    CppFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	}
@@ -33,11 +33,11 @@ public class ParseErrorTest extends CppParserTest{
 		};
 
 		for (String src:srcs) {
-			CdtCppFileParser parser = (CdtCppFileParser)createParser(src);
+			CdtCppFileParser parser = (CdtCppFileParser)createParser();
 
 			Map<String, String> macroMap = new HashMap<>();
 			macroMap.put("AP_DECLARE(x)","x");
-			parser.parse(true,macroMap);
+			parser.parse(src,true,macroMap);
 		}
 		resolveAllBindings();
 	}

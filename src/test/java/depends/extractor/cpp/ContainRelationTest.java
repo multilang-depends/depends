@@ -1,5 +1,6 @@
 package depends.extractor.cpp;
 import depends.deptypes.DependencyType;
+import multilang.depends.util.file.FileUtil;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,8 +21,8 @@ public class ContainRelationTest extends CppParserTest{
 	    	    };
 	    
 	    for (String src:srcs) {
-		    CppFileParser parser = createParser(src);
-		    parser.parse();
+		    CppFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
         assertEquals(1, entityRepo.getEntity("UnderTest").getRelations().size());
@@ -35,8 +36,8 @@ public class ContainRelationTest extends CppParserTest{
 	    	    };
 	    
 	    for (String src:srcs) {
-		    CppFileParser parser = createParser(src);
-		    parser.parse();
+		    CppFileParser parser = createParser();
+		    parser.parse(FileUtil.uniqFilePath(src));
 	    }
 	    resolveAllBindings();
         assertEquals(2, entityRepo.getEntity("UnderTest").getRelations().size());
@@ -50,8 +51,8 @@ public class ContainRelationTest extends CppParserTest{
 	    	    };
 	    
 	    for (String src:srcs) {
-		    CppFileParser parser = createParser(src);
-		    parser.parse();
+		    CppFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	    this.assertContainsRelation(entityRepo.getEntity("UnderTest"), DependencyType.CONTAIN, "Member");
@@ -67,8 +68,8 @@ public class ContainRelationTest extends CppParserTest{
 	    	    };
 	    
 	    for (String src:srcs) {
-		    CppFileParser parser = createParser(src);
-		    parser.parse();
+		    CppFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	}

@@ -23,8 +23,8 @@ public class DependencyWithPropertiesOfParentTest extends MavenParserTest{
 	    	    };
 	    
 	    for (String src:srcs) {
-		    PomFileParser parser = createParser(src);
-		    parser.parse();
+		    PomFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	    assertFalse(entityRepo.getEntity("parent-group.a-parent_1.0_") instanceof MultiDeclareEntities);
@@ -40,8 +40,8 @@ public class DependencyWithPropertiesOfParentTest extends MavenParserTest{
 	    	    };
 	    
 	    for (String src:srcs) {
-		    PomFileParser parser = createParser(src);
-		    parser.parse();
+		    PomFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	    this.assertContainsRelation(entityRepo.getEntity("testgroup.test_1.0_"), DependencyType.PomPlugin, "aplugins.aplugin_0.1_");

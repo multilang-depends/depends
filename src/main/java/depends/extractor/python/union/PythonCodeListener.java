@@ -183,10 +183,10 @@ public class PythonCodeListener extends PythonParserBaseListener{
 	}
 
 	private void visitIncludedFile(String fullName) {
-		PythonFileParser importedParser = new PythonFileParser(fullName, entityRepo, includeFileLocator, bindingResolver,
+		PythonFileParser importedParser = new PythonFileParser(entityRepo, includeFileLocator, bindingResolver,
 				pythonProcessor);
 		try {
-			importedParser.parse();
+			importedParser.parse(fullName);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

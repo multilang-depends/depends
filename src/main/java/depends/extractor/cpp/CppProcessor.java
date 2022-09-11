@@ -58,7 +58,7 @@ public class CppProcessor extends AbstractLangProcessor {
 	}
 
 	@Override
-	public FileParser createFileParser(String fileFullPath) {
+	public FileParser createFileParser() {
 		if (macroRepo == null) {
 			macroRepo = new MacroEhcacheRepo(entityRepo);
 			macroRepo.buildDefaultMap(super.includePaths());
@@ -66,7 +66,7 @@ public class CppProcessor extends AbstractLangProcessor {
 		if (preprocessorHandler==null) {
 			preprocessorHandler = new PreprocessorHandler(super.inputSrcPath,super.includePaths());
 		}
-		return new CdtCppFileParser(fileFullPath, entityRepo, preprocessorHandler, bindingResolver, macroRepo);
+		return new CdtCppFileParser(entityRepo, preprocessorHandler, bindingResolver, macroRepo);
 	}
 
 	@Override

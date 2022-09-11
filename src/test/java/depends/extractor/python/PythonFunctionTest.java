@@ -24,8 +24,8 @@ public class PythonFunctionTest extends PythonParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    PythonFileParser parser = createParser(src);
-		    parser.parse();
+		    PythonFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
         assertNotNull(entityRepo.getEntity(withPackageName(srcs[0],"foo")));
@@ -38,8 +38,8 @@ public class PythonFunctionTest extends PythonParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    PythonFileParser parser = createParser(src);
-		    parser.parse();
+		    PythonFileParser parser = createParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	    FunctionEntity func = (FunctionEntity) entityRepo.getEntity(withPackageName(srcs[0],"foo"));

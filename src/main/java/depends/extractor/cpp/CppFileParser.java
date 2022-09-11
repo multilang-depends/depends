@@ -27,10 +27,8 @@ package depends.extractor.cpp;
 import depends.entity.repo.EntityRepo;
 
 public abstract class CppFileParser implements depends.extractor.FileParser {
-	protected String fileFullPath;
 	protected EntityRepo entityRepo;
-	public CppFileParser(String fileFullPath, EntityRepo entityRepo) {
-		this.fileFullPath = fileFullPath;
+	public CppFileParser(EntityRepo entityRepo) {
 		this.entityRepo = entityRepo;
 	}
 	

@@ -1,16 +1,15 @@
 package depends.extractor.ruby;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.IOException;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import depends.entity.FunctionEntity;
 import depends.entity.TypeEntity;
 import depends.entity.VarEntity;
 import depends.extractor.FileParser;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
 
 public class RubyAssignedVariableTypeDedudceTest extends RubyParserTest {
 	@Before
@@ -25,8 +24,8 @@ public class RubyAssignedVariableTypeDedudceTest extends RubyParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    FileParser parser = createFileParser(src);
-		    parser.parse();
+		    FileParser parser = createFileParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	    FunctionEntity function = (FunctionEntity)(entityRepo.getEntity("Class.test"));
@@ -52,8 +51,8 @@ public class RubyAssignedVariableTypeDedudceTest extends RubyParserTest {
 	    	    };
 	    
 	    for (String src:srcs) {
-		    FileParser parser = createFileParser(src);
-		    parser.parse();
+		    FileParser parser = createFileParser();
+		    parser.parse(src);
 	    }
 	    resolveAllBindings();
 	    FunctionEntity function = (FunctionEntity)(entityRepo.getEntity("Class.operator_is_call"));
