@@ -29,7 +29,7 @@ public class PythonFileParser extends FileParser {
 	}
 
 	@Override
-	public void parseFile(String fileFullPath) throws IOException {
+	protected void parseFile(String fileFullPath) throws IOException {
 		fileFullPath = FileUtil.uniqFilePath(fileFullPath);
         CharStream input = CharStreams.fromFileName(fileFullPath);
         Lexer lexer = new PythonLexer(input);

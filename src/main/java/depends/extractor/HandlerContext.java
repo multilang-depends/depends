@@ -310,8 +310,13 @@ public abstract class HandlerContext {
 	private VarEntity getVarInLocalFile(ContainerEntity container, GenericName varName) {
 		Entity entity = bindingResolver.resolveName(container, varName, false);
 		if (entity ==null ) return null;
-		if (!entity.getAncestorOfType(FileEntity.class).equals(currentFileEntity)) return null;
-		if (entity instanceof VarEntity) return (VarEntity)entity;
+		Entity fileEntity = entity.getAncestorOfType(FileEntity.class);
+		if (fileEntity ==null ){
+			//may not exist in fileEntity, for example global vars
+		}else{
+			if (!fileEntity.equals(currentFileEntity)) return null;
+			if (entity instanceof VarEntity) return (VarEntity)entity;
+		}
 		return null;
 	}
 

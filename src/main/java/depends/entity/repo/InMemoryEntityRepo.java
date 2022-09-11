@@ -126,7 +126,10 @@ public class InMemoryEntityRepo extends SimpleIdGenerator implements EntityRepo 
 	@Override
 	public void completeFile(String fileFullPath) {
 		FileEntity fileEntity = getFileEntity(fileFullPath);
-		fileEntity.cacheAllExpressions();
-		allFileEntitiesByOrder.add(fileEntity);
+		// in case of parse error(throw exception), the file entity may not exists
+		if (fileEntity!=null) {
+			fileEntity.cacheAllExpressions();
+			allFileEntitiesByOrder.add(fileEntity);
+		}
 	}
 }

@@ -34,6 +34,7 @@ import depends.extractor.xml.XMLParserBaseListener;
 import depends.relations.IBindingResolver;
 import org.antlr.v4.runtime.ParserRuleContext;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Stack;
 
@@ -137,10 +138,9 @@ public class PomListener extends XMLParserBaseListener {
 			if (parentFileName != null) {
 				FileParser importedParser = parseCreator.createFileParser();
 				try {
-					System.out.println("parsing " + parentFileName);
 					importedParser.parse(parentFileName);
-				} catch (Exception e) {
-					System.err.println("parsing error in " + parentFileName);
+				} catch (IOException e) {
+					System.err.println("error occurred during parse "+ parentFileName);
 				}
 			}
 			pomCoords.pop();

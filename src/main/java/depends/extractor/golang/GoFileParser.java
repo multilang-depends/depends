@@ -48,7 +48,7 @@ public class GoFileParser extends  depends.extractor.FileParser{
 	}
 
 	@Override
-	public void parseFile(String fileFullPath) throws IOException {
+	protected void parseFile(String fileFullPath) throws IOException {
 		CharStream input = CharStreams.fromFileName(fileFullPath);
         Lexer lexer = new GoLexer(input);
         lexer.setInterpreter(new LexerATNSimulator(lexer, lexer.getATN(), lexer.getInterpreter().decisionToDFA, new PredictionContextCache()));

@@ -12,9 +12,8 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import java.io.IOException;
 
 public class KotlinFileParser extends FileParser {
-
 	@Override
-	public void parseFile(String fileFullPath) throws IOException {
+	protected void parseFile(String fileFullPath) throws IOException {
 		CharStream input = CharStreams.fromFileName(fileFullPath);
 		Lexer lexer = new KotlinLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -24,7 +23,6 @@ public class KotlinFileParser extends FileParser {
 		walker.walk(bridge, parser.kotlinFile());
 	}
 	
-	private EntityRepo entityRepo;
 	private IBindingResolver bindingResolver;
 	public KotlinFileParser(EntityRepo entityRepo, IBindingResolver bindingResolver) {
         this.entityRepo = entityRepo;

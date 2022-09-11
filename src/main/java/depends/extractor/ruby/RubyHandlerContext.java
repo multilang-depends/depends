@@ -72,7 +72,6 @@ public class RubyHandlerContext extends HandlerContext {
 				}
 				FileParser importedParser = parserCreator.createFileParser();
 				try {
-					System.out.println("parsing "+inclFileName);
 					importedParser.parse(inclFileName);
 				} catch (Exception e) {
 					System.err.println("parsing error in "+inclFileName);

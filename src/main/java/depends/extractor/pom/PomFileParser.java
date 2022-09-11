@@ -51,7 +51,8 @@ public class PomFileParser extends FileParser {
 	}
 
 	@Override
-	public void parseFile(String fileFullPath) throws IOException {
+
+	protected void parseFile(String fileFullPath) throws IOException {
         CharStream input = CharStreams.fromFileName(fileFullPath);
         Lexer lexer = new XMLLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);

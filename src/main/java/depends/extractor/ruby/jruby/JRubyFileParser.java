@@ -34,6 +34,7 @@ import org.antlr.v4.runtime.CharStreams;
 import org.jrubyparser.CompatVersion;
 import org.jrubyparser.Parser;
 import org.jrubyparser.ast.Node;
+import org.jrubyparser.lexer.SyntaxException;
 import org.jrubyparser.parser.ParserConfiguration;
 
 import java.io.IOException;
@@ -54,7 +55,7 @@ public class JRubyFileParser extends FileParser {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void parseFile(String fileFullPath) throws IOException {
+	protected void parseFile(String fileFullPath) throws IOException {
         CharStream input = CharStreams.fromFileName(fileFullPath);
 		Parser rubyParser = new Parser();
 		StringReader in = new StringReader(input.toString());
@@ -64,8 +65,10 @@ public class JRubyFileParser extends FileParser {
 			Node node = rubyParser.parse(fileFullPath, in, config);
 			JRubyVisitor parser = new JRubyVisitor(fileFullPath, entityRepo, includesFileLocator, bindingResolver,parserCreator);
 			node.accept(parser);
-		}catch(Exception e) {
-			System.err.println("parsing error in "+fileFullPath);
+		}catch(SyntaxException e) {
+			System.out.println("parsing error in "+fileFullPath + "(" + e.getMessage() +")");
+		}catch (Exception e){
+			e.printStackTrace();
 		}
 	}
 
