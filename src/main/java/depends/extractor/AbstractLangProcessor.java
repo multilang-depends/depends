@@ -160,42 +160,36 @@ abstract public class AbstractLangProcessor {
 			@Override
 			public void visit(File file) {
 				String fileFullPath = file.getAbsolutePath();
-				fileFullPath = FileUtil.uniqFilePath(fileFullPath);
 				if (!fileFullPath.startsWith(inputSrcPath)) {
 					return;
 				}
-				if (isPhase2Files(fileFullPath)) {
-
-				} else {
-					parseFile(fileFullPath);
-				}
+				parseFile(fileFullPath, phase2Files);
 			}
 
 		});
 		fileTransversal.extensionFilter(this.fileSuffixes());
 		fileTransversal.travers(this.inputSrcPath);
 		for (String f : phase2Files) {
-			parseFile(f);
+			parseFile(f, phase2Files);
 		}
 		System.out.println("all files procceed successfully...");
 
 	}
 
-	protected void parseFile(String fileFullPath) {
+	protected void parseFile(String fileFullPath, Set<String> phase2Files) {
 		FileParser fileParser = createFileParser();
 		try {
-			System.out.println("parsing " + fileFullPath + "...");
-			fileParser.parse(FileUtil.uniqFilePath(fileFullPath));
+			if (fileParser.isPhase2Files(fileFullPath)){
+				phase2Files.add(fileFullPath);
+			}else {
+				fileParser.parse(fileFullPath);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (Exception e) {
 			System.err.println("error occoured during parse file " + fileFullPath);
 			e.printStackTrace();
 		}
-	}
-
-	protected boolean isPhase2Files(String fileFullPath) {
-		return false;
 	}
 
 	public List<String> includePaths() {

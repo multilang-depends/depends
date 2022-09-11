@@ -335,8 +335,4 @@ public class CppVisitor  extends ASTVisitor {
 		}
 		return super.visit(parameterDeclaration);
 	}
-
-	public void done() {
-		context.done();
-	}
 }

@@ -24,14 +24,11 @@ SOFTWARE.
 
 package depends.extractor.ruby.jruby;
 
-import depends.entity.Entity;
-import depends.entity.FileEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.FileParser;
 import depends.extractor.IncludedFileLocator;
 import depends.extractor.ParserCreator;
 import depends.relations.IBindingResolver;
-import multilang.depends.util.file.FileUtil;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.jrubyparser.CompatVersion;
@@ -41,8 +38,7 @@ import org.jrubyparser.parser.ParserConfiguration;
 
 import java.io.IOException;
 import java.io.StringReader;
-public class JRubyFileParser implements FileParser {
-	private EntityRepo entityRepo;
+public class JRubyFileParser extends FileParser {
 	private IncludedFileLocator includesFileLocator;
 	private IBindingResolver bindingResolver;
 	private ParserCreator parserCreator;
@@ -58,26 +54,16 @@ public class JRubyFileParser implements FileParser {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void parse(String fileFullPath) throws IOException {
-		fileFullPath = FileUtil.uniqFilePath(fileFullPath);
-		/** If file already exist, skip it */
-		Entity fileEntity = entityRepo.getEntity(fileFullPath);
-		if (fileEntity!=null && fileEntity instanceof FileEntity) {
-			return;
-		}
-		
+	public void parseFile(String fileFullPath) throws IOException {
         CharStream input = CharStreams.fromFileName(fileFullPath);
 		Parser rubyParser = new Parser();
 		StringReader in = new StringReader(input.toString());
 		CompatVersion version = CompatVersion.RUBY2_3;
 		ParserConfiguration config = new ParserConfiguration(0, version);
 		try {
-			Node node = rubyParser.parse("<code>", in, config);
+			Node node = rubyParser.parse(fileFullPath, in, config);
 			JRubyVisitor parser = new JRubyVisitor(fileFullPath, entityRepo, includesFileLocator, bindingResolver,parserCreator);
 			node.accept(parser);
-			fileEntity = entityRepo.getEntity(fileFullPath);
-			((FileEntity)fileEntity).cacheAllExpressions();
-			parser.done();
 		}catch(Exception e) {
 			System.err.println("parsing error in "+fileFullPath);
 		}

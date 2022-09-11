@@ -50,7 +50,9 @@ public interface EntityRepo extends IdGenerator {
 
 	Iterator<Entity> sortedFileIterator();
 
-	void addFile(FileEntity currentFileEntity);
-
     void clear();
+
+	FileEntity getFileEntity(String fileFullPath);
+
+	void completeFile(String fileFullPath);
 }

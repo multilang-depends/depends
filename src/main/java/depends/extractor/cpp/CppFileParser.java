@@ -26,11 +26,8 @@ package depends.extractor.cpp;
 
 import depends.entity.repo.EntityRepo;
 
-public abstract class CppFileParser implements depends.extractor.FileParser {
-	protected EntityRepo entityRepo;
+public abstract class CppFileParser extends depends.extractor.FileParser {
 	public CppFileParser(EntityRepo entityRepo) {
 		this.entityRepo = entityRepo;
 	}
-	
-	
 }

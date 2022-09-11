@@ -97,13 +97,4 @@ public class CppProcessor extends AbstractLangProcessor {
 		depedencyTypes.add(IMPLLINK);
 		return depedencyTypes;
 	}
-
-	@Override
-	protected boolean isPhase2Files(String fileFullPath) {
-		if (fileFullPath.endsWith(".h") || fileFullPath.endsWith(".hh") || fileFullPath.endsWith(".hpp")
-				|| fileFullPath.endsWith(".hxx"))
-			return true;
-		return false;
-	}
-
 }

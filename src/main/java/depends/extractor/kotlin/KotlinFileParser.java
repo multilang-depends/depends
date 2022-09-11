@@ -3,7 +3,6 @@ package depends.extractor.kotlin;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.FileParser;
 import depends.relations.IBindingResolver;
-import multilang.depends.util.file.FileUtil;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -12,11 +11,10 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import java.io.IOException;
 
-public class KotlinFileParser implements FileParser {
+public class KotlinFileParser extends FileParser {
 
 	@Override
-	public void parse(String fileFullPath) throws IOException {
-		fileFullPath = FileUtil.uniqFilePath(fileFullPath);
+	public void parseFile(String fileFullPath) throws IOException {
 		CharStream input = CharStreams.fromFileName(fileFullPath);
 		Lexer lexer = new KotlinLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);

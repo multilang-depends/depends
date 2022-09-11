@@ -1,12 +1,10 @@
 package depends.extractor.python.union;
 
-import depends.entity.Entity;
-import depends.entity.FileEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.FileParser;
+import depends.extractor.IncludedFileLocator;
 import depends.extractor.python.PythonLexer;
 import depends.extractor.python.PythonParser;
-import depends.extractor.IncludedFileLocator;
 import depends.relations.IBindingResolver;
 import multilang.depends.util.file.FileUtil;
 import org.antlr.v4.runtime.CharStream;
@@ -17,8 +15,7 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import java.io.IOException;
 
-public class PythonFileParser implements FileParser {
-	private EntityRepo entityRepo;
+public class PythonFileParser extends FileParser {
 	private IBindingResolver bindingResolver;
 	private IncludedFileLocator includeFileLocator;
 	private PythonProcessor processor;
@@ -32,13 +29,8 @@ public class PythonFileParser implements FileParser {
 	}
 
 	@Override
-	public void parse(String fileFullPath) throws IOException {
+	public void parseFile(String fileFullPath) throws IOException {
 		fileFullPath = FileUtil.uniqFilePath(fileFullPath);
-		/** If file already exist, skip it */
-		Entity fileEntity = entityRepo.getEntity(fileFullPath);
-		if (fileEntity!=null && fileEntity instanceof FileEntity) {
-			return;
-		}
         CharStream input = CharStreams.fromFileName(fileFullPath);
         Lexer lexer = new PythonLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -48,9 +40,6 @@ public class PythonFileParser implements FileParser {
         PythonCodeListener bridge = new PythonCodeListener(fileFullPath, entityRepo, bindingResolver, includeFileLocator, processor);
 	    ParseTreeWalker walker = new ParseTreeWalker();
 	    walker.walk(bridge, parser.file_input());
-		fileEntity = entityRepo.getEntity(fileFullPath);
-		((FileEntity)fileEntity).cacheAllExpressions();
-		bridge.done();
 	}
 
 }

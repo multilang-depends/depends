@@ -24,11 +24,9 @@ SOFTWARE.
 
 package depends.extractor.java;
 
-import depends.entity.Entity;
-import depends.entity.FileEntity;
 import depends.entity.repo.EntityRepo;
+import depends.extractor.FileParser;
 import depends.relations.IBindingResolver;
-import multilang.depends.util.file.FileUtil;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -41,8 +39,7 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import java.io.IOException;
 
 
-public class JavaFileParser implements depends.extractor.FileParser{
-	private EntityRepo entityRepo;
+public class JavaFileParser extends FileParser {
 	private IBindingResolver bindingResolver;
 	public JavaFileParser(EntityRepo entityRepo, IBindingResolver bindingResolver) {
         this.entityRepo = entityRepo;
@@ -50,8 +47,7 @@ public class JavaFileParser implements depends.extractor.FileParser{
 	}
 
 	@Override
-	public void parse(String fileFullPath) throws IOException {
-		fileFullPath = FileUtil.uniqFilePath(fileFullPath);
+	public void parseFile(String fileFullPath) throws IOException {
 		CharStream input = CharStreams.fromFileName(fileFullPath);
         Lexer lexer = new JavaLexer(input);
         lexer.setInterpreter(new LexerATNSimulator(lexer, lexer.getATN(), lexer.getInterpreter().decisionToDFA, new PredictionContextCache()));
@@ -63,11 +59,8 @@ public class JavaFileParser implements depends.extractor.FileParser{
 	    ParseTreeWalker walker = new ParseTreeWalker();
 	    try {
 	    	walker.walk(bridge, parser.compilationUnit());
-			Entity fileEntity = entityRepo.getEntity(fileFullPath);
-			((FileEntity)fileEntity).cacheAllExpressions();
 			interpreter.clearDFA();
-			bridge.done();
-	    	
+
 	    }catch (Exception e) {
 	    	System.err.println("error encountered during parse..." );
 	    	e.printStackTrace();

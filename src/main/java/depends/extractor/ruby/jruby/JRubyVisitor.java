@@ -277,7 +277,4 @@ public class JRubyVisitor extends NoopVisitor {
 		return super.visit(node);
 	}
 
-	public void done() {
-		context.done();
-	}
 }

@@ -24,9 +24,44 @@ SOFTWARE.
 
 package depends.extractor;
 
+import depends.entity.FileEntity;
+import depends.entity.repo.EntityRepo;
+import multilang.depends.util.file.FileUtil;
+
 import java.io.IOException;
 
-public interface FileParser {
-	void parse(String filePath) throws IOException;
+public abstract class FileParser {
+	protected EntityRepo entityRepo;
+
+	/**
+	 * parse files
+	 * @param filePath
+	 * @throws IOException
+	 */
+	public final void parse(String filePath) throws IOException{
+		filePath = FileUtil.uniqFilePath(filePath);
+		/* If file already exist, skip it */
+		FileEntity fileEntity = entityRepo.getFileEntity(filePath);
+		if (fileEntity!=null) {
+			System.out.println("already parsed " + filePath + "...skip");
+			if (!fileEntity.isInProjectScope())
+				fileEntity.setInProjectScope(true);
+		}else {
+			System.out.println("parsing " + filePath + "...");
+			parseFile(filePath);
+			entityRepo.completeFile(filePath);
+		}
+	}
+
+	/**
+	 * The actual file parser - it should put parsed entities into entityRepo;
+	 * @param filePath - it is alread unique file path name
+	 * @throws IOException
+	 */
+	protected abstract void parseFile(String filePath) throws IOException;
+
+	protected boolean isPhase2Files(String filePath){
+		return false;
+	}
 
 }

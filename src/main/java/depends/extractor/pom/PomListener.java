@@ -162,9 +162,4 @@ public class PomListener extends XMLParserBaseListener {
 		String name = p.Name().get(0).getText();
 		return name;
 	}
-
-	public void done() {
-		context.done();
-	}
-
 }

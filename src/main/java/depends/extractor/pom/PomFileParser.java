@@ -24,14 +24,11 @@ SOFTWARE.
 
 package depends.extractor.pom;
 
-import depends.entity.Entity;
-import depends.entity.FileEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.FileParser;
 import depends.extractor.xml.XMLLexer;
 import depends.extractor.xml.XMLParser;
 import depends.relations.IBindingResolver;
-import multilang.depends.util.file.FileUtil;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -41,9 +38,7 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import java.io.IOException;
 import java.util.List;
 
-public class PomFileParser implements FileParser {
-
-	private EntityRepo entityRepo;
+public class PomFileParser extends FileParser {
 	private PomProcessor parseCreator;
 	private List<String> includePaths;
 	private IBindingResolver bindingResolver;
@@ -56,14 +51,7 @@ public class PomFileParser implements FileParser {
 	}
 
 	@Override
-	public void parse(String fileFullPath) throws IOException {
-		fileFullPath = FileUtil.uniqFilePath(fileFullPath);
-		/* If file already exist, skip it */
-		Entity fileEntity = entityRepo.getEntity(fileFullPath);
-		if (fileEntity!=null && fileEntity instanceof FileEntity) {
-			return;
-		}
-		/*parse file*/
+	public void parseFile(String fileFullPath) throws IOException {
         CharStream input = CharStreams.fromFileName(fileFullPath);
         Lexer lexer = new XMLLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -71,9 +59,6 @@ public class PomFileParser implements FileParser {
         PomListener bridge = new PomListener(fileFullPath, entityRepo, includePaths,parseCreator, bindingResolver);
 	    ParseTreeWalker walker = new ParseTreeWalker();
 	    walker.walk(bridge, parser.document());
-		fileEntity = entityRepo.getEntity(fileFullPath);
-		bridge.done();
-		((FileEntity)fileEntity).cacheAllExpressions();
 	}
 
 }

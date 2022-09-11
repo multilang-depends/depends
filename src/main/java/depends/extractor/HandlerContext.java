@@ -57,10 +57,6 @@ public abstract class HandlerContext {
 		return currentFileEntity;
 	}
 
-	public void done() {
-		entityRepo.addFile(this.currentFile());
-	}
-
 	public TypeEntity foundNewType(GenericName name, Integer startLine) {
 		TypeEntity currentTypeEntity = new TypeEntity(name, this.latestValidContainer(),
 				idGenerator.generateId());

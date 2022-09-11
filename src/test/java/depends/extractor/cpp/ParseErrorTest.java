@@ -37,7 +37,7 @@ public class ParseErrorTest extends CppParserTest{
 
 			Map<String, String> macroMap = new HashMap<>();
 			macroMap.put("AP_DECLARE(x)","x");
-			parser.parse(src,true,macroMap);
+			parser.parse(src,macroMap);
 		}
 		resolveAllBindings();
 	}

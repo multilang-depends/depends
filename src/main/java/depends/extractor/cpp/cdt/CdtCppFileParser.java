@@ -24,13 +24,10 @@ SOFTWARE.
 
 package depends.extractor.cpp.cdt;
 
-import depends.entity.Entity;
-import depends.entity.FileEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.cpp.CppFileParser;
 import depends.extractor.cpp.MacroRepo;
 import depends.relations.IBindingResolver;
-import multilang.depends.util.file.FileUtil;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 
 import java.io.IOException;
@@ -49,10 +46,9 @@ public class CdtCppFileParser extends CppFileParser {
 		this.macroRepo= macroRepo;
 		}
 	@Override
-	public void parse(String fileFullPath) throws IOException {
-		fileFullPath = FileUtil.uniqFilePath(fileFullPath);
+	protected void parseFile(String fileFullPath) throws IOException {
 		Map<String, String> macroMap = new HashMap<>(macroRepo.getDefaultMap());
-		parse(FileUtil.uniqFilePath(fileFullPath),true,macroMap);
+		parse(fileFullPath,macroMap);
 	}
 	
 	/**
@@ -60,24 +56,13 @@ public class CdtCppFileParser extends CppFileParser {
 	 * @param isInScope whether the parse is invoked by project file or an 'indirect' included file
 	 * @return 
 	 */
-	public void parse(String fileFullPath, boolean isInScope,Map<String, String> macroMap) {
-		/** If file already exist, skip it */
-		Entity fileEntity = entityRepo.getEntity(fileFullPath);
-		if (fileEntity!=null && fileEntity instanceof FileEntity) {
-			FileEntity t = ((FileEntity)fileEntity);
-			if (!t.isInProjectScope() && isInScope)
-				t.setInProjectScope(true);
-			return;
-		}
-		if (fileFullPath.contains("regex.h")){
-			System.out.println("stop");
-		}
+	public void parse(String fileFullPath,Map<String, String> macroMap) throws IOException {
 		CppVisitor bridge = new CppVisitor(fileFullPath, entityRepo, preprocessorHandler, bindingResolver);
 		IASTTranslationUnit tu = (new CDTParser(preprocessorHandler.getIncludePaths())).parse(fileFullPath,macroMap);
 		boolean containsIncludes = false;
 		for (String incl:preprocessorHandler.getDirectIncludedFiles(tu.getAllPreprocessorStatements(),fileFullPath)) {
 			CdtCppFileParser importedParser = new CdtCppFileParser(entityRepo, preprocessorHandler, bindingResolver,macroRepo);
-			importedParser.parse(incl,false,macroMap);
+			importedParser.parse(incl);
 			Map<String, String> macros = macroRepo.get(incl);
 			if (macros!=null)
 				macroMap.putAll(macros);
@@ -88,10 +73,14 @@ public class CdtCppFileParser extends CppFileParser {
 		}
 		macroRepo.putMacros(fileFullPath,macroMap,tu.getMacroDefinitions());
 		tu.accept(bridge);
-		fileEntity = entityRepo.getEntity(fileFullPath);
-		((FileEntity)fileEntity).cacheAllExpressions();
-		bridge.done();
 		return;
 	}
-	
+
+	@Override
+	protected boolean isPhase2Files(String fileFullPath) {
+		if (fileFullPath.endsWith(".h") || fileFullPath.endsWith(".hh") || fileFullPath.endsWith(".hpp")
+				|| fileFullPath.endsWith(".hxx"))
+			return true;
+		return false;
+	}
 }

@@ -4,6 +4,7 @@ import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.GenericName;
 import depends.entity.MultiDeclareEntities;
+import multilang.depends.util.file.FileUtil;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -99,14 +100,33 @@ public class InMemoryEntityRepo extends SimpleIdGenerator implements EntityRepo 
 	}
 
 	@Override
-	public void addFile(FileEntity fileEntity) {
-		allFileEntitiesByOrder.add(fileEntity);
-	}
-
-	@Override
 	public void clear() {
 		allEntieisByName.clear();
 		allEntitiesById.clear();
 		allFileEntitiesByOrder.clear();
+	}
+
+	@Override
+	public FileEntity getFileEntity(String fileFullPath) {
+		fileFullPath = FileUtil.uniqFilePath(fileFullPath);
+		Entity entity = this.getEntity(fileFullPath);
+		if (entity ==null) return null;
+		if (entity instanceof FileEntity) return (FileEntity) entity;
+		if (entity instanceof  MultiDeclareEntities){
+			MultiDeclareEntities multiDeclare = (MultiDeclareEntities) entity;
+			for (Entity theEntity: multiDeclare.getEntities()){
+				if (theEntity instanceof FileEntity){
+					return (FileEntity) theEntity;
+				}
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public void completeFile(String fileFullPath) {
+		FileEntity fileEntity = getFileEntity(fileFullPath);
+		fileEntity.cacheAllExpressions();
+		allFileEntitiesByOrder.add(fileEntity);
 	}
 }
