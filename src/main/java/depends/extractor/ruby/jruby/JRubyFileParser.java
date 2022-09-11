@@ -29,7 +29,7 @@ import depends.entity.FileEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.FileParser;
 import depends.extractor.ParserCreator;
-import depends.extractor.ruby.IncludedFileLocator;
+import depends.extractor.IncludedFileLocator;
 import depends.relations.IBindingResolver;
 import multilang.depends.util.file.FileUtil;
 import org.antlr.v4.runtime.CharStream;

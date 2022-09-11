@@ -6,7 +6,7 @@ import depends.extractor.python.NameAliasImport;
 import depends.extractor.python.PythonHandlerContext;
 import depends.extractor.python.PythonParser.*;
 import depends.extractor.python.PythonParserBaseListener;
-import depends.extractor.ruby.IncludedFileLocator;
+import depends.extractor.IncludedFileLocator;
 import depends.importtypes.FileImport;
 import depends.relations.IBindingResolver;
 import multilang.depends.util.file.FileUtil;

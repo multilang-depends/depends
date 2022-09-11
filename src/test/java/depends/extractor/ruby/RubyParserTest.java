@@ -1,6 +1,7 @@
 package depends.extractor.ruby;
 
 import depends.extractor.FileParser;
+import depends.extractor.IncludedFileLocator;
 import depends.extractor.ParserCreator;
 import depends.extractor.ParserTest;
 import depends.extractor.ruby.jruby.JRubyFileParser;

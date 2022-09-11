@@ -27,6 +27,7 @@ package depends.extractor.ruby;
 import depends.entity.repo.BuiltInType;
 import depends.extractor.AbstractLangProcessor;
 import depends.extractor.FileParser;
+import depends.extractor.IncludedFileLocator;
 import depends.extractor.ParserCreator;
 import depends.extractor.ruby.jruby.JRubyFileParser;
 import depends.relations.ImportLookupStrategy;

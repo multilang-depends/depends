@@ -2,7 +2,7 @@ package depends.extractor.python.union;
 
 import depends.extractor.FileParser;
 import depends.extractor.python.BasePythonProcessor;
-import depends.extractor.ruby.IncludedFileLocator;
+import depends.extractor.IncludedFileLocator;
 
 public class PythonProcessor extends BasePythonProcessor {
 

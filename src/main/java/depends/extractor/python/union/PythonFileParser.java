@@ -6,7 +6,7 @@ import depends.entity.repo.EntityRepo;
 import depends.extractor.FileParser;
 import depends.extractor.python.PythonLexer;
 import depends.extractor.python.PythonParser;
-import depends.extractor.ruby.IncludedFileLocator;
+import depends.extractor.IncludedFileLocator;
 import depends.relations.IBindingResolver;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;

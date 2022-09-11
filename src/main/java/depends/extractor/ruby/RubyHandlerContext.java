@@ -29,6 +29,7 @@ import depends.entity.PackageEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.FileParser;
 import depends.extractor.HandlerContext;
+import depends.extractor.IncludedFileLocator;
 import depends.extractor.ParserCreator;
 import depends.importtypes.FileImport;
 import depends.relations.IBindingResolver;
