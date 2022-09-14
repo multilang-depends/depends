@@ -24,18 +24,17 @@ SOFTWARE.
 
 package depends.matrix.core;
 
+import multilang.depends.util.file.path.FilenameWritter;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
-import multilang.depends.util.file.path.FilenameWritter;
-
 public class DependencyMatrix {
     private HashMap<String, DependencyPair> dependencyPairs = new HashMap<>();
     private ArrayList<String> nodes = new ArrayList<>();
     private HashMap<Integer,String> nodeIdToName = new HashMap<>();
-	private Integer relationCount=0;
 	private List<String> typeFilter;
     public DependencyMatrix() {
     }
@@ -65,7 +64,6 @@ public class DependencyMatrix {
 		}
 		DependencyPair dependencyPair = dependencyPairs.get(DependencyPair.key(from,to));
 		dependencyPair.addDependency(depType,weight,details);
-		relationCount+=weight;		
 	}
 	
 	public void addDependency(String depType, Integer from, Integer to,  int weight,DependencyDetail detail) {
@@ -79,17 +77,13 @@ public class DependencyMatrix {
 		}
 		DependencyPair dependencyPair = dependencyPairs.get(DependencyPair.key(from,to));
 		dependencyPair.addDependency(depType,weight,detail);
-		relationCount+=weight;		
 	}
 	
     public ArrayList<String> getNodes() {
 		return nodes;
 	}
 
-	public Integer relationCount() {
-		return relationCount;
-	}
-	
+
 	public DependencyMatrix reWriteFilenamePattern(FilenameWritter filenameRewritter) {
 		this.nodeIdToName = new HashMap<>();
 		for (int i=0;i<nodes.size();i++) {
