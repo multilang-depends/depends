@@ -70,6 +70,7 @@ public class FunctionDependencyGenerator extends DependencyGenerator {
 		String name = stripper.stripFilename(file.getRawName().uniqName());
 		name = filenameWritter.reWrite(name);
 		String functionName = EntityNameBuilder.build(entity);
+		functionName = stripper.stripFilename(functionName);
 		name = name + "("+functionName+")";
 		return name;
 	}

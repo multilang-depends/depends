@@ -74,8 +74,8 @@ public abstract class DependencyGenerator {
 		Entity toFile = toEntity.getAncestorOfType(FileEntity.class);
 
 		return new DependencyDetail(
-				new LocationInfo(fromObject,fromFile.getQualifiedName(),fromLineNumber),
-				new LocationInfo(toObject,toFile.getQualifiedName(),toEntity.getLine()));
+				new LocationInfo(stripper.stripFilename(fromObject),stripper.stripFilename(fromFile.getQualifiedName()),fromLineNumber),
+				new LocationInfo(stripper.stripFilename(toObject),stripper.stripFilename(toFile.getQualifiedName()),toEntity.getLine()));
 	}
 	public void setFilenameRewritter(FilenameWritter filenameWritter) {
 		this.filenameWritter = filenameWritter;

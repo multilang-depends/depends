@@ -1,16 +1,15 @@
 package depends.format.json;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-
+import depends.format.excel.ExcelXlsxFormatDependencyDumper;
+import depends.matrix.core.DependencyMatrix;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
-import depends.format.excel.ExcelXlsxFormatDependencyDumper;
-import depends.matrix.core.DependencyMatrix;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class JsonFormatDependencyDumperTest {
 	DependencyMatrix dependencyMatrix;
@@ -38,7 +37,6 @@ public class JsonFormatDependencyDumperTest {
 		
 		String projectName = "test";
 		String outputDir =  folder.getRoot().getAbsolutePath();
-		outputDir = "/tmp/";
 		JsonFormatDependencyDumper dumper = new JsonFormatDependencyDumper(dependencyMatrix, projectName, outputDir);
 		dumper.output();
 		System.out.println(outputDir+File.separator+"test.json");
@@ -49,7 +47,6 @@ public class JsonFormatDependencyDumperTest {
 	public void testExcel() throws IOException {
 		String projectName = "test";
 		String outputDir =  folder.getRoot().getAbsolutePath();
-		outputDir = "/tmp/";
 		ExcelXlsxFormatDependencyDumper dumper = new ExcelXlsxFormatDependencyDumper(dependencyMatrix, projectName, outputDir);
 		dumper.output();
 		System.out.println(outputDir+File.separator+"test.xlsx");
