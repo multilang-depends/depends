@@ -59,7 +59,7 @@ public class JRubyVisitor extends NoopVisitor {
 	@Override
 	public Object visitModuleNode(ModuleNode node) {
 		String name = helper.getName(node.getCPath());
-		context.foundNamespace(name,node.getPosition().getStartLine());
+		context.foundNamespace(name,node.getPosition().getStartLine()+1);
 		super.visitModuleNode(node);
 		context.exitLastedEntity();
 		return null;
@@ -67,7 +67,7 @@ public class JRubyVisitor extends NoopVisitor {
 
 	@Override
 	public Object visitClassNode(ClassNode node) {
-		TypeEntity type = context.foundNewType(helper.getName(node.getCPath()),node.getPosition().getStartLine());
+		TypeEntity type = context.foundNewType(helper.getName(node.getCPath()),node.getPosition().getStartLine()+1);
 		Node superNode = node.getSuper();
 		
 		if (superNode instanceof ConstNode ||
@@ -96,7 +96,7 @@ public class JRubyVisitor extends NoopVisitor {
 	public Object visitFCallNode(FCallNode node) {
 		String fname = helper.getName(node);
 		Collection<String> params = getParams(node);
-		context.processSpecialFuncCall(fname, params, node.getPosition().getStartLine());
+		context.processSpecialFuncCall(fname, params, node.getPosition().getStartLine()+1);
 		return super.visitFCallNode(node);
 	}
 
@@ -121,7 +121,7 @@ public class JRubyVisitor extends NoopVisitor {
 		String fname = helper.getName(node);
 		Collection<String> params = getParams(node);
 		addCallToReceiverVar(node, fname);
-		context.processSpecialFuncCall(fname, params, node.getPosition().getStartLine());
+		context.processSpecialFuncCall(fname, params, node.getPosition().getStartLine()+1);
 		return super.visitCallNode(node);
 	}
 
@@ -142,7 +142,7 @@ public class JRubyVisitor extends NoopVisitor {
 	public Object visitUnaryCallNode(UnaryCallNode node) {
 		String fname = helper.getName(node);
 		Collection<String> params = new ArrayList<>();
-		context.processSpecialFuncCall(fname, params, node.getPosition().getStartLine());
+		context.processSpecialFuncCall(fname, params, node.getPosition().getStartLine()+1);
 		return super.visitUnaryCallNode(node);
 	}
 
@@ -156,8 +156,8 @@ public class JRubyVisitor extends NoopVisitor {
 
 	@Override
 	public Object visitDefnNode(DefnNode node) {
-		FunctionEntity method = context.foundMethodDeclarator(node.getName(),node.getPosition().getStartLine());
-		method.setLine(node.getPosition().getStartLine());
+		FunctionEntity method = context.foundMethodDeclarator(node.getName(),node.getPosition().getStartLine()+1);
+		method.setLine(node.getPosition().getStartLine()+1);
 
 		super.visitDefnNode(node);
 		context.exitLastedEntity();
@@ -174,8 +174,8 @@ public class JRubyVisitor extends NoopVisitor {
 			String className = ((INameNode) varNode).getName();
 			Entity entity = context.foundEntityWithName(GenericName.build(className));
 			if (entity != null && entity instanceof ContainerEntity) {
-				FunctionEntity method = context.foundMethodDeclarator(((ContainerEntity) entity), node.getName(),node.getPosition().getStartLine());
-				method.setLine(node.getPosition().getStartLine());
+				FunctionEntity method = context.foundMethodDeclarator(((ContainerEntity) entity), node.getName(),node.getPosition().getStartLine()+1);
+				method.setLine(node.getPosition().getStartLine()+1);
 				handled = true;
 			}
 
@@ -183,16 +183,16 @@ public class JRubyVisitor extends NoopVisitor {
 			String varName = ((INameNode) varNode).getName();
 			Entity var = context.foundEntityWithName(GenericName.build(varName));
 			if (var != null && var instanceof ContainerEntity) {
-				FunctionEntity method = context.foundMethodDeclarator(((ContainerEntity) var), node.getName(),node.getPosition().getStartLine());
-				method.setLine(node.getPosition().getStartLine());
+				FunctionEntity method = context.foundMethodDeclarator(((ContainerEntity) var), node.getName(),node.getPosition().getStartLine()+1);
+				method.setLine(node.getPosition().getStartLine()+1);
 				handled = true;
 			}
 		} 
 
 		if (!handled) {
 			// fallback to add it to last container
-			FunctionEntity method = context.foundMethodDeclarator(node.getName(),node.getPosition().getStartLine());
-			method.setLine(node.getPosition().getStartLine());
+			FunctionEntity method = context.foundMethodDeclarator(node.getName(),node.getPosition().getStartLine()+1);
+			method.setLine(node.getPosition().getStartLine()+1);
 		}
 		super.visitDefsNode(node);
 		context.exitLastedEntity();
@@ -201,31 +201,31 @@ public class JRubyVisitor extends NoopVisitor {
 
 	@Override
 	public Object visitGlobalVarNode(GlobalVarNode node) {
-		context.foundVarDefinition(context.globalScope(), node.getName(),node.getPosition().getStartLine());
+		context.foundVarDefinition(context.globalScope(), node.getName(),node.getPosition().getStartLine()+1);
 		return super.visitGlobalVarNode(node);
 	}
 
 	@Override
 	public Object visitInstVarNode(InstVarNode node) {
-		context.foundVarDefinition(context.currentType(), node.getName(),node.getPosition().getStartLine());
+		context.foundVarDefinition(context.currentType(), node.getName(),node.getPosition().getStartLine()+1);
 		return super.visitInstVarNode(node);
 	}
 
 	@Override
 	public Object visitClassVarAsgnNode(ClassVarAsgnNode node) {
-		context.foundVarDefinition(helper.getScopeOfVar(node,context), node.getName(),node.getPosition().getStartLine());
+		context.foundVarDefinition(helper.getScopeOfVar(node,context), node.getName(),node.getPosition().getStartLine()+1);
 		return super.visitClassVarAsgnNode(node);
 	}
 
 	@Override
 	public Object visitClassVarDeclNode(ClassVarDeclNode node) {
-		context.foundVarDefinition(context.currentType(), node.getName(),node.getPosition().getStartLine());
+		context.foundVarDefinition(context.currentType(), node.getName(),node.getPosition().getStartLine()+1);
 		return super.visitClassVarDeclNode(node);
 	}
 
 	@Override
 	public Object visitClassVarNode(ClassVarNode node) {
-		context.foundVarDefinition(context.currentType(), node.getName(),node.getPosition().getStartLine());
+		context.foundVarDefinition(context.currentType(), node.getName(),node.getPosition().getStartLine()+1);
 		return super.visitClassVarNode(node);
 	}
 
@@ -236,25 +236,26 @@ public class JRubyVisitor extends NoopVisitor {
 
 	@Override
 	public Object visitDVarNode(DVarNode node) {
-		context.foundVarDefinition(context.lastContainer(), node.getName(),node.getPosition().getStartLine());
+		context.foundVarDefinition(context.lastContainer(), node.getName(),node.getPosition().getStartLine()+1);
 		return super.visitDVarNode(node);
 	}
 
 	@Override
 	public Object visitDAsgnNode(DAsgnNode node) {
-		context.foundVarDefinition(helper.getScopeOfVar(node,context), node.getName(),node.getPosition().getStartLine());
+		context.foundVarDefinition(helper.getScopeOfVar(node,context), node.getName(),node.getPosition().getStartLine()+1);
+		expressionUsage.foundExpression(node.getValue());
 		return super.visitDAsgnNode(node);
 	}
 
 	@Override
 	public Object visitGlobalAsgnNode(GlobalAsgnNode node) {
-		context.foundVarDefinition(helper.getScopeOfVar(node,context), node.getName(),node.getPosition().getStartLine());
+		context.foundVarDefinition(helper.getScopeOfVar(node,context), node.getName(),node.getPosition().getStartLine()+1);
 		return super.visitGlobalAsgnNode(node);
 	}
 
 	@Override
 	public Object visitInstAsgnNode(InstAsgnNode node) {
-		context.foundVarDefinition(helper.getScopeOfVar(node,context), node.getName(),node.getPosition().getStartLine());
+		context.foundVarDefinition(helper.getScopeOfVar(node,context), node.getName(),node.getPosition().getStartLine()+1);
 		return super.visitInstAsgnNode(node);
 	}
 
@@ -267,7 +268,7 @@ public class JRubyVisitor extends NoopVisitor {
 
 	@Override
 	public Object visitLocalAsgnNode(LocalAsgnNode node) {
-		context.foundVarDefinition(helper.getScopeOfVar(node,context), node.getName(),node.getPosition().getStartLine());
+		context.foundVarDefinition(helper.getScopeOfVar(node,context), node.getName(),node.getPosition().getStartLine()+1);
 		return super.visitLocalAsgnNode(node);
 	}
 
