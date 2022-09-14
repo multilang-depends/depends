@@ -97,4 +97,9 @@ public class CppProcessor extends AbstractLangProcessor {
 		depedencyTypes.add(IMPLLINK);
 		return depedencyTypes;
 	}
+
+	@Override
+	public boolean supportCallAsImpl() {
+		return true;
+	}
 }

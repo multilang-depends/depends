@@ -138,8 +138,6 @@ abstract public class AbstractLangProcessor {
 	}
 
 	/**
-	 * 
-	 * @param callAsImpl
 	 * @return unsolved bindings
 	 */
 	public void resolveBindings() {
@@ -233,7 +231,18 @@ abstract public class AbstractLangProcessor {
 		return relation;
 	}
 
+	/**
+	 * Whether to resolve expression immediately during parse
+	 * @return
+	 */
 	public boolean isEagerExpressionResolve(){
 		return false;
 	}
+
+	/**
+	 * Call as Impl:
+	 *     implicit call (for example polymorphic in cpp)
+	 * @return
+	 */
+	public boolean supportCallAsImpl(){return false;};
 }

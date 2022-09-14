@@ -26,6 +26,7 @@ package depends.relations;
 import depends.entity.*;
 import depends.entity.repo.BuiltInType;
 import depends.entity.repo.EntityRepo;
+import depends.extractor.AbstractLangProcessor;
 import depends.extractor.UnsolvedBindings;
 import depends.extractor.empty.EmptyBuiltInType;
 import depends.importtypes.Import;
@@ -47,16 +48,17 @@ public class BindingResolver implements IBindingResolver{
 	private boolean isDuckTypingDeduce = true;
 	private static Logger logger = LoggerFactory.getLogger(IBindingResolver.class);
 
-	public BindingResolver(EntityRepo repo, ImportLookupStrategy importLookupStrategy, BuiltInType buildInTypeManager,
+	public BindingResolver(AbstractLangProcessor langProcessor,
 							boolean isCollectUnsolvedBindings, boolean isDuckTypingDeduce) {
-		this.repo = repo;
-		this.importLookupStrategy = importLookupStrategy;
-		this.buildInTypeManager = buildInTypeManager;
+		this.repo = langProcessor.getEntityRepo();
+		this.importLookupStrategy = langProcessor.getImportLookupStrategy();
+		this.buildInTypeManager = langProcessor.getBuiltInType();
 		this.isCollectUnsolvedBindings = isCollectUnsolvedBindings;
 		this.isDuckTypingDeduce = isDuckTypingDeduce;
 		unsolvedSymbols= new HashSet<>();
 		importLookupStrategy.setBindingResolver(this);
 	}
+
 
 	@Override
 	public  Set<UnsolvedBindings> resolveAllBindings(boolean isEagerExpressionResolve) {

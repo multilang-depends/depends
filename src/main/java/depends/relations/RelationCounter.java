@@ -41,11 +41,11 @@ public class RelationCounter {
 	private boolean callAsImpl;
 	private AbstractLangProcessor langProcessor;
 
-	public RelationCounter(EntityRepo repo, boolean callAsImpl, AbstractLangProcessor langProcessor, IBindingResolver bindingResolver) {
+	public RelationCounter(EntityRepo repo, AbstractLangProcessor langProcessor, IBindingResolver bindingResolver) {
 		this.entities = repo.getFileEntities();
 		this.bindingResolver = bindingResolver;
 		this.repo = repo;
-		this.callAsImpl = callAsImpl;
+		this.callAsImpl = langProcessor.supportCallAsImpl();
 		this.langProcessor = langProcessor;
 	}
 	

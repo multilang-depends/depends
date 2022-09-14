@@ -55,18 +55,21 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * The entry pooint of depends
+ */
 public class Main {
 
 	public static void main(String[] args) {
 		try {
 			LangRegister langRegister = new LangRegister();
 			langRegister.register();
-			DependsCommand app = CommandLine.populateCommand(new DependsCommand(), args);
-			if (app.help) {
+			DependsCommand appArgs = CommandLine.populateCommand(new DependsCommand(), args);
+			if (appArgs.help) {
 				CommandLine.usage(new DependsCommand(), System.out);
 				System.exit(0);
 			}
-			executeCommand(app);
+			executeCommand(appArgs);
 		} catch (Exception e) {
 			if (e instanceof PicocliException) {
 				CommandLine.usage(new DependsCommand(), System.out);
@@ -81,23 +84,18 @@ public class Main {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static void executeCommand(DependsCommand app) throws ParameterException {
-		String lang = app.getLang();
-		String inputDir = app.getSrc();
-		String[] includeDir = app.getIncludes();
-		String outputName = app.getOutputName();
-		String outputDir = app.getOutputDir();
-		String[] outputFormat = app.getFormat();
+	private static void executeCommand(DependsCommand args) throws ParameterException {
+		String lang = args.getLang();
+		String inputDir = args.getSrc();
+		String[] includeDir = args.getIncludes();
+		String outputName = args.getOutputName();
+		String outputDir = args.getOutputDir();
+		String[] outputFormat = args.getFormat();
 
 		inputDir = FileUtil.uniqFilePath(inputDir);
-		boolean supportImplLink = false;
-		if (app.getLang().equals("cpp") || app.getLang().equals("python")) supportImplLink = true;
-		
-		if (app.isAutoInclude()) {
-			FolderCollector includePathCollector = new FolderCollector();
-			List<String> additionalIncludePaths = includePathCollector.getFolders(inputDir);
-			additionalIncludePaths.addAll(Arrays.asList(includeDir));
-			includeDir = additionalIncludePaths.toArray(new String[] {});
+
+		if (args.isAutoInclude()) {
+			includeDir = appendAllFoldersToIncludePath(inputDir, includeDir);
 		}
 			
 		AbstractLangProcessor langProcessor = LangProcessorRegistration.getRegistry().getProcessorOf(lang);
@@ -105,29 +103,29 @@ public class Main {
 			System.err.println("Not support this language: " + lang);
 			return;
 		}
-		IBindingResolver bindingResolver = new BindingResolver(langProcessor.getEntityRepo(), langProcessor.getImportLookupStrategy(), langProcessor.getBuiltInType()
-				, app.isOutputExternalDependencies(), app.isDuckTypingDeduce());
+
+		IBindingResolver bindingResolver = new BindingResolver(langProcessor, args.isOutputExternalDependencies(), args.isDuckTypingDeduce());
 
 		long startTime = System.currentTimeMillis();
 		//step1: build data
 		EntityRepo entityRepo = langProcessor.buildDependencies(inputDir, includeDir, bindingResolver);
 
-		new RelationCounter(entityRepo,supportImplLink,langProcessor, bindingResolver).computeRelations();
+		new RelationCounter(entityRepo,langProcessor, bindingResolver).computeRelations();
 		System.out.println("Dependency done....");
 
 		//step2: generate dependencies matrix
-		DependencyGenerator dependencyGenerator = getDependencyGenerator(app, inputDir);
-		DependencyMatrix matrix = dependencyGenerator.identifyDependencies(entityRepo,app.getTypeFilter());
+		DependencyGenerator dependencyGenerator = getDependencyGenerator(args, inputDir);
+		DependencyMatrix matrix = dependencyGenerator.identifyDependencies(entityRepo,args.getTypeFilter());
 		//step3: output
-		if (app.getGranularity().startsWith("L")) {
-			matrix = new MatrixLevelReducer(matrix,app.getGranularity().substring(1)).shrinkToLevel();
+		if (args.getGranularity().startsWith("L")) {
+			matrix = new MatrixLevelReducer(matrix,args.getGranularity().substring(1)).shrinkToLevel();
 		}
 		DependencyDumper output = new DependencyDumper(matrix);
 		output.outputResult(outputName,outputDir,outputFormat);
-		if (app.isOutputExternalDependencies()) {
+		if (args.isOutputExternalDependencies()) {
 			Set<UnsolvedBindings> unsolved = langProcessor.getExternalDependencies();
-	    	UnsolvedSymbolDumper unsolvedSymbolDumper = new UnsolvedSymbolDumper(unsolved,app.getOutputName(),app.getOutputDir(),
-	    			new LeadingNameStripper(app.isStripLeadingPath(),inputDir,app.getStrippedPaths()));
+	    	UnsolvedSymbolDumper unsolvedSymbolDumper = new UnsolvedSymbolDumper(unsolved,args.getOutputName(),args.getOutputDir(),
+	    			new LeadingNameStripper(args.isStripLeadingPath(),inputDir,args.getStrippedPaths()));
 	    	unsolvedSymbolDumper.output();
 		}
 		long endTime = System.currentTimeMillis();
@@ -135,11 +133,18 @@ public class Main {
 		CacheManager.create().shutdown();
 		System.out.println("Consumed time: " + (float) ((endTime - startTime) / 1000.00) + " s,  or "
 				+ (float) ((endTime - startTime) / 60000.00) + " min.");
-		if ( app.isDv8map()) {
+		if ( args.isDv8map()) {
 			DV8MappingFileBuilder dv8MapfileBuilder = new DV8MappingFileBuilder(langProcessor.supportedRelations());
 			dv8MapfileBuilder.create(outputDir+ File.separator+"depends-dv8map.mapping");
 		}
+	}
 
+	private static String[] appendAllFoldersToIncludePath(String inputDir, String[] includeDir) {
+		FolderCollector includePathCollector = new FolderCollector();
+		List<String> additionalIncludePaths = includePathCollector.getFolders(inputDir);
+		additionalIncludePaths.addAll(Arrays.asList(includeDir));
+		includeDir = additionalIncludePaths.toArray(new String[] {});
+		return includeDir;
 	}
 
 	private static DependencyGenerator getDependencyGenerator(DependsCommand app, String inputDir) throws ParameterException {

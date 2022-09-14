@@ -24,27 +24,27 @@ public abstract class ParserTest {
 
 	protected  void init(){
 		entityRepo = langProcessor.getEntityRepo();
-		bindingResolver = new BindingResolver(langProcessor.getEntityRepo(),langProcessor.getImportLookupStrategy(),langProcessor.getBuiltInType(),true,false);
+		bindingResolver = new BindingResolver(langProcessor,true,false);
 		langProcessor.bindingResolver = bindingResolver;
 		TemporaryFile.reset();
 	}
 
 	protected  void init(boolean duckTypingDeduce){
 		entityRepo = langProcessor.getEntityRepo();
-		bindingResolver = new BindingResolver(langProcessor.getEntityRepo(),langProcessor.getImportLookupStrategy(),langProcessor.getBuiltInType(),false,duckTypingDeduce);
+		bindingResolver = new BindingResolver(langProcessor,false,duckTypingDeduce);
 		langProcessor.bindingResolver = bindingResolver;
 		TemporaryFile.reset();
 	}
 
 	public Set<UnsolvedBindings> resolveAllBindings() {
 		Set<UnsolvedBindings> result = bindingResolver.resolveAllBindings(langProcessor.isEagerExpressionResolve());
-		new RelationCounter(entityRepo,false,langProcessor, bindingResolver).computeRelations();
+		new RelationCounter(entityRepo,langProcessor, bindingResolver).computeRelations();
 		return result;
 	}
 
 	protected Set<UnsolvedBindings>  resolveAllBindings(boolean callAsImpl) {
 		Set<UnsolvedBindings> result = bindingResolver.resolveAllBindings(langProcessor.isEagerExpressionResolve());
-		new RelationCounter(entityRepo,callAsImpl,langProcessor, bindingResolver).computeRelations();
+		new RelationCounter(entityRepo,langProcessor, bindingResolver).computeRelations();
 		return result;
 	}
 
