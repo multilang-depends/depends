@@ -25,47 +25,19 @@ SOFTWARE.
 package depends.generator;
 
 import depends.entity.Entity;
+import depends.entity.EntityNameBuilder;
 import depends.entity.FileEntity;
 import depends.entity.FunctionEntity;
-import depends.entity.EntityNameBuilder;
 import depends.entity.repo.EntityRepo;
-import depends.matrix.core.DependencyMatrix;
-import depends.relations.Relation;
-
-import java.util.Iterator;
-import java.util.List;
 
 public class FunctionDependencyGenerator extends DependencyGenerator {
-	public DependencyMatrix build(EntityRepo entityRepo,List<String> typeFilter) {
-		DependencyMatrix dependencyMatrix = new DependencyMatrix(typeFilter);
-		Iterator<Entity> iterator = entityRepo.entityIterator();
-		while(iterator.hasNext()) {
-			Entity entity = iterator.next();
-			if (!entity.inScope()) continue;
-			if (entity instanceof FunctionEntity) {
-				String name = getFunctionEntityDisplayName((FunctionEntity)entity);
-				dependencyMatrix.addNode(name,entity.getId());
-			}
-			int entityFrom = getFunctionEntityIdNoException(entity);
-			if (entityFrom == -1)
-				continue;
-			for (Relation relation : entity.getRelations()) {
-				Entity relatedEntity = relation.getEntity();
-        		if (relatedEntity==null) continue;
-				if (relatedEntity.getId() >= 0) {
-					int entityTo = getFunctionEntityIdNoException(relation.getEntity());
-					if (entityTo == -1)
-						continue;
-					dependencyMatrix.addDependency(relation.getType(), entityFrom, entityTo, 1,buildDescription(entity,
-							relation.getEntity(),relation.getFromLine()));
-				}
-			}
-		}
-		return dependencyMatrix;
+	@Override
+	protected boolean outputLevelMatch(Entity entity) {
+		return (entity instanceof FunctionEntity);
 	}
 
-
-	private String getFunctionEntityDisplayName(FunctionEntity entity) {
+	@Override
+	protected String nameOf(Entity entity) {
 		FileEntity file = (FileEntity) entity.getAncestorOfType(FileEntity.class);
 		String name = stripper.stripFilename(file.getRawName().uniqName());
 		name = filenameWritter.reWrite(name);
@@ -75,8 +47,8 @@ public class FunctionDependencyGenerator extends DependencyGenerator {
 		return name;
 	}
 
-
-	private int getFunctionEntityIdNoException(Entity entity) {
+	@Override
+	protected int upToOutputLevelEntityId(EntityRepo entityRepo, Entity entity) {
 		Entity ancestor = entity.getAncestorOfType(FunctionEntity.class);
 		if (ancestor == null)
 			return -1;

@@ -26,68 +26,16 @@ package depends.generator;
 
 import depends.entity.*;
 import depends.entity.repo.EntityRepo;
-import depends.matrix.core.DependencyDetail;
-import depends.matrix.core.DependencyMatrix;
-import depends.matrix.core.LocationInfo;
-import depends.relations.Relation;
-
-import java.util.Iterator;
-import java.util.List;
 
 public class StructureDependencyGenerator extends DependencyGenerator{
-	/**
-	 * Build the dependency matrix (without re-mapping file id)
-	 * @param entityRepo which contains entities and relations
-	 * @return the generated dependency matrix
-	 */
 	@Override
-	public DependencyMatrix build(EntityRepo entityRepo,List<String> typeFilter) {
-		DependencyMatrix dependencyMatrix = new DependencyMatrix(typeFilter);
-		Iterator<Entity> iterator = entityRepo.entityIterator();
-		System.out.println("Start create dependencies matrix....");
-		while(iterator.hasNext()) {
-			Entity entity = iterator.next();
-			if (!entity.inScope()) continue;
-			if (isStructureEntityType(entity)){
-				String name = entity.getQualifiedName() + "|" + entity.getClass().getSimpleName().replace("Entity","");
-        		dependencyMatrix.addNode(name,entity.getId());
-        	}
-			
-        	int fileEntityFrom = getStructureEntityIdNoException(entity);
-        	if (fileEntityFrom==-1) continue;
-        	for (Relation relation:entity.getRelations()) {
-        		Entity relatedEntity = relation.getEntity();
-        		if (relatedEntity==null) continue;
-        		if (relatedEntity instanceof CandidateTypes) {
-        			List<TypeEntity> candidateTypes = ((CandidateTypes)relatedEntity).getCandidateTypes();
-        			for (TypeEntity candidateType:candidateTypes) {
-    	        		if (candidateType.getId()>=0) {
-    	        			int fileEntityTo = getStructureEntityIdNoException(candidateType);
-    	        			if (fileEntityTo!=-1) {
-								DependencyDetail detail = buildDescription(entity,candidateType,relation.getFromLine());
-								dependencyMatrix.addDependency(relation.getType(), fileEntityFrom,fileEntityTo,1,detail);
-    	        			}
-    	        		}
-        			}
-        		}else {
-	        		if (relatedEntity.getId()>=0) {
-	        			int fileEntityTo = getStructureEntityIdNoException(relatedEntity);
-	        			if (fileEntityTo!=-1) {
-							DependencyDetail detail = buildDescription(entity, relatedEntity, relation.getFromLine());
-							dependencyMatrix.addDependency(relation.getType(), fileEntityFrom,fileEntityTo,1,detail);
-	        			}
-	        		}
-        		}
-        	}
-        }
-		System.out.println("Finish create dependencies matrix....");
-
-		return dependencyMatrix;
+	protected String nameOf(Entity entity) {
+		return entity.getQualifiedName() + "|" + entity.getClass().getSimpleName().replace("Entity","");
 	}
 
 
-
-	private boolean isStructureEntityType(Entity entity) {
+	@Override
+	protected boolean outputLevelMatch(Entity entity) {
 		if (entity instanceof FileEntity) return false;
 		if (entity instanceof TypeEntity) return true; //package included
 		if (entity instanceof VarEntity && entity.getParent() instanceof TypeEntity) return true;
@@ -95,7 +43,8 @@ public class StructureDependencyGenerator extends DependencyGenerator{
 		return false;
 	}
 
-	private int getStructureEntityIdNoException(Entity entity) {
+	@Override
+	protected int upToOutputLevelEntityId(EntityRepo entityRepo, Entity entity) {
 		Entity ancestor = getAncestorOfType(entity);
 		if (ancestor==null) {
 			return -1;
@@ -106,7 +55,7 @@ public class StructureDependencyGenerator extends DependencyGenerator{
 
 	public Entity getAncestorOfType(Entity fromEntity) {
 		while(fromEntity!=null) {
-			if (isStructureEntityType(fromEntity))
+			if (outputLevelMatch(fromEntity))
 				return fromEntity;
 			if (fromEntity.getParent()==null) return null;
 			fromEntity = fromEntity.getParent();

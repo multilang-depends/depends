@@ -31,6 +31,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+import static depends.deptypes.DependencyType.DuckTypingLabel;
+
 public class DependencyMatrix {
     private HashMap<String, DependencyPair> dependencyPairs = new HashMap<>();
     private ArrayList<String> nodes = new ArrayList<>();
@@ -67,7 +69,7 @@ public class DependencyMatrix {
 	}
 	
 	public void addDependency(String depType, Integer from, Integer to,  int weight,DependencyDetail detail) {
-		if (typeFilter!=null && (!typeFilter.contains(depType)))
+		if (typeFilter!=null && (!typeFilter.contains(depType.replace(DuckTypingLabel,""))))
 			return;
 		if(from.equals(to) || from == -1 || to == -1) {
 		    return;

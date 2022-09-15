@@ -46,7 +46,8 @@ public class DependencyType {
 	public static final String PomParent = "Parent";
 	public static final String PomPlugin = "Plugin";
 	public static final String PomDependency = "Dependency";
-	
+
+	public static final String DuckTypingLabel = "(duck)";
 
 	public static ArrayList<String> allDependencies() {
 		ArrayList<String> depedencyTypes = new ArrayList<String>();

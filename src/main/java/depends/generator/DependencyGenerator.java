@@ -24,6 +24,7 @@ SOFTWARE.
 
 package depends.generator;
 
+import depends.entity.CandidateTypes;
 import depends.entity.Entity;
 import depends.entity.EntityNameBuilder;
 import depends.entity.FileEntity;
@@ -32,6 +33,7 @@ import depends.matrix.core.DependencyDetail;
 import depends.matrix.core.DependencyMatrix;
 import depends.matrix.core.LocationInfo;
 import depends.matrix.transform.OrderedMatrixGenerator;
+import depends.relations.Relation;
 import multilang.depends.util.file.path.EmptyFilenameWritter;
 import multilang.depends.util.file.path.FilenameWritter;
 import multilang.depends.util.file.strip.EmptyLeadingNameStripper;
@@ -39,7 +41,12 @@ import multilang.depends.util.file.strip.ILeadingNameStrippper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+
+import static depends.deptypes.DependencyType.DuckTypingLabel;
 
 public abstract class DependencyGenerator {
 
@@ -56,7 +63,74 @@ public abstract class DependencyGenerator {
 		return dependencyMatrix;
 	}
 
-	public abstract DependencyMatrix build(EntityRepo entityRepo,List<String> typeFilter);
+	/**
+	 * Build the dependency matrix (without re-mapping file id)
+	 * @param entityRepo which contains entities and relations
+	 * @return the generated dependency matrix
+	 */
+	public DependencyMatrix build(EntityRepo entityRepo,List<String> typeFilter) {
+		DependencyMatrix dependencyMatrix = new DependencyMatrix(typeFilter);
+		Iterator<Entity> iterator = entityRepo.entityIterator();
+		System.out.println("Start create dependencies matrix....");
+		while(iterator.hasNext()) {
+			Entity entity = iterator.next();
+			if (!entity.inScope()) continue;
+			if (outputLevelMatch(entity)){
+				dependencyMatrix.addNode(nameOf(entity),entity.getId());
+			}
+			int entityFrom = upToOutputLevelEntityId(entityRepo, entity);
+			if (entityFrom==-1) continue;
+			for (Relation relation:entity.getRelations()) {
+				Entity relatedEntity = relation.getEntity();
+				if (relatedEntity==null) continue;
+				List<Entity> relatedEntities = expandEntity(relatedEntity);
+				String duckTypingFlag = relatedEntity instanceof CandidateTypes? DuckTypingLabel:"";
+				relatedEntities.forEach(theEntity->{
+					if (theEntity.getId()>=0) {
+						int entityTo = upToOutputLevelEntityId(entityRepo,theEntity);
+						if (entityTo!=-1) {
+							DependencyDetail detail = buildDescription(entity, theEntity, relation.getFromLine());
+							detail = rewriteDetail(detail);
+							dependencyMatrix.addDependency(relation.getType()+duckTypingFlag, entityFrom,entityTo,1,detail);
+						}
+					}
+				});
+			}
+		}
+		System.out.println("Finish create dependencies matrix....");
+		return dependencyMatrix;
+	}
+
+	private List<Entity> expandEntity(Entity relatedEntity) {
+		List<Entity> entities = new ArrayList<>();
+		if (relatedEntity instanceof CandidateTypes) {
+			entities = Collections.unmodifiableList((List) ((CandidateTypes) relatedEntity).getCandidateTypes());
+		}else {
+			entities.add(relatedEntity);
+		}
+		return entities;
+	}
+
+	private DependencyDetail rewriteDetail(DependencyDetail detail) {
+		if (detail==null) return null;
+		String srcFile = filenameWritter.reWrite(
+				stripper.stripFilename(detail.getSrc().getFile())
+		);
+		String dstFile = filenameWritter.reWrite(
+				stripper.stripFilename(detail.getDest().getFile()));
+		return new DependencyDetail(
+				new LocationInfo(detail.getSrc().getObject(),
+						srcFile, detail.getSrc().getLineNumber())
+				,
+				new LocationInfo(detail.getDest().getObject(),
+						dstFile, detail.getDest().getLineNumber()));
+	}
+
+	protected abstract int upToOutputLevelEntityId(EntityRepo entityRepo, Entity entity);
+
+	protected abstract String nameOf(Entity entity);
+
+	protected abstract boolean outputLevelMatch(Entity entity);
 
 	protected ILeadingNameStrippper stripper = new EmptyLeadingNameStripper();
 	protected FilenameWritter filenameWritter = new EmptyFilenameWritter();
