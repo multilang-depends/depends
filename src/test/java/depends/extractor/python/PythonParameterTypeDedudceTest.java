@@ -11,8 +11,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class PythonParameterTypeDedudceTest extends PythonParserTest {
 	@Before
@@ -96,6 +95,22 @@ public class PythonParameterTypeDedudceTest extends PythonParserTest {
 	    TypeEntity type = var.getType();
 	    assertTrue(type instanceof CandidateTypes);
 	    assertEquals(2,((CandidateTypes)type).getCandidateTypes().size());
+	}
+
+	@Test
+	public void test_expression_count_should_be_only_1() throws IOException {
+		String[] srcs = new String[] {
+				"./src/test/resources/python-code-examples/deducetype_parameter.py",
+		};
+
+		for (String src:srcs) {
+			FileParser parser = createFileParser();
+			parser.parse(src);
+		}
+		resolveAllBindings();
+		String name = withPackageName(srcs[0],"test_expression");
+		FunctionEntity function = (FunctionEntity)( entityRepo.getEntity(name));
+		assertNotNull(function);
 	}
 
 
