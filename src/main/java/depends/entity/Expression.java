@@ -182,24 +182,7 @@ public class Expression implements Serializable{
 		else if (parent.isDot) {
 			if (parent.isCall()) {
 				List<Entity> funcs = this.getType().lookupFunctionInVisibleScope(parent.identifier);
-				if (funcs!=null) {
-					//funcs = funcs.stream().filter(item->!(item instanceof MultiDeclareEntities)).collect(Collectors.toList());
-					if (funcs.size()>0) {
-						Entity func = funcs.get(0);
-						if (funcs.size()>1) {
-							MultiDeclareEntities m = new MultiDeclareEntities(func, bindingResolver.getRepo().generateId());
-							bindingResolver.getRepo().add(m);
-							for (int i=1;i<funcs.size();i++) {
-								m.add(funcs.get(i));
-							}
-							parent.setType(func.getType(), m, bindingResolver);
-							parent.setReferredEntity(m);
-						}else {
-							parent.setType(func.getType(), func, bindingResolver);
-							parent.setReferredEntity(func);
-						}
-					}
-				}
+				setReferredFunctions(bindingResolver, parent, funcs);
 			}else {
 				Entity var = this.getType().lookupVarInVisibleScope(parent.identifier);
 				if (var!=null) {
@@ -207,22 +190,7 @@ public class Expression implements Serializable{
 					parent.setReferredEntity(var);
 				}else {
 					List<Entity> funcs = this.getType().lookupFunctionInVisibleScope(parent.identifier);
-					if (funcs!=null) {
-						Entity func = funcs.get(0);
-						if (funcs.size()>1) {
-							MultiDeclareEntities m = new MultiDeclareEntities(func, bindingResolver.getRepo().generateId());
-							bindingResolver.getRepo().add(m);
-
-							for (int i=1;i<funcs.size();i++) {
-								m.add(funcs.get(i));
-							}
-							parent.setType(func.getType(), m, bindingResolver);
-							parent.setReferredEntity(m);
-						}else {
-							parent.setType(func.getType(), func, bindingResolver);
-							parent.setReferredEntity(func);
-						}
-					}
+					setReferredFunctions(bindingResolver,parent,funcs);
 				}
 			}
 			if (parent.getType()==null) {
@@ -235,6 +203,23 @@ public class Expression implements Serializable{
 		}
 		if (parent.getReferredEntity()==null)
 			parent.setReferredEntity(parent.type);
+	}
+
+	private void setReferredFunctions(IBindingResolver bindingResolver, Expression expr, List<Entity> funcs) {
+		if (funcs ==null ||funcs.size()==0) return;
+		Entity func = funcs.get(0);
+		if (funcs.size()==1){
+			expr.setType(func.getType(), func, bindingResolver);
+			expr.setReferredEntity(func);
+			return;
+		}
+		MultiDeclareEntities m = new MultiDeclareEntities(func, bindingResolver.getRepo().generateId());
+		bindingResolver.getRepo().add(m);
+		for (int i = 1; i< funcs.size(); i++) {
+			m.add(funcs.get(i));
+		}
+		expr.setType(func.getType(), m, bindingResolver);
+		expr.setReferredEntity(m);
 	}
 
 	private void setReferredEntity(Entity referredEntity) {

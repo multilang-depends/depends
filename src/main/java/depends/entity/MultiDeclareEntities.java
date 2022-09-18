@@ -24,12 +24,12 @@ SOFTWARE.
 
 package depends.entity;
 
+import depends.relations.IBindingResolver;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-
-import depends.relations.IBindingResolver;
 
 /**
  * MultiDeclareEntity is a special container, which is used as a wrapper
@@ -57,8 +57,11 @@ public class MultiDeclareEntities extends ContainerEntity {
 		entity.setMutliDeclare(this);
 		if (entity instanceof TypeEntity) 
 			this.containsTypeEntity = true;
-		
-		entities.add(entity);
+		if (entity instanceof  MultiDeclareEntities){
+			((MultiDeclareEntities)entity).entities.forEach(e->add(e));
+		}else {
+			entities.add(entity);
+		}
 	}
 
 	public List<Entity> getEntities() {
