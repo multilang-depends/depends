@@ -113,8 +113,12 @@ public class Expression implements Serializable{
 		}
 		
 		//referer referredEntity -- TODO:maybe not require
-		if (this.referredEntityId!=null && this.referredEntity==null)
+		if (this.referredEntityId!=null && this.referredEntity==null) {
 			this.referredEntity = repo.getEntity(this.referredEntityId);
+			if (this.referredEntity ==null){
+				System.err.println("unexpected: referred Entity is null" + this.referredEntityId + this.text+this.id);
+			}
+		}
 	}
 	
 	/**

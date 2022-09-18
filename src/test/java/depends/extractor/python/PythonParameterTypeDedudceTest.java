@@ -100,7 +100,7 @@ public class PythonParameterTypeDedudceTest extends PythonParserTest {
 	@Test
 	public void test_expression_count_should_be_only_1() throws IOException {
 		String[] srcs = new String[] {
-				"./src/test/resources/python-code-examples/deducetype_parameter.py",
+				"./src/test/resources/python-code-examples/expression_reload_issue_test.py",
 		};
 
 		for (String src:srcs) {

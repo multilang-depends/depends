@@ -286,6 +286,7 @@ public abstract class HandlerContext {
 		if (currentFunction()==null) return null;
 		VarEntity varEntity = new VarEntity(GenericName.build(paramName),null,currentFunction(),idGenerator.generateId());
 		currentFunction().addParameter(varEntity);
+		addToRepo(varEntity);
 		return varEntity;
 	}
 
