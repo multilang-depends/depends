@@ -16,3 +16,5 @@ mvn install:install-file -DgroupId=eclipse-photon -DartifactId=org.eclipse.core.
 
 mvn install:install-file -DgroupId=eclipse-photon -DartifactId=org.eclipse.core.resources -Dversion=3.13.500.v20190819-0800 -Dpackaging=jar -Dfile=./jars/org.eclipse.core.resources_3.13.500.v20190819-0800.jar -DgeneratePom=true
 
+mvn install:install-file -DgroupId=cn.emergentdesign.se -DartifactId=utils -Dversion=0.0.1 -Dpackaging=jar -Dfile=./jars/cn.emergentdesign.se.utils_0.1.1.jar -DgeneratePom=true
+
