@@ -1,9 +1,6 @@
 package depends.entity.repo;
 
-import depends.entity.Entity;
-import depends.entity.FileEntity;
-import depends.entity.GenericName;
-import depends.entity.MultiDeclareEntities;
+import depends.entity.*;
 import multilang.depends.util.file.FileUtil;
 
 import java.util.*;
@@ -39,6 +36,7 @@ public class InMemoryEntityRepo extends SimpleIdGenerator implements EntityRepo 
 		allEntieisByName = new TreeMap<>();
 		allEntitiesById = new TreeMap<>();
 		allFileEntitiesByOrder = new LinkedList<>();
+		add(TypeEntity.buildInType);
 	}
 
 	@Override
