@@ -5,11 +5,14 @@ import depends.entity.FunctionEntity;
 import depends.entity.TypeEntity;
 import depends.entity.VarEntity;
 import depends.extractor.FileParser;
+import edu.emory.mathcs.backport.java.util.Arrays;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
@@ -110,8 +113,9 @@ public class PythonParameterTypeDedudceTest extends PythonParserTest {
 		resolveAllBindings();
 		String name = withPackageName(srcs[0],"test_expression");
 		FunctionEntity function = (FunctionEntity)( entityRepo.getEntity(name));
-		for (int r= 2;r<4;r++)
-			assertTrue(function.getRelations().get(r).possible());
+		List<Boolean> result = function.getRelations().stream().map(r -> r.possible()).collect(Collectors.toList());
+		List<Boolean> expected = Arrays.asList(new Boolean[]{false,false,true,true,true,false, false, true, true,false});
+		assertArrayEquals(expected.toArray(),result.toArray());
 	}
 
 

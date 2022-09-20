@@ -1,6 +1,8 @@
 class A(object):
   def foo(self):
     pass
+  def bar(self):
+    pass
 
 class B(object):
   def foo(self):
@@ -15,4 +17,5 @@ class AnotherConnectionMock(object):
     return B()
 
 def test_expression(conn):
-  conn.send(msg.to_bytes())
+  conn.send(msg.to_bytes()).foo()
+  conn.send(msg.to_bytes()).bar()
