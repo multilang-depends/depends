@@ -46,7 +46,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import static depends.deptypes.DependencyType.DuckTypingLabel;
+import static depends.deptypes.DependencyType.POSSIBLE_DEP;
 
 public abstract class DependencyGenerator {
 
@@ -84,14 +84,14 @@ public abstract class DependencyGenerator {
 				Entity relatedEntity = relation.getEntity();
 				if (relatedEntity==null) continue;
 				List<Entity> relatedEntities = expandEntity(relatedEntity);
-				String duckTypingFlag = relatedEntity instanceof CandidateTypes? DuckTypingLabel:"";
+				String possibleDependencyFlag = relation.possible()? POSSIBLE_DEP :"";
 				relatedEntities.forEach(theEntity->{
 					if (theEntity.getId()>=0) {
 						int entityTo = upToOutputLevelEntityId(entityRepo,theEntity);
 						if (entityTo!=-1) {
 							DependencyDetail detail = buildDescription(entity, theEntity, relation.getFromLine());
 							detail = rewriteDetail(detail);
-							dependencyMatrix.addDependency(relation.getType()+duckTypingFlag, entityFrom,entityTo,1,detail);
+							dependencyMatrix.addDependency(relation.getType()+possibleDependencyFlag, entityFrom,entityTo,1,detail);
 						}
 					}
 				});

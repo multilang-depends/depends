@@ -102,12 +102,13 @@ public class RelationCounter {
 				continue;
 			}
 			Entity referredEntity = expression.getReferredEntity();
-			addRelationFromExpression(entity, expression, referredEntity);
+			addRelationFromExpression(entity, expression, referredEntity, false);
 		}
 		entity.clearExpressions();
 	}
 
-	private void addRelationFromExpression(ContainerEntity entity, Expression expression, Entity referredEntity) {
+
+	private void addRelationFromExpression(ContainerEntity entity, Expression expression, Entity referredEntity, boolean possibleDependency) {
 		
 		if (referredEntity==null) {
 			return;
@@ -117,7 +118,7 @@ public class RelationCounter {
 		}
 		if (referredEntity instanceof MultiDeclareEntities) {
 			for (Entity e:((MultiDeclareEntities)referredEntity).getEntities()) {
-				addRelationFromExpression(entity,expression,e);
+				addRelationFromExpression(entity,expression,e, true);
 			}
 			return;
 		}
@@ -127,7 +128,7 @@ public class RelationCounter {
 			/* if it is a FunctionEntityProto, add Relation to all Impl Entities*/
 			if (callAsImpl && referredEntity instanceof FunctionEntityProto) {
 				if (entity.getAncestorOfType(FileEntity.class).getId().equals(referredEntity.getAncestorOfType(FileEntity.class).getId())){
-					entity.addRelation(buildRelation(entity,DependencyType.CALL,referredEntity,expression.getLocation()));
+					entity.addRelation(buildRelation(entity,DependencyType.CALL,referredEntity,expression.getLocation(), possibleDependency));
 				}else {
 					Entity multiDeclare = repo.getEntity(referredEntity.getQualifiedName());
 					if (multiDeclare instanceof MultiDeclareEntities) {
@@ -135,56 +136,63 @@ public class RelationCounter {
 						List<Entity> entities = m.getEntities().stream().filter(item -> (item instanceof FunctionEntityImpl))
 								.collect(Collectors.toList());
 						for (Entity e : entities) {
-							entity.addRelation(expression, buildRelation(entity, DependencyType.IMPLLINK, e, expression.getLocation()));
+							entity.addRelation(expression, buildRelation(entity, DependencyType.IMPLLINK, e, expression.getLocation(), true));
 							matched = true;
 						}
 					}
 				}
 			}
-			entity.addRelation(buildRelation(entity,DependencyType.CALL,referredEntity,expression.getLocation()));
+			entity.addRelation(buildRelation(entity,DependencyType.CALL,referredEntity,expression.getLocation(), possibleDependency));
 			matched = true;
 
 		}
 		if (expression.isCreate()) {
-			entity.addRelation(buildRelation(entity,DependencyType.CREATE,referredEntity,expression.getLocation()));
+			entity.addRelation(buildRelation(entity,DependencyType.CREATE,referredEntity,expression.getLocation(), possibleDependency));
 			matched = true;
 		}
 		if (expression.isThrow()) {
-			entity.addRelation(buildRelation(entity,DependencyType.THROW,referredEntity,expression.getLocation()));
+			entity.addRelation(buildRelation(entity,DependencyType.THROW,referredEntity,expression.getLocation(), possibleDependency));
 			matched = true;
 		}
 		if (expression.isCast()) { 
-			entity.addRelation(buildRelation(entity,DependencyType.CAST,referredEntity,expression.getLocation()));
+			entity.addRelation(buildRelation(entity,DependencyType.CAST,referredEntity,expression.getLocation(), possibleDependency));
 			matched = true;
 		}
 		if (!matched)  {
 			if (callAsImpl && repo.getEntity(referredEntity.getQualifiedName()) instanceof MultiDeclareEntities &&
 					(referredEntity instanceof VarEntity ||referredEntity instanceof FunctionEntity)) {
 				if (entity.getAncestorOfType(FileEntity.class).getId().equals(referredEntity.getAncestorOfType(FileEntity.class).getId())){
-					entity.addRelation(buildRelation(entity,DependencyType.USE,referredEntity,expression.getLocation()));
+					entity.addRelation(buildRelation(entity,DependencyType.USE,referredEntity,expression.getLocation(), possibleDependency));
 				}else {
 					MultiDeclareEntities m = (MultiDeclareEntities) (repo.getEntity(referredEntity.getQualifiedName()));
 					for (Entity e : m.getEntities()) {
 						if (e == referredEntity) {
-							entity.addRelation(expression, buildRelation(entity, DependencyType.USE, e, expression.getLocation()));
+							entity.addRelation(expression, buildRelation(entity, DependencyType.USE, e, expression.getLocation(), true));
 						} else {
-							entity.addRelation(expression, buildRelation(entity, DependencyType.IMPLLINK, e, expression.getLocation()));
+							entity.addRelation(expression, buildRelation(entity, DependencyType.IMPLLINK, e, expression.getLocation(), true));
 						}
 						matched = true;
 					}
 				}
 			}
 			else {
-				entity.addRelation(expression,buildRelation(entity,DependencyType.USE,referredEntity,expression.getLocation()));
+				entity.addRelation(expression,buildRelation(entity,DependencyType.USE,referredEntity,expression.getLocation(), possibleDependency));
 			}
 		}
 	}
 
-	private Relation buildRelation(Entity from, String type, Entity referredEntity) {
-		return buildRelation(from,type,referredEntity,from.getLocation());
+	private Relation buildRelation(Entity from, String type, Entity referredEntity, boolean possibleDependency) {
+		return buildRelation(from,type,referredEntity,from.getLocation(), possibleDependency);
+	}
+
+	private Relation buildRelation(ContainerEntity from, String type, Entity referredEntity) {
+		return buildRelation(from,type,referredEntity, false);
 	}
 
 	private Relation buildRelation(Entity from, String type, Entity referredEntity,Location location) {
+		return buildRelation(from,type,referredEntity, location,false);
+	}
+	private Relation buildRelation(Entity from, String type, Entity referredEntity,Location location, boolean possibleDependency) {
 		if (referredEntity instanceof AliasEntity) {
 			if (from.getAncestorOfType(FileEntity.class).equals(referredEntity.getAncestorOfType(FileEntity.class))) {
 				AliasEntity alias = ((AliasEntity) referredEntity);
@@ -193,9 +201,11 @@ public class RelationCounter {
 				}
 			}
 		}
+		if (referredEntity instanceof  CandidateTypes)
+			possibleDependency = true;
 		if (this.langProcessor==null)
-			return new Relation(type,referredEntity,location);
-		return new Relation(langProcessor.getRelationMapping(type),referredEntity,location);
+			return new Relation(type,referredEntity,location, possibleDependency);
+		return new Relation(langProcessor.getRelationMapping(type),referredEntity,location, possibleDependency);
 	}
 
 	private void computeTypeRelations(TypeEntity type) {

@@ -35,11 +35,13 @@ public class Relation {
 	private Location location;
 	private String type;
 	private Entity toEntity;
+	private boolean possibleDependency;
 	
-	public Relation(String type, Entity toEntity,Location location) {
+	public Relation(String type, Entity toEntity,Location location, boolean possibleDependency) {
 		this.toEntity = toEntity;
 		this.type = type;
 		this.location = location;
+		this.possibleDependency = possibleDependency;
 	}
 	public String getType() {
 		return type;
@@ -56,5 +58,9 @@ public class Relation {
 	public Integer getFromLine() {
 		if (location==null) return null;
 		return location.getLine();
+	}
+
+	public boolean possible() {
+		return this.possibleDependency;
 	}
 }

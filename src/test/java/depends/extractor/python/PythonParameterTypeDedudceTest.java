@@ -98,7 +98,7 @@ public class PythonParameterTypeDedudceTest extends PythonParserTest {
 	}
 
 	@Test
-	public void test_expression_count_should_be_() throws IOException {
+	public void test_expression_with_duck_type_should_introduce_possibile_relation() throws IOException {
 		String[] srcs = new String[] {
 				"./src/test/resources/python-code-examples/expression_reload_issue_test.py",
 		};
@@ -110,7 +110,8 @@ public class PythonParameterTypeDedudceTest extends PythonParserTest {
 		resolveAllBindings();
 		String name = withPackageName(srcs[0],"test_expression");
 		FunctionEntity function = (FunctionEntity)( entityRepo.getEntity(name));
-		assertNotNull(function);
+		for (int r= 2;r<4;r++)
+			assertTrue(function.getRelations().get(r).possible());
 	}
 
 

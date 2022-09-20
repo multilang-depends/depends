@@ -1,10 +1,18 @@
+class A(object):
+  def foo(self):
+    pass
+
+class B(object):
+  def foo(self):
+    pass
+
 class ConnectionMock(object):
   def send(self, data):
-    pass
+    return A()
 
 class AnotherConnectionMock(object):
   def send(self, data):
-    pass
+    return B()
 
 def test_expression(conn):
-  conn = conn.send(msg.to_bytes())
+  conn.send(msg.to_bytes())
