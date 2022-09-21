@@ -123,9 +123,15 @@ public class Expression implements Serializable{
 	
 	/**
 	 * Set type of the expression
-	 * @param type
-	 * @param referredEntity
-	 * @param bindingResolver
+	 *      if it is already has type, it will skip
+	 *      if it is already referered entity, it will skip
+	 *      if the type changed, parent expression will be re-caculated
+	 * For dynamic type language, return type or parameters, variables may depends on the expression type,
+	 *      so once we get the type of expression, we will assign type to them.
+	 *
+	 * @param type  the type of the expression
+	 * @param referredEntity the entity of the expression point to, which is used to calculate dependency relation
+	 * @param bindingResolver a parameter which will be passed to deduced parent type
 	 */
 	public void setType(TypeEntity type, Entity referredEntity, IBindingResolver bindingResolver) {
 		if (this.getReferredEntity()==null && referredEntity!=null) {
@@ -135,6 +141,7 @@ public class Expression implements Serializable{
 		boolean changedType = false;
 		if (this.type==null && type!=null) {
 			this.type = type;
+			changedType = true;
 			for (VarEntity var:deducedTypeVars) {
 				if (var!=null) {
 					var.setType(this.type);
@@ -145,7 +152,6 @@ public class Expression implements Serializable{
 					func.addReturnType(this.type);
 				}
 			}
-			changedType = true;
 		}
 		if (this.referredEntity==null)
 			this.setReferredEntity(this.type);
@@ -157,6 +163,7 @@ public class Expression implements Serializable{
 
 	/**
 	 * deduce type of parent based on child's type
+	 *
 	 * @param bindingResolver
 	 */
 	private void deduceTheParentType(IBindingResolver bindingResolver) {
@@ -182,7 +189,7 @@ public class Expression implements Serializable{
 		else if (parent.isDot) {
 			if (parent.isCall()) {
 				List<Entity> funcs = this.getType().lookupFunctionInVisibleScope(parent.identifier);
-				setReferredFunctions(bindingResolver, parent, funcs);
+				parent.setReferredFunctions(bindingResolver, funcs);
 			}else {
 				Entity var = this.getType().lookupVarInVisibleScope(parent.identifier);
 				if (var!=null) {
@@ -190,7 +197,7 @@ public class Expression implements Serializable{
 					parent.setReferredEntity(var);
 				}else {
 					List<Entity> funcs = this.getType().lookupFunctionInVisibleScope(parent.identifier);
-					setReferredFunctions(bindingResolver,parent,funcs);
+					parent.setReferredFunctions(bindingResolver,funcs);
 				}
 			}
 			if (parent.getType()==null) {
@@ -205,12 +212,22 @@ public class Expression implements Serializable{
 			parent.setReferredEntity(parent.type);
 	}
 
-	private void setReferredFunctions(IBindingResolver bindingResolver, Expression expr, List<Entity> funcs) {
+	/**
+	 * set expr's referred entity to functions
+	 *    why do not use 'setReferredEntity' directly?
+	 *    in case of multiple functions, we should first construct a multi-declare entities object,
+	 *    than set the type to multi-declare entity, for future resolver,
+	 *    for example in duck typing case:
+	 *        conn.send().foo, if conn is mutiple type (A, B), send should be search in both A and B
+	 * @param bindingResolver
+	 * @param funcs
+	 */
+	private void setReferredFunctions(IBindingResolver bindingResolver, List<Entity> funcs) {
 		if (funcs ==null ||funcs.size()==0) return;
 		Entity func = funcs.get(0);
 		if (funcs.size()==1){
-			expr.setType(func.getType(), func, bindingResolver);
-			expr.setReferredEntity(func);
+			setType(func.getType(), func, bindingResolver);
+			setReferredEntity(func);
 			return;
 		}
 		MultiDeclareEntities m = new MultiDeclareEntities(func, bindingResolver.getRepo().generateId());
@@ -218,8 +235,8 @@ public class Expression implements Serializable{
 		for (int i = 1; i< funcs.size(); i++) {
 			m.add(funcs.get(i));
 		}
-		expr.setType(func.getType(), m, bindingResolver);
-		expr.setReferredEntity(m);
+		setType(func.getType(), m, bindingResolver);
+		setReferredEntity(m);
 	}
 
 	private void setReferredEntity(Entity referredEntity) {
@@ -229,11 +246,19 @@ public class Expression implements Serializable{
 		}
 	}
 
+	/**
+	 * remember the vars depends on the expression type
+	 * @param var
+	 */
 	public void addDeducedTypeVar(VarEntity var) {
 		this.deducedTypeVars.add(var);
 		this.deducedTypeVarsId.add(var.getId());
 	}
 
+	/**
+	 * remember the functions depends on the expression type
+	 * @param var
+	 */
 	public void addDeducedTypeFunction(FunctionEntity function) {
 		this.deducedTypeFunctions.add(function);
 		this.deducedTypeFunctionsId.add(function.id);
