@@ -7,7 +7,6 @@ import depends.entity.VarEntity;
 import depends.extractor.FileParser;
 import edu.emory.mathcs.backport.java.util.Arrays;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -81,7 +80,7 @@ public class PythonParameterTypeDedudceTest extends PythonParserTest {
 	}
 	
 	
-	@Ignore
+	@Test
 	public void test_deduce_type_of_non_param_var() throws IOException {
 		String[] srcs = new String[] {
 	    		"./src/test/resources/python-code-examples/deducetype_nonparam.py",
@@ -97,7 +96,7 @@ public class PythonParameterTypeDedudceTest extends PythonParserTest {
 	    VarEntity var = function.lookupVarLocally("t2");
 	    TypeEntity type = var.getType();
 	    assertTrue(type instanceof CandidateTypes);
-	    assertEquals(2,((CandidateTypes)type).getCandidateTypes().size());
+	    assertEquals(1,((CandidateTypes)type).getCandidateTypes().size());
 	}
 
 	@Test
