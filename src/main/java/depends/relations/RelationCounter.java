@@ -136,7 +136,7 @@ public class RelationCounter {
 						List<Entity> entities = m.getEntities().stream().filter(item -> (item instanceof FunctionEntityImpl))
 								.collect(Collectors.toList());
 						for (Entity e : entities) {
-							entity.addRelation(expression, buildRelation(entity, DependencyType.IMPLLINK, e, expression.getLocation(), true));
+							entity.addRelation(expression, buildRelation(entity, DependencyType.LINK, e, expression.getLocation(), true));
 							matched = true;
 						}
 					}
@@ -169,7 +169,7 @@ public class RelationCounter {
 						if (e == referredEntity) {
 							entity.addRelation(expression, buildRelation(entity, DependencyType.USE, e, expression.getLocation(), true));
 						} else {
-							entity.addRelation(expression, buildRelation(entity, DependencyType.IMPLLINK, e, expression.getLocation(), true));
+							entity.addRelation(expression, buildRelation(entity, DependencyType.LINK, e, expression.getLocation(), true));
 						}
 						matched = true;
 					}

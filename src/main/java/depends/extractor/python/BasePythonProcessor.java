@@ -49,7 +49,7 @@ public abstract class BasePythonProcessor extends AbstractLangProcessor{
 		depedencyTypes.add(CREATE);
 		depedencyTypes.add(USE);
 		depedencyTypes.add(THROW);
-		depedencyTypes.add(IMPLLINK);
+		depedencyTypes.add(LINK);
 		return depedencyTypes;
 	}
 
