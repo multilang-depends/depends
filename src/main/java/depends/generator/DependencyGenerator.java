@@ -119,9 +119,11 @@ public abstract class DependencyGenerator {
 				stripper.stripFilename(detail.getDest().getFile()));
 		return new DependencyDetail(
 				new LocationInfo(detail.getSrc().getObject(),
+						detail.getSrc().getType(),
 						srcFile, detail.getSrc().getLineNumber())
 				,
 				new LocationInfo(detail.getDest().getObject(),
+						detail.getSrc().getType(),
 						dstFile, detail.getDest().getLineNumber()));
 	}
 
@@ -147,9 +149,14 @@ public abstract class DependencyGenerator {
 		Entity toFile = toEntity.getAncestorOfType(FileEntity.class);
 
 		return new DependencyDetail(
-				new LocationInfo(stripper.stripFilename(fromObject),stripper.stripFilename(fromFile.getQualifiedName()),fromLineNumber),
-				new LocationInfo(stripper.stripFilename(toObject),stripper.stripFilename(toFile.getQualifiedName()),toEntity.getLine()));
+				new LocationInfo(stripper.stripFilename(fromObject),typeOf(fromEntity),stripper.stripFilename(fromFile.getQualifiedName()),fromLineNumber),
+				new LocationInfo(stripper.stripFilename(toObject),typeOf(toEntity),stripper.stripFilename(toFile.getQualifiedName()),toEntity.getLine()));
 	}
+
+	private String typeOf(Entity entity) {
+		return entity.getClass().getSimpleName().replace("Entity","").toLowerCase();
+	}
+
 	public void setFilenameRewritter(FilenameWritter filenameWritter) {
 		this.filenameWritter = filenameWritter;
 	}
