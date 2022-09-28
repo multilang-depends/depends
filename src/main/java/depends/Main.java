@@ -36,7 +36,6 @@ import depends.generator.FileDependencyGenerator;
 import depends.generator.FunctionDependencyGenerator;
 import depends.generator.StructureDependencyGenerator;
 import depends.matrix.core.DependencyMatrix;
-import depends.matrix.transform.MatrixLevelReducer;
 import depends.relations.BindingResolver;
 import depends.relations.IBindingResolver;
 import depends.relations.RelationCounter;
@@ -52,6 +51,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.PicocliException;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -69,6 +69,7 @@ public class Main {
 				CommandLine.usage(new DependsCommand(), System.out);
 				System.exit(0);
 			}
+			verifyParameters(appArgs);
 			executeCommand(appArgs);
 		} catch (Exception e) {
 			if (e instanceof PicocliException) {
@@ -80,6 +81,16 @@ public class Main {
 				e.printStackTrace();
 			}
 			System.exit(0);
+		}
+	}
+
+	private static void verifyParameters(DependsCommand args) throws ParameterException {
+		String[] granularities = args.getGranularity();
+		List<String> validGranularities = Arrays.asList(new String[]{"file", "method", "structure"});
+		for (String g:granularities){
+			if (!validGranularities.contains(g)){
+				throw  new ParameterException("granularity is invalid:"+g);
+			}
 		}
 	}
 
@@ -114,14 +125,13 @@ public class Main {
 		System.out.println("Dependency done....");
 
 		//step2: generate dependencies matrix
-		DependencyGenerator dependencyGenerator = getDependencyGenerator(args, inputDir);
-		DependencyMatrix matrix = dependencyGenerator.identifyDependencies(entityRepo,args.getTypeFilter());
-		//step3: output
-		if (args.getGranularity().startsWith("L")) {
-			matrix = new MatrixLevelReducer(matrix,args.getGranularity().substring(1)).shrinkToLevel();
+		List<DependencyGenerator> dependencyGenerators = getDependencyGenerators(args, inputDir);
+		for (DependencyGenerator dependencyGenerator:dependencyGenerators) {
+			DependencyMatrix matrix = dependencyGenerator.identifyDependencies(entityRepo, args.getTypeFilter());
+			DependencyDumper output = new DependencyDumper(matrix);
+			output.outputResult(outputName+"-"+dependencyGenerator.getType(), outputDir, outputFormat);
 		}
-		DependencyDumper output = new DependencyDumper(matrix);
-		output.outputResult(outputName,outputDir,outputFormat);
+
 		if (args.isOutputExternalDependencies()) {
 			Set<UnsolvedBindings> unsolved = langProcessor.getExternalDependencies();
 	    	UnsolvedSymbolDumper unsolvedSymbolDumper = new UnsolvedSymbolDumper(unsolved,args.getOutputName(),args.getOutputDir(),
@@ -147,7 +157,7 @@ public class Main {
 		return includeDir;
 	}
 
-	private static DependencyGenerator getDependencyGenerator(DependsCommand app, String inputDir) throws ParameterException {
+	private static List<DependencyGenerator> getDependencyGenerators(DependsCommand app, String inputDir) throws ParameterException {
 		FilenameWritter filenameWritter = new EmptyFilenameWritter();
 		if (!StringUtils.isEmpty(app.getNamePathPattern())) {
 			if (app.getNamePathPattern().equals("dot")||
@@ -164,34 +174,29 @@ public class Main {
 			}
 		}
 
-
-		/* by default use file dependency generator */
-		DependencyGenerator dependencyGenerator = new FileDependencyGenerator();
-		if (!StringUtils.isEmpty(app.getGranularity())) {
+		List<DependencyGenerator> dependencyGenerators = new ArrayList<>();
+		for (int i=0;i<app.getGranularity().length;i++) {
+			/* by default use file dependency generator */
+			DependencyGenerator dependencyGenerator = null;
 			/* method parameter means use method generator */
-			if (app.getGranularity().equals("method"))
+			if (app.getGranularity()[i].equals("method"))
 				dependencyGenerator = new FunctionDependencyGenerator();
-			else if (app.getGranularity().equals("structure"))
+			else if (app.getGranularity()[i].equals("file"))
+				dependencyGenerator = new FileDependencyGenerator();
+			else if (app.getGranularity()[i].equals("structure"))
 				dependencyGenerator = new StructureDependencyGenerator();
-			else if (app.getGranularity().equals("file"))
-				/*no action*/;
-			else if (app.getGranularity().startsWith("L"))
-				/*no action*/;
-			else
-				throw new ParameterException("Unknown granularity parameter:" + app.getGranularity());
-		}
 
-		if (app.isStripLeadingPath() ||
-				app.getStrippedPaths().length>0) {
-			dependencyGenerator.setLeadingStripper(new LeadingNameStripper(app.isStripLeadingPath(), inputDir, app.getStrippedPaths()));
+			dependencyGenerators.add(dependencyGenerator);
+			if (app.isStripLeadingPath() ||
+					app.getStrippedPaths().length > 0) {
+				dependencyGenerator.setLeadingStripper(new LeadingNameStripper(app.isStripLeadingPath(), inputDir, app.getStrippedPaths()));
+			}
+			if (app.isDetail()) {
+				dependencyGenerator.setGenerateDetail(true);
+			}
+			dependencyGenerator.setFilenameRewritter(filenameWritter);
 		}
-
-		if (app.isDetail()) {
-			dependencyGenerator.setGenerateDetail(true);
-		}
-
-		dependencyGenerator.setFilenameRewritter(filenameWritter);
-		return dependencyGenerator;
+		return dependencyGenerators;
 	}
 
 }

@@ -41,6 +41,11 @@ public class FileDependencyGenerator extends DependencyGenerator{
 	}
 
 	@Override
+	public String getType() {
+		return "file";
+	}
+
+	@Override
 	protected int upToOutputLevelEntityId(EntityRepo entityRepo, Entity entity) {
 		Entity ancestor = entity.getAncestorOfType(FileEntity.class);
 		if (ancestor==null) {

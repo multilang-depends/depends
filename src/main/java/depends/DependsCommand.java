@@ -24,14 +24,14 @@ SOFTWARE.
 
 package depends;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import depends.deptypes.DependencyType;
 import depends.extractor.LangProcessorRegistration;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Command(name = "depends")
 public class DependsCommand {
@@ -62,8 +62,8 @@ public class DependsCommand {
 	@Option(names = {"--strip-paths"}, split=",", description =  "The path(s) to be stripped. if -s enabled, the path(s) start after <src>. "
 			+ "Otherwise, the path(s) should be valid.")
 	private String[] strippedPaths = new String[]{};
-	@Option(names = {"-g", "--granularity"},  description = "Granularity of dependency.[file(default),method,structure,L#(the level of folder. e.g. L1=1st level folder)]")
-    private String granularity="file";
+	@Option(names = {"-g", "--granularity"}, split=",",  description = "Granularity of dependency.[file(default),method,structure]")
+    private String[] granularity=new String[]{"file"};
 	@Option(names = {"-p", "--namepattern"},  description = "The name path pattern.[dot(.), unix(/) or windows(\\)")
     private String namePathPattern="";
 	@Option(names = {"-i","--includes"},split=",", description = "The files of searching path")
@@ -120,7 +120,7 @@ public class DependsCommand {
 	public boolean isHelp() {
 		return help;
 	}
-    public String getGranularity() {
+    public String[] getGranularity() {
 		return granularity;
 	}
 	public String getNamePathPattern() {

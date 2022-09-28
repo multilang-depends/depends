@@ -51,11 +51,10 @@ import static depends.deptypes.DependencyType.POSSIBLE_DEP;
 public abstract class DependencyGenerator {
 
 	private static Logger logger = LoggerFactory.getLogger(DependencyGenerator.class);
-
+	public abstract String getType();
 	public DependencyMatrix identifyDependencies(EntityRepo entityRepo, List<String> typeFilter) {
 		System.out.println("dependencie data generating...");
 		DependencyMatrix dependencyMatrix = build(entityRepo, typeFilter);
-		entityRepo.clear();
 		System.out.println("reorder dependency matrix...");
 		dependencyMatrix = new OrderedMatrixGenerator(dependencyMatrix).build();
 		System.out.println("Dependencies data generating done successfully...");

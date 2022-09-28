@@ -56,4 +56,9 @@ public class FunctionDependencyGenerator extends DependencyGenerator {
 		return ancestor.getId();
 	}
 
+	@Override
+	public String getType() {
+		return "method";
+	}
+
 }

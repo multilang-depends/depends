@@ -44,6 +44,11 @@ public class StructureDependencyGenerator extends DependencyGenerator{
 	}
 
 	@Override
+	public String getType() {
+		return "structure";
+	}
+
+	@Override
 	protected int upToOutputLevelEntityId(EntityRepo entityRepo, Entity entity) {
 		Entity ancestor = getAncestorOfType(entity);
 		if (ancestor==null) {
