@@ -61,7 +61,7 @@ public class MatrixLevelReducer {
 				return o1.compareTo(o2);
 			}
 		});
-	    DependencyMatrix ordered = new DependencyMatrix();
+	    DependencyMatrix ordered = new DependencyMatrix(0,null,false);
 		for (int id=0;id<reMappedNodes.size();id++) {
 			nodesMap.put(reMappedNodes.get(id), id);
 			ordered.addNode(reMappedNodes.get(id), id);

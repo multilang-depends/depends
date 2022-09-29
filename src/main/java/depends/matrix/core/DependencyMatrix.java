@@ -34,18 +34,18 @@ import java.util.List;
 import static depends.deptypes.DependencyType.POSSIBLE_DEP;
 
 public class DependencyMatrix {
-    private HashMap<String, DependencyPair> dependencyPairs = new HashMap<>();
+	private final boolean outputSelfDependencies;
+	private HashMap<String, DependencyPair> dependencyPairs = new HashMap<>();
     private ArrayList<String> nodes = new ArrayList<>();
     private HashMap<Integer,String> nodeIdToName = new HashMap<>();
 	private List<String> typeFilter;
-    public DependencyMatrix() {
-    }
-    public DependencyMatrix(int size) {
-    	dependencyPairs = new HashMap<>(size);
-    }	
-	public DependencyMatrix(List<String> typeFilter) {
+
+	public DependencyMatrix(int size, List<String> typeFilter,boolean outputSelfDependencies) {
+		dependencyPairs = new HashMap<>(size);
 		this.typeFilter = typeFilter;
+		this.outputSelfDependencies = outputSelfDependencies;
 	}
+
 	public Collection<DependencyPair> getDependencyPairs() {
         return dependencyPairs.values();
     }
@@ -58,7 +58,10 @@ public class DependencyMatrix {
 	public void addDependency(String depType, Integer from, Integer to,  int weight,List<DependencyDetail> details) {
 		if (typeFilter!=null && (!typeFilter.contains(depType)))
 			return;
-		if(from.equals(to) || from == -1 || to == -1) {
+		if (!outputSelfDependencies && from.equals(to) ){
+			return;
+		}
+		if( from == -1 || to == -1) {
 		    return;
 		}
 		if (dependencyPairs.get(DependencyPair.key(from,to))==null) {
@@ -71,8 +74,11 @@ public class DependencyMatrix {
 	public void addDependency(String depType, Integer from, Integer to,  int weight,DependencyDetail detail) {
 		if (typeFilter!=null && (!typeFilter.contains(depType.replace(POSSIBLE_DEP,""))))
 			return;
-		if(from.equals(to) || from == -1 || to == -1) {
-		    return;
+		if (!outputSelfDependencies && from.equals(to) ){
+			return;
+		}
+		if( from == -1 || to == -1) {
+			return;
 		}
 		if (dependencyPairs.get(DependencyPair.key(from,to))==null) {
 			dependencyPairs.put(DependencyPair.key(from,to),new DependencyPair(from,to));
@@ -98,5 +104,9 @@ public class DependencyMatrix {
 
 	public String getNodeName(Integer key) {
 		return nodeIdToName.get(key);
+	}
+
+	public boolean isOutputSelfDependencies(){
+		return outputSelfDependencies;
 	}
 }

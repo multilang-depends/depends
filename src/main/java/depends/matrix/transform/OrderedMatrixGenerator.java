@@ -23,13 +23,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-
 import depends.matrix.core.DependencyMatrix;
 import depends.matrix.core.DependencyPair;
 import depends.matrix.core.DependencyValue;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 
 public class OrderedMatrixGenerator  {
 	private DependencyMatrix matrix;
@@ -46,7 +46,7 @@ public class OrderedMatrixGenerator  {
 			}
 		});
 	    
-	    DependencyMatrix ordered = new DependencyMatrix((int)(matrix.getDependencyPairs().size()/0.75+1));
+	    DependencyMatrix ordered = new DependencyMatrix((int)(matrix.getDependencyPairs().size()/0.75+1),null,matrix.isOutputSelfDependencies());
 		HashMap<String, Integer> nodesMap = new HashMap<>();
 		for (int id=0;id<reMappedNodes.size();id++) {
 			nodesMap.put(reMappedNodes.get(id), id);

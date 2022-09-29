@@ -194,6 +194,7 @@ public class Main {
 			if (app.isDetail()) {
 				dependencyGenerator.setGenerateDetail(true);
 			}
+			dependencyGenerator.setOutputSelfDependencies(app.isOutputSelfDependencies());
 			dependencyGenerator.setFilenameRewritter(filenameWritter);
 		}
 		return dependencyGenerators;

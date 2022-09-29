@@ -79,7 +79,9 @@ public class DependsCommand {
 	@Option(names = {"--external-deps"}, description = "Output external dependencies")
 	private boolean outputExternalDependencies = false;	
 	@Option(names = {"--duck-typing-deduce"}, description = "Deduce implicit variable types")
-	private boolean duckTypingDeduce = true;	
+	private boolean duckTypingDeduce = true;
+	@Option(names = {"--output-self-deps"}, description = "Output self dependencies")
+	private boolean outputSelfDependencies = false;
 	@Option(names = {"-h","--help"}, usageHelp = true, description = "display this help and exit")
     boolean help;
 	public DependsCommand() {
@@ -154,7 +156,9 @@ public class DependsCommand {
 	public boolean isOutputExternalDependencies() {
 		return outputExternalDependencies;
 	}
-	
+	public boolean isOutputSelfDependencies() {
+		return outputSelfDependencies;
+	}
 	public boolean isDuckTypingDeduce() {
 		return this.duckTypingDeduce;
 	}

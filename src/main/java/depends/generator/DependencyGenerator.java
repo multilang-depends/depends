@@ -51,6 +51,8 @@ import static depends.deptypes.DependencyType.POSSIBLE_DEP;
 public abstract class DependencyGenerator {
 
 	private static Logger logger = LoggerFactory.getLogger(DependencyGenerator.class);
+	private boolean outputSelfDependencies;
+
 	public abstract String getType();
 	public DependencyMatrix identifyDependencies(EntityRepo entityRepo, List<String> typeFilter) {
 		System.out.println("dependencie data generating...");
@@ -68,7 +70,7 @@ public abstract class DependencyGenerator {
 	 * @return the generated dependency matrix
 	 */
 	public DependencyMatrix build(EntityRepo entityRepo,List<String> typeFilter) {
-		DependencyMatrix dependencyMatrix = new DependencyMatrix(typeFilter);
+		DependencyMatrix dependencyMatrix = new DependencyMatrix(0, typeFilter,outputSelfDependencies);
 		Iterator<Entity> iterator = entityRepo.entityIterator();
 		System.out.println("Start create dependencies matrix....");
 		while(iterator.hasNext()) {
@@ -123,7 +125,7 @@ public abstract class DependencyGenerator {
 						srcFile, detail.getSrc().getLineNumber())
 				,
 				new LocationInfo(detail.getDest().getObject(),
-						detail.getSrc().getType(),
+						detail.getDest().getType(),
 						dstFile, detail.getDest().getLineNumber()));
 	}
 
@@ -162,5 +164,9 @@ public abstract class DependencyGenerator {
 	}
 	public void setGenerateDetail(boolean generateDetail) {
 		this.generateDetail = generateDetail;
+	}
+
+	public void setOutputSelfDependencies(boolean outputSelfDependencies) {
+		this.outputSelfDependencies = outputSelfDependencies;
 	}
 }

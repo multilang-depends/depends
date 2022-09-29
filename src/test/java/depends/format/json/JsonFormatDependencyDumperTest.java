@@ -19,7 +19,7 @@ public class JsonFormatDependencyDumperTest {
 	 @Before
 	 public void init() {
 		 int SIZE = 4000;
-			dependencyMatrix = new DependencyMatrix(SIZE*100);
+			dependencyMatrix = new DependencyMatrix(SIZE*100,null,false);
 			for (int i=0;i<SIZE;i++)
 				dependencyMatrix.addNode(""+i,i);
 			System.out.print("here1");
