@@ -243,7 +243,7 @@ public class JRubyVisitor extends NoopVisitor {
 	@Override
 	public Object visitDAsgnNode(DAsgnNode node) {
 		context.foundVarDefinition(helper.getScopeOfVar(node,context), node.getName(),node.getPosition().getStartLine()+1);
-		expressionUsage.foundExpression(node.getValue());
+		expressionUsage.foundExpression(node);
 		return super.visitDAsgnNode(node);
 	}
 
