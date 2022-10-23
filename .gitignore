@@ -3,14 +3,8 @@
 *.class
 *.log
 .idea/
-out/
-data/
 *.DS_Store
 /target/
 .classpath
 .project
 .settings/
-META-INF/
-result/
-java_design_pattern_test/
-lang
