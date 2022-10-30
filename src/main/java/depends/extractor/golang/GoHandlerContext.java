@@ -25,6 +25,7 @@ SOFTWARE.
 package depends.extractor.golang;
 
 import depends.entity.Entity;
+import depends.entity.FileEntity;
 import depends.entity.PackageEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.HandlerContext;
@@ -46,4 +47,7 @@ public class GoHandlerContext extends HandlerContext {
 		return pkgEntity;
 	}
 
+	public FileEntity startFile(String fileName) {
+		return super.startFile(false, fileName);
+	}
 }

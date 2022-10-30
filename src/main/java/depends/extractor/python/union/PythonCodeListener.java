@@ -3,6 +3,7 @@ package depends.extractor.python.union;
 import depends.entity.*;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.python.NameAliasImport;
+import depends.extractor.python.PythonBuiltInType;
 import depends.extractor.python.PythonHandlerContext;
 import depends.extractor.python.PythonParser.*;
 import depends.extractor.python.PythonParserBaseListener;
@@ -43,7 +44,11 @@ public class PythonCodeListener extends PythonParserBaseListener{
 		PackageEntity packageEntity = (PackageEntity) entityRepo.getEntity(dir);
 		String moduleName = fileEntity.getRawName().uniqName().substring(packageEntity.getRawName().uniqName().length() + 1);
 		if (moduleName.endsWith(".py"))
-			moduleName.substring(0, moduleName.length() - ".py".length());
+			moduleName = moduleName.substring(0, moduleName.length() - ".py".length());
+		if (fileEntity.getRawName().uniqName().endsWith(PythonBuiltInType.PACKAGE_PY_NAME)){
+			moduleName = "";
+		}
+		fileEntity.setModuleName(moduleName);
 		Entity.setParent(fileEntity, packageEntity);
 		packageEntity.addChild(FileUtil.getShortFileName(fileEntity.getRawName().uniqName()).replace(".py", ""), fileEntity);
 	}
@@ -176,8 +181,8 @@ public class PythonCodeListener extends PythonParserBaseListener{
 		ArrayList<String> r = new ArrayList<>();
 		if (fullName==null) return r;
 		r.add(fullName);
-		if (FileUtil.existFile(fullName+File.separator + "__init__.py")) {
-			r.add( fullName+File.separator +"__init__.py");
+		if (FileUtil.existFile(fullName+File.separator + PythonBuiltInType.PACKAGE_PY_NAME)) {
+			r.add( fullName+File.separator +PythonBuiltInType.PACKAGE_PY_NAME);
 		}
 		return r;
 	}

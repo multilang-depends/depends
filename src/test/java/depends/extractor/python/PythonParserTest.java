@@ -29,7 +29,18 @@ public abstract class PythonParserTest extends ParserTest implements ParserCreat
 	}
 	
 	protected String withPackageName(String theFile,String entityName) {
-		return FileUtil.uniqFilePath(FileUtil.getLocatedDir(theFile))+"."+entityName;
+		String uniqName = FileUtil.uniqFilePath(theFile);
+		return FileUtil.getLocatedDir(uniqName)+"."+FileUtil.getShortFileName(uniqName).replace(".py","")+"."+entityName;
+	}
+
+	protected String withPackageName(String theFile, String moduleName, String entityName) {
+		String uniqName = FileUtil.uniqFilePath(theFile);
+		return FileUtil.getLocatedDir(uniqName)+"."+moduleName+"."+entityName;
+	}
+
+	protected String withPackageName2(String theFile, String entityName) {
+		String uniqName = FileUtil.uniqFilePath(theFile);
+		return FileUtil.getLocatedDir(uniqName)+"."+entityName;
 	}
 
 

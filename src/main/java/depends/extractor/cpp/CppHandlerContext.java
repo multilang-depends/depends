@@ -64,9 +64,8 @@ public class CppHandlerContext extends HandlerContext {
 	}
 
 
-	@Override
 	public FileEntity startFile(String fileName) {
-		currentFileEntity = new FileEntity(fileName, idGenerator.generateId(),true);
+		currentFileEntity = new FileEntity(false, fileName, idGenerator.generateId(),true);
 		pushToStack(currentFileEntity);
 		entityRepo.add(currentFileEntity);
 		return currentFileEntity;

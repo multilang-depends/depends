@@ -25,6 +25,7 @@ SOFTWARE.
 package depends.extractor.ruby;
 
 import depends.entity.Entity;
+import depends.entity.FileEntity;
 import depends.entity.PackageEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.FileParser;
@@ -100,6 +101,7 @@ public class RubyHandlerContext extends HandlerContext {
 		} 
 	}
 
-
-
+	public FileEntity startFile(String fileName) {
+		return super.startFile(false, fileName);
+	}
 }

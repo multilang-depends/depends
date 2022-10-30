@@ -1,9 +1,6 @@
 package depends.extractor.python;
 
-import depends.entity.AliasEntity;
-import depends.entity.Entity;
-import depends.entity.GenericName;
-import depends.entity.PackageEntity;
+import depends.entity.*;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.HandlerContext;
 import depends.relations.IBindingResolver;
@@ -24,7 +21,7 @@ public class PythonHandlerContext extends HandlerContext {
 		Entity parent = entity.getParent();
 		if (parent == null)
 			return;
-		if (parent.getRawName().getName().endsWith("__init__.py")) {
+		if (parent.getRawName().getName().endsWith(PythonBuiltInType.PACKAGE_PY_NAME)) {
 			Entity packageEntity = parent.getAncestorOfType(PackageEntity.class);
 			if (packageEntity == null)
 				return;
@@ -50,4 +47,7 @@ public class PythonHandlerContext extends HandlerContext {
 		return alias;
 	}
 
+	public FileEntity startFile(String fileName) {
+		return super.startFile(true, fileName);
+	}
 }

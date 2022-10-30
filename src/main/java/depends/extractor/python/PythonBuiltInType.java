@@ -12,7 +12,8 @@ import java.util.List;
 
 public class PythonBuiltInType extends BuiltInType {
 
-	public static String[] BUILT_IN_FUNCTIONS = { "abs", "delattr", "hash", "memoryview", "set", "all", "dict", "help",
+    public static final String PACKAGE_PY_NAME = "__init__.py";
+    public static String[] BUILT_IN_FUNCTIONS = { "abs", "delattr", "hash", "memoryview", "set", "all", "dict", "help",
 			"min", "setattr", "any", "dir", "hex", "next", "slice", "exit", "ascii", "divmod", "id", "object", "sorted",
 			"bin", "enumerate", "input", "oct", "staticmethod", "bool", "eval", "int", "open", "str", "breakpoint",
 			"exec", "isinstance", "ord", "sum", "bytearray", "filter", "issubclass", "pow", "super", "bytes", "float",

@@ -145,7 +145,7 @@ public abstract class Entity {
 		deduceQualifiedName();
 	}
 	
-	public final String getQualifiedName() {
+	public String getQualifiedName() {
 		return qualifiedName;
 	}
 

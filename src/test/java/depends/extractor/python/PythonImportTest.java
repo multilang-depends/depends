@@ -4,7 +4,6 @@ import depends.deptypes.DependencyType;
 import depends.entity.Entity;
 import depends.entity.FileEntity;
 import depends.entity.FunctionEntity;
-import depends.entity.MultiDeclareEntities;
 import depends.extractor.python.union.PythonFileParser;
 import multilang.depends.util.file.FileUtil;
 import org.junit.Before;
@@ -49,7 +48,7 @@ public class PythonImportTest extends PythonParserTest {
 	    resolveAllBindings();
 	    Entity file = entityRepo.getEntity(FileUtil.uniqFilePath(srcs[0]));
 		this.assertContainsRelation(file, DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[1]));
-		this.assertContainsRelation(file, DependencyType.CALL,withPackageName(srcs[0],"foo"));
+		this.assertContainsRelation(file, DependencyType.CALL,withPackageName(srcs[0],"imported_a","foo"));
 	}
 	
 	@Test
@@ -66,7 +65,7 @@ public class PythonImportTest extends PythonParserTest {
 	    resolveAllBindings();
 	    Entity file = entityRepo.getEntity(FileUtil.uniqFilePath(srcs[0]));
 		this.assertContainsRelation(file, DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[1]));
-		this.assertContainsRelation(file, DependencyType.CALL,withPackageName(srcs[0],"foo"));
+		this.assertContainsRelation(file, DependencyType.CALL,withPackageName(srcs[0], "imported_a", "foo"));
 	}
 	
 	@Test
@@ -82,7 +81,7 @@ public class PythonImportTest extends PythonParserTest {
 	    }
 	    resolveAllBindings();
 	    Entity file = entityRepo.getEntity(FileUtil.uniqFilePath(srcs[0]));
-		this.assertContainsRelation(file, DependencyType.CALL,withPackageName(srcs[0],"foo"));
+		this.assertContainsRelation(file, DependencyType.CALL,withPackageName(srcs[0], "imported_a","foo"));
 		this.assertContainsRelation(file, DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[1]));
 	}
 	
@@ -100,7 +99,7 @@ public class PythonImportTest extends PythonParserTest {
 	    }
 	    resolveAllBindings();
 	    Entity file = entityRepo.getEntity(FileUtil.uniqFilePath(srcs[0]));
-		this.assertContainsRelation(file, DependencyType.CALL,withPackageName(srcs[0],"foo"));
+		this.assertContainsRelation(file, DependencyType.CALL,withPackageName(srcs[0],"imported_a","foo"));
 		this.assertContainsRelation(file, DependencyType.IMPORT,FileUtil.uniqFilePath(srcs[1]));
 	}
 	
@@ -219,8 +218,7 @@ public class PythonImportTest extends PythonParserTest {
 	    }
 	    resolveAllBindings();
 	    
-	    MultiDeclareEntities funcs = (MultiDeclareEntities) entityRepo.getEntity(withPackageName(srcs[1],"in_the_forest"));
-	    Entity func = funcs.getEntities().get(0);
+	    Entity func = entityRepo.getEntity(withPackageName(srcs[1], "forest","in_the_forest"));
 
 	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[1],"Duck.quack"));
 	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[1],"Doge.quack"));
@@ -240,9 +238,8 @@ public class PythonImportTest extends PythonParserTest {
 		    parser.parse(src);
 	    }
 	    resolveAllBindings();
-	    
-	    MultiDeclareEntities funcs = (MultiDeclareEntities) entityRepo.getEntity(withPackageName(srcs[1],"in_the_forest"));
-	    Entity func = funcs.getEntities().get(0);
+
+		Entity func = entityRepo.getEntity(withPackageName(srcs[1], "forest","in_the_forest"));
 	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[0],"Duck.quack"));
 	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[0],"Bird.quack"));
 	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[0],"Doge.quack"));
@@ -261,8 +258,8 @@ public class PythonImportTest extends PythonParserTest {
 		    parser.parse(src);
 	    }
 	    resolveAllBindings();
-	    FunctionEntity func = (FunctionEntity) entityRepo.getEntity(withPackageName(srcs[0],"bar"));
-	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[2],"C"));
+	    FunctionEntity func = (FunctionEntity) entityRepo.getEntity(withPackageName(srcs[0],"use_imported", "bar"));
+	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName2(srcs[2],"C"));
 	}
 
 	@Test

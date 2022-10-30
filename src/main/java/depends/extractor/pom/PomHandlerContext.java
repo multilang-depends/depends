@@ -24,6 +24,7 @@ SOFTWARE.
 
 package depends.extractor.pom;
 
+import depends.entity.FileEntity;
 import depends.entity.repo.EntityRepo;
 import depends.extractor.HandlerContext;
 
@@ -33,4 +34,7 @@ public class PomHandlerContext extends HandlerContext {
 		super(entityRepo, null);
 	}
 
+	public FileEntity startFile(String fileName) {
+		return super.startFile(false, fileName);
+	}
 }

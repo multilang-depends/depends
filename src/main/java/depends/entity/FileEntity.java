@@ -37,16 +37,20 @@ public class FileEntity extends TypeEntity {
 	private Collection<Entity> importedTypes = new ArrayList<>();
 	private List<TypeEntity> declaredTypes = new ArrayList<>();
 	private ImportedFileCollector importedFileCollector = null;
+	private boolean fileAsModule = false;
+	private String moduleName = "";
+
 	public FileEntity() {}
 
-	public FileEntity(String fullName, int fileId, boolean isInProjectScope) {
+	public FileEntity(boolean fileAsModule,String fullName, int fileId, boolean isInProjectScope) {
 		super(GenericName.build(fullName), null, fileId);
 		setQualifiedName(fullName);
 		this.isInProjectScope = isInProjectScope;
+		this.fileAsModule = fileAsModule;
 	}
 
-	public FileEntity(String fullName, int fileId) {
-		this(fullName, fileId, true);
+	public FileEntity(boolean fileAsModule,String fullName, int fileId) {
+		this(fileAsModule,fullName, fileId, true);
 	}
 
 	public void addImport(Import imported) {
@@ -74,20 +78,26 @@ public class FileEntity extends TypeEntity {
 		}
 		return null;
 	}
-	
+
 
 	@Override
 	public String getQualifiedName(boolean overrideFileWithPackage) {
-		if (!overrideFileWithPackage) {
-			return super.getQualifiedName();
-		}
-		if (this.getParent() == null) {
+		if (this.getParent() == null ||
+			!(this.getParent() instanceof PackageEntity)) {
+			if (fileAsModule){
+				return super.getQualifiedName();
+			}
 			return "";
 		}
-		if (this.getParent() instanceof PackageEntity)
+		//parent is  PackageEntity
+		if (!fileAsModule) {
 			return this.getParent().getQualifiedName();
-		else
-			return super.getQualifiedName();
+		}else {
+			if (moduleName==null || moduleName.equals("")){
+				return this.getParent().getQualifiedName();
+			}
+			return this.getParent().getQualifiedName() + "." +moduleName;
+		}
 	}
 
 	@Override
@@ -166,4 +176,7 @@ public class FileEntity extends TypeEntity {
 		}
 	}
 
+	public void setModuleName(String moduleName) {
+		this.moduleName = moduleName;
+	}
 }

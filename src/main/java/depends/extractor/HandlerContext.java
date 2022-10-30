@@ -50,8 +50,8 @@ public abstract class HandlerContext {
 		this.bindingResolver = bindingResolver;
 	}
 
-	public FileEntity startFile(String fileName) {
-		currentFileEntity = new FileEntity(fileName, idGenerator.generateId(),true);
+	public FileEntity startFile(boolean fileAsModule, String fileName) {
+		currentFileEntity = new FileEntity(fileAsModule, fileName, idGenerator.generateId(),true);
 		pushToStack(currentFileEntity);
 		addToRepo(currentFileEntity);
 		return currentFileEntity;
