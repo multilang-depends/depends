@@ -50,6 +50,15 @@ public class ExpressionUsage {
 			return names;
 	}
 
+	private List<String> getName(List<Testlist_star_exprContext> testlist_star_expr) {
+		List<String> names = new ArrayList<>();
+		for (Testlist_star_exprContext expr:testlist_star_expr){
+			expr.accept(new NameCollector(names));
+		}
+		return names;
+	}
+
+
 	public void foundExpression(ParserRuleContext ctx) {
 		if (!isStartOfContainerRule(ctx)) {
 			return ;
@@ -79,7 +88,9 @@ public class ExpressionUsage {
 				expression.setSet(true);
 				expression.setIdentifier(exprAssign.testlist_star_expr().getText());
 				if (isValidIdentifier(expression.getIdentifier())) {
-					makeSureVarExist(expression.getIdentifier(), ctx);
+					if (!isAlias(exprAssign)){
+						makeSureVarExist(expression.getIdentifier(), ctx);
+					}
 				}
 				deduceVarTypeInCaseOfAssignment((Expr_stmtContext)ctx,expression);
 			}
@@ -96,6 +107,22 @@ public class ExpressionUsage {
 		
 	}
 
+	private boolean isAlias(Expr_stmtContext exprAssign) {
+		String theName = exprAssign.testlist_star_expr().getText();
+
+		List<String> assignNames = this.getName(exprAssign.assign_part().testlist_star_expr());
+		if (assignNames.size()==0) return false;
+		String assignName = assignNames.get(0);
+		Entity type = bindingResolver.resolveName(context.lastContainer(), GenericName.build(assignName),true);
+		if (type==null)
+			return false;
+		if (!(type instanceof TypeEntity))
+			return false;
+		context.foundNewAlias(theName,assignName);
+		return true;
+	}
+
+
 	private void deduceReturnTypeInCaseOfReturn(Return_stmtContext ctx, Expression expression) {
 		FunctionEntity currentFunction = context.currentFunction();
 		if (currentFunction == null)
@@ -106,9 +133,8 @@ public class ExpressionUsage {
 
 	private void makeSureVarExist(GenericName identifier, ParserRuleContext ctx) {
 		if (null==context.foundEntityWithName(identifier)) {
-			VarEntity var = context.foundVarDefinition(context.lastContainer(), identifier.getName(),ctx.getStart().getLine());
+			VarEntity var = context.foundVarDefinition(context.lastContainer(), identifier.getName(), ctx.getStart().getLine());
 			var.setLine(ctx.getStart().getLine());
-
 		}
 	}
 
