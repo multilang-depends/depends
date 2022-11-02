@@ -1,13 +1,12 @@
 package depends.extractor.python;
 
-import java.io.IOException;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import depends.deptypes.DependencyType;
 import depends.entity.FunctionEntity;
 import depends.extractor.python.union.PythonFileParser;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.io.IOException;
 
 public class PythonFuncCallTest extends PythonParserTest {
     @Before
@@ -58,9 +57,9 @@ public class PythonFuncCallTest extends PythonParserTest {
 	    }
 
 	    resolveAllBindings();
-	    FunctionEntity func = (FunctionEntity) entityRepo.getEntity(withPackageName(srcs[0],"C.test"));
-	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[0],"A.fooA"));
-	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[0],"B.fooB"));
-	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[0],"C.fooC"));
+	    FunctionEntity func = (FunctionEntity) entityRepo.getEntity(withPackageName(srcs[0],"func_call_multi_dots","C.test"));
+	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[0],"func_call_multi_dots","A.fooA"));
+	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[0],"func_call_multi_dots","B.fooB"));
+	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[0],"func_call_multi_dots","C.fooC"));
 	}
 }

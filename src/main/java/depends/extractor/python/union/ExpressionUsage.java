@@ -5,10 +5,12 @@ import depends.entity.repo.IdGenerator;
 import depends.extractor.HandlerContext;
 import depends.extractor.python.PythonHandlerContext;
 import depends.extractor.python.PythonParser.*;
+import depends.extractor.python.PythonParserBaseListener;
 import depends.extractor.python.PythonParserBaseVisitor;
 import depends.relations.IBindingResolver;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.RuleContext;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -108,6 +110,10 @@ public class ExpressionUsage {
 	}
 
 	private boolean isAlias(Expr_stmtContext exprAssign) {
+		//if contain arguments, like a = A(), it must be a variable
+		if (containArguments(exprAssign)){
+			return false;
+		}
 		String theName = exprAssign.testlist_star_expr().getText();
 
 		List<String> assignNames = this.getName(exprAssign.assign_part().testlist_star_expr());
@@ -122,6 +128,19 @@ public class ExpressionUsage {
 		return true;
 	}
 
+	private boolean containArguments(Expr_stmtContext expr) {
+		final boolean[] containsArgument = {false};
+		PythonParserBaseListener visitor = new PythonParserBaseListener() {
+			@Override
+			public void enterArguments(ArgumentsContext ctx) {
+				containsArgument[0] = true;
+				super.enterArguments(ctx);
+			}
+		};
+		ParseTreeWalker walker = new ParseTreeWalker();
+		walker.walk(visitor,expr);
+		return containsArgument[0];
+	}
 
 	private void deduceReturnTypeInCaseOfReturn(Return_stmtContext ctx, Expression expression) {
 		FunctionEntity currentFunction = context.currentFunction();

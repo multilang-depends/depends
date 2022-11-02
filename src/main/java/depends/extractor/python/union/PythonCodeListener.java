@@ -20,6 +20,12 @@ import java.util.List;
 
 public class PythonCodeListener extends PythonParserBaseListener{
 	private final PythonHandlerContext context;
+
+//	@Override
+//	public void exitEveryRule(ParserRuleContext ctx) {
+//		System.out.println(ctx.getClass().getSimpleName().replace("Context","")+":"+ctx.getText());
+//		super.exitEveryRule(ctx);
+//	}
 	private final ExpressionUsage expressionUsage;
 	private final EntityRepo entityRepo;
 	private final IncludedFileLocator  includeFileLocator;
