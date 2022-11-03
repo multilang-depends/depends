@@ -259,7 +259,7 @@ public class PythonImportTest extends PythonParserTest {
 	    }
 	    resolveAllBindings();
 	    FunctionEntity func = (FunctionEntity) entityRepo.getEntity(withPackageName(srcs[0],"use_imported", "bar"));
-	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName2(srcs[2],"C"));
+	    this.assertContainsRelation(func, DependencyType.CALL, withPackageName(srcs[2],"core","C"));
 	}
 
 	@Test

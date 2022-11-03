@@ -32,7 +32,7 @@ import java.util.List;
 /**
  * Search file in all included path
  */
-public class IncludedFileLocator {
+public final class IncludedFileLocator {
 	private List<String> includesPath;
 	public IncludedFileLocator(List<String> includedPath) {
 		this.includesPath = includedPath;

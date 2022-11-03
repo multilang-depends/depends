@@ -19,8 +19,8 @@ public class ImportWithSameNameTest extends PythonParserTest {
 	@Test
 	public void same_name_in_different_file_should_be_treat_as_two_vars() throws IOException {
 		String[] srcs = new String[] {
-	    		"./src/test/resources/python-code-examples/import_with_same_name/pkg/a.py",
 				"./src/test/resources/python-code-examples/import_with_same_name/b.py",
+				"./src/test/resources/python-code-examples/import_with_same_name/pkg/a.py",
 	    	    };
 	    
 	    for (String src:srcs) {
@@ -28,10 +28,29 @@ public class ImportWithSameNameTest extends PythonParserTest {
 		    parser.parse(src);
 	    }
 	    resolveAllBindings();
+		VarEntity foo_a = (VarEntity) entityRepo.getEntity(withPackageName(srcs[1],"a","foo"));
+		assertNotNull(foo_a);
+		VarEntity foo_b = (VarEntity) entityRepo.getEntity(withPackageName(srcs[0],"b","foo"));
+		assertNotNull(foo_b);
+		assertFalse(foo_a.equals(foo_b));
+	}
+	@Test
+	public void same_name_in_different_file_should_be_treat_as_two_vars_diff_order() throws IOException {
+		String[] srcs = new String[] {
+				"./src/test/resources/python-code-examples/import_with_same_name/pkg/a.py",
+				"./src/test/resources/python-code-examples/import_with_same_name/b.py",
+		};
+
+		for (String src:srcs) {
+			PythonFileParser parser = createParser();
+			parser.parse(src);
+		}
+		resolveAllBindings();
 		VarEntity foo_a = (VarEntity) entityRepo.getEntity(withPackageName(srcs[0],"a","foo"));
 		assertNotNull(foo_a);
 		VarEntity foo_b = (VarEntity) entityRepo.getEntity(withPackageName(srcs[1],"b","foo"));
 		assertNotNull(foo_b);
 		assertFalse(foo_a.equals(foo_b));
 	}
+
 }

@@ -40,7 +40,6 @@ public class PythonCodeListener extends PythonParserBaseListener{
 		this.includeFileLocator = includeFileLocator;
 		this.bindingResolver = bindingResolver;
 		this.pythonProcessor = pythonProcessor;
-
 		String dir = FileUtil.uniqFilePath(FileUtil.getLocatedDir(fileFullPath));
 		if (entityRepo.getEntity(dir) == null) {
 			PackageEntity pacakgeEntity = new PackageEntity(dir, entityRepo.generateId());
@@ -67,7 +66,7 @@ public class PythonCodeListener extends PythonParserBaseListener{
 			if (dotted_as_name.name()!=null) {
 				aliasName = dotted_as_name.name().getText();
 			}
-			List<String> fullNames = foundImportedModuleOrPackage(0,moduleName);
+			List<String> fullNames = sureImportedModulesParsed(0,moduleName,null);
 			 
 			for (String fullName:fullNames) {
 				if (FileUtil.existFile(fullName) && !(FileUtil.isDirectory(fullName))) {
@@ -80,15 +79,15 @@ public class PythonCodeListener extends PythonParserBaseListener{
 	}
 	@Override
 	public void enterFrom_stmt(From_stmtContext ctx) {
-		String moduleName = null;
+		String fromName = null;
 		if (ctx.dotted_name() != null) {
-			moduleName = ctx.dotted_name().getText();
+			fromName = ctx.dotted_name().getText();
 		}
 		int prefixDotCount = getDotCounter(ctx);
+		List<String> moduleNames = getModuleNames(ctx.import_as_names());
+		List<String> fullNames = sureImportedModulesParsed(prefixDotCount, fromName,moduleNames);
 
-		 List<String> fullNames = foundImportedModuleOrPackage(prefixDotCount, moduleName);
 		for (String fullName:fullNames) {
-
 			if (ctx.import_as_names() == null) {// import *
 				ContainerEntity moduleEntity = (ContainerEntity) (entityRepo.getEntity(fullName));
 				if (moduleEntity != null) {
@@ -124,8 +123,7 @@ public class PythonCodeListener extends PythonParserBaseListener{
 						if (FileUtil.existFile(fileName) && !(FileUtil.isDirectory(fileName))) {
 							context.foundNewImport(new FileImport(fileName));
 						}
-					}
-					if (FileUtil.existFile(fullName) && !(FileUtil.isDirectory(fullName))) {
+					}else if (FileUtil.existFile(fullName)) {
 						context.foundNewImport(new FileImport(fullName));
 					}
 					Entity itemEntity = bindingResolver.resolveName(entityRepo.getEntity(fullName), GenericName.build(name), true);
@@ -138,8 +136,18 @@ public class PythonCodeListener extends PythonParserBaseListener{
 		}
 		super.enterFrom_stmt(ctx);
 	}
-	
-	
+
+	private List<String> getModuleNames(Import_as_namesContext import_as_names) {
+		List<String> names = new ArrayList<>();
+		if (import_as_names==null)
+			return names;
+		for (Import_as_nameContext item : import_as_names.import_as_name()) {
+			String name = item.name(0).getText();
+			names.add(name);
+		}
+		return names;
+	}
+
 	private int getDotCounter(From_stmtContext ctx) {
 		int total = 0;
 		if (ctx.DOT()!=null){
@@ -150,54 +158,82 @@ public class PythonCodeListener extends PythonParserBaseListener{
 		}
 		return total;
 	}
-	private List<String> foundImportedModuleOrPackage(int prefixDotCount, String originalName) {
+
+
+	private List<String> sureImportedModulesParsed(int prefixDotCount, String fromName, List<String> moduleNames) {
+		ArrayList<String> visitedFiles = new ArrayList<>();
+
+		/*  compute prefix path */
 		String dir = FileUtil.getLocatedDir(context.currentFile().getRawName().uniqName());
 		String preFix = "";
 		for (int i = 0; i < prefixDotCount - 1; i++) {
 			preFix = preFix + ".." + File.separator;
 		}
 		dir = dir + File.separator + preFix;
-		String fullName = null;
-		if (originalName != null) {
-			String importedName = originalName.replace(".", File.separator);
-			fullName = includeFileLocator.uniqFileName(dir, importedName);
-			if (fullName == null) {
-				fullName = includeFileLocator.uniqFileName(dir, importedName + ".py");
-			}
-		} else {
-			fullName = FileUtil.uniqFilePath(dir);
+
+		/* compute importedName */
+		String importedName = "";
+		if (fromName!=null) {
+			importedName = fromName.replace(".", File.separator);
 		}
-		if (fullName != null) {
-			if (FileUtil.isDirectory(fullName)) {
-				if (!FileUtil.uniqFilePath(fullName).equals(FileUtil.uniqFilePath(dir))) {
-					File d = new File(fullName);
-					File[] files = d.listFiles();
-					for (File file : files) {
-						if (!file.isDirectory()) {
-							if (file.getAbsolutePath().endsWith(".py")) {
-								visitIncludedFile(FileUtil.uniqFilePath(file.getAbsolutePath()));
-							}
-						}
-					}
+
+		/* search importedName from all included paths */
+		String uniqFrom = includeFileLocator.uniqFileName(dir, importedName);
+		if (uniqFrom==null)
+			uniqFrom = includeFileLocator.uniqFileName(dir,importedName+".py");
+		if (uniqFrom==null){ //cannot find the path
+			return visitedFiles;
+		}
+		if (uniqFrom.endsWith(".py")){
+			return visitIncludedFile(uniqFrom);
+		}
+		if (moduleNames!=null && moduleNames.size()>0){
+			for (String moduleName:moduleNames){
+				String fileName = uniqFrom + File.separator + moduleName;
+				if (!FileUtil.existFile(fileName)){
+					fileName +=".py";
+				}else if (FileUtil.isDirectory(fileName)){
+					fileName += File.separator + PythonBuiltInType.PACKAGE_PY_NAME;
 				}
-			} else {
-				visitIncludedFile(fullName);
+
+				List<String> files = visitIncludedFile(fileName);
+				visitedFiles.addAll(files);
 			}
+		}else{
+			return visitIncludedFile(uniqFrom);
 		}
-		ArrayList<String> r = new ArrayList<>();
-		if (fullName==null) return r;
-		r.add(fullName);
-		if (FileUtil.existFile(fullName+File.separator + PythonBuiltInType.PACKAGE_PY_NAME)) {
-			r.add( fullName+File.separator +PythonBuiltInType.PACKAGE_PY_NAME);
-		}
-		return r;
+		return visitedFiles;
 	}
 
-	private void visitIncludedFile(String fullName) {
+	private List<String> visitIncludedFile(String fullName) {
+		List<String> visitedFiles = new ArrayList<>();
+		if (FileUtil.isDirectory(fullName)){
+			File d = new File(fullName);
+			File[] files = d.listFiles();
+			for (File file : files) {
+				if (!file.isDirectory()) {
+					if (file.getAbsolutePath().endsWith(".py")) {
+						String fileName = FileUtil.uniqFilePath(file.getAbsolutePath());
+						visitIncludedFile(fileName);
+						visitedFiles.add(fileName);
+					}
+				}
+			}
+			if (FileUtil.existFile(fullName+File.separator + PythonBuiltInType.PACKAGE_PY_NAME)) {
+				visitedFiles.add( fullName+File.separator +PythonBuiltInType.PACKAGE_PY_NAME);
+			}
+		}else{
+			invokeParser(fullName);
+			visitedFiles.add(fullName);
+		}
+		return visitedFiles;
+	}
+
+	private void invokeParser(String fileName){
 		PythonFileParser importedParser = new PythonFileParser(entityRepo, includeFileLocator, bindingResolver,
 				pythonProcessor);
 		try {
-			importedParser.parse(fullName);
+			importedParser.parse(fileName);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
