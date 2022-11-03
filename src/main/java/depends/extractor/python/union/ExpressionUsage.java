@@ -115,10 +115,9 @@ public class ExpressionUsage {
 			return false;
 		}
 		String theName = exprAssign.testlist_star_expr().getText();
-
 		List<String> assignNames = this.getName(exprAssign.assign_part().testlist_star_expr());
 		if (assignNames.size()==0) return false;
-		String assignName = assignNames.get(0);
+		String assignName = namesToDot(assignNames);
 		Entity type = bindingResolver.resolveName(context.lastContainer(), GenericName.build(assignName),true);
 		if (type==null)
 			return false;
@@ -126,6 +125,17 @@ public class ExpressionUsage {
 			return false;
 		context.foundNewAlias(theName,assignName);
 		return true;
+	}
+
+	private String namesToDot(List<String> assignNames) {
+		StringBuilder sb = new StringBuilder();
+		for (String s:assignNames){
+			if (sb.length()>0){
+				sb.append(".");
+			}
+			sb.append(s);
+		}
+		return sb.toString();
 	}
 
 	private boolean containArguments(Expr_stmtContext expr) {
@@ -335,9 +345,8 @@ class NameCollector extends PythonParserBaseVisitor<Void>{
 		this.names = names;
 	}
 	@Override
-	public Void visitAtom(AtomContext ctx) {
-		if (ctx.name()!=null)
-			names.add(ctx.name().getText());
-		return super.visitAtom(ctx);
+	public Void visitName(NameContext ctx) {
+			names.add(ctx.getText());
+		return super.visitName(ctx);
 	}
 }

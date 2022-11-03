@@ -1,5 +1,6 @@
 package depends.extractor.python;
 
+import depends.entity.AliasEntity;
 import depends.entity.Entity;
 import depends.extractor.python.union.PythonFileParser;
 import org.junit.Before;
@@ -7,7 +8,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class PythonClassAssignmentTest extends PythonParserTest {
     @Before
@@ -27,6 +28,6 @@ public class PythonClassAssignmentTest extends PythonParserTest {
 	    }
 	    resolveAllBindings();
 		Entity classB = entityRepo.getEntity(withPackageName(srcs[0],"class_assignment","ClassB"));
-        assertNotNull(classB);
+        assertTrue(classB instanceof AliasEntity);
 	}
 }
