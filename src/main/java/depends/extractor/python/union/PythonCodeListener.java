@@ -251,8 +251,14 @@ public class PythonCodeListener extends PythonParserBaseListener{
 		List<String> result = new ArrayList<>();
 		for (Def_parametersContext params:def_parameters) {
 			for (Def_parameterContext param:params.def_parameter()) {
-				String p = getName( param.named_parameter().name());
-				result.add(p);
+				if (!(param.named_parameter()==null)){
+					String p = getName( param.named_parameter().name());
+					result.add(p);
+				}
+				else{
+					// STAR, we ignore it
+					//    refer to definition: def_parameter:named_parameter (ASSIGN test)? | STAR
+				}
 			}
 		
 		}
