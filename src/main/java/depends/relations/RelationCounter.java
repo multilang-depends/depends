@@ -79,7 +79,7 @@ public class RelationCounter {
 			if (var.getType()!=null)
 				entity.addRelation(buildRelation(entity,DependencyType.CONTAIN,var.getType(),var.getLocation()));
 			for (Entity type:var.getResolvedTypeParameters()) {
-				var.addRelation(buildRelation(var, DependencyType.PARAMETER,type,type.getLocation()));
+				var.addRelation(buildRelation(var, DependencyType.PARAMETER,type));
 			}
 		}
 		for (Entity type:entity.getResolvedAnnotations()) {
