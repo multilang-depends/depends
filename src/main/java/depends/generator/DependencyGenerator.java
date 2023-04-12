@@ -150,6 +150,9 @@ public abstract class DependencyGenerator {
 		Entity fromFile = fromEntity.getAncestorOfType(FileEntity.class);
 		Entity toFile = toEntity.getAncestorOfType(FileEntity.class);
 
+		// If the toEntity is above the file level (e.g. a package), then toFile will be null.
+		if (toFile == null) return null;
+
 		return new DependencyDetail(
 				new LocationInfo(stripper.stripFilename(fromObject),typeOf(fromEntity),stripper.stripFilename(fromFile.getQualifiedName()),fromLineNumber),
 				new LocationInfo(stripper.stripFilename(toObject),typeOf(toEntity),stripper.stripFilename(toFile.getQualifiedName()),toEntity.getLine()));
