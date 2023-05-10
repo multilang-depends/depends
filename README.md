@@ -50,7 +50,7 @@ The CLI tool usage could be listed by ```depends --help```, like following:
       -h, --help                 Display this help and exit
       -s, --strip-leading-path   Strip the leading path.
       
-      -m, --map                  Output DV8 dependency map file.
+      -m, --n-map-files          Output DV8 dependency map file.
       -p, --namepattern=<namePathPattern>
                                  The name path separators.[default(/),dot(.)
 
