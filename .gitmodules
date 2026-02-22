@@ -3,4 +3,4 @@
 	url = https://github.com/multilang-depends/ruby-parser-antlr4
 [submodule "utils"]
 	path = utils
-	url = https://github.com/bsync/utils
+	url = https://github.com/multilang-depends/utils
