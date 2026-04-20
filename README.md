@@ -17,6 +17,44 @@ and then unzip the ```depends-*version*.tgz``` file in any directory of your com
 
 *Depends* is written in java, so it could be run on any OS with a JRE or JDK environment (like Windows, Linux or Mac OS). 
 
+## Build from source (for contributors)
+
+If you are developing on this repository locally, run the following steps before `mvn test` or `mvn package`.
+
+1. Initialize submodules:
+
+   ```bash
+   git submodule update --init --recursive
+   ```
+
+2. Install the `utils` submodule into your local Maven repo:
+
+   ```bash
+   cd utils
+   mvn install -DskipTests
+   cd ..
+   ```
+
+3. Install local third-party jars (CDT/JRuby) into your local Maven repo:
+
+   ```bash
+   sh ./lib_install.sh
+   ```
+
+4. Use JDK 11+ for Maven build (ANTLR plugin requires this):
+
+   ```bash
+   jenv local 11.0.26
+   export JAVA_HOME="$(jenv prefix)"
+   ```
+
+5. Run build:
+
+   ```bash
+   mvn clean test
+   mvn clean package
+   ```
+
 ## Run it from command line
 
 Following the single responsibility principle, *Depends* is designed for the purpose of extracting dependencies only. It only provides CLI interface, without GUI. But you can convert the output of *Depends* into the GUI of other tools, such as GraphViz(http://graphviz.org/), PlantUML(http://plantuml.com/), and DV8 (https://www.archdia.com). 
